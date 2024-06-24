@@ -77,7 +77,6 @@ class authentication {
 
     async adminLogin(req, res, next){
         try {
-            console.log("11111111111111")
             let userAgent = ua_parser(req.headers["user-agent"]);
             let { username, password, fcmToken } = req.body;
             let response = await authentationDAObj.adminIsExistDA(username);

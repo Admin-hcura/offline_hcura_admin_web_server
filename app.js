@@ -42,6 +42,7 @@ async function connectMongo() {
 }
 connectMongo();
 
+app.use(logger('dev'));
 app.use(compression());
 app.use(helmet());
 app.use(express.json());

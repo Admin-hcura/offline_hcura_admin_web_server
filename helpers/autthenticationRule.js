@@ -46,3 +46,7 @@ exports.updatePasswordRule = Joi.object({
 exports.forgetPasswordRule = Joi.object({
     username: Joi.string().required().error(new Error("username is required")),
 });
+
+exports.patientRegRule = Joi.object({
+    
+})

@@ -118,6 +118,24 @@ class authentationDA {
             throw e;
           }
     };
+
+    async branchListDA(){
+        try{
+            let result = await branchesModel.find({ isDeleted: false, isLocked: "ENABLED" })
+            return result;
+        } catch (e){
+            throw e;
+        }
+    }
+
+    async roleListDA(){
+        try{
+            let result = await roleModel.find({ isDeleted: false, isLocked: "ENABLED"})
+            return result;
+        } catch (e){
+            throw e;
+        }
+    }
 }
 
 module.exports = new authentationDA();

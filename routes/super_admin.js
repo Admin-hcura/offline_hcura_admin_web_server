@@ -27,5 +27,11 @@ router.post("/forget/password",
 router.post("/update/password",
     authenticationController.updatePassword
 );
+router.get("/branch/list",
+    authenticationController.getBranchList
+)
+router.get("/role/list",
+    authenticationController.getRoleList
+)
 
 module.exports = router;

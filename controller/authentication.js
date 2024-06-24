@@ -155,8 +155,42 @@ class authentication {
     };
 
     async patientRegistartion(req, res, next){
-
+        let body = req.body
+        const { error } = rule.addAdminRule.validate(body);
+                if (error) {
+                    throw Boom.badData(error.message);
+                }
     };
+
+    async getBranchList(req, res, next){
+        try{
+            let branchList = await authentationDAObj.branchListDA();
+            if (!branchList) {
+                throw Boom.conflict(
+                  apiResponse.ServerErrors.error.branches_not_found
+                );
+              } else {
+                res.send({ success: true, data: branchList});
+              }
+        } catch (e){
+            next(e);
+        }
+    }
+
+    async getRoleList(req, res, next){
+        try{
+            let roleList = await authentationDAObj.roleListDA();
+            if (!roleList) {
+                throw Boom.conflict(
+                  apiResponse.ServerErrors.error.role_not_found
+                );
+              } else {
+                res.send({ success: true, data: roleList});
+              }
+        } catch (e){
+            next(e);
+        }
+    }
 }
 
 async function createAdminSession(response, res, userAgent) {

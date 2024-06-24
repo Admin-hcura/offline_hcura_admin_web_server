@@ -90,4 +90,4 @@ const { number, required } = require("joi");
   exports.adminModel = mongoose.model("Admin", admin, "admin");
   exports.patient = mongoose.model("Patient", patient, "patient");
 
-}.call(this));
+}.call(this))

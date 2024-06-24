@@ -24,6 +24,8 @@ ServerErrors.error = {
 //   aws_error: "AWS error,File is not deleted in AWS",
 //   payout_error: "you have already accepted please contact admin",
 //   email_id_error: "Email id already exists.",
+  branches_not_found: "Branches not found", 
+  role_not_found: "Role not found"
 };
 ServerSuccess.Codes = {
   SUCCESS: { status: true, success_code: 200, success_message: "SUCCESS" },

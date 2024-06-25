@@ -125,7 +125,37 @@ class Mail{
         } catch (e) {
           console.error("Internal error ", e);
         }
+    };
+
+    async patientWelcomeEmail(firstName, lastName, hcuraId, emailId, phoneNumber){
+      try {
+        let info = await this.setUpSmtp();
+        info
+          .sendMail({
+            from: constants.MAIL_CONFIG.auth.user,
+            to: emailId,
+            subject: "Welcome to H-Cura",
+            //text: "Hi Dear "+userName+",\n \nYour one time password(otp) is: "+otp+"\n \n  Thank you",
+            html: (
+              await emailTemplates.patientWelcomeEmail(
+                firstName,
+                lastName,
+                hcuraId,
+                emailId,
+                phoneNumber
+              )
+            ).toString(),
+          })
+          .then(() => {
+            console.log("Email sent");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } catch (e) {
+        console.error("Internal error ", e);
       }
+    }
 }
 
 module.exports = new Mail();

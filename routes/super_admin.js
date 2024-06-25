@@ -28,6 +28,7 @@ router.post("/update/password",
     authenticationController.updatePassword
 );
 router.get("/branch/list",
+    sessionValidator.validateAdminSession,
     authenticationController.getBranchList
 )
 router.get("/role/list",

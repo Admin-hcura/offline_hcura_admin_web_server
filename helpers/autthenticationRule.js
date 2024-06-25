@@ -48,5 +48,23 @@ exports.forgetPasswordRule = Joi.object({
 });
 
 exports.patientRegRule = Joi.object({
-    
-})
+    registeredBy: Joi.string().required().error(new Error("registeredBy Id is required")),
+    branchId: Joi.string().required().error(new Error("branchId is required")),
+    firstName: Joi.string().required().error(new Error("firstName is required")),
+    lastName: Joi.string().required().error(new Error("lastName is required")),
+    birthDate: Joi.date().required().error(new Error("birtDate is required")),
+    gender: Joi.string().required().error(new Error("Gender is required")),
+    emailId: Joi.string().required().error(new Error("Email Id is required")),
+    phoneNumber: Joi.number().required().error(new Error("phone Number is required")),
+    alternativeNumber: Joi.number().empty("").allow(null),
+    bloodGroup: Joi.string().empty("").allow(null),
+    address: Joi.array().items(Joi.object({
+        houseNo: Joi.string().empty("").allow(null).default(null),
+        street: Joi.string().empty("").allow(null).default(null),
+        city: Joi.string().empty("").allow(null).default(null),
+        state: Joi.string().empty("").allow(null).default(null),
+        pinCode: Joi.number().empty("").allow(null).default(null),
+      })),
+    source: Joi.string().empty("").allow(null),
+    occupation: Joi.string().empty("").allow(null),
+});

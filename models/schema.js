@@ -57,24 +57,24 @@ const { number, required } = require("joi");
   });
 
   let patient = new schema ({
-    hcuraId: {type:String, required: true},
-    branchCode: {type: mongoose.Schema.Types.ObjectId, ref: "Branches", required: true},
-    firstName: {type:String, required: true},
-    lastName: {type:String, required: true},
+    hcuraId: {type: String, required: true},
+    branchId: {type: mongoose.Schema.Types.ObjectId, ref: "Branches", required: true},
+    firstName: {type: String, required: true},
+    lastName: {type: String, required: true},
     birthDate : {type: Date, required: true },
     gender: {type: String, enum: ["Male", "Female", "Others"], required: true },
     emailId: {type:String, required: true},
-    phoneNumber: {type:Number, required: true},
-    alternativeNumber: {type:Number, required: true},
-    bloodGroup: {type:String, required: true},
+    phoneNumber: {type: Number, required: true},
+    alternativeNumber: {type: Number, default: null},
+    bloodGroup: {type: String, default: null},
     address: {
-        houseNo: {type:String, default: null},
-        street: {type:String, default: null},
-        city: {type:String, default: null},
-        state: {type:String, default: null},
-        pinCode: {type:Number, default: null},
+        houseNo: {type: String, default: null},
+        street: {type: String, default: null},
+        city: {type: String, default: null},
+        state: {type: String, default: null},
+        pinCode: {type: Number, default: null},
     },
-    consultationType: {type:String, required: true, default: "OFFLINE", enum: ["OFFLINE", "ONLINE"]},
+    consultationType: {type: String, required: true, default: "OFFLINE", enum: ["OFFLINE", "ONLINE"]},
     registeredBy: {type: mongoose.Schema.Types.ObjectId, required: true, ref: "Admin"},
     registeredOn: {type: Date, default: new Date()},
     source: {type: String, default: null},
@@ -88,6 +88,6 @@ const { number, required } = require("joi");
   exports.branchesModel = mongoose.model("Branches", branches, "branches");
   exports.roleModel = mongoose.model("Role", role, "role");
   exports.adminModel = mongoose.model("Admin", admin, "admin");
-  exports.patient = mongoose.model("Patient", patient, "patient");
+  exports.patientModel = mongoose.model("Patient", patient, "patient");
 
 }.call(this))

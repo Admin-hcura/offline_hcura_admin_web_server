@@ -2,6 +2,7 @@
 const branchesModel = require("../../models/schema").branchesModel;
 const roleModel = require("../../models/schema").roleModel;
 const adminModel = require("../../models/schema").adminModel;
+const patientModel = require("../../models/schema").patientModel;
 const mongoose = require("mongoose");
 const moment = require("moment-timezone");
 const bcrypt = require("bcrypt");
@@ -126,7 +127,7 @@ class authentationDA {
         } catch (e){
             throw e;
         }
-    }
+    };
 
     async roleListDA(){
         try{
@@ -135,7 +136,82 @@ class authentationDA {
         } catch (e){
             throw e;
         }
-    }
+    };
+
+    async patientExistDA(phoneNumber){
+        try{
+            let result = await patientModel.findOne({ phoneNumber: phoneNumber});
+            return result;
+        } catch(e) {
+            throw e;
+        }
+    };
+
+    async getHcuraIdDA(){
+        try{
+            let result = await patientModel.aggregate([
+                {
+                  '$project': {
+                    '_id': 0, 
+                    'hcuraId': 1
+                  }
+                }
+              ]
+            )
+            return result;
+        } catch (e) {
+            throw e;
+        }
+    };
+
+    async getBrachDetailsDA(branchId){
+        try{
+            let result = await branchesModel.findOne({ _id : branchId});
+            return result;
+        } catch (e){
+            throw e;
+        }
+    };
+
+    async patientRegDA(
+        hcuraId,
+        branchId,
+        firstName,
+        lastName, 
+        birthDate,
+        gender,
+        emailId,
+        phoneNumber,
+        alternativeNumber,
+        bloodGroup,
+        address,
+        registeredBy,
+        source,
+        occupation
+    ){
+        try{
+            let result = new patientModel({
+                hcuraId: hcuraId,
+                branchId: branchId,
+                firstName: firstName,
+                lastName: lastName,
+                birthDate: birthDate,
+                gender: gender,
+                emailId: emailId,
+                phoneNumber: phoneNumber,
+                alternativeNumber: alternativeNumber,
+                bloodGroup: bloodGroup,
+                address: address,
+                registeredBy: registeredBy,
+                source: source,
+                occupation: occupation,
+            });
+            return await result.save();
+        } catch(e){
+            throw e;
+        }
+    };
+
 }
 
 module.exports = new authentationDA();

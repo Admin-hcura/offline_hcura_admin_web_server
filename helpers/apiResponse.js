@@ -1,8 +1,9 @@
 class ServerErrors {}
 class ServerSuccess {}
 ServerErrors.error = {
-    admin_already_exist : "Admin already exist with this username or emailid or phonenumber",
-//   message: "Phone-number or Email-id already exists",
+  admin_already_exist : "Admin already exist with this username or emailid or phonenumber",
+  phoneNumber_Exist: "Phone-number already exists",
+  branchCode_not_exist: "Branch Code not avaliable",
 //   invalid_otp: "Invalid-OTP",
   otp_expired: "OTP-Expired",
 //   invalid_phoneNumber_Otp: "Phone-number OTP is Invalid",

@@ -242,23 +242,54 @@ class authentication {
     }
 }
 
+// async function createAdminSession(response, res, userAgent) {
+//     response = JSON.parse(JSON.stringify(response));
+//     console.log("============response========",response);
+//     let sessionKey = response._id + "_session@" + Date.now();
+//     console.log("--------- sessionKey--------", sessionKey);
+//     let sessionId = await utilities.encryptSession(sessionKey);
+//     console.log("................sessionId.........",sessionId)
+//     response.sessionId = sessionId;
+//     sessionId = response._id + "_offline_admin_web@" + sessionId;
+//     console.log(";;;;;;;;;sessiodId;;;;;;;",sessionId)
+//     if (!redisClient.isReady) {
+//         await redisClient.connect();
+//     }
+//     await redisClient.set(
+//       response._id + "_offline_admin_web",
+//       JSON.stringify(response)
+//     );
+//   console.log("'''''''''''response.sessionId'''''''",response.sessionId)
+//     response.sessionId = sessionId;
+//     res.send({ success: true, data: response });
+// }
 async function createAdminSession(response, res, userAgent) {
     response = JSON.parse(JSON.stringify(response));
-    let sessionKey = response._id + "_session@" + Date.now();
-    let sessionId = await utilities.encryptSession(sessionKey);
-  
+    let sessionKey = response._id + "_session@" + Date.now();    
+    let sessionId = await utilities.encryptSession(sessionKey);    
     response.sessionId = sessionId;
     sessionId = response._id + "_offline_admin_web@" + sessionId;
     if (!redisClient.isReady) {
         await redisClient.connect();
     }
+    // Invalidate any existing session for this user
+    let existingSession = await redisClient.get(response._id + "_offline_admin_web");
+    if (existingSession) {
+        let existingSessionData = JSON.parse(existingSession);
+        existingSessionData.sessionId = null; // Mark the old session as invalid
+        await redisClient.set(
+            response._id + "_offline_admin_web",
+            JSON.stringify(existingSessionData)
+        );
+    }
+    // Store the new session without TTL
     await redisClient.set(
-      response._id + "_offline_admin_web",
-      JSON.stringify(response)
+        response._id + "_offline_admin_web",
+        JSON.stringify(response)
     );
-  
     response.sessionId = sessionId;
     res.send({ success: true, data: response });
 }
+
 
 module.exports = new authentication();

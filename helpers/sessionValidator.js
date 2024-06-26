@@ -42,7 +42,7 @@ class sessionValidator {
     // };
     async validateAdminSession(req, res, next) {
       try {
-          let sessionId = req.headers["authToken"];
+          let sessionId = req.headers["session_id"];
           console.log("------------------------",sessionId)
           let userId = getUserIdFromSessionId(sessionId); // Implement this function to extract user ID
           let extractedSession = getSessionPartFromSessionId(sessionId);

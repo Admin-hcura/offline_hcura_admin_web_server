@@ -43,6 +43,7 @@ class sessionValidator {
     async validateAdminSession(req, res, next) {
       try {
           let sessionId = req.headers["authToken"];
+          console.log("------------------------",sessionId)
           let userId = getUserIdFromSessionId(sessionId); // Implement this function to extract user ID
           let extractedSession = getSessionPartFromSessionId(sessionId);
           let sessionData = await redisClient.get(userId + "_offline_admin_web");

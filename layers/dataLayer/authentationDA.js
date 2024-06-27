@@ -18,7 +18,8 @@ class authentationDA {
                 branchCode: obj.branchCode,
                 branchName: obj.branchName,
                 createdOn: new Date(),
-                location: obj.location
+                location: obj.location,
+                insertedBy: obj.insertedBy
             });
             return await result.save();
         } catch (e) {
@@ -31,7 +32,8 @@ class authentationDA {
             let result = new roleModel({
                 roleName: obj.roleName,
                 roleCode: obj.roleCode,
-                createdOn: new Date()
+                createdOn: new Date(),
+                insertedBy: obj.insertedBy
             });
             return await result.save();
         } catch (e) {
@@ -52,7 +54,9 @@ class authentationDA {
                 phoneNumber: obj.phoneNumber,
                 birthDate: obj.birthDate,
                 roleId: obj.roleId,
-                branchId: obj.branchId
+                branchId: obj.branchId,
+                registeredBy: obj.registeredBy,
+                gender: obj.gender
             });
             return await result.save();
         } catch(e) {

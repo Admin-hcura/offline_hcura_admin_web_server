@@ -20,6 +20,7 @@ const { number, required } = require("joi");
         enum: ["ENABLED", "DISABLED"],
         default: "ENABLED",
       },
+    insertedBy: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", required: true},
   });
 
   let role = new schema ({
@@ -32,6 +33,7 @@ const { number, required } = require("joi");
         enum: ["ENABLED", "DISABLED"],
         default: "ENABLED",
       },
+    insertedBy: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", required: true},
   });
 
   let admin = new schema ({
@@ -53,7 +55,8 @@ const { number, required } = require("joi");
     roleId: {type: mongoose.Schema.Types.ObjectId, ref: "Role", required: true},
     branchId: {type: mongoose.Schema.Types.ObjectId, ref: "Branches", required: true},
     lockedBy: {type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin"},
-    remarks: {type: String, default: null}
+    remarks: {type: String, default: null},
+    gender: {type: String, enum: ["Male", "Female", "Others"], required: true },
   });
 
   let patient = new schema ({
@@ -83,6 +86,7 @@ const { number, required } = require("joi");
     lockedOn: {type: Date, default: null},
     isDeleted: {type: Boolean, default: false},
     deletedOn: {type: Date, default: null},
+    registeredBy: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", required: true},
   });
 
   exports.branchesModel = mongoose.model("Branches", branches, "branches");

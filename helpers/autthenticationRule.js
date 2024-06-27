@@ -9,11 +9,13 @@ exports.authRule = Joi.object({
     branchCode: Joi.string().required().error(new Error("branchCode is required")),
     branchName: Joi.string().required().error(new Error("branchName is required")),
     location: Joi.string().required().error(new Error("location is required")),
+    insertedBy: Joi.string().required().error(new Error("insertedBy is required")),
 });
 
 exports.roleRule = Joi.object({
     roleCode: Joi.string().required().error(new Error("branchCode is required")),
-    roleName: Joi.string().required().error(new Error("role Name is required"))
+    roleName: Joi.string().required().error(new Error("role Name is required")),
+    insertedBy: Joi.string().required().error(new Error("insertedBy is required"))
 });
 
 exports.addAdminRule = Joi.object({
@@ -25,7 +27,8 @@ exports.addAdminRule = Joi.object({
     phoneNumber: Joi.string().required().error(new Error("phoneNumber is required")),
     birthDate: Joi.string().required().error(new Error("birthDate is required")),
     roleId: Joi.string().required().error(new Error("roleId is required")),
-    branchId: Joi.string().required().error(new Error("branchId is required"))
+    branchId: Joi.string().required().error(new Error("branchId is required")),
+    registeredBy: Joi.string().required().error(new Error("insertedBy is required")),
 });
 
 exports.sessionRules = Joi.object({

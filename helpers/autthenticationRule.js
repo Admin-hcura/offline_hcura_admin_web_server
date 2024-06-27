@@ -71,3 +71,7 @@ exports.patientRegRule = Joi.object({
     source: Joi.string().empty("").allow(null),
     occupation: Joi.string().empty("").allow(null),
 });
+
+exports.logoutRule = Joi.object({
+    userId: Joi.string().required().error(new Error("userId is required")),
+});

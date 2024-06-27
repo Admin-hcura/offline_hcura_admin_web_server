@@ -216,6 +216,26 @@ class authentationDA {
         }
     };
 
+    async getroleCodeDA(roleId){
+        try{
+            let result = await roleModel.findOne({ _id : roleId});
+            return result;
+        } catch(e){
+            throw e;
+        }
+    };
+
+    async adminLogoutDA(userId){
+        try{
+            return await adminModel.updateOne(
+                { _id: userId },
+                { $set: { fcmToken: "" } }
+              );
+        } catch(e){
+            throw e;
+        }
+    }
+
 }
 
 module.exports = new authentationDA();

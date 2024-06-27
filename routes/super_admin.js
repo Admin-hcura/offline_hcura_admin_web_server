@@ -21,6 +21,9 @@ router.post("/admin/login",
     // sessionValidator.validateAdminSession,
     authenticationController.adminLogin
 );
+router.post("/admin/logout",
+    authenticationController.adminLogout
+)
 router.post("/forget/password",
     authenticationController.forgetPassword
 );

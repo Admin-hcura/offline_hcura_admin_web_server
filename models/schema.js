@@ -57,6 +57,7 @@ const { number, required } = require("joi");
     lockedBy: {type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin"},
     remarks: {type: String, default: null},
     gender: {type: String, enum: ["Male", "Female", "Others"], required: true },
+    fcmToken: { type: String, default: null },
   });
 
   let patient = new schema ({

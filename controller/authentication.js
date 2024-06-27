@@ -80,6 +80,11 @@ class authentication {
             let userAgent = ua_parser(req.headers["user-agent"]);
             let { username, password, fcmToken } = req.body;
             let response = await authentationDAObj.adminIsExistDA(username);
+            let roleCode = await authentationDAObj.getroleCodeDA(response.roleId);
+            response.roleCode = roleCode
+            if (!roleCode){
+                apiResponse.ServerErrors.error.role_not_found
+            }
             if (!response) {
               throw Boom.conflict(
                 apiResponse.ServerErrors.error.user_not_exist_admin
@@ -99,6 +104,17 @@ class authentication {
           } catch (e) {
             next(e);
           }
+    };
+
+    async adminLogout(req, res, next){
+        try{
+            let userId = req.userId;
+            await redisClient.del(userId + "_offline_admin_web");
+            await authentationDAObj.adminLogoutDA(userId);
+            res.send({ success: true, message: 'Logged out successfully'});
+        } catch(e){
+            next(e);
+        }
     };
 
     async forgetPassword(req, res, next){
@@ -287,6 +303,7 @@ async function createAdminSession(response, res, userAgent) {
         response._id + "_offline_admin_web",
         JSON.stringify(response)
     );
+    await authentationDAObj.updateAdminFcmTokenDA(response._id, sessionId);
     response.sessionId = sessionId;
     res.send({ success: true, data: response });
 }

@@ -29,6 +29,7 @@ exports.addAdminRule = Joi.object({
     roleId: Joi.string().required().error(new Error("roleId is required")),
     branchId: Joi.string().required().error(new Error("branchId is required")),
     registeredBy: Joi.string().required().error(new Error("insertedBy is required")),
+    gender: Joi.string().required().error(new Error("Gender is required")),
 });
 
 exports.sessionRules = Joi.object({

@@ -56,7 +56,8 @@ class authentication {
                 if (error) {
                     throw Boom.badData(error.message);
                 }
-                let adminExist = await authentationDAObj.adminExistDA();
+                let adminExist = await authentationDAObj.adminExistDA(body.emailId, body.username, body.phoneNumber);
+                console.log("................",adminExist);
                 if (adminExist){
                     throw Boom.conflict(apiResponse.ServerErrors.error.admin_already_exist);
                 } else {

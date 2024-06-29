@@ -40,7 +40,6 @@ const { number, required } = require("joi");
     firstName: {type:String, required: true},
     lastName: {type:String, required: true},
     username: {type: String, required: true, unique: true},
-    password: {type: String, required: true, unique: true},
     emailId: {type: String, required: true, unique: true},
     phoneNumber: {type: String, required: true, unique: true},
     birthDate: {type: Date, required: true},
@@ -57,6 +56,7 @@ const { number, required } = require("joi");
     lockedBy: {type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin"},
     remarks: {type: String, default: null},
     gender: {type: String, enum: ["Male", "Female", "Others"], required: true },
+    password: {type: String, required: true},
   });
 
   let patient = new schema ({

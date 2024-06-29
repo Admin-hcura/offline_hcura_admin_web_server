@@ -36,32 +36,32 @@ class Mail{
         }
       }
 
-    async sendForgotPasswordUrlToAdmin(emailId, url, userName) {
-        try {
-          let info = await this.setUpSmtp();
-          info
-            .sendMail({
-              from: constants.MAIL_CONFIG.auth.user,
-              to: emailId,
-              subject: "H-Cura Team Member Forgot Password",
-              text:
-                "Hi Dear " +
-                userName +
-                ",\n \nPlease use below mentioned link to reset you Password:\n " +
-                url +
-                "\n\n  Thank you",
-              // html: (await emailTemplates.registrationOtp(otp)).toString()
-            })
-            .then(() => {
-              console.log("Email sent");
-            })
-            .catch((error) => {
-              console.error(error);
-            });
-        } catch (e) {
-          console.error("Internal error ", e);
-        }
-    };
+    // async sendForgotPasswordUrlToAdmin(emailId, url, userName) {
+    //     try {
+    //       let info = await this.setUpSmtp();
+    //       info
+    //         .sendMail({
+    //           from: constants.MAIL_CONFIG.auth.user,
+    //           to: emailId,
+    //           subject: "H-Cura Team Member Forgot Password",
+    //           text:
+    //             "Hi Dear " +
+    //             userName +
+    //             ",\n \nPlease use below mentioned link to reset you Password:\n " +
+    //             url +
+    //             "\n\n  Thank you",
+    //           // html: (await emailTemplates.registrationOtp(otp)).toString()
+    //         })
+    //         .then(() => {
+    //           console.log("Email sent");
+    //         })
+    //         .catch((error) => {
+    //           console.error(error);
+    //         });
+    //     } catch (e) {
+    //       console.error("Internal error ", e);
+    //     }
+    // };
 
     async setUpSmtp() {
         var transporter = nodemailer.createTransport({

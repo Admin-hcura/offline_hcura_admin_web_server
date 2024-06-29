@@ -21,8 +21,8 @@ exports.roleRule = Joi.object({
 exports.addAdminRule = Joi.object({
     firstName: Joi.string().required().error(new Error("firstName is required")),
     lastName: Joi.string().required().error(new Error("lastName is required")),
-    username: Joi.string().required().error(new Error("userName is required")),
-    password: Joi.string().required().error(new Error("pasword is required")),
+    username: Joi.string().required().error(new Error("username is required")),
+    password: Joi.string().required().error(new Error("password is required")),
     emailId: Joi.string().required().error(new Error("emailId is required")),
     phoneNumber: Joi.string().required().error(new Error("phoneNumber is required")),
     birthDate: Joi.string().required().error(new Error("birthDate is required")),

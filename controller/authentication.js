@@ -57,7 +57,6 @@ class authentication {
                     throw Boom.badData(error.message);
                 }
                 let adminExist = await authentationDAObj.adminExistDA(body.emailId, body.username, body.phoneNumber);
-                console.log("................",adminExist);
                 if (adminExist){
                     throw Boom.conflict(apiResponse.ServerErrors.error.admin_already_exist);
                 } else {
@@ -81,6 +80,7 @@ class authentication {
             let userAgent = ua_parser(req.headers["user-agent"]);
             let { username, password, fcmToken } = req.body;
             let response = await authentationDAObj.adminIsExistDA(username);
+            console.log("---------",response)
             let roleCode = await authentationDAObj.getroleCodeDA(response.roleId);
             response.roleCode = roleCode
             if (!roleCode){

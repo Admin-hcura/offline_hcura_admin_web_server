@@ -80,9 +80,8 @@ class authentication {
             let userAgent = ua_parser(req.headers["user-agent"]);
             let { username, password, fcmToken } = req.body;
             let response = await authentationDAObj.adminIsExistDA(username);
-            console.log("---------",response)
             let roleCode = await authentationDAObj.getroleCodeDA(response.roleId);
-            response.roleCode = roleCode
+            response.roleCode = roleCode.roleCode
             if (!roleCode){
                 apiResponse.ServerErrors.error.role_not_found
             }
@@ -97,7 +96,9 @@ class authentication {
               );
               if (checkPassword) {
                 await authentationDAObj.updateAdminFcmTokenDA(response._id, fcmToken);
-                await createAdminSession(response, res, userAgent);
+                let details = await createAdminSession(response, res, userAgent);
+                details.roleCode = roleCode.roleCode
+                res.send({ success: true, data: details });
               } else {
                 throw Boom.conflict(apiResponse.ServerErrors.error.password);
               }
@@ -310,7 +311,8 @@ async function createAdminSession(response, res, userAgent) {
     );
     await authentationDAObj.updateAdminFcmTokenDA(response._id, sessionId);
     response.sessionId = sessionId;
-    res.send({ success: true, data: response });
+    return response;
+    // res.send({ success: true, data: response });
 }
 
 

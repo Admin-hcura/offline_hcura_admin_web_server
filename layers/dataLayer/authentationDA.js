@@ -10,7 +10,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 let mongDB = require("mongodb");
-const { consulatationAmountModel, packageModel, paymentModel } = require("../../models/schema");
+const { consulatationAmountModel, packageModel, paymentModel, tempAppointmentModel } = require("../../models/schema");
 
 
 class authentationDA {
@@ -160,6 +160,23 @@ class authentationDA {
                   '$project': {
                     '_id': 0, 
                     'hcuraId': 1
+                  }
+                }
+              ]
+            )
+            return result;
+        } catch (e) {
+            throw e;
+        }
+    };
+
+    async getHcuraTIdDA(){
+        try{
+            let result = await tempAppointmentModel.aggregate([
+                {
+                  '$project': {
+                    '_id': 0, 
+                    'hcuraTId': 1
                   }
                 }
               ]

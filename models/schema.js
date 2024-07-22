@@ -136,6 +136,7 @@ const { number, required } = require("joi");
     caseStudyId: {type: mongoose.Schema.Types.ObjectId, ref: "caseStudy", default: null},
     prescriptionId: {type: mongoose.Schema.Types.ObjectId, ref: "Prescription", default: null},
     branchId: {type: mongoose.Schema.Types.ObjectId, ref: "Branches", default: null},
+    bookedBy: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
     appointmentDate: { type: Date, default: null },
     startTime: { type: Date, default: null },
     endTime: { type: Date, default: null },
@@ -248,6 +249,22 @@ const { number, required } = require("joi");
     isActive: {type: Boolean, default: true},
   });
 
+  let tempAppointment = new schema({
+    firstName: {type: String, required: true},
+    lastName: {type: String, required: true},
+    gender: {type: String, enum: ["Male", "Female", "Others"], required: true },
+    phoneNumber: {type: Number, required: true},
+    hcuraTId: {type: String, required: true},
+    complaint: {type: String, default: null},
+    appointmentDate: { type: Date, default: null },
+    doctorId: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
+    branchId: {type: mongoose.Schema.Types.ObjectId, ref: "Branches", default: null},
+    bookedBy: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
+    createdOn: {type: Date, default: new Date()},
+    isActive: {type: Boolean, default: true},
+    isConverted: {type: Boolean, default: false},
+  });
+
   let package = new schema ({
     name: { type: String, default: null},
     type: {type: String, default: "OTHERS"},
@@ -304,5 +321,6 @@ const { number, required } = require("joi");
   exports.occupationModel = mongoose.model("Occupation", occupation, "occupation");
   exports.statesModel = mongoose.model("States", states, "states");
   exports.symptomsAllegryModel = mongoose.model("SymptomsAllegry", symptomsAllegry, "symptomsAllegry");
+  exports.tempAppointmentModel = mongoose.model("TempAppointment", tempAppointment, "tempAppointment");
 
 }.call(this))

@@ -39,6 +39,9 @@ router.post("/insert/symptoms/allegires",
 router.get("/symptoms/allegires/list",
   appointmentController.getSymptomsAllegiresList
 );
+router.post("/book/temperory/appointment",
+  authenticationController.bookTempAppointment
+)
 
 
 module.exports = router;

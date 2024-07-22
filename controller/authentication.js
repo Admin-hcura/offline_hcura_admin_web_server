@@ -12,6 +12,7 @@ const utilities = require("../helpers/utilities");
 const constants = require("../helpers/constants");
 const appointmentDA = require("../layers/dataLayer/appointmentDA");
 const htmlToPDF = require("../helpers/htmlToPDF");
+const sendSMS = require("../helpers/sendSMS")
 
 
 async function redisGet(key) {
@@ -187,14 +188,14 @@ class authentication {
             if (error) {
                 throw Boom.badData(error.message);
             }
-            let patientExist = await authentationDAObj.patientExistDA(body.phoneNumber);
+            // let patientExist = await authentationDAObj.patientExistDA(body.phoneNumber);
             let branchCode = await authentationDAObj.getBrachDetailsDA(body.branchId);
             if(!branchCode){
                 throw Boom.conflict(apiResponse.ServerErrors.error.branchCode_not_exist);
             }
-            if(patientExist){
-            throw Boom.conflict(apiResponse.ServerErrors.error.phoneNumber_Exist);
-            } else {
+            // if(patientExist){
+            // throw Boom.conflict(apiResponse.ServerErrors.error.phoneNumber_Exist);
+            // } else {
                 const now = new Date();
                 const month = String(now.getMonth() + 1).padStart(2, '0');
                 const year = String(now.getFullYear()).slice(-2);
@@ -231,12 +232,69 @@ class authentication {
                     patientReg.phoneNumber
                 );
                 res.send({success: true, data: patientReg});
-            }
+            // }
         } catch(e){
         next(e);
         }
     };
 
+    async bookTempAppointment(req, res, next) {
+        try {
+            let body = req.body;
+            console.log("..........", body);
+    
+            const now = new Date();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = String(now.getFullYear()).slice(-2);
+            console.log("..........", now, month, year);
+            let branchCode = await authentationDAObj.getBrachDetailsDA(body.branchId);
+            if(!branchCode){
+                throw Boom.conflict(apiResponse.ServerErrors.error.branchCode_not_exist);
+            }
+            let existingIDss = await authentationDAObj.getHcuraTIdDA();
+            console.log("..........", existingIDss);
+    
+            const hcuraTIds = existingIDss.map(item => item.hcuraTId).filter(id => id);
+            console.log("..........", hcuraTIds);
+    
+            const existingIDsArray = hcuraTIds.map(id => ({
+                prefix: id.substring(0, 5),  // Extract "H01J" part
+                month: id.substring(5, 7),   // Extract "06" part
+                year: id.substring(7, 9),    // Extract "24" part
+                count: id.substring(9)       // Extract the count part, e.g., "01", "02", etc.
+            }));
+            console.log("..........", existingIDsArray);
+    
+            // Find the maximum count for the current month and year
+            let maxCount = 0;
+            if (hcuraTIds.length > 0) {
+                existingIDsArray.forEach(id => {
+                    if (id.month === month && id.year === year) {
+                        const count = parseInt(id.count, 10);
+                        if (count > maxCount) {
+                            maxCount = count;
+                        }
+                    }
+                });
+            }
+    
+            // Increment the maximum count by one
+            const countThisMonth = maxCount + 1;
+            const hcuraTId = `${branchCode.branchCode}T${month}${year}${String(countThisMonth).padStart(2, '0')}`;
+            let booked = await appointmentDA.bookedDetails(body, hcuraTId);
+            let docDetails = await appointmentDA.getDoctorDetails(body.doctorId);
+            console.log(".....booked...", booked);
+            console.log(".....docDetails...", docDetails);
+            let SMSsend = await sendSMS.sendSMSAppointmentBookedToPT(booked, docDetails);
+            // needs to send email to doctors
+            // needs to send sms to pt
+
+            res.send({success: true, data: {booked,SMSsend}});
+        } catch (e) {
+            next(e);
+        }
+    };
+    
     async getBranchList(req, res, next){
         try{
             let branchList = await authentationDAObj.branchListDA();

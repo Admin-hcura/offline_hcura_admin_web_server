@@ -9,7 +9,7 @@ const paymentModel = require("../../models/schema").paymentModel;
 const mongoose = require("mongoose");
 const moment = require("moment-timezone");
 const { branchesModel, slotModel, occupationModel,
-    sourceModel, symptomsAllegryModel,
+    sourceModel, symptomsAllegryModel, tempAppointmentModel,
     statesModel} = require("../../models/schema");
 const { startTime } = require("express-pino-logger");
 
@@ -449,7 +449,7 @@ class appointmentDA{
 
     async insertSymptomsAllergiesDA(body){
         try{
-            let result = new  symptomsAllegryModel({
+            let result = new symptomsAllegryModel({
                 symptoms: body.symptoms,
                 allegires: body.allegires
             });
@@ -466,5 +466,33 @@ class appointmentDA{
             throw e;
         }
     };
+
+    async bookedDetails(details, hcuraTId){
+        try{
+            let result = new tempAppointmentModel({
+                firstName: details.firstName,
+                lastName: details.lastName,
+                gender: details.gender,
+                phoneNumber: details.phoneNumber,
+                complaint: details.complaint,
+                appointmentDate: details.appointmentDate,
+                doctorId: details.doctorId,
+                branchId: details.branchId,
+                bookedBy: details.bookedBy,
+                hcuraTId: hcuraTId
+            });
+            return await result.save();
+        } catch(e){
+            throw e;
+        }
+    };
+
+    async getDoctorDetails(docId){
+        try{
+            return await adminModel.findOne({_id: docId, isDeleted: false});
+        } catch(e){
+            throw e;
+        }
+    }
 }
 module.exports = new appointmentDA();

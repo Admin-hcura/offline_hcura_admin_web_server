@@ -2,7 +2,7 @@
 const constants = require("./constants");
 const nodemailer = require("nodemailer");
 const emailTemplates = require("./emailTemplets");
-
+const moment = require("moment-timezone");
 
 class Mail{
 
@@ -34,7 +34,7 @@ class Mail{
         } catch (e) {
           console.error("Internal error ", e);
         }
-      }
+    }
 
     // async sendForgotPasswordUrlToAdmin(emailId, url, userName) {
     //     try {
@@ -155,7 +155,165 @@ class Mail{
       } catch (e) {
         console.error("Internal error ", e);
       }
-    }
+    };
+
+    async sendConsultationInvoiceEmail(emailId, file) {
+      try {
+        let info = await this.setUpSmtp();
+        info.sendMail({
+            from: constants.MAIL_CONFIG.auth.user,
+            to: [constants.MAIL_CONFIG.invoiceEmail, emailId],
+            subject: "H-Cura Consultation_invoice received successfully!",
+            text: "Hi Dear H-Cura consumer Please find the attached file for your reference \n \nThank you.",
+            attachments: [
+              {
+                filename: "Consultation_invoice.pdf",
+                content: file,
+                contentType: "application/pdf",
+              },
+            ],
+          })
+          .then(() => {
+            console.log("INVOICE___Email sent");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } catch (e) {
+        console.error("Internal error ", e);
+      }
+    };
+
+    async sendPaymentSuccess(
+      userName,
+      emailId,
+      amount,
+      translationId,
+      paymentMethod
+    ) {
+      try {
+        let info = await this.setUpSmtp();
+        info
+          .sendMail({
+            from: constants.MAIL_CONFIG.auth.user,
+            to: emailId,
+            subject: "H-Cura Payment received successfully!",
+            html: (
+              await emailTemplates.sendPaymentSuccess(
+                userName,
+                emailId,
+                amount,
+                translationId,
+                paymentMethod
+              )
+            ).toString(),
+          })
+          .then(() => {
+            console.log("Email sent");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } catch (e) {
+        console.error("Internal error ", e);
+      }
+    };
+
+    async appointmentBookedMail(
+      userFirstName,
+      userLastName,
+      doctorFirstName,
+      doctorLastName,
+      emailId,
+      pdfDetails
+    ) {
+      try {
+        let appointmentDate = pdfDetails.startTime
+        ? moment(pdfDetails.appointmentDate)
+            .tz(constants.defaultTimezone)
+            .format("DD/MM/YYYY")
+        : "NA";
+      let startTime = pdfDetails.startTime
+        ? moment(pdfDetails.startTime)
+            .tz(constants.defaultTimezone)
+            .format("HH:mm A")
+        : "NA";
+      let endTime = pdfDetails.endTime
+        ? moment(pdfDetails.endTime)
+            .tz(constants.defaultTimezone)
+            .format("HH:mm A")
+        : "NA";
+        let info = await this.setUpSmtp();
+        info
+          .sendMail({
+            from: constants.MAIL_CONFIG.auth.user,
+            to: emailId,
+            subject: "Your appointment has been scheduled",
+            html: (
+              await emailTemplates.appointmentBookedMail(
+                userFirstName,
+                userLastName,
+                doctorFirstName,
+                doctorLastName,
+                appointmentDate,
+                startTime,
+                endTime
+              )
+            ).toString(),
+          })
+          .then(() => {
+            console.log("Email sent");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } catch (e) {
+        console.error("Internal error ", e);
+      }
+    };
+
+    async sendAppointmentBookedEmailToDoctor(emailId, pdfDetails) {
+      try {
+        let appointmentDate = pdfDetails.startTime
+        ? moment(pdfDetails.appointmentDate)
+            .tz(constants.defaultTimezone)
+            .format("DD/MM/YYYY")
+        : "NA";
+      let startTime = pdfDetails.startTime
+        ? moment(pdfDetails.startTime)
+            .tz(constants.defaultTimezone)
+            .format("HH:mm A")
+        : "NA";
+      let endTime = pdfDetails.endTime
+        ? moment(pdfDetails.endTime)
+            .tz(constants.defaultTimezone)
+            .format("HH:mm A")
+        : "NA";
+        let info = await this.setUpSmtp();
+        info.sendMail({
+            from: constants.MAIL_CONFIG.auth.user,
+            to: [constants.MAIL_CONFIG.invoiceEmail, emailId],
+            subject: "A new appointment has been scheduled !",
+            html: (
+              await emailTemplates.appointmentBookedEmailToDoctor(
+                pdfDetails.docFirstName,
+                pdfDetails.firstName,
+                appointmentDate,
+                startTime,
+                endTime,
+              )
+            ).toString(),
+          })
+          .then(() => {
+            console.log("INVOICE___Email sent To Doctor");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } catch (e) {
+        console.error("Internal error ", e);
+      }
+    };
 }
 
 module.exports = new Mail();

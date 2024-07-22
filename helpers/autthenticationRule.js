@@ -76,3 +76,16 @@ exports.patientRegRule = Joi.object({
 exports.logoutRule = Joi.object({
     userId: Joi.string().required().error(new Error("userId is required")),
 });
+
+exports.insertPackageRule = Joi.object({
+    name: Joi.string().required().error(new Error("name is required")),
+    type: Joi.string().required().error(new Error("package type is required")),
+    months: Joi.number().required().error(new Error("months is required")),
+    amount: Joi.number().required().error(new Error("amount is required")),
+});
+
+exports.offlinePaymentStatusRule = Joi.object({
+    paymentId: Joi.string()
+      .required()
+      .error(new Error("Payment Id Required")),
+  });

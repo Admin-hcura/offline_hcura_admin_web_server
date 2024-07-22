@@ -8,6 +8,7 @@ Constants.MAIL_CONFIG = {
       pass: "Support@2021!",
     },
     email: "support@h-cura.com",
+    invoiceEmail: "dmkreddy1322@gmail.com"        //"admin@h-cura.com",
   };
 Constants.OTP_STORE_TIME_LIMIT = 60 * 15; //15 Minutes
 Constants.OTP = {
@@ -19,6 +20,24 @@ Constants.OTP = {
     demoDoctorEmail: "techsupport@h-cura.com",
     demoPatientEmail: "techsupport@h-cura.com",
   };
+Constants.value = {
+    CREATED: "created",
+    CONSULTATION: "CONSULTATION",
+    PACKAGE: "PACKAGE",
+    UPCOMING: "UPCOMING",
+    RECOMMENDED: "RECOMMENDED",
+    ATTENDED: "ATTENDED",
+    EXTERNAL_SOURCE: "EXTERNAL_SOURCE"
+  };
+Constants.PAYMENT_STATUS = {
+    CAPTURE: "CAPTURED",
+    FAILED: "FAILED",
+  };
+Constants.pageConstants = {
+    pageLength: 20,
+    defaultPage: 1,
+  };
 
+  Constants.defaultTimezone = "Asia/Calcutta";
 
   module.exports = Constants;

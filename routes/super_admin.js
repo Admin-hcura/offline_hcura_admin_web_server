@@ -33,9 +33,34 @@ router.post("/update/password",
 router.get("/branch/list",
     sessionValidator.validateAdminSession,
     authenticationController.getBranchList
-)
+);
 router.get("/role/list",
     authenticationController.getRoleList
-)
+);
+// To insert timings
+router.post("/insert/time",
+    authenticationController.insertTime
+);
+// To insert Day
+router.post("/insert/day",
+    authenticationController.insertDay
+);
+// to insert consultation Amount
+router.post("/insert/consultation/amount",
+    authenticationController.insertConsultationAmount
+);
+// to insert package 
+router.post("/insert/package",
+    authenticationController.insertPackage
+);
+// OFFLINE WEBHOOK
+router.post("/payment/offline/web_hook",
+    authenticationController.getPaymentReportByWebHook
+);
+// offline patment status checking
+router.post("/offline/payment/status", 
+    authenticationController.offlinPaymentStatus
+);
+
 
 module.exports = router;

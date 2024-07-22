@@ -22,6 +22,7 @@
     "express": "^4.19.2",
     "express-pino-logger": "^7.0.0",
     "helmet": "^7.1.0",
+    "html-pdf-node": "^1.0.8",
     "joi": "^17.13.1",
     "moment-timezone": "^0.5.45",
     "mongo-scheduler-more": "^2.4.0",

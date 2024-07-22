@@ -1,14 +1,16 @@
-
 const branchesModel = require("../../models/schema").branchesModel;
 const roleModel = require("../../models/schema").roleModel;
 const adminModel = require("../../models/schema").adminModel;
 const patientModel = require("../../models/schema").patientModel;
+const timeModel = require("../../models/schema").timeModel;
+const dayModel = require("../../models/schema").dayModel;
 const mongoose = require("mongoose");
 const moment = require("moment-timezone");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 let mongDB = require("mongodb");
+const { consulatationAmountModel, packageModel, paymentModel } = require("../../models/schema");
 
 
 class authentationDA {
@@ -234,7 +236,72 @@ class authentationDA {
         } catch(e){
             throw e;
         }
-    }
+    };
+
+    async insertTime(body){
+        try{
+            let result = new timeModel({
+                slots: body.slots,
+            });
+            return await result.save();
+        } catch(e){
+            throw e;
+        }
+    };
+
+    async insertDay(body){
+        try{
+            let result = new dayModel({
+                day: body.day
+            });
+            return await result.save();
+        } catch(e){
+            throw(e);
+        }
+    };
+
+    async insertAmountDA(body){
+        try{
+            let result = new consulatationAmountModel({
+                type: body.type,
+                amount: body.amount,
+            });
+            return await result.save();
+        } catch(e){
+            throw(e);
+        }
+    };
+
+    async insertPackage(body){
+        try{
+            let result = new packageModel({
+                name: body.name,
+                type: body.type,
+                months: body.months,
+                amount: body.amount
+            });
+            return await result.save();
+        } catch(e){
+            throw e;
+        }
+    };
+
+    async offlineGetStatusDA(relationId) {
+        try {
+          return await paymentModel.findOne({paymentRelationId : relationId , isDeleted: false});
+        } catch (e) {
+          throw e;
+        }
+    };
+
+    async getPaymentStatus(paymentId) {
+        try {
+          return await paymentModel.findOne({_id : paymentId , isDeleted: false} ,
+          {paymentStatus : 1 ,paymentMethod : 1});
+        } catch (e) {
+          throw e;
+        }
+      };
 
 }
 

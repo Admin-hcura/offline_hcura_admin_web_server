@@ -48,11 +48,11 @@ class SendSMS {
           .tz(constants.defaultTimezone)
           .format("hh:mm A");
         let message =
-          "👋🏼 Hi DR. " +
+          " Hi DR. " +
           docDetails.firstName +
           " " +
           docDetails.firstName +
-          ",\n You have Temporary Appointment with " +
+          ", You have Temporary Appointment with " +
           bookedDetails.firstName +
           " " +
           bookedDetails.lastName +
@@ -60,9 +60,7 @@ class SendSMS {
           date +
           " at " +
           startTime +
-          " has been scheduled with our Patient. \nPlease Followup \n"+
-          " Thanks & Regrads \n" +
-          " H-CURA TEAM ";
+          " has been scheduled with our Patient. Please Followup, Thanks & Regrads ,H-CURA TEAM";
         let smsURL =
           "https://cloud.smsindiahub.in/vendorsms/pushsms.aspx?APIKey=856274d0f9364de4876b321558541740&msisdn=" +
           "" +
@@ -75,6 +73,10 @@ class SendSMS {
           "" +
           "&fl=0&gwid=2";
         let messageId = await axios.post(smsURL);
+        console.log("..docDetails...",docDetails)
+        console.log("..bookedDetails...",bookedDetails)
+        console.log("..message...",message)
+        console.log("..messageId...",messageId);
         return messageId.data;
     };
 }

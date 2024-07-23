@@ -12,7 +12,8 @@ const utilities = require("../helpers/utilities");
 const constants = require("../helpers/constants");
 const appointmentDA = require("../layers/dataLayer/appointmentDA");
 const htmlToPDF = require("../helpers/htmlToPDF");
-const sendSMS = require("../helpers/sendSMS")
+const sendSMS = require("../helpers/sendSMS");
+const moment = require("moment-timezone");
 
 
 async function redisGet(key) {
@@ -292,13 +293,13 @@ class authentication {
             let docDetails = await appointmentDA.getDoctorDetails(body.doctorId);
             console.log(".....booked...", booked);
             console.log(".....docDetails...", docDetails);
-            let SMSToPatient = await sendSMS.sendSMSAppointmentBookedToPT(booked, docDetails);
+            // let SMSToPatient = await sendSMS.sendSMSAppointmentBookedToPT(booked, docDetails);
             let SMSToDoctor = await sendSMS.sendSMSTempAppointmentBookedToDoc(booked, docDetails);
             // needs to send email to Admin
             // sms to doctor
             emailSender.sendTempAppointmentBookedEmailToAdmin(booked, docDetails);
 
-            res.send({success: true, data: {booked, SMSToPatient}});
+            res.send({success: true, data: {booked, SMSToPatient, SMSToDoctor}});
         } catch (e) {
             next(e);
         }

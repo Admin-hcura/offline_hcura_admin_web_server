@@ -89,3 +89,15 @@ exports.offlinePaymentStatusRule = Joi.object({
       .required()
       .error(new Error("Payment Id Required")),
   });
+  exports.tempAppointmentRule = Joi.object({
+    firstName: Joi.string().required().error(new Error("firstName is required")),
+    lastName: Joi.string().required().error(new Error("lastName is required")),
+    gender: Joi.string().required().error(new Error("Gender is required")),
+    phoneNumber: Joi.number().required().error(new Error("phone Number is required")),
+    complaint: Joi.string().required().error(new Error("complaint is required")),
+    appointmentDate: Joi.date().required()
+    .error(new Error("Appointment date is required")),
+    doctorId: Joi.string().required().error(new Error("doctorId is required")),
+    branchId: Joi.string().required().error(new Error("branchId is required")),
+    bookedBy: Joi.string().required().error(new Error("bookedBy is required")),
+  });

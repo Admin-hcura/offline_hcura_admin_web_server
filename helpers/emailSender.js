@@ -314,6 +314,28 @@ class Mail{
         console.error("Internal error ", e);
       }
     };
+
+    async sendTempAppointmentBookedEmailToAdmin(booked, docDetails) {
+      try {
+        let info = await this.setUpSmtp();
+        info.sendMail({
+            from: constants.MAIL_CONFIG.auth.user,
+            to: [constants.MAIL_CONFIG.invoiceEmail],
+            subject: "A new Temperory appointment has been scheduled !",
+            html: (
+              await emailTemplates.tempAppointmentBookedEmailToAdmin(
+                booked, docDetails)).toString(),
+          })
+          .then(() => {
+            console.log("TempAppt__Email sent To Admin");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } catch (e) {
+        console.error("Internal error ", e);
+      }
+    };
 }
 
 module.exports = new Mail();

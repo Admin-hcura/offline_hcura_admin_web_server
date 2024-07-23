@@ -242,7 +242,14 @@ class authentication {
         try {
             let body = req.body;
             console.log("..........", body);
-    
+            const { error } = rule.patientRegRule.validate(body);
+            if (error) {
+                throw Boom.badData(error.message);
+            }
+            let appointmentDate = moment(body.appointmentDate)
+            .tz("UTC")
+            .format(process.env.format);
+            body.appointmentDate = appointmentDate
             const now = new Date();
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const year = String(now.getFullYear()).slice(-2);
@@ -285,11 +292,13 @@ class authentication {
             let docDetails = await appointmentDA.getDoctorDetails(body.doctorId);
             console.log(".....booked...", booked);
             console.log(".....docDetails...", docDetails);
-            let SMSsend = await sendSMS.sendSMSAppointmentBookedToPT(booked, docDetails);
-            // needs to send email to doctors
-            // needs to send sms to pt
+            let SMSToPatient = await sendSMS.sendSMSAppointmentBookedToPT(booked, docDetails);
+            let SMSToDoctor = await sendSMS.sendSMSTempAppointmentBookedToDoc(booked, docDetails);
+            // needs to send email to Admin
+            // sms to doctor
+            emailSender.sendTempAppointmentBookedEmailToAdmin(booked, docDetails);
 
-            res.send({success: true, data: {booked,SMSsend}});
+            res.send({success: true, data: {booked, SMSToPatient}});
         } catch (e) {
             next(e);
         }

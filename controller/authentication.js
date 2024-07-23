@@ -299,7 +299,7 @@ class authentication {
             // sms to doctor
             emailSender.sendTempAppointmentBookedEmailToAdmin(booked, docDetails);
 
-            res.send({success: true, data: {booked, SMSToPatient, SMSToDoctor}});
+            res.send({success: true, data: {booked, SMSToDoctor}});
         } catch (e) {
             next(e);
         }

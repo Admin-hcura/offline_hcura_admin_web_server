@@ -41,6 +41,9 @@ router.get("/symptoms/allegires/list",
 );
 router.post("/book/temperory/appointment",
   authenticationController.bookTempAppointment
+);
+router.get("/doctors/list",
+  appointmentController.getDoctorsList
 )
 
 

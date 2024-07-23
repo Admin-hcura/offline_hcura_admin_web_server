@@ -493,6 +493,37 @@ class appointmentDA{
         } catch(e){
             throw e;
         }
-    }
+    };
+
+    async getDoctorsList(){
+        try{
+            return await roleModel.aggregate(
+                [
+                    {
+                      $match: {
+                        isDeleted: false,
+                        roleName: "DOCTORS"
+                      }
+                    },
+                    {
+                      $lookup: {
+                        from: "admin",
+                        localField: "_id",
+                        foreignField: "roleId",
+                        as: "doctors"
+                      }
+                    },
+                    {
+                      $unwind: {
+                        path: "$doctors",
+                        preserveNullAndEmptyArrays: true
+                      }
+                    }
+                  ]    
+            );
+        } catch(e){
+            throw e;
+        }
+    };
 }
 module.exports = new appointmentDA();

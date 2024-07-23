@@ -260,19 +260,14 @@ class authentication {
                 throw Boom.conflict(apiResponse.ServerErrors.error.branchCode_not_exist);
             }
             let existingIDss = await authentationDAObj.getHcuraTIdDA();
-            console.log("..........", existingIDss);
     
-            const hcuraTIds = existingIDss.map(item => item.hcuraTId).filter(id => id);
-            console.log("..........", hcuraTIds);
-    
+            const hcuraTIds = existingIDss.map(item => item.hcuraTId).filter(id => id);    
             const existingIDsArray = hcuraTIds.map(id => ({
                 prefix: id.substring(0, 5),  // Extract "H01J" part
                 month: id.substring(5, 7),   // Extract "06" part
                 year: id.substring(7, 9),    // Extract "24" part
                 count: id.substring(9)       // Extract the count part, e.g., "01", "02", etc.
-            }));
-            console.log("..........", existingIDsArray);
-    
+            }));    
             // Find the maximum count for the current month and year
             let maxCount = 0;
             if (hcuraTIds.length > 0) {
@@ -293,13 +288,12 @@ class authentication {
             let docDetails = await appointmentDA.getDoctorDetails(body.doctorId);
             console.log(".....booked...", booked);
             console.log(".....docDetails...", docDetails);
-            // let SMSToPatient = await sendSMS.sendSMSAppointmentBookedToPT(booked, docDetails);
-            let SMSToDoctor = await sendSMS.sendSMSTempAppointmentBookedToDoc(booked, docDetails);
-            // needs to send email to Admin
+            let SMSToPatient = await sendSMS.sendSMSAppointmentBookedToPT(booked, docDetails);
+            // let SMSToDoctor = await sendSMS.sendSMSTempAppointmentBookedToDoc(booked, docDetails);
             // sms to doctor
             emailSender.sendTempAppointmentBookedEmailToAdmin(booked, docDetails);
 
-            res.send({success: true, data: {booked, SMSToDoctor}});
+            res.send({success: true, data: {booked, SMSToPatient}});
         } catch (e) {
             next(e);
         }

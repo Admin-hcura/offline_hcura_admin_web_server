@@ -352,6 +352,15 @@ class appointment{
         }
     };
 
+    async getDoctorsList(req, res, next){
+        try{
+            let result = await appointmentDA.getDoctorsList();
+            res.send({ success: true, data: result});
+        } catch(e){
+            next(e);
+        }
+    }
+
 }
 
 module.exports = new appointment();

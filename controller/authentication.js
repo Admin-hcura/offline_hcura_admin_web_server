@@ -242,7 +242,7 @@ class authentication {
         try {
             let body = req.body;
             console.log("..........", body);
-            const { error } = rule.patientRegRule.validate(body);
+            const { error } = rule.tempAppointmentRule.validate(body);
             if (error) {
                 throw Boom.badData(error.message);
             }

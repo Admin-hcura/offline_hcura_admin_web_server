@@ -139,7 +139,6 @@ const { number, required } = require("joi");
     slotId: {type: mongoose.Schema.Types.ObjectId, ref: "Slot", default: null},
     dayId: {type: mongoose.Schema.Types.ObjectId, ref: "Day", default: null},
     paymentId: {type: mongoose.Schema.Types.ObjectId, ref: "Payment", default: null},
-    packageId: {type: mongoose.Schema.Types.ObjectId, ref: "Patient", default: null},
     caseStudyId: {type: mongoose.Schema.Types.ObjectId, ref: "caseStudy", default: null},
     prescriptionId: {type: mongoose.Schema.Types.ObjectId, ref: "Prescription", default: null},
     branchId: {type: mongoose.Schema.Types.ObjectId, ref: "Branches", default: null},

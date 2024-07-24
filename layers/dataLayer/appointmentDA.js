@@ -39,7 +39,6 @@ class appointmentDA{
                 doctorId: obj.doctorId,
                 slotId: obj.slotId,
                 dayId: obj.dayId,
-                packageId: obj.packageId,
                 branchId: obj.branchId,
                 appointmentDate: obj.appointmentDate,
                 startTime: obj.startTime,
@@ -525,5 +524,13 @@ class appointmentDA{
             throw e;
         }
     };
+
+    async getpatientDetailsDA(patientId){
+        try{
+            return await patientModel.find({_id: patientId, isDeleted: false});
+        } catch(e){
+            throw e;
+        }
+    }
 }
 module.exports = new appointmentDA();

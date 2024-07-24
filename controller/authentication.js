@@ -24,7 +24,7 @@ async function redisGet(key) {
         console.error("Error retrieving from Redis:", err);
         throw err;
     }
-}
+};
 
 class authentication {
     async insertBranch(req, res, next){
@@ -760,7 +760,7 @@ async function createAdminSession(response, res, userAgent) {
     response.sessionId = sessionId;
     return response;
     // res.send({ success: true, data: response });
-}
+};
 
 
 module.exports = new authentication();

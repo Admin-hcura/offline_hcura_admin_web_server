@@ -18,6 +18,9 @@ router.post("/appointment/book",
 router.post("/patient/search/list",
   appointmentController.getPatientList
 );
+router.post("/patient/details",
+  appointmentController.getPatientDetails
+)
 router.post("/insert/occupation",
   appointmentController.insertOccupation
 );

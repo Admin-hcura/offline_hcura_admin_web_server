@@ -10,7 +10,6 @@ exports.appointmentRule = Joi.object({
     day: Joi.string().required().error(new Error("day is required")),
     timeId: Joi.string().required().error(new Error("timeId is required")),
     dayId: Joi.string().required().error(new Error("dayId is required")),
-    packageId: Joi.string().required().error(new Error("packageId is required")),
     branchId: Joi.string().required().error(new Error("branchId is required")),
     appointmentDate: Joi.string().required().error(new Error("appointmentDate is required")),
     startTime: Joi.string().required().error(new Error("startTime is required")),

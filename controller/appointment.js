@@ -41,7 +41,6 @@ class appointment{
                 doctorId: body.doctorId,
                 slotId: blockSlot._id,
                 dayId: body.dayId,
-                packageId: body.packageId,
                 branchId: body.branchId,
                 appointmentDate: appointmentDate,
                 startTime: body.startTime,
@@ -282,6 +281,16 @@ class appointment{
           res.status(200).send({ status: true, data: sendObj });
         } catch (e) {
           next(e);
+        }
+    };
+
+    async getPatientDetails(req, res, next){
+        try{
+            let body = req.body
+            let patientDetails = await appointmentDA.getpatientDetailsDA(body.patientId);
+            res.status(200).send({ status: true, data: patientDetails});
+        } catch(e){
+            next(e);
         }
     };
 

@@ -527,9 +527,9 @@ class appointmentDA{
         }
     };
 
-    async getpatientDetailsDA(patientId){
+    async getpatientDetailsDA(hcuraId){
         try{
-            return await patientModel.find({_id: patientId, isDeleted: false});
+            return await patientModel.find({hcuraId: hcuraId, isDeleted: false});
         } catch(e){
             throw e;
         }

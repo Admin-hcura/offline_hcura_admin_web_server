@@ -313,7 +313,7 @@ class appointment{
             if(error){
                 throw Boom.badData(error.message);
             }
-            let patientDetails = await appointmentDA.getpatientDetailsDA(body.patientId);
+            let patientDetails = await appointmentDA.getpatientDetailsDA(body.hcuraId);
             res.status(200).send({ status: true, data: patientDetails});
         } catch(e){
             next(e);

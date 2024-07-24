@@ -28,5 +28,5 @@ exports.appointmentRule = Joi.object({
 });
 
 exports.patientIdRule = Joi.object({
-    patientId: Joi.string().required().error(new Error("Patient Id is required")),
+    hcuraId: Joi.string().required().error(new Error("hcuraId is required")),
 });

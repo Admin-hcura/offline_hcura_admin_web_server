@@ -20,7 +20,7 @@ router.post("/patient/search/list",
 );
 router.post("/patient/details",
   appointmentController.getPatientDetails
-)
+);
 router.post("/insert/occupation",
   appointmentController.insertOccupation
 );

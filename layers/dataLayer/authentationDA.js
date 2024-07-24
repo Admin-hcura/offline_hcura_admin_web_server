@@ -21,7 +21,9 @@ class authentationDA {
                 branchName: obj.branchName,
                 createdOn: new Date(),
                 location: obj.location,
-                insertedBy: obj.insertedBy
+                insertedBy: obj.insertedBy,
+                stateId: obj.stateId,
+                branchPhoneNumber: obj.branchPhoneNumber
             });
             return await result.save();
         } catch (e) {
@@ -57,8 +59,13 @@ class authentationDA {
                 birthDate: obj.birthDate,
                 roleId: obj.roleId,
                 branchId: obj.branchId,
+                EmpNumber: obj.EmpNumber,
+                registerationNumber: obj.registerationNumber,
                 registeredBy: obj.registeredBy,
-                gender: obj.gender
+                gender: obj.gender,
+                qualifaction: obj.qualifaction,
+                specilazation: obj.specilazation,
+                experience: obj.experience
             });
             return await result.save();
         } catch(e) {
@@ -66,11 +73,11 @@ class authentationDA {
         }
     };
 
-    async adminExistDA(email ,username ,phoneNumber){
+    async adminExistDA(email ,username, phoneNumber, EmpNumber){
         try{
             let result = await adminModel.findOne({
                 $and: [
-                    { $or: [{ email: email }, { username: username }, { phoneNumber: phoneNumber }] },
+                    { $or: [{ email: email }, { username: username }, { phoneNumber: phoneNumber }, {EmpNumber: EmpNumber}] },
                     { isDeleted: false }
                   ]
             });
@@ -205,12 +212,14 @@ class authentationDA {
         gender,
         emailId,
         phoneNumber,
-        alternativeNumber,
+        whatsappNumber,
         bloodGroup,
         address,
         registeredBy,
         source,
-        occupation
+        occupation,
+        stateId,
+        stateName
     ){
         try{
             let result = new patientModel({
@@ -222,7 +231,9 @@ class authentationDA {
                 gender: gender,
                 emailId: emailId,
                 phoneNumber: phoneNumber,
-                alternativeNumber: alternativeNumber,
+                whatsappNumber: whatsappNumber,
+                stateId: stateId,
+                stateName: stateName,
                 bloodGroup: bloodGroup,
                 address: address,
                 registeredBy: registeredBy,

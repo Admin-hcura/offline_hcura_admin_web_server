@@ -359,7 +359,7 @@ class appointment{
         } catch(e){
             next(e);
         }
-    }
+    };
 
 }
 

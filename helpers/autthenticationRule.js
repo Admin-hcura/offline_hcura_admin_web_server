@@ -10,6 +10,8 @@ exports.authRule = Joi.object({
     branchName: Joi.string().required().error(new Error("branchName is required")),
     location: Joi.string().required().error(new Error("location is required")),
     insertedBy: Joi.string().required().error(new Error("insertedBy is required")),
+    stateId: Joi.string().required().error(new Error("stateId is required")),
+    branchPhoneNumber: Joi.number().required().error(new Error("branchPhoneNumber is required")),
 });
 
 exports.roleRule = Joi.object({
@@ -30,6 +32,11 @@ exports.addAdminRule = Joi.object({
     branchId: Joi.string().required().error(new Error("branchId is required")),
     registeredBy: Joi.string().required().error(new Error("registeredBy is required")),
     gender: Joi.string().required().error(new Error("Gender is required")),
+    EmpNumber: Joi.string().required().error(new Error("Employee number is required")),
+    registerationNumber: Joi.string().required().error(new Error("registerationNumber is required")),
+    qualifaction: Joi.string().required().error(new Error("qualifaction is required")),
+    specilazation: Joi.string().required().error(new Error("specilazation is required")),
+    experience: Joi.number().required().error(new Error("experience is required")),
 });
 
 exports.sessionRules = Joi.object({
@@ -60,7 +67,9 @@ exports.patientRegRule = Joi.object({
     gender: Joi.string().required().error(new Error("Gender is required")),
     emailId: Joi.string().required().error(new Error("Email Id is required")),
     phoneNumber: Joi.number().required().error(new Error("phone Number is required")),
-    alternativeNumber: Joi.number().empty("").allow(null),
+    whatsappNumber: Joi.number().empty("").allow(null),
+    stateId: Joi.number().required().error(new Error("stateId is required")),
+    stateName: Joi.number().required().error(new Error("stateId is required")),
     bloodGroup: Joi.string().empty("").allow(null),
     address: Joi.array().items(Joi.object({
         houseNo: Joi.string().empty("").allow(null).default(null),
@@ -69,8 +78,8 @@ exports.patientRegRule = Joi.object({
         state: Joi.string().empty("").allow(null).default(null),
         pinCode: Joi.number().empty("").allow(null).default(null),
       })),
-    source: Joi.string().empty("").allow(null),
-    occupation: Joi.string().empty("").allow(null),
+    source: Joi.string().required().error(new Error("source is required")),
+    occupation: Joi.string().required().error(new Error("occupation is required")),
 });
 
 exports.logoutRule = Joi.object({

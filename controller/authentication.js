@@ -62,7 +62,7 @@ class authentication {
                 if (error) {
                     throw Boom.badData(error.message);
                 }
-                let adminExist = await authentationDAObj.adminExistDA(body.emailId, body.username, body.phoneNumber);
+                let adminExist = await authentationDAObj.adminExistDA(body.emailId, body.username, body.phoneNumber, body.EmpNumber);
                 if (adminExist){
                     throw Boom.conflict(apiResponse.ServerErrors.error.admin_already_exist);
                 } else {
@@ -182,63 +182,132 @@ class authentication {
         }
     };
 
-    async patientRegistartion(req, res, next){
-        try{
-            let body = req.body
+    // async patientRegistartion(req, res, next){
+    //     try{
+    //         let body = req.body
+    //         const { error } = rule.patientRegRule.validate(body);
+    //         if (error) {
+    //             throw Boom.badData(error.message);
+    //         }
+    //         // let patientExist = await authentationDAObj.patientExistDA(body.phoneNumber);
+    //         let branchCode = await authentationDAObj.getBrachDetailsDA(body.branchId);
+    //         if(!branchCode){
+    //             throw Boom.conflict(apiResponse.ServerErrors.error.branchCode_not_exist);
+    //         }
+    //         // if(patientExist){
+    //         // throw Boom.conflict(apiResponse.ServerErrors.error.phoneNumber_Exist);
+    //         // } else {
+    //             const now = new Date();
+    //             const month = String(now.getMonth() + 1).padStart(2, '0');
+    //             const year = String(now.getFullYear()).slice(-2);
+    //             let existingIDss = await authentationDAObj.getHcuraIdDA();
+    //             const hcuraIds = existingIDss.map(item => item.hcuraId);
+    //             const existingIDsArray = hcuraIds.map(id => ({
+    //                 prefix: id.substring(0, 4),  // Extract "H01J" part
+    //                 month: id.substring(4, 6),   // Extract "06" part
+    //                 year: id.substring(6, 8),    // Extract "24" part
+    //                 count: id.substring(8)       // Extract the count part, e.g., "01", "02", etc.
+    //             }));
+    //                 // Find the maximum count for the current month and year
+    //             let maxCount = 0;
+    //             existingIDsArray.forEach(id => {
+    //                 if (id.month === month && id.year === year) {
+    //                     const count = parseInt(id.count, 10);
+    //                     if (count > maxCount) {
+    //                         maxCount = count;
+    //                     }
+    //                 }
+    //             });
+    //                 // Increment the maximum count by one
+    //             const countThisMonth = maxCount + 1;
+    //             const hcuraId = `${branchCode.branchCode}${month}${year}${String(countThisMonth).padStart(2, '0')}`;
+    //             let patientReg = await authentationDAObj.patientRegDA(
+    //                 hcuraId, body.branchId, body.firstName.trim(), body.lastName.trim(), body.birthDate,
+    //                 body.gender, body.emailId.trim(), body.phoneNumber, body.alternativeNumber,
+    //                 body.bloodGroup, body.address, body.registeredBy, body.source, body.occupation);
+    //             await emailSender.patientWelcomeEmail(
+    //                 patientReg.firstName, 
+    //                 patientReg.lastName, 
+    //                 hcuraId, 
+    //                 patientReg.emailId, 
+    //                 patientReg.phoneNumber
+    //             );
+    //             res.send({success: true, data: patientReg});
+    //         // }
+    //     } catch(e){
+    //     next(e);
+    //     }
+    // };
+
+    async patientRegistartion(req, res, next) {
+        try {
+            let body = req.body;
             const { error } = rule.patientRegRule.validate(body);
             if (error) {
                 throw Boom.badData(error.message);
             }
-            // let patientExist = await authentationDAObj.patientExistDA(body.phoneNumber);
-            let branchCode = await authentationDAObj.getBrachDetailsDA(body.branchId);
-            if(!branchCode){
+    
+            // Check branch code
+            let branchDetails = await authentationDAObj.getBrachDetailsDA(body.branchId);
+            if (!branchDetails) {
                 throw Boom.conflict(apiResponse.ServerErrors.error.branchCode_not_exist);
             }
-            // if(patientExist){
-            // throw Boom.conflict(apiResponse.ServerErrors.error.phoneNumber_Exist);
-            // } else {
-                const now = new Date();
-                const month = String(now.getMonth() + 1).padStart(2, '0');
-                const year = String(now.getFullYear()).slice(-2);
-                let existingIDss = await authentationDAObj.getHcuraIdDA();
-                const hcuraIds = existingIDss.map(item => item.hcuraId);
-                const existingIDsArray = hcuraIds.map(id => ({
-                    prefix: id.substring(0, 4),  // Extract "H01J" part
-                    month: id.substring(4, 6),   // Extract "06" part
-                    year: id.substring(6, 8),    // Extract "24" part
-                    count: id.substring(8)       // Extract the count part, e.g., "01", "02", etc.
-                }));
-                    // Find the maximum count for the current month and year
-                let maxCount = 0;
-                existingIDsArray.forEach(id => {
-                    if (id.month === month && id.year === year) {
-                        const count = parseInt(id.count, 10);
-                        if (count > maxCount) {
-                            maxCount = count;
-                        }
+    
+            const branchCode = branchDetails.branchCode;
+    
+            // Generate HCURA ID
+            const now = new Date();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = String(now.getFullYear()).slice(-2);
+    
+            // Get existing HCURA IDs
+            let existingIDss = await authentationDAObj.getHcuraIdDA();
+            const hcuraIds = existingIDss.map(item => item.hcuraId);
+    
+            const existingIDsArray = hcuraIds.map(id => ({
+                branchPrefix: id.substring(0, 6),  // Extract "HKA01J" part (or similar branch prefix)
+                month: id.substring(6, 8),         // Extract "07" part
+                year: id.substring(8, 10),         // Extract "24" part
+                count: id.substring(10)            // Extract the count part, e.g., "01", "02", etc.
+            }));
+    
+            // Find the maximum count for the current branch code, month, and year
+            let maxCount = 0;
+            existingIDsArray.forEach(id => {
+                if (id.branchPrefix === branchCode && id.month === month && id.year === year) {
+                    const count = parseInt(id.count, 10);
+                    if (count > maxCount) {
+                        maxCount = count;
                     }
-                });
-                    // Increment the maximum count by one
-                const countThisMonth = maxCount + 1;
-                const hcuraId = `${branchCode.branchCode}${month}${year}${String(countThisMonth).padStart(2, '0')}`;
-                let patientReg = await authentationDAObj.patientRegDA(
-                    hcuraId, body.branchId, body.firstName.trim(), body.lastName.trim(), body.birthDate,
-                    body.gender, body.emailId.trim(), body.phoneNumber, body.alternativeNumber,
-                    body.bloodGroup, body.address, body.registeredBy, body.source, body.occupation);
-                await emailSender.patientWelcomeEmail(
-                    patientReg.firstName, 
-                    patientReg.lastName, 
-                    hcuraId, 
-                    patientReg.emailId, 
-                    patientReg.phoneNumber
-                );
-                res.send({success: true, data: patientReg});
-            // }
-        } catch(e){
-        next(e);
+                }
+            });
+            // Increment the maximum count by one
+            const countThisMonth = maxCount + 1;
+            const hcuraId = `${branchCode}${month}${year}${String(countThisMonth).padStart(2, '0')}`;
+    
+            // Register patient
+            let patientReg = await authentationDAObj.patientRegDA(
+                hcuraId, body.branchId, body.firstName.trim(), body.lastName.trim(), body.birthDate,
+                body.gender, body.emailId.trim(), body.phoneNumber, body.alternativeNumber,
+                body.bloodGroup, body.address, body.registeredBy, body.source, body.occupation
+            );
+    
+            // Send welcome email
+            await emailSender.patientWelcomeEmail(
+                patientReg.firstName,
+                patientReg.lastName,
+                hcuraId,
+                patientReg.emailId,
+                patientReg.phoneNumber
+            );
+    
+            res.send({ success: true, data: patientReg });
+    
+        } catch (e) {
+            next(e);
         }
     };
-
+    
     async bookTempAppointment(req, res, next) {
         try {
             let body = req.body;
@@ -377,7 +446,7 @@ class authentication {
 
     };
 
-    async getPaymentReportByWebHook(req, res, next) {
+    async getPaymentReportByWebHook(req, res, next){
         try {
           if (req.body) {
             let body = req.body;

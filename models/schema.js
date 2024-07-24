@@ -62,6 +62,11 @@ const { number, required } = require("joi");
     remarks: {type: String, default: null},
     gender: {type: String, enum: ["Male", "Female", "Others"], required: true },
     password: {type: String, required: true},
+    EmpNumber: {type: String, default: null},
+    registerationNumber: {type: String, default: null},
+    qualifaction: {type: String, default: null},
+    specilazation: {type: String, default: null},
+    experience: {type: Number, default: null},
   });
 
   let patient = new schema ({
@@ -74,7 +79,9 @@ const { number, required } = require("joi");
     emailId: {type:String, required: true},
     phoneNumber: {type: Number, required: true},
     countryCode: {type: String, default: "+91"},
-    alternativeNumber: {type: Number, default: null},
+    whatsappNumber: {type: Number, default: null},
+    stateId: {type: String, default: null},
+    stateName: {type: String, default: null},
     bloodGroup: {type: String, default: null},
     address: {
         houseNo: {type: String, default: null},

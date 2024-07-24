@@ -170,7 +170,7 @@ class authentationDA {
                   }
                 }
               ]
-            )
+            );
             return result;
         } catch (e) {
             throw e;
@@ -187,7 +187,7 @@ class authentationDA {
                   }
                 }
               ]
-            )
+            );
             return result;
         } catch (e) {
             throw e;

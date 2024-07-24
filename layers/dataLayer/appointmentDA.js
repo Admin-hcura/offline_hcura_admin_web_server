@@ -48,6 +48,8 @@ class appointmentDA{
                 consultationMode: obj.consultationMode,
                 consultationType: obj.consultationType,
                 appointmentStatus: obj.appointmentStatus,
+                bookedBy: obj.bookedBy,
+                appointmentNumber: obj.appointmentNumber
             });
             return await result.save();
         } catch(e){
@@ -528,6 +530,23 @@ class appointmentDA{
     async getpatientDetailsDA(patientId){
         try{
             return await patientModel.find({_id: patientId, isDeleted: false});
+        } catch(e){
+            throw e;
+        }
+    };
+    
+    async getAppointmentNumber(){
+        try{
+            let result = await appointmentModel.aggregate([
+                {
+                  '$project': {
+                    '_id': 0, 
+                    'appointmentNumber': 1
+                  }
+                }
+              ]
+            );
+            return result;
         } catch(e){
             throw e;
         }

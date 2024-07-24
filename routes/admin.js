@@ -12,7 +12,7 @@ router.get("/", async (req, res) => {
 router.post("/patient/registration",
   authenticationController.patientRegistartion
 );
-router.post("/appointment/book",
+router.post("/book/appointment",
   appointmentController.bookAppointment
 );
 router.post("/patient/search/list",

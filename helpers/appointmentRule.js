@@ -24,18 +24,9 @@ exports.appointmentRule = Joi.object({
         .error(new Error("Allergies is required")),
     consultationMode: Joi.string().required().error(new Error("consultationMode is required")),
     consultationType: Joi.string().required().error(new Error("consultationType is required")),
-    paymentDoneBy: Joi.string().required().error(new Error("paymentDoneBy is required")),
-    paymentMode: Joi.string().required()
-                .error(new Error("Must be one of [cash, qr_code, swiping_machine]"))
-                .valid("cash", "qr_code", "swiping_machine", "online"),
-    paymentFor: Joi.string().required()
-                .error(new Error("Must be one of [CONSULTATION, PACKAGE, EXTERNAL_SOURCE, ASTHETIC]"))
-                .valid( "CONSULTATION", "PACKAGE", "EXTERNAL_SOURCE", "ASTHETIC"),
-    // promoCodes: Joi.array()
-    //             .min(0)
-    //             .max(1)
-    //             .required()
-    //             .error(new Error("Applying Multiple Promo-codes is not allowed")),
-    payableAmount: Joi.number().required().error(new Error("payableAmount is required")),
+    bookedBy: Joi.string().required().error(new Error("bookedBy ID is required")),
+});
 
+exports.patientIdRule = Joi.object({
+    patientId: Joi.string().required().error(new Error("Patient Id is required")),
 });

@@ -512,10 +512,13 @@ class authentication {
                     let consultationfee = await appointmentDA.getAmount(appointmentDetails[0].consultationType);
                     console.log("_________consultationfee________",consultationfee.amount);
                   if (userInfo && userInfo.length > 0) {
+                    console.log("------entered----------1");
                     if (
                       report.status.toUpperCase() == constants.PAYMENT_STATUS.CAPTURE
                     ) {
-                      if (userInfo[0].appointmentFor == constants.value.CONSULTATION) {
+                      console.log("------entered----------2");
+                      if (userInfo[0].paymentFor == constants.value.CONSULTATION) {
+                        console.log("------entered----------3");
                         let pdfDetails = {
                             invoiceNumber: updatePaymentReport.invoiceNumber,
                             firstName: userInfo[0].patient.firstName,

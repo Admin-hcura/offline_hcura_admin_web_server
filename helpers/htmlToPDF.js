@@ -25,7 +25,7 @@ class HtmlToPdfHelper {
       let ptlastName = pdfDetails.lastName.toUpperCase()
       let docfirstName = pdfDetails.docFirstName.toUpperCase()
       let doclastName = pdfDetails.docLastName.toUpperCase()
-      let docQualification = pdfDetails.docQualification
+      let docQualification = pdfDetails.docQualification.toUpperCase()
 
       let paidOn = pdfDetails.paidOn
         ? moment(pdfDetails.paidOn)
@@ -172,7 +172,7 @@ class HtmlToPdfHelper {
         " " +
         doclastName +
         " - " +
-        docQualification.toUpperCase()+
+        docQualification +
         "</P>" +
         '<P class="p6 ft6">Registration Number : ' +
         pdfDetails.docRegstration +

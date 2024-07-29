@@ -509,7 +509,7 @@ class authentication {
                     console.log("--------userInfo-----",userInfo);
                     let appointmentDetails = await appointmentDA.getAppointmentDetails(updatePaymentReport.appointmentId);
                     console.log("------appointmentDetails------",appointmentDetails);
-                    let consultationfee = await appointmentDA.getAmount(body.consultationType);
+                    let consultationfee = await appointmentDA.getAmount(appointmentDetails[0].consultationType);
                     console.log("_________consultationfee________",consultationfee.amount);
                   if (userInfo && userInfo.length > 0) {
                     if (

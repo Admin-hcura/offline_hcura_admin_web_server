@@ -21,6 +21,12 @@ class HtmlToPdfHelper {
         ],
         scale: 0.22,
       };
+      let ptfirstName = pdfDetails.firstName.toUpperCase()
+      let ptlastName = pdfDetails.lastName.toUpperCase()
+      let docfirstName = pdfDetails.docFirstName.toUpperCase()
+      let doclastName = pdfDetails.docLastName.toUpperCase()
+      let docQualification = pdfDetails.docQualification
+
       let paidOn = pdfDetails.paidOn
         ? moment(pdfDetails.paidOn)
             .tz(constants.defaultTimezone)
@@ -141,9 +147,9 @@ class HtmlToPdfHelper {
         '<DIV id="id1_2_1">' +
         '<P class="p2 ft2">Patient’s Name</P>' +
         '<P class="p3 ft3">' +
-        pdfDetails.firstName.toUpperCase()+
+        ptfirstName+
         " " +
-        pdfDetails.lastName.toUpperCase() +
+        ptlastName +
         "</P>" +
         '<P class="p3 ft3">PatientId : ' +
         pdfDetails.hcuraId +
@@ -162,11 +168,11 @@ class HtmlToPdfHelper {
         pdfDetails.gender +
         "</P>" +
         '<P class="p4 ft3">Doctor’s Name : ' +
-        pdfDetails.docFirstName.toUpperCase() +
+        docfirstName +
         " " +
-        pdfDetails.docLastName.toUpperCase() +
+        doclastName +
         " - " +
-        pdfDetails.docQualification.toUpperCase()+
+        docQualification.toUpperCase()+
         "</P>" +
         '<P class="p6 ft6">Registration Number : ' +
         pdfDetails.docRegstration +

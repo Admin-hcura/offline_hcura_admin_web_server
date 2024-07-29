@@ -21,6 +21,9 @@ router.post("/patient/search/list",
 router.post("/patient/details",
   appointmentController.getPatientDetails
 );
+router.post("/payment/consultation",
+  appointmentController.paymentConsultation
+);
 router.post("/insert/occupation",
   appointmentController.insertOccupation
 );
@@ -47,7 +50,10 @@ router.post("/book/temperory/appointment",
 );
 router.get("/doctors/list",
   appointmentController.getDoctorsList
-)
+);
+router.get("/consultation/promo/list",
+  appointmentController.getConsultationPromocodes
+);
 
 
 module.exports = router;

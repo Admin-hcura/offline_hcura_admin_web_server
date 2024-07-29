@@ -30,3 +30,13 @@ exports.appointmentRule = Joi.object({
 exports.patientIdRule = Joi.object({
     hcuraId: Joi.string().required().error(new Error("hcuraId is required")),
 });
+
+exports.paymentConsultationRule = Joi.object({
+    paymentDoneBy: Joi.string().required().error(new Error("paymentDoneBy is required")),
+    appointmentId: Joi.string().required().error(new Error("appointmentId is required")),
+    patientId: Joi.string().required().error(new Error("patientId is required")),
+    paymentFor: Joi.string().required().error(new Error("paymentFor is required")),
+    promoCodes: Joi.string().empty("").allow(null).default(null),
+    payableAmount: Joi.number().required().error(new Error("payableAmount is required")),
+    paymentMode: Joi.string().required().error(new Error("paymentMode is required")),
+});

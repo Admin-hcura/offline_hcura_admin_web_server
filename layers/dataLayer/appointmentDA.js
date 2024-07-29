@@ -8,7 +8,7 @@ const consulatationAmount = require("../../models/schema").consulatationAmountMo
 const paymentModel = require("../../models/schema").paymentModel;
 const mongoose = require("mongoose");
 const moment = require("moment-timezone");
-const { branchesModel, slotModel, occupationModel,
+const { branchesModel, slotModel, occupationModel, promoCodesModel,
     sourceModel, symptomsAllegryModel, tempAppointmentModel,
     statesModel} = require("../../models/schema");
 const { startTime } = require("express-pino-logger");
@@ -63,7 +63,6 @@ class appointmentDA{
                 patientId: obj.patientId,
                 doctorId: obj.doctorId,
                 branchId: obj.branchId,
-                packageId: obj.packageId,
                 appointmentId: obj.appointmentId,
                 paymentDoneBy: obj.paymentDoneBy,
                 dayId: obj.dayId,
@@ -75,10 +74,10 @@ class appointmentDA{
                 paymentRelationId: obj.paymentRelationId,
                 paymentLinkId: obj.paymentLinkId,
                 paymentDoneBy: obj.paymentDoneBy,
-                // discount: obj.discount,
-                // GST: obj.GST,
+                discount: obj.discount,
+                GSTAmount: obj.GSTAmount,
                 // GSTID: obj.GSTID,
-                // afterRemovingGST: obj.afterRemovingGST,
+                afterRemovingGST: obj.afterRemovingGST,
                 paymentMethod: obj.paymentMethod,
                 paymentStatus: obj.paymentStatus,
             });
@@ -190,49 +189,63 @@ class appointmentDA{
         }
     };
 
-    async getLastInvoiceNo(){
-        try{
-            return await paymentModel.aggregate(
-                [
-                    {
-                      $match: {
+    async getLastInvoiceNo(branchCode){
+        try {
+            console.log("-------branchCode----------", branchCode)
+            return await paymentModel.aggregate([
+                {
+                    $match: {
                         isDeleted: false,
-                      },
-                    },
-                    {
-                      $project: {
-                        invoiceNumberPart: {
-                          $arrayElemAt: [
-                            {
-                              $split: ["$invoiceNumber", "/"],
-                            },
-                            1,
-                          ],
-                        },
-                      },
-                    },
-                    {
-                      $project: {
+                        // Match the branch code dynamically
                         invoiceNumber: {
-                          $toInt: "$invoiceNumberPart",
+                            $regex: `^${branchCode}/`
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        // Extract the part after the branch code
+                        invoiceNumberPart: {
+                            $arrayElemAt: [
+                                {
+                                    $split: [
+                                        {
+                                            $arrayElemAt: [
+                                                {
+                                                    $split: ["$invoiceNumber", "/"]
+                                                },
+                                                1
+                                            ]
+                                        },
+                                        "/"
+                                    ]
+                                },
+                                0
+                            ]
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        invoiceNumber: {
+                            $toInt: "$invoiceNumberPart"
                         },
-                        _id: 0,
-                      },
-                    },
-                    {
-                      $sort: {
-                        invoiceNumber: -1,
-                      },
-                    },
-                    {
-                      $limit: 1,
-                    },
-                  ]
-                  
-        );
-        } catch(e){
+                        _id: 0
+                    }
+                },
+                {
+                    $sort: {
+                        invoiceNumber: -1
+                    }
+                },
+                // {
+                //     $limit: 1
+                // }
+            ]);
+        } catch (e) {
             throw e;
         }
+        
     };
 
     async getAppointmentDetails(appointmentId){
@@ -253,8 +266,27 @@ class appointmentDA{
         }
     };
 
+    async getApptDetails(appointmentId){
+        try{
+            let result = await appointmentModel.aggregate(
+                [
+                    {
+                      $match: {
+                        _id: new mongoose.Types.ObjectId(appointmentId),
+                        isActive: true
+                      }
+                    }
+                  ]
+            ); 
+            return result;
+        } catch(e){
+            throw e;
+        }
+    };
+
     async getAmount(consultationType){
         try{
+            console.log("-----consultationType-----",consultationType)
             return await consulatationAmount.findOne({type: consultationType, isActive: true});
         } catch(e){
             throw e;
@@ -429,6 +461,7 @@ class appointmentDA{
                 name : body.name,
                 stateCode: body.stateCode,
                 stateId: body.stateId,
+                consultationGST: body.consultationGST,
                 CGST: body.CGST,
                 SGST: body.SGST,
                 UGST: body.UGST,
@@ -550,6 +583,54 @@ class appointmentDA{
         } catch(e){
             throw e;
         }
-    }
+    };
+
+    async getPromoListConsultation() {
+        try {
+            console.log("........entered");
+            return await promoCodesModel.aggregate([
+                {
+                    $match: {
+                        isDeleted: false,
+                        promoCodeFor: "CONSULTATION",
+                        $expr: {
+                            $and: [
+                                { $gte: ["$expiredOn", new Date()] },
+                                { $lte: ["$startsOn", new Date()] }
+                            ]
+                        }
+                    },
+                },
+                {
+                    $project: {
+                      promoCodeName: 1,
+                      discount: 1,
+                      promoCodeFor: 1,
+                    },
+                },
+            ]);
+        } catch (e) {
+            throw e;
+        }
+    };
+
+    async getConsultationGST(stateId){
+        try{
+            console.log("------stateId-----",stateId)
+            return await statesModel.findOne({_id: stateId, isActive: true})
+        } catch(e){
+            throw e;
+        }
+    };
+
+    async getPromoCodeList(promoCodes){
+        try{
+            console.log("------promoCodes-----",promoCodes)
+            return await promoCodesModel.findOne({_id: promoCodes, isDeleted: false})
+        } catch(e){
+            throw e;
+        }
+    };
+    
 }
 module.exports = new appointmentDA();

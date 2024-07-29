@@ -288,8 +288,8 @@ class authentication {
             // Register patient
             let patientReg = await authentationDAObj.patientRegDA(
                 hcuraId, body.branchId, body.firstName.trim(), body.lastName.trim(), body.birthDate,
-                body.gender, body.emailId.trim(), body.phoneNumber, body.alternativeNumber,
-                body.bloodGroup, body.address, body.registeredBy, body.source, body.occupation
+                body.gender, body.emailId.trim(), body.phoneNumber, body.whatsappNumber, body.stateName,
+                body.bloodGroup, body.address, body.registeredBy, body.source, body.occupation, body.stateId
             );
     
             // Send welcome email
@@ -442,8 +442,19 @@ class authentication {
         }
     };
 
-    async addState(req, res, next){
-
+    async insertPromoCodes(req, res, next){
+      try{
+        let body = req.body
+        console.log(".......body......",body)
+        const { error } = rule.insertPromoCodeRule.validate(body);
+                if (error) {
+                    throw Boom.badData(error.message);
+                }
+        let insertedPromoCodes = await authentationDAObj.addpromoCodes(body);
+        res.send({success: true, data:insertedPromoCodes});
+      } catch(e){
+        next(e);
+      }
     };
 
     async getPaymentReportByWebHook(req, res, next){

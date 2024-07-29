@@ -109,3 +109,11 @@ exports.offlinePaymentStatusRule = Joi.object({
     branchId: Joi.string().required().error(new Error("branchId is required")),
     bookedBy: Joi.string().required().error(new Error("bookedBy is required")),
   });
+
+  exports.insertPromoCodeRule = Joi.object({
+    promoCodeName: Joi.string().required().error(new Error("promoCodeName is required")),
+    promoCodeFor: Joi.string().required().error(new Error("promoCodeFor type is required")),
+    discount: Joi.number().required().error(new Error("discount is required")),
+    startsOn: Joi.date().required().error(new Error("startsOn is required")),
+    expiredOn: Joi.date().required().error(new Error("expiredOn is required")),
+});

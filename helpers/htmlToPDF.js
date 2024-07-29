@@ -1,8 +1,6 @@
 const html_to_pdf = require("html-pdf-node");
 const moment = require("moment-timezone");
 const constants = require("./constants");
-const contact_us_on = 7411845657
-const contact_us_on1 = 8870001377
 const visit_us_on = "https://h-cura.com"
 
 let options = {
@@ -23,12 +21,6 @@ class HtmlToPdfHelper {
         ],
         scale: 0.22,
       };
-    //   appointmentDetails = appointmentDetails[0];
-    //   let doctorDetails = appointmentDetails.doctorDetails;
-    //   let patientDetails =
-        // appointmentDetails.consultFor == "SELF"
-        //   ? appointmentDetails.patientDetails
-        //   : appointmentDetails.relativeDetails;
       let paidOn = pdfDetails.paidOn
         ? moment(pdfDetails.paidOn)
             .tz(constants.defaultTimezone)
@@ -37,9 +29,6 @@ class HtmlToPdfHelper {
       let patientAge = pdfDetails.age
         ? moment().diff(pdfDetails.age, "years")
         : "NA";
-    //   let paymentId = appointmentDetails.paymentId
-    //     ? appointmentDetails.paymentId
-    //     : "NA";
       let invoiceNumber = pdfDetails.invoiceNumber
         ? pdfDetails.invoiceNumber
         : "NA";
@@ -72,7 +61,7 @@ class HtmlToPdfHelper {
         "#page_1 {position:relative; overflow: hidden;margin: 162px 0px 1472px 0px;padding: 0px;border: none;width: 3307px;}" +
         "#page_1 #id1_1 {border:none;margin: 0px 0px 0px 0px;padding: 0px;border:none;width: 3132px;overflow: hidden;}" +
         "#page_1 #id1_2 {border:none;margin: 237px 0px 0px 192px;padding: 0px;border:none;width: 3115px;overflow: hidden;}" +
-        "#page_1 #id1_2 #id1_2_1 {float:left;border:none;margin: 0px 0px 0px 0px;padding: 0px;border:none;width: 2485px;overflow: hidden;}" +
+        "#page_1 #id1_2 #id1_2_1 {float:left;border: 1px solid #333;margin: 0px 0px 0px 0px;padding: 0px;border:none;width: 2485px;overflow: hidden;}" +
         "#page_1 #id1_2 #id1_2_2 {float:left;border:none;margin: 67px 0px 0px 0px;padding: 0px;border:none;width: 630px;overflow: hidden;}" +
         "#page_1 #id1_3 {border:none;margin: 27px 0px 0px 192px;padding: 0px;border:none;width: 3115px;overflow: hidden;}" +
         "" +
@@ -108,7 +97,7 @@ class HtmlToPdfHelper {
         ".p12{text-align: left;margin-top: 226px;margin-bottom: 0px;}" +
         ".p13{text-align: left;padding-left: 2776px;margin-top: 34px;margin-bottom: 0px;}" +
         ".p14{text-align: justify;padding-left: 200px;margin-top: 0px}" + //fotter
-        ".p15{text-align: justify;padding-left: 2200px;margin-top: 20px;margin-bottom: 0px;}" + //fotter
+        ".p15{text-align: justify;padding-left: 2200px;margin-top: 0px;margin-bottom: 20px;}" + //fotter
         "" +
         ".td0{padding: 0px;margin: 0px;width: 787px;vertical-align: bottom;}" +
         ".td1{padding: 0px;margin: 0px;width: 1578px;vertical-align: bottom;}" +
@@ -129,6 +118,7 @@ class HtmlToPdfHelper {
         '.t0{width: 2934px;margin-top: 279px;font: bold 79px "Arial";color: #202020;}' +
         '.t1{width: 2933px;margin-left: 2px;margin-top: 79px;font: bold 57px "Arial";}' +
         '.t2{width: 2935px;margin-top: 100px;font: bold 79px "Arial";color: #202020;}' +
+        '.watermark { position: fixed; opacity: 0.2; z-index: -1; }'+
         "" +
         "</STYLE>" +
         "</HEAD>" +
@@ -151,9 +141,12 @@ class HtmlToPdfHelper {
         '<DIV id="id1_2_1">' +
         '<P class="p2 ft2">Patient’s Name</P>' +
         '<P class="p3 ft3">' +
-        pdfDetails.firstName +
+        pdfDetails.firstName.toUpperCase()+
         " " +
-        pdfDetails.lastName +
+        pdfDetails.lastName.toUpperCase() +
+        "</P>" +
+        '<P class="p3 ft3">PatientId : ' +
+        pdfDetails.hcuraId +
         "</P>" +
         "</DIV>" +
         '<DIV id="id1_2_2">' +
@@ -168,16 +161,15 @@ class HtmlToPdfHelper {
         " yrs, " +
         pdfDetails.gender +
         "</P>" +
-        '<P class="p4 ft2">Doctor’s Name</P>' +
-        '<P class="p5 ft3">' +
-        pdfDetails.docFirstName +
+        '<P class="p4 ft3">Doctor’s Name : ' +
+        pdfDetails.docFirstName.toUpperCase() +
         " " +
-        pdfDetails.docLastName +
-        "</P>" +
-        '<P class="p6 ft6">' +
-        // doctorDetails.qualification.join(", ") +
+        pdfDetails.docLastName.toUpperCase() +
         " - " +
-        // doctorDetails.specialization.join(", ") +
+        pdfDetails.docQualification.toUpperCase()+
+        "</P>" +
+        '<P class="p6 ft6">Registration Number : ' +
+        pdfDetails.docRegstration +
         "</P>" +
         '<TABLE cellpadding=0 cellspacing=0 class="t0">' +
         "<TR>" +
@@ -223,14 +215,38 @@ class HtmlToPdfHelper {
         "</P></TD>" +
         "</TR>" +
         "<TR>" +
-        '	<TD class="tr5 td6"><P class="p7 ft7">GST</P></TD>' + //GST@Nill (GST is exempt for healthcare services)
+        '	<TD class="tr5 td6"><P class="p7 ft7">CGST</P></TD>' + //GST@Nill (GST is exempt for healthcare services)
+        '	<TD class="tr5 td7"><P class="p11 ft7">' +
+        "+" +
+        parseFloat(pdfDetails.GST).toFixed(2) +
+        "</P></TD>" +
+        "</TR>" +
+        "</TR>" +
+        "<TR>" +
+        '	<TD class="tr5 td6"><P class="p7 ft7">SGST</P></TD>' + 
+        '	<TD class="tr5 td7"><P class="p11 ft7">' +
+        "+" +
+        parseFloat(pdfDetails.GST).toFixed(2) +
+        "</P></TD>" +
+        "</TR>" +
+        "</TR>" +
+        "<TR>" +
+        '	<TD class="tr5 td6"><P class="p7 ft7">IGST</P></TD>' + 
+        '	<TD class="tr5 td7"><P class="p11 ft7">' +
+        "+" +
+        parseFloat(pdfDetails.GST).toFixed(2) +
+        "</P></TD>" +
+        "</TR>" +
+        "</TR>" +
+        "<TR>" +
+        '	<TD class="tr5 td6"><P class="p7 ft7">UGST</P></TD>' + 
         '	<TD class="tr5 td7"><P class="p11 ft7">' +
         "+" +
         parseFloat(pdfDetails.GST).toFixed(2) +
         "</P></TD>" +
         "</TR>" +
         "<TR>" +
-        '	<TD class="tr5 td6"><P class="p7 ft7">Payable Amount</P></TD>' +
+        '	<TD class="tr5 td6"><P class="p7 ft7">Total Amount</P></TD>' +
         '	<TD class="tr5 td7"><P class="p11 ft7">' +
         parseFloat(pdfDetails.payableAmount).toFixed(2) +
         "</P></TD>" +
@@ -255,7 +271,7 @@ class HtmlToPdfHelper {
             "</DIV>"+
             '<DIV class="p14 ft12">' +
                 "For Booking Appointments Contact us on : "+
-                contact_us_on+
+                pdfDetails.branchPhoneNumber+
             "</DIV>"+
             '<DIV class="p15 ft1">' +
                 "For more Info visit : "+

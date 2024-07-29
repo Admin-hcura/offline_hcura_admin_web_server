@@ -45,6 +45,10 @@ router.post("/insert/time",
 router.post("/insert/day",
     authenticationController.insertDay
 );
+// to insert promocodes
+router.post("/insert/promocodes",
+    authenticationController.insertPromoCodes
+);
 // to insert consultation Amount
 router.post("/insert/consultation/amount",
     authenticationController.insertConsultationAmount
@@ -53,8 +57,8 @@ router.post("/insert/consultation/amount",
 router.post("/insert/package",
     authenticationController.insertPackage
 );
-// OFFLINE WEBHOOK
-router.post("/payment/offline/web_hook",
+// WEBHOOK
+router.post("/payment/clinic/web_hook",
     authenticationController.getPaymentReportByWebHook
 );
 // offline patment status checking

@@ -5,7 +5,6 @@ const emailTemplates = require("./emailTemplets");
 const moment = require("moment-timezone");
 
 class Mail{
-
     async welcomeMail(emailId, username, phoneNumber, firstName, lastName,) {
         try {
           let info = await this.setUpSmtp();
@@ -251,13 +250,8 @@ class Mail{
             subject: "Your appointment has been scheduled",
             html: (
               await emailTemplates.appointmentBookedMail(
-                userFirstName,
-                userLastName,
-                doctorFirstName,
-                doctorLastName,
-                appointmentDate,
-                startTime,
-                endTime
+                userFirstName, userLastName, doctorFirstName,
+                doctorLastName, appointmentDate, startTime, endTime
               )
             ).toString(),
           })
@@ -272,32 +266,32 @@ class Mail{
       }
     };
 
-    async sendAppointmentBookedEmailToDoctor(emailId, pdfDetails) {
+    async sendAppointmentBookedEmailToDoctor(details) {
       try {
-        let appointmentDate = pdfDetails.startTime
-        ? moment(pdfDetails.appointmentDate)
+        let appointmentDate = details.startTime
+        ? moment(details.appointmentDate)
             .tz(constants.defaultTimezone)
             .format("DD/MM/YYYY")
         : "NA";
-      let startTime = pdfDetails.startTime
-        ? moment(pdfDetails.startTime)
+      let startTime = details.startTime
+        ? moment(details.startTime)
             .tz(constants.defaultTimezone)
             .format("HH:mm A")
         : "NA";
-      let endTime = pdfDetails.endTime
-        ? moment(pdfDetails.endTime)
+      let endTime = details.endTime
+        ? moment(details.endTime)
             .tz(constants.defaultTimezone)
             .format("HH:mm A")
         : "NA";
         let info = await this.setUpSmtp();
         info.sendMail({
             from: constants.MAIL_CONFIG.auth.user,
-            to: [constants.MAIL_CONFIG.invoiceEmail, emailId],
+            to: [constants.MAIL_CONFIG.invoiceEmail, details.docEmail],
             subject: "A new appointment has been scheduled !",
             html: (
               await emailTemplates.appointmentBookedEmailToDoctor(
-                pdfDetails.docFirstName,
-                pdfDetails.firstName,
+                details.docFirstName,
+                details.firstName,
                 appointmentDate,
                 startTime,
                 endTime,
@@ -328,6 +322,28 @@ class Mail{
           })
           .then(() => {
             console.log("TempAppt__Email sent To Admin");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } catch (e) {
+        console.error("Internal error ", e);
+      }
+    };
+
+    async sendAppointmentConformedEmailToPT(details) {
+      try {
+        let info = await this.setUpSmtp();
+        info.sendMail({
+            from: constants.MAIL_CONFIG.auth.user,
+            to: [details.emailId],                               // [constants.MAIL_CONFIG.invoiceEmail],
+            subject: "Your appointment has been scheduled !",
+            html: (
+              await emailTemplates.appointmentConformedEmailToPT(
+                details)).toString(),
+          })
+          .then(() => {
+            console.log("TempAppt__Email sent To PT");
           })
           .catch((error) => {
             console.error(error);

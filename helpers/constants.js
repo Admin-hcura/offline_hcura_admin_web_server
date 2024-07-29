@@ -8,7 +8,7 @@ Constants.MAIL_CONFIG = {
       pass: "Support@2021!",
     },
     email: "support@h-cura.com",
-    invoiceEmail: "dmkreddy1322@gmail.com"        //"admin@h-cura.com",
+    invoiceEmail: "admin@h-cura.com",
   };
 Constants.OTP_STORE_TIME_LIMIT = 60 * 15; //15 Minutes
 Constants.OTP = {

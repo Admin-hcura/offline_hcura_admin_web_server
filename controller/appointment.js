@@ -72,205 +72,239 @@ class appointment{
                 appointmentNumber: newAppointmentNumber
             }
             let createAppointment = await appointmentDA.createAppointment(obj);
-            console.log("........createAppointment.......",createAppointment);
+            let userInfo = await appointmentDA.patientDetaiils(body.patientId);
+            let docDetails = await appointmentDA.getDoctorDetails(body.doctorId);
+            console.log("......userInfo.......",userInfo);
+            console.log("......docDetails.......",docDetails);
+            let details = {
+                appointmentDate : createAppointment.appointmentDate,
+                firstName : userInfo.firstName,
+                lastName : userInfo.lastName,
+                emailId : userInfo.emailId,
+                docFirstName : docDetails.firstName,
+                docEmail : docDetails.emailId,
+                endTime : createAppointment.endTime,
+                startTime : createAppointment.startTime
+            }
+            // email to patient appointment details
+                emailSender.sendAppointmentConformedEmailToPT(details);
+            // email to docors 
+                emailSender.sendAppointmentBookedEmailToDoctor(details);
+
             res.status(200).send({ status: true, data: createAppointment});
-            
-            // let ptDetails = await appointmentDA.patientDetaiils(body.patientId);
-            // // let PromoCodeResult = await appointmentBAObj.getPromoCodeBA(
-            // //     body.promoCodes
-            // //   );
-            // if((body.paymentMode === "cash" || body.paymentMode === "qr_code" || body.paymentMode === "swiping_machine") && body.payableAmount > 0){
-            //     let paymentObj = {
-            //         patientId: body.patientId,
-            //         doctorId: body.doctorId,
-            //         branchId: obj.branchId,
-            //         packageId: obj.packageId,
-            //         appointmentId: createAppointment._id,
-            //         paymentDoneBy: body.paymentDoneBy,
-            //         slotId: blockSlot._id,
-            //         dayId: body.dayId,
-            //         paymentFor: body.paymentFor,
-            //         promoCodes: body.promoCodes,
-            //         payableAmount: body.payableAmount,
-            //         shortUrl: null,
-            //         paymentRelationId: null,
-            //         paymentLinkId: null,
-            //         paymentStatus: constants.value.CREATED,
-            //         paymentMethod: body.paymentMode,
-            //         // afterRemovingGST: obj.afterRemovingGST,
-            //         // GST: obj.GST,
-            //         // GSTID: obj.GSTID,
-            //       };
-            //       if(body.consultationType === "FOLLOW-UP"){
-            //         let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, paymentObj.appointmentId);
+        } catch(e){
+            next(e);
+        }
+    };
+
+    async paymentConsultation(req, res, next){
+        try{
+            let body = req.body
+            const {error} = rule.paymentConsultationRule.validate(body);
+            if(error){
+                throw Boom.badData(error.message);
+            }
+            let ptDetails = await appointmentDA.patientDetaiils(body.patientId);
+            console.log(".....body.appointmentId.......",body.appointmentId);
+            let appointmentData = await appointmentDA.getApptDetails(body.appointmentId)
+            console.log(".....appointmentData.......",appointmentData);
+            let info = await appointmentDA.getConsultationGST(ptDetails.stateId);
+            console.log("-----info-----",info)
+            let promoCodeResult = await appointmentDA.getPromoCodeList(body.promoCodes);
+            console.log("+++++promoCodeResult+++++++",promoCodeResult)
+            let consultationfee = await appointmentDA.getAmount(appointmentData[0].consultationType);
+            console.log("+++++consultationfee+++++++", consultationfee.amount)
+            // const reducer = (accumulator, currentValue) =>
+            //     accumulator + currentValue.discount;
+            let discountPercent = promoCodeResult.discount
+            console.log("=====discountPercent======",discountPercent);
+            let discount = ((consultationfee.amount * discountPercent)).toFixed(2);
+            let Discount = discount/100
+            console.log("*****discount*****",discount/100);
+
+            // let serviceCharge = (
+            //     (parseFloat(body.payableAmount) *
+            //       parseFloat(info[0].medicineServiceCharge)) /
+            //     100
+            //   ).toFixed(2);
+
+            let afterRemovingDiscount = (
+                consultationfee.amount - parseFloat(Discount)
+              ).toFixed(2);
+              console.log(",,,,,,,afterRemovingDiscount,,,,,,,",afterRemovingDiscount)
+
+            //   let afterAddingServiceCharge = (
+            //     parseFloat(afterRemovingDiscount) + parseFloat(serviceCharge)
+            //   ).toFixed(2);
+
+            let gstAmount = parseFloat(((afterRemovingDiscount * parseFloat(info.consultationGST)) /100).toFixed(2));
+            console.log("......gstAmount.......",gstAmount)
+
+            let payable = (
+                parseFloat(afterRemovingDiscount) +
+                parseFloat(gstAmount) ).toFixed(2);
+
+            console.log("----payable------",payable)
+
+            if((body.paymentMode === "cash" || body.paymentMode === "qr_code" || body.paymentMode === "swiping_machine") && payable == body.payableAmount && payable > 0){
+                let paymentObj = {
+                    patientId: body.patientId,
+                    doctorId: appointmentData[0].doctorId,
+                    branchId: ptDetails.branchId,
+                    appointmentId: body.appointmentId,
+                    paymentDoneBy: body.paymentDoneBy,
+                    slotId: appointmentData[0].slotId,
+                    dayId: appointmentData[0].dayId,
+                    paymentFor: body.paymentFor,
+                    promoCodes: body.promoCodes,
+                    payableAmount: payable,
+                    shortUrl: null,
+                    paymentRelationId: null,
+                    paymentLinkId: null,
+                    paymentStatus: constants.value.CREATED,
+                    paymentMethod: body.paymentMode,
+                    afterRemovingGST: afterRemovingDiscount,
+                    GSTAmount: gstAmount,
+                    discount: Discount,
+                    // GSTID: obj.GSTID,
+                  };
+                  if(body.consultationType === "FOLLOW-UP"){
+                    let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, paymentObj.appointmentId);
     
-            //         }
-            //       let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
-            //       console.log("----addPaymentInfo----",addPaymentInfo);
-            //       let PAYMENT_ID = addPaymentInfo._id;
-            //       let confirmAppt = await appointmentDA.confirmAppointment(
-            //                                             createAppointment._id,
-            //                                             addPaymentInfo._id );
-            //       console.log("++++++confirm Appt+++++",confirmAppt)
-            //       let paidOn = moment().format();
-            //       let branchCode = await appointmentDA.branchCode(body.branchId);
-            //       console.log("@@@@@@@  branchCode  @@@@@",branchCode.branchCode)
-            //       let invoiceNumber =
-            //           await invoiceGenerator.generateInvoiceNumber(branchCode.branchCode);
-            //       console.log("*****invoiceNumber*****",invoiceNumber)
-            //       let updatePaymentDetails = {
-            //         paymentMethod: body.paymentMode,
-            //         paymentStatus: "captured",
-            //         paymentId: PAYMENT_ID,
-            //         orderId: PAYMENT_ID,
-            //         paymentRelationId: PAYMENT_ID,
-            //         paidOn: paidOn,
-            //         appointmentId: createAppointment._id,
-            //         paymentLinkId: PAYMENT_ID,
-            //         invoiceNumber: invoiceNumber
-            //       };
-            //       let relationId = updatePaymentDetails.paymentRelationId;
-            //       console.log("paymentObj.paymentRelationId......",paymentObj.paymentRelationId)
-            //       console.log("relationId,,,,,,,",relationId)
-            //       let updatePaymentReport = await appointmentDA.updatePaymentReport(updatePaymentDetails);
-            //       console.log("....updatePaymentReport......",updatePaymentReport)
-            //       if(updatePaymentReport != null){
-            //         let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
-            //         console.log("-------userInfo------",userInfo);
-            //         let appointmentDetails = await appointmentDA.getAppointmentDetails(updatePaymentReport.appointmentId);
-            //         console.log("------appointmentDetails------",appointmentDetails);
-            //         let consultationfee = await appointmentDA.getAmount(body.consultationType);
-            //         console.log("_________consultationfee________",consultationfee,consultationfee.amount);
-            //         console.log("****************",userInfo[0].patient)
-            //         let pdfDetails = {
-            //             invoiceNumber: updatePaymentReport.invoiceNumber,
-            //             firstName: userInfo[0].patient.firstName,
-            //             lastName: userInfo[0].patient.lastName,
-            //             paidOn: updatePaymentDetails.paidOn,
-            //             age: userInfo[0].patient.birthDate,
-            //             gender: userInfo[0].patient.gender,
-            //             docFirstName: userInfo[0].doctor.firstName,
-            //             docLastName: userInfo[0].doctor.lastName,
-            //             appointmentDate: appointmentDetails[0].appointmentDate,
-            //             startTime: appointmentDetails[0].startTime,
-            //             endTime: appointmentDetails[0].endTime,
-            //             consultationfee: consultationfee.amount,
-            //             serviceCharges: updatePaymentReport.serviceCharges,
-            //             discount: updatePaymentReport.discount,
-            //             GST: "0%", // needs to work on gst
-            //             payableAmount: updatePaymentReport.payableAmount,
-            //             paymentMethod: updatePaymentDetails.paymentMethod
-            //         }
-            //         console.log(",,,,,,,,,,pdfDetails,,,,,,,,",pdfDetails)
-            //         let file = await htmlToPDF.generateInvoiceForConsultation(pdfDetails);
-            //             // email to patient consultation invoice
-            //             emailSender.sendConsultationInvoiceEmail(
-            //                 userInfo[0].patient.emailId,
-            //                 file
-            //             );
-            //             // email to patient payment success
-            //             emailSender.sendPaymentSuccess(
-            //                 userInfo[0].patient.firstName,
-            //                 userInfo[0].patient.emailId,
-            //                 consultationfee.amount,
-            //                 "#" + relationId,
-            //                 updatePaymentDetails.paymentMethod.toUpperCase()
-            //               );
-            //             // email to patient appointment details
-            //             emailSender.appointmentBookedMail(
-            //                 userInfo[0].patient.firstName,
-            //                 userInfo[0].patient.lastName,
-            //                 userInfo[0].doctor.firstName,
-            //                 userInfo[0].doctor.lastName,
-            //                 userInfo[0].patient.emailId,
-            //                 pdfDetails
-            //               );
-            //             // email to docors 
-            //             emailSender.sendAppointmentBookedEmailToDoctor(
-            //                 userInfo[0].doctor.emailId,
-            //                 pdfDetails
-            //               );
+                    }
+                  let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
+                  console.log("----addPaymentInfo----",addPaymentInfo);
+                  let PAYMENT_ID = addPaymentInfo._id;
+                  let confirmAppt = await appointmentDA.confirmAppointment(
+                    appointmentData[0]._id, addPaymentInfo._id );
+                  console.log("++++++confirm Appt+++++",confirmAppt)
+                  let paidOn = moment().format();
+                  let branchCode = await appointmentDA.branchCode(ptDetails.branchId);
+                  console.log("@@@@@@@  branchCode  @@@@@",branchCode)
+                  let invoiceNumber =
+                      await invoiceGenerator.generateInvoiceNumber(branchCode.branchCode);
+                  console.log("*****invoiceNumber*****",invoiceNumber)
+                  let updatePaymentDetails = {
+                    paymentMethod: body.paymentMode,
+                    paymentStatus: "captured",
+                    paymentId: PAYMENT_ID,
+                    orderId: PAYMENT_ID,
+                    paymentRelationId: PAYMENT_ID,
+                    paidOn: paidOn,
+                    appointmentId: appointmentData[0]._id,
+                    paymentLinkId: PAYMENT_ID,
+                    invoiceNumber: invoiceNumber
+                  };
+                  let relationId = updatePaymentDetails.paymentRelationId;
+                  console.log("paymentObj.paymentRelationId......",paymentObj.paymentRelationId)
+                  console.log("relationId,,,,,,,",relationId)
+                  let updatePaymentReport = await appointmentDA.updatePaymentReport(updatePaymentDetails);
+                  console.log("....updatePaymentReport......",updatePaymentReport)
+                  if(updatePaymentReport != null){
+                    let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
+                    console.log("-------userInfo------",userInfo);
+                    let appointmentDetails = await appointmentDA.getAppointmentDetails(updatePaymentReport.appointmentId);
+                    console.log("------appointmentDetails------",appointmentDetails);
+                    let consultationfee = await appointmentDA.getAmount(appointmentDetails[0].consultationType);
+                    console.log("_________consultationfee________",consultationfee);
+                    console.log("****************",userInfo[0].patient)
+                    let pdfDetails = {
+                        invoiceNumber: updatePaymentReport.invoiceNumber,
+                        firstName: userInfo[0].patient.firstName,
+                        lastName: userInfo[0].patient.lastName,
+                        paidOn: updatePaymentDetails.paidOn,
+                        age: userInfo[0].patient.birthDate,
+                        gender: userInfo[0].patient.gender,
+                        docFirstName: userInfo[0].doctor.firstName,
+                        docLastName: userInfo[0].doctor.lastName,
+                        appointmentDate: appointmentDetails[0].appointmentDate,
+                        startTime: appointmentDetails[0].startTime,
+                        endTime: appointmentDetails[0].endTime,
+                        consultationfee: consultationfee.amount,
+                        serviceCharges: updatePaymentReport.serviceCharges,
+                        discount: updatePaymentReport.discount,
+                        GST: "0%", // needs to work on gst
+                        payableAmount: updatePaymentReport.payableAmount,
+                        paymentMethod: updatePaymentDetails.paymentMethod,
+                        hcuraId: userInfo[0].patient.hcuraId,
+                        branchPhoneNumber : branchCode.branchPhoneNumber,
+                        docQualification : userInfo[0].doctor.qualification,
+                        docRegstration : userInfo[0].doctor.registrationNumber
+                    }
+                    console.log(",,,,,,,,,,pdfDetails,,,,,,,,",pdfDetails)
+                    let file = await htmlToPDF.generateInvoiceForConsultation(pdfDetails);
+                        // email to patient consultation invoice
+                        emailSender.sendConsultationInvoiceEmail(
+                            userInfo[0].patient.emailId,
+                            file
+                        );
+                        // email to patient payment success
+                        emailSender.sendPaymentSuccess(
+                            userInfo[0].patient.firstName,
+                            userInfo[0].patient.emailId,
+                            consultationfee.amount,
+                            "#" + relationId,
+                            updatePaymentDetails.paymentMethod.toUpperCase()
+                          );
+                       // // email to patient appointment details
+                        // emailSender.appointmentBookedMail(
+                        //     userInfo[0].patient.firstName,
+                        //     userInfo[0].patient.lastName,
+                        //     userInfo[0].doctor.firstName,
+                        //     userInfo[0].doctor.lastName,
+                        //     userInfo[0].patient.emailId,
+                        //     pdfDetails
+                        //   );
                         
-            //             res.send({ success: true, data: userInfo});
-            //       }
-            // } else if (body.payableAmount > 0) {
-            //         if(body.consultationType === "FOLLOW-UP"){
-            //             let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, createAppointment._id);
-            //         } 
-            //     let payment = await paymentGateway.generatePaymentLinkConsultation(
-            //         ptDetails.firstName, 
-            //         ptDetails.phoneNumber,
-            //         ptDetails.emailId,
-            //         body.payableAmount
-            //     );
-            //     if (payment && payment.data.status == constants.value.CREATED) {
-            //     let paymentObj = {
-            //         patientId: body.patientId,
-            //         doctorId: body.doctorId,
-            //         branchId: body.branchId,
-            //         packageId: body.packageId,
-            //         appointmentId: createAppointment._id,
-            //         paymentDoneBy: body.paymentDoneBy,
-            //         slotId: body.slotId,
-            //         dayId: body.dayId,
-            //         paymentFor: body.paymentFor,
-            //         promoCodes: body.promoCodes,
-            //         payableAmount: body.payableAmount,
-            //         shortUrl: payment.data.short_url,
-            //         paymentRelationId: payment.data.id.substring(6),
-            //         paymentLinkId: payment.data.id,
-            //         paymentStatus: payment.data.status,
-            //         // afterRemovingGst: parseFloat(payable) - gstAmount,
-            //         // GST: gstAmount,
-            //         // discountAmount: discount,
-            //     };
-            //     let addPaymentInfo = await appointmentDA.addPaymentInfo(
-            //         paymentObj,
-            //         // serviceCharge
-            //         ); //payment table
-            //     // if (
-            //     //   files &&
-            //     //   files.length > 0 &&
-            //     //   files[0].originalFilename
-            //     // ) {
-            //     //   medicalFile = await fileUploader.uploadMultipleFile(
-            //     //     files,
-            //     //     body?.userId || req._id,
-            //     //     process.env.medical_record
-            //     //   );
-            //     //   if (body.consultFor == constants.message.DEPENDENT) {
-            //     //     await appointmentBAObj.addMedicalFileToMainBA(
-            //     //       body.relativeId,
-            //     //       body?.userId || req._id,
-            //     //       medicalFile
-            //     //     );
-            //     //   } else {
-            //     //     await appointmentBAObj.addMedicalFileToMainUserBA(
-            //     //       body?.userId || req._id,
-            //     //       medicalFile
-            //     //     );
-            //     //   }
-            //     // }
-            //     // let combined = medicalFile.concat(body.selectedFile);
+                        res.send({ success: true, data: userInfo});
+                  }
+            } 
+            else if (payable == body.payableAmount && payable > 0) {
+                    if(body.consultationType === "FOLLOW-UP"){
+                        let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, appointmentData[0]._id);
+                    } 
+                let payment = await paymentGateway.generatePaymentLinkConsultation(
+                    ptDetails.firstName, 
+                    ptDetails.phoneNumber,
+                    ptDetails.emailId,
+                    body.payableAmount
+                );
+                if (payment && payment.data.status == constants.value.CREATED) {
+                let paymentObj = {
+                    patientId: body.patientId,
+                    doctorId: appointmentData[0].doctorId,
+                    branchId:  ptDetails.branchId,
+                    appointmentId: body.appointmentId,
+                    paymentDoneBy: body.paymentDoneBy,
+                    slotId: appointmentData[0].slotId,
+                    dayId: appointmentData[0].dayId,
+                    paymentFor: body.paymentFor,
+                    promoCodes: body.promoCodes,
+                    payableAmount: payable,
+                    shortUrl: payment.data.short_url,
+                    paymentRelationId: payment.data.id.substring(6),
+                    paymentLinkId: payment.data.id,
+                    paymentStatus: payment.data.status,
+                    afterRemovingGst: afterRemovingDiscount,
+                    GSTAmount: gstAmount,
+                    discount: Discount,
+                    // GSTID: obj.GSTID,
+                };
+                let addPaymentInfo = await appointmentDA.addPaymentInfo(
+                    paymentObj,
+                    );
                 
-            //         await appointmentDA.updatePaymentDetailsAppointment(
-            //         createAppointment._id,
-            //         addPaymentInfo._id,
-            //         ); //appointment table
-            //         res.send({ success: true, data: addPaymentInfo });
+                    await appointmentDA.updatePaymentDetailsAppointment(
+                        body.appointmentId, addPaymentInfo._id,); //appointment table
+                    res.send({ success: true, data: addPaymentInfo });
                 
-            //     } else {
-            //     await zoomBAObj.removeAppointmentFromZoomCredentialBA(
-            //         createAppointment._id
-            //     );
-            //     await appointmentBAObj.deleteAppointmentBA(
-            //         createAppointment._id
-            //     );
-            //     throw Boom.badData(
-            //         apiResponse.ServerErrors.error.payment_not_created
-            //     );
-            //     }
-            // }
+                } else {
+                    throw Boom.badData(
+                        apiResponse.ServerErrors.error.payment_not_created
+                    );
+                }
+            }
+            // res.status(200).send({ status: true, data: {ptDetails,appointmentData}});
         } catch(e){
             next(e);
         }
@@ -393,6 +427,15 @@ class appointment{
             res.send({ success: true, data: result});
         } catch(e){
             next(e);
+        }
+    };
+
+    async getConsultationPromocodes(req, res, next){
+        try{
+          let result = await appointmentDA.getPromoListConsultation();
+          res.send({success: true, data: result});
+        } catch(e){
+          next(e);
         }
     };
 

@@ -10,7 +10,8 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 let mongDB = require("mongodb");
-const { consulatationAmountModel, packageModel, paymentModel, tempAppointmentModel } = require("../../models/schema");
+const { consulatationAmountModel, packageModel, paymentModel, tempAppointmentModel,
+     promoCodesModel } = require("../../models/schema");
 
 
 class authentationDA {
@@ -328,6 +329,22 @@ class authentationDA {
           {paymentStatus : 1 ,paymentMethod : 1});
         } catch (e) {
           throw e;
+        }
+      };
+
+      async addpromoCodes(promoCodes){
+        try{
+            let result = new promoCodesModel({
+                promoCodeName: promoCodes.promoCodeName,
+                promoCodeFor: promoCodes.promoCodeFor,
+                discount: promoCodes.discount,
+                promoCodeFor: promoCodes.promoCodeFor,
+                startsOn: promoCodes.startsOn,
+                expiredOn: promoCodes.expiredOn
+            });
+            return await result.save();
+        } catch(e){
+            throw e;
         }
       };
 

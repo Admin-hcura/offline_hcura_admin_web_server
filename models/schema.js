@@ -17,6 +17,8 @@ const { number, required } = require("joi");
   let branches = new schema ({
     branchCode: {type: String, required: true,unique: true },
     branchName: {type: String, required: true,unique: true },
+    branchPhoneNumber: {type: Number, required: true },
+    stateId: {type: mongoose.Schema.Types.ObjectId, ref: "States", required: true},
     createdOn: {type: Date, default: new Date()},
     location: {type: String, required: true},
     isDeleted: {type: Boolean, default: false },
@@ -80,7 +82,7 @@ const { number, required } = require("joi");
     phoneNumber: {type: Number, required: true},
     countryCode: {type: String, default: "+91"},
     whatsappNumber: {type: Number, default: null},
-    stateId: {type: String, default: null},
+    stateId: {type: mongoose.Schema.Types.ObjectId, ref: "States", default: null},
     stateName: {type: String, default: null},
     bloodGroup: {type: String, default: null},
     address: {
@@ -177,12 +179,6 @@ const { number, required } = require("joi");
     isActive: {type: Boolean, default: true},
     appointmentNumber: { type: String, default: null },
   });
-//   appointment.plugin(increment, {
-//     type: String,
-//     modelName: "Appointment",
-//     fieldName: "appointmentNumber",
-//     prefix: "HCA",
-//   });
 
   let payment = new schema ({
     patientId: {type: mongoose.Schema.Types.ObjectId, ref: "Patient", default: null},
@@ -206,10 +202,10 @@ const { number, required } = require("joi");
     prescribedBy: {type: String, default: null},
     installments: {type: Number, default: null},
     remarks: {type: String, default: null},
-    promoCodes: [],
+    promoCodes: {type: String, default: null},
     payableAmount: {type: Number, default: null},
     discount: {type: Number, default: null},
-    GST: {type: Number, default: null},
+    GSTAmount: {type: Number, default: null},
     GSTID: {type: mongoose.Schema.Types.ObjectId, ref: "GST", default: null},
     afterRemovingGST: {type: Number, default: null},
     paymentMethod: {type: String, default: null},
@@ -284,6 +280,7 @@ const { number, required } = require("joi");
     name: {type: String, default: null},
     stateCode: {type: String, default: null},
     stateId: {type: Number, default: null},
+    consultationGST: {type: Number, default: 0},
     CGST: {type: Number, default: null},
     SGST: {type: Number, default: null},
     UGST: {type: Number, default: null},
@@ -293,13 +290,14 @@ const { number, required } = require("joi");
   });
 
   let promoCodes = new schema({
-    promoCodeName: { type: String, default: null },
-    promoCodeFor: { type: String, enum: ["ADMIN", "MOBILE"], default:null },
-    discount: { type: Number, default: null },
-    deleteOn: { type: Date, default: null },
-    createdOn: { type: Date, default: new Date() },
-    expiredOn: { type: Date, default: null },
-    isDeleted: { type: String, enum: ["YES", "NO"], default: "NO" },
+    promoCodeName: { type: String, required: true, unique: true},
+    promoCodeFor: { type: String, enum: ["CONSULTATION", "PACKAGE", "ASTHETIC"], default:null },
+    discount: { type: Number, default: null},
+    startsOn: { type: Date, default: null},
+    expiredOn: { type: Date, default: null},
+    createdOn: { type: Date, default: new Date()},
+    deleteOn: { type: Date, default: null},
+    isDeleted: { type: Boolean, default: false},
   });
 
   let caseSheet = new schema ({
@@ -328,5 +326,6 @@ const { number, required } = require("joi");
   exports.statesModel = mongoose.model("States", states, "states");
   exports.symptomsAllegryModel = mongoose.model("SymptomsAllegry", symptomsAllegry, "symptomsAllegry");
   exports.tempAppointmentModel = mongoose.model("TempAppointment", tempAppointment, "tempAppointment");
+  exports.promoCodesModel = mongoose.model("promoCodes", promoCodes, "promoCodes");
 
 }.call(this))

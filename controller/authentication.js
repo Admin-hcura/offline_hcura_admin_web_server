@@ -536,7 +536,8 @@ class authentication {
                             discount: updatePaymentReport.discount,
                             GST: "0%", // needs to work on gst
                             payableAmount: updatePaymentReport.payableAmount,
-                            paymentMethod: updatePaymentDetails.paymentMethod
+                            paymentMethod: updatePaymentDetails.paymentMethod,
+                            docQualification: userInfo[0].doctor.qualification
                         }
                         console.log("+++++++++pdfDetails+++++++",pdfDetails);
                         //INVOICE EMAIL

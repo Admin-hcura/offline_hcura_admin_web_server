@@ -14,6 +14,7 @@ const appointmentDA = require("../layers/dataLayer/appointmentDA");
 const htmlToPDF = require("../helpers/htmlToPDF");
 const sendSMS = require("../helpers/sendSMS");
 const moment = require("moment-timezone");
+const appointment = require("./appointment");
 
 
 async function redisGet(key) {
@@ -482,7 +483,9 @@ class authentication {
               console.log("--------relationId-----",relationId)
               let getStatus = await authentationDAObj.offlineGetStatusDA(relationId);
               console.log("........getStatus.......",getStatus);
-              let invoiceNumber = await invoiceGenerator.generateInvoiceNumber(getStatus.branchId);
+              let branchDetails = await authentationDAObj.getBrachDetailsDA(getStatus.branchId);
+              console.log("........branchDetails.......",branchDetails);
+              let invoiceNumber = await invoiceGenerator.generateInvoiceNumber(branchDetails.branchCode);
               let updatePaymentDetails = {
                 paymentMethod: report.method,
                 paymentStatus: report.status,
@@ -490,19 +493,16 @@ class authentication {
                 orderId: report.order_id,
                 paymentRelationId: relationId,
                 paidOn: paidOn,
-                invoiceNumber: invoiceNumber
+                invoiceNumber: invoiceNumber,
+                appointmentId: getStatus.appointmentId
               };
               console.log("--------updatePaymentDetails-----",updatePaymentDetails)
               if (
                 getStatus.paymentStatus.toUpperCase() !=
                 constants.PAYMENT_STATUS.CAPTURE
               ) {
-                // if(getStatus.appointmentFor === 'MEDICINE'){
-                //   let updatePaymentReport = await appointmentBAObj.updatePaymentByPaymentIdBA(obj);
-                // } else {
                 let updatePaymentReport = await appointmentDA.updatePaymentReport(updatePaymentDetails);
                 console.log("--------updatePaymentReport-----",updatePaymentReport)
-                // }
                 if (updatePaymentReport && updatePaymentReport != null) {
                   let userInfo =
                     await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
@@ -569,68 +569,68 @@ class authentication {
                       }else if (
                         userInfo[0].appointmentFor == constants.value.MEDICINE
                       ) {
-                        //INVOICE EMAIL
-                        let appointmentDetails =
-                          await appointmentBAObj.getInvoiceInfoForMedicineBA(
-                            updatePaymentReport._id
-                          );
-                        let packageDetails = await appointmentBAObj.getPackageDetailsAppBA(getStatus.appointmentId)
-                        let file = await htmlToPDF.generateInvoiceForPackage( appointmentDetails,packageDetails );
-                        emailSender.sendPackageInvoiceEmail(userInfo[0].user.emailId, file);
-                        let endDate =  moment(updatePaymentReport.paidOn).add(parseInt(packageDetails[0].months), 'months');
-                        if (!endDate.isValid()) {
-                          endDate = moment(startDate).endOf('month');
-                          console.log("End Date:", endDate); 
-                        }
-                        let packageSchedules = {
-                          userId: updatePaymentReport.userId,
-                          packageId: updatePaymentReport.packageId,
-                          paymentId: updatePaymentReport._id,
-                          endDate: endDate,
-                          paidOn: updatePaymentReport.paidOn,
-                        }
-                        let insertPackageSchedules = await appointmentBAObj.insertPackageSchedulesBA(packageSchedules);
-                        let details ={
-                          endDate: insertPackageSchedules.endDate,
-                          _id: insertPackageSchedules._id
-                        }
-                        await schedulerObj.changeisActiveStatus(details)
-                        // order details is getting empty ----------------------
-                        let orderResult = await appointmentBAObj.getOrderInfoBA(
-                          relationId
-                        );
-                        await appointmentBAObj.updateOrderBA(
-                          orderResult[0].medicineOrderId,
-                          obj,
-                          paidOn
-                        );
+                        // //INVOICE EMAIL
+                        // let appointmentDetails =
+                        //   await appointmentBAObj.getInvoiceInfoForMedicineBA(
+                        //     updatePaymentReport._id
+                        //   );
+                        // let packageDetails = await appointmentBAObj.getPackageDetailsAppBA(getStatus.appointmentId)
+                        // let file = await htmlToPDF.generateInvoiceForPackage( appointmentDetails,packageDetails );
+                        // emailSender.sendPackageInvoiceEmail(userInfo[0].user.emailId, file);
+                        // let endDate =  moment(updatePaymentReport.paidOn).add(parseInt(packageDetails[0].months), 'months');
+                        // if (!endDate.isValid()) {
+                        //   endDate = moment(startDate).endOf('month');
+                        //   console.log("End Date:", endDate); 
+                        // }
+                        // let packageSchedules = {
+                        //   userId: updatePaymentReport.userId,
+                        //   packageId: updatePaymentReport.packageId,
+                        //   paymentId: updatePaymentReport._id,
+                        //   endDate: endDate,
+                        //   paidOn: updatePaymentReport.paidOn,
+                        // }
+                        // let insertPackageSchedules = await appointmentBAObj.insertPackageSchedulesBA(packageSchedules);
+                        // let details ={
+                        //   endDate: insertPackageSchedules.endDate,
+                        //   _id: insertPackageSchedules._id
+                        // }
+                        // await schedulerObj.changeisActiveStatus(details)
+                        // // order details is getting empty ----------------------
+                        // let orderResult = await appointmentBAObj.getOrderInfoBA(
+                        //   relationId
+                        // );
+                        // await appointmentBAObj.updateOrderBA(
+                        //   orderResult[0].medicineOrderId,
+                        //   obj,
+                        //   paidOn
+                        // );
                         
-                        await notificationObj.sendMedicineBookedNotificationToDoctor(
-                          userInfo[0].user._id,
-                          userInfo[0].doctor._id,
-                          userInfo[0].user.firstName,
-                          userInfo[0].user.lastName,
-                          userInfo[0].doctor.firstName,
-                          userInfo[0].doctor.lastName,
-                          userInfo[0].appointmentId
-                        ); //notification
-                        emailSender.medicineOrderSuccess(
-                          userInfo[0].user.firstName,
-                          userInfo[0].doctor.firstName,
-                          userInfo[0].user.emailId
-                        );
-                        emailSender.sendPaymentSuccess(
-                          userInfo[0].user.firstName,
-                          userInfo[0].user.emailId,
-                          userInfo[0].currencySymbol + userInfo[0].payableAmount,
-                          "#" + relationId,
-                          report.method.toUpperCase()
-                        ); //notification
+                        // await notificationObj.sendMedicineBookedNotificationToDoctor(
+                        //   userInfo[0].user._id,
+                        //   userInfo[0].doctor._id,
+                        //   userInfo[0].user.firstName,
+                        //   userInfo[0].user.lastName,
+                        //   userInfo[0].doctor.firstName,
+                        //   userInfo[0].doctor.lastName,
+                        //   userInfo[0].appointmentId
+                        // ); //notification
+                        // emailSender.medicineOrderSuccess(
+                        //   userInfo[0].user.firstName,
+                        //   userInfo[0].doctor.firstName,
+                        //   userInfo[0].user.emailId
+                        // );
+                        // emailSender.sendPaymentSuccess(
+                        //   userInfo[0].user.firstName,
+                        //   userInfo[0].user.emailId,
+                        //   userInfo[0].currencySymbol + userInfo[0].payableAmount,
+                        //   "#" + relationId,
+                        //   report.method.toUpperCase()
+                        // ); //notification
                       } else if (userInfo[0].appointmentFor == constants.value.EXTERNAL_SOURCE){
                         //INVOICE EMAIL
-                       let patientDetails = await appointmentBAObj.userDetailsBA(updatePaymentReport.userId)
-                        let file = await htmlToPDF.generateInvoiceForExternalSource( updatePaymentReport,patientDetails );
-                        emailSender.sendExternalSourceInvoiceEmail(userInfo[0].user.emailId, file);
+                      //  let patientDetails = await appointmentBAObj.userDetailsBA(updatePaymentReport.userId)
+                      //   let file = await htmlToPDF.generateInvoiceForExternalSource( updatePaymentReport,patientDetails );
+                      //   emailSender.sendExternalSourceInvoiceEmail(userInfo[0].user.emailId, file);
                       }
                     } else if (
                       report.status.toUpperCase() == constants.PAYMENT_STATUS.FAILED

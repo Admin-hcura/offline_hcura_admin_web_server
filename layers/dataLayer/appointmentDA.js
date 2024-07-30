@@ -770,7 +770,19 @@ class appointmentDA{
         }
     };
 
-
+    async validatePromoCode(code) {
+        try {
+          let currentDate = moment().tz("UTC").format(process.env.dateformat);
+          return await promoCodesModel.findOne({
+            promoCodeName: code,
+            isDeleted: false,
+            startsOn: { $lte: new Date(currentDate) },
+            expiredOn: { $gte: new Date(currentDate) },
+          });
+        } catch (e) {
+          throw e;
+        }
+    };
     
 }
 module.exports = new appointmentDA();

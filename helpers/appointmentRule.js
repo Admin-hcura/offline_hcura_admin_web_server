@@ -52,3 +52,7 @@ exports.appointmentIdRule = Joi.object({
 exports.consultationTypeRule = Joi.object({
     consultationType: Joi.string().required().error(new Error("consultationType is required"))
 });
+
+exports.promoCodeRule = Joi.object({
+    promoCode: Joi.string().required().error(new Error("promoCode is required"))
+});

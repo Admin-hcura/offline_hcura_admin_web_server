@@ -63,6 +63,9 @@ router.post("/get/payemnt/details/appointment",
 router.post("/get/consultation/amount",
   appointmentController.getConsultationAmount
 );
+router.post("/validate/promo/code",
+  appointmentController.validatePromoCode
+);
 
 
 module.exports = router;

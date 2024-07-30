@@ -481,6 +481,26 @@ class appointment{
         }
     };
 
+    async validatePromoCode(req, res, next){
+        try{
+            let body = req.body;
+            const { error } = rule.promoCodeRule.validate(body);
+            if (error) {
+              throw Boom.badData(error.message);
+            }
+            let promoCode = body.promoCode.toUpperCase();
+            let result = await appointmentDA.validatePromoCode(promoCode);
+            if(result){
+                res.send({ success: true, data: result});
+            } else{
+                res.send({ success: false, data: "No Promo codes avaliable"});
+            }
+            
+        } catch(e){
+            next(e);
+        }
+    };
+
 }
 
 module.exports = new appointment();

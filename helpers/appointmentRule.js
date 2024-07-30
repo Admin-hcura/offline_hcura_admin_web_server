@@ -61,3 +61,39 @@ exports.avaliableSlotsRule = Joi.object({
     selectedDate: Joi.date().required().error(new Error("selectedDate is required")),
     doctorId: Joi.string().required().error(new Error("doctorId is required"))
 });
+
+exports.generatePaymentLinkPackageRule = Joi.object({
+    phoneNumber: Joi.number().required().error(new Error ("Phone number is Required")),
+    appointmentId: Joi.string().required().error(new Error("appointmentId is Required")),
+    courierCharges: Joi.number().required().error(new Error("courierCharges is Required")),
+    promoCodes: Joi.string().empty("").allow(null).default(null),
+    // installements: Joi.number().required().error(new Error("installements is required")),
+    remarks: Joi.string().required().error(new Error("remarks is required")),
+    paymentDoneBy: Joi.string().required().error(new Error("paymentDoneBy is required")),
+    userId: Joi.string().required().error(new Error("userId is Required")),
+    packageId: Joi.string().required().error(new Error("packageId is Required")),
+    paymentMode: Joi.string().valid('cash', 'qr_code', 'swiping_machine', 'online').required().error(new Error("payment Mode is Required")),
+    payableAmount: Joi.number().required().error(new Error("payable Amount is Required")),
+    address: Joi.array()
+      .items({
+        fullName: Joi.string().required().error(new Error("Name is required")),
+        countryCode: Joi.string()
+          .required()
+          .error(new Error("Country code is required")),
+        phoneNumber: Joi.number()
+          .required()
+          .error(new Error("Phone number is required")),
+        postCode: Joi.number()
+          .required()
+          .error(new Error("Postcode is required")),
+        houseNameOrNumber: Joi.string()
+          .required()
+          .error(new Error("House name or Number is required")),
+        street: Joi.string().empty("").allow(null),
+        city: Joi.string().required().error(new Error("City is required")),
+        state: Joi.string().required().error(new Error("State is required")),
+      })
+      .min(1)
+      .max(1)
+      .required(),
+  });

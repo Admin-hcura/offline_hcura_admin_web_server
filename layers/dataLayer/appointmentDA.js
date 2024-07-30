@@ -10,7 +10,8 @@ const mongoose = require("mongoose");
 const moment = require("moment-timezone");
 const { branchesModel, slotModel, occupationModel, promoCodesModel,
     sourceModel, symptomsAllegryModel, tempAppointmentModel,
-    statesModel} = require("../../models/schema");
+    statesModel,
+    packageModel} = require("../../models/schema");
 const { startTime } = require("express-pino-logger");
 
 class appointmentDA{
@@ -462,6 +463,7 @@ class appointmentDA{
                 stateCode: body.stateCode,
                 stateId: body.stateId,
                 consultationGST: body.consultationGST,
+                packageGST: body.packageGST,
                 CGST: body.CGST,
                 SGST: body.SGST,
                 UGST: body.UGST,
@@ -637,69 +639,85 @@ class appointmentDA{
             const hcuraid = hcuraId.replace(/\s+/g, '').toUpperCase();
             return await patientModel.aggregate(
                 [
-                    [
-                        {
-                          $match: {
-                            hcuraId: hcuraid,
-                            isDeleted: false
-                          }
+                    {
+                      $match: {
+                        hcuraId: hcuraid,
+                        isDeleted: false
+                      }
+                    },
+                    {
+                      $lookup: {
+                        from: "appointment",
+                        localField: "_id",
+                        foreignField: "patientId",
+                        as: "appointmentDetails"
+                      }
+                    },
+                    {
+                      $unwind: {
+                        path: "$appointmentDetails",
+                        preserveNullAndEmptyArrays: true
+                      }
+                    },
+                    {
+                      $lookup: {
+                        from: "admin",
+                        localField: "appointmentDetails.doctorId",
+                        foreignField: "_id",
+                        as: "doctorDetails"
+                      }
+                    },
+                    {
+                      $unwind: {
+                        path: "$doctorDetails",
+                        preserveNullAndEmptyArrays: true
+                      }
+                    },
+                    {
+                      $lookup: {
+                        from: "consulatationAmount",
+                        localField:
+                          "appointmentDetails.consultationType",
+                        foreignField: "type",
+                        as: "consultationAmount"
+                      }
+                    },
+                    {
+                      $unwind: {
+                        path: "$consultationAmount",
+                        preserveNullAndEmptyArrays: true
+                      }
+                    },
+                    {
+                      $project: {
+                        fullName: {
+                          $concat: ["$firstName", " ", "$lastName"]
                         },
-                        {
-                          $lookup: {
-                            from: "appointment",
-                            localField: "_id",
-                            foreignField: "patientId",
-                            as: "appointmentDetails"
-                          }
+                        emailId: 1,
+                        hcuraId: 1,
+                        gender: 1,
+                        birthDate: 1,
+                        phoneNumber: 1,
+                        consultationAmount:
+                          "$consultationAmount.amount",
+                        consultationType:
+                          "$appointmentDetails.consultationType",
+                        doctorId: "$doctorDetails._id",
+                        doctorFullName: {
+                          $concat: [
+                            "$doctorDetails.firstName",
+                            " ",
+                            "$doctorDetails.lastName"
+                          ]
                         },
-                        {
-                          $unwind: {
-                            path: "$appointmentDetails",
-                            preserveNullAndEmptyArrays: true
-                          }
-                        },
-                        {
-                          $lookup: {
-                            from: "admin",
-                            localField: "appointmentDetails.doctorId",
-                            foreignField: "_id",
-                            as: "doctorDetails"
-                          }
-                        },
-                        {
-                          $unwind: {
-                            path: "$doctorDetails",
-                            preserveNullAndEmptyArrays: true
-                          }
-                        },
-                        {
-                          $project: {
-                            fullName: {
-                              $concat: ["$firstName", " ", "$lastName"]
-                            },
-                            emailId: 1,
-                            hcuraId: 1,
-                            gender: 1,
-                            birthDate: 1,
-                            phoneNumber: 1,
-                            consultationType: '$appointmentDetails.consultationType',
-                            doctorId: "$doctorDetails._id",
-                            doctorFullName: {
-                              $concat: [
-                                "$doctorDetails.firstName",
-                                " ",
-                                "$doctorDetails.lastName"
-                              ]
-                            },
-                            appointmentId: "$appointmentDetails._id",
-                            appointmentNumber:
-                              "$appointmentDetails.appointmentNumber",
-                            appointmentdate:
-                              "$appointmentDetails.appointmentDate"
-                          }
-                        }
-                      ]
-                    ]
+                        appointmentId: "$appointmentDetails._id",
+                        appointmentNumber:
+                          "$appointmentDetails.appointmentNumber",
+                        appointmentdate:
+                          "$appointmentDetails.appointmentDate"
+                      }
+                    }
+                  ]
                 );
         } catch(e){
             throw e;
@@ -854,19 +872,13 @@ class appointmentDA{
         }
     };
 
-// // Example usage
-// const doctorId = 'your-doctor-id-here';
-// const selectedDate = '2024-08-01'; // Replace with the desired date
-
-// getRemainingSlotsAndTimings(doctorId, selectedDate)
-//     .then(result => {
-//         console.log("Available times:", result.availableTimes);
-//         console.log("Available days:", result.availableDays);
-//     })
-//     .catch(error => {
-//         console.error("Error:", error);
-//     });
-
+    async getpackageList(){
+        try{
+            return await packageModel.find({isActive: true, packageFor: "HOMEOPATHY"})
+        } catch(e){
+            throw e;
+        }
+    };
     
 }
 module.exports = new appointmentDA();

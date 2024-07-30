@@ -87,10 +87,12 @@ exports.logoutRule = Joi.object({
 });
 
 exports.insertPackageRule = Joi.object({
-    name: Joi.string().required().error(new Error("name is required")),
-    type: Joi.string().required().error(new Error("package type is required")),
+    name: Joi.string().required().error(new Error("package name is required")),
+    packageFor: Joi.string().required().error(new Error("packageFor type is required")),
     months: Joi.number().required().error(new Error("months is required")),
     amount: Joi.number().required().error(new Error("amount is required")),
+    createdBy: Joi.string().required().error(new Error("createdBy Id is required")),
+    installments: Joi.number().required().error(new Error("installments Id is required")),
 });
 
 exports.offlinePaymentStatusRule = Joi.object({
@@ -98,7 +100,8 @@ exports.offlinePaymentStatusRule = Joi.object({
       .required()
       .error(new Error("Payment Id Required")),
   });
-  exports.tempAppointmentRule = Joi.object({
+
+exports.tempAppointmentRule = Joi.object({
     firstName: Joi.string().required().error(new Error("firstName is required")),
     lastName: Joi.string().required().error(new Error("lastName is required")),
     gender: Joi.string().required().error(new Error("Gender is required")),

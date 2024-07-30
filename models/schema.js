@@ -274,11 +274,13 @@ const { number, required } = require("joi");
 
   let package = new schema ({
     name: { type: String, default: null},
-    type: {type: String, default: "OTHERS"},
+    packageFor: {type: String, enum: ["HOMEOPATHY", "ASTHETIC"], default: "HOMEOPATHY"},
     months: { type: Number, default: 0},
     amount: { type: Number, default: 0},
+    installments: { type: Number, default: 0},
     createdOn: { type: Date, default: new Date() },
-    isDelete: { type: String, enum: ["YES", "NO"], default: "NO" },
+    isActive: { type: Boolean, default: true},
+    createdBy: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
   });
 
   let states = new schema ({
@@ -286,6 +288,7 @@ const { number, required } = require("joi");
     stateCode: {type: String, default: null},
     stateId: {type: Number, default: null},
     consultationGST: {type: Number, default: 0},
+    packageGST: {type: Number, default: 0},
     CGST: {type: Number, default: null},
     SGST: {type: Number, default: null},
     UGST: {type: Number, default: null},
@@ -296,7 +299,7 @@ const { number, required } = require("joi");
 
   let promoCodes = new schema({
     promoCodeName: { type: String, required: true, unique: true},
-    promoCodeFor: { type: String, enum: ["CONSULTATION", "PACKAGE", "ASTHETIC"], default:null },
+    promoCodeFor: { type: String, enum: ["CONSULTATION", "HOMEOPATHY", "ASTHETIC"], default:null },
     discount: { type: Number, default: null},
     startsOn: { type: Date, default: null},
     expiredOn: { type: Date, default: null},

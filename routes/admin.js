@@ -69,5 +69,11 @@ router.post("/validate/promo/code",
 router.post("/get/avaliable/slots",
   appointmentController.avaliableSlots
 );
+router.get("/get/package/homeopathy",
+  appointmentController.getPackageList
+);
+// router.get("/payment/package",
+//   appointmentController.packagePayment
+// )
 
 module.exports = router;

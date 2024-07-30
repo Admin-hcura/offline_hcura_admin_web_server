@@ -437,7 +437,7 @@ class authentication {
                     throw Boom.badData(error.message);
                 }
             let insertedPackageDetails = await authentationDAObj.insertPackage(body);
-            res.send({success: true, data:insertedPackageDetails});
+            res.send({success: true, data: insertedPackageDetails});
         } catch(e){
             next(e);
         }

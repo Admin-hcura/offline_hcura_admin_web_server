@@ -303,17 +303,20 @@ class authentationDA {
 
     async insertPackage(body){
         try{
+            console.log("=============",body);
             let result = new packageModel({
                 name: body.name,
-                type: body.type,
+                packageFor: body.packageFor,
                 months: body.months,
-                amount: body.amount
+                amount: body.amount,
+                installments: body.installments,
+                createdBy: body.createdBy
             });
             return await result.save();
         } catch(e){
             throw e;
         }
-    };
+      };
 
     async offlineGetStatusDA(relationId) {
         try {

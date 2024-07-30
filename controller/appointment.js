@@ -515,6 +515,19 @@ class appointment{
         }
     };
 
+    async getPackageList(req, res, next){
+        try{
+            let result = await appointmentDA.getpackageList()
+            res.send({ success: true, data: result});
+        } catch(e){
+            next(e);
+        }
+    };
+
+    async packagePayment(req, res, next){
+
+    };
+
 };
 
 module.exports = new appointment();

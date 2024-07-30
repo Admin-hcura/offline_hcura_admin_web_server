@@ -60,6 +60,9 @@ router.post("/get/patient/details/consultation/payment",
 router.post("/get/payemnt/details/appointment",
   appointmentController.getPaymentDetailsAppointment
 );
+router.post("/get/consultation/amount",
+  appointmentController.getConsultationAmount
+);
 
 
 module.exports = router;

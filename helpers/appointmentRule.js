@@ -48,3 +48,7 @@ exports.hcuraIdRule = Joi.object({
 exports.appointmentIdRule = Joi.object({
     appointmentId: Joi.string().required().error(new Error("appointmentId is required"))
 });
+
+exports.consultationTypeRule = Joi.object({
+    consultationType: Joi.string().required().error(new Error("consultationType is required"))
+});

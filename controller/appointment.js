@@ -465,7 +465,21 @@ class appointment{
         } catch(e){
             next(e);
         }
-    }
+    };
+
+    async getConsultationAmount(req, res, next){
+        try{
+            let body = req.body
+            const { error } = rule.consultationTypeRule.validate(body);
+            if (error){
+              throw Boom.badData(error.message);
+            }
+            let obj = await appointmentDA.getAmount(body.consultationType);
+            res.status(200).send({ status: true, data: obj });
+        } catch(e){
+            next(e);
+        }
+    };
 
 }
 

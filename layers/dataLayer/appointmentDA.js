@@ -681,6 +681,7 @@ class appointmentDA{
                             hcuraId: 1,
                             gender: 1,
                             birthDate: 1,
+                            consultationType: '$appointmentDetails.consultationType',
                             doctorId: "$doctorDetails._id",
                             doctorFullName: {
                               $concat: [
@@ -766,7 +767,9 @@ class appointmentDA{
         } catch(e){
             throw e;
         }
-    }
+    };
+
+
     
 }
 module.exports = new appointmentDA();

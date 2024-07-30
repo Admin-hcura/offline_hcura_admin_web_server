@@ -631,6 +631,142 @@ class appointmentDA{
             throw e;
         }
     };
+
+    async getAppointmentDetailsPaymentDetails(hcuraId){
+        try{
+            const hcuraid = hcuraId.replace(/\s+/g, '').toUpperCase();
+            return await patientModel.aggregate(
+                [
+                    [
+                        {
+                          $match: {
+                            hcuraId: hcuraid,
+                            isDeleted: false
+                          }
+                        },
+                        {
+                          $lookup: {
+                            from: "appointment",
+                            localField: "_id",
+                            foreignField: "patientId",
+                            as: "appointmentDetails"
+                          }
+                        },
+                        {
+                          $unwind: {
+                            path: "$appointmentDetails",
+                            preserveNullAndEmptyArrays: true
+                          }
+                        },
+                        {
+                          $lookup: {
+                            from: "admin",
+                            localField: "appointmentDetails.doctorId",
+                            foreignField: "_id",
+                            as: "doctorDetails"
+                          }
+                        },
+                        {
+                          $unwind: {
+                            path: "$doctorDetails",
+                            preserveNullAndEmptyArrays: true
+                          }
+                        },
+                        {
+                          $project: {
+                            fullName: {
+                              $concat: ["$firstName", " ", "$lastName"]
+                            },
+                            emailId: 1,
+                            hcuraId: 1,
+                            gender: 1,
+                            birthDate: 1,
+                            doctorId: "$doctorDetails._id",
+                            doctorFullName: {
+                              $concat: [
+                                "$doctorDetails.firstName",
+                                " ",
+                                "$doctorDetails.lastName"
+                              ]
+                            },
+                            appointmentId: "$appointmentDetails._id",
+                            appointmentNumber:
+                              "$appointmentDetails.appointmentNumber",
+                            appointmentdate:
+                              "$appointmentDetails.appointmentDate"
+                          }
+                        }
+                      ]
+                    ]
+                );
+        } catch(e){
+            throw e;
+        }
+    };
+
+    async getAppointmentPaymentDetails(appointmentId){
+        try{
+            return await paymentModel.aggregate(
+                [
+                    {
+                      $match: {
+                        appointmentId: new mongoose.Types.ObjectId(appointmentId),
+                        isDeleted: false
+                      }
+                    },
+                    {
+                      $lookup: {
+                        from: "patient",
+                        localField: "patientId",
+                        foreignField: "_id",
+                        as: "patientDetails"
+                      }
+                    },
+                    {
+                      $unwind: {
+                        path: "$patientDetails",
+                        preserveNullAndEmptyArrays: true
+                      }
+                    },
+                    {
+                      $lookup: {
+                        from: "appointment",
+                        localField: "appointmentId",
+                        foreignField: "_id",
+                        as: "appointmentDetails"
+                      }
+                    },
+                    {
+                      $unwind: {
+                        path: "$appointmentDetails",
+                        preserveNullAndEmptyArrays: true
+                      }
+                    },
+                    {
+                      $project: {
+                        callMode:
+                          "$appointmentDetils.consultationMode",
+                        paymentFor: 1,
+                        payableAmount: 1,
+                        discount: 1,
+                        paymentType: "$paymentMethod",
+                        paidOn: 1,
+                        createdOn: 1,
+                        paymentStatus: 1,
+                        consultationMode:
+                          "$appointmentDetails.consultationType",
+                        paymentDoneBy: 1,
+                        invoiceNumber: 1,
+                        appointmentNumber:
+                          "$appointmentDetails.appointmentNumber"
+                      }
+                    }
+                ]
+            );
+        } catch(e){
+            throw e;
+        }
+    }
     
 }
 module.exports = new appointmentDA();

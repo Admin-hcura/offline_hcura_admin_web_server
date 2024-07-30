@@ -54,6 +54,12 @@ router.get("/doctors/list",
 router.get("/consultation/promo/list",
   appointmentController.getConsultationPromocodes
 );
+router.post("/get/patient/details/consultation/payment",
+  appointmentController.getPatientDetailsConsultationPayment
+);
+router.post("/get/payemnt/details/appointment",
+  appointmentController.getPaymentDetailsAppointment
+);
 
 
 module.exports = router;

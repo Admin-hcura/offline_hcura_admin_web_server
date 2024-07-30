@@ -439,6 +439,34 @@ class appointment{
         }
     };
 
+    async getPatientDetailsConsultationPayment(req, res, next){
+        try{
+            let body = req.body
+            const { error } = rule.hcuraIdRule.validate(body);
+            if (error){
+              throw Boom.badData(error.message);
+            }
+            let obj = await appointmentDA.getAppointmentDetailsPaymentDetails(body.hcuraId);
+            res.status(200).send({ status: true, data: obj});
+        } catch(e){
+            next(e);
+        }
+    };
+
+    async getPaymentDetailsAppointment(req, res, next){
+        try{
+            let body = req.body
+            const { error } = rule.appointmentIdRule.validate(body);
+            if (error){
+              throw Boom.badData(error.message);
+            }
+            let obj = await appointmentDA.getAppointmentPaymentDetails(body.appointmentId);
+            res.status(200).send({ status: true, data: obj });
+        } catch(e){
+            next(e);
+        }
+    }
+
 }
 
 module.exports = new appointment();

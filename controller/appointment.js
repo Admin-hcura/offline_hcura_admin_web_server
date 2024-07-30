@@ -501,6 +501,20 @@ class appointment{
         }
     };
 
-}
+    async avaliableSlots(req, res, next){
+        try{
+            let body = req.body;
+            const { error } = rule.avaliableSlotsRule.validate(body);
+            if (error) {
+              throw Boom.badData(error.message);
+            }
+            let result = await appointmentDA.getRemainingSlotsAndTimings(body.doctorId ,body.selectedDate);
+            res.send({ success: true, data: result});
+        } catch(e){
+            next(e);
+        }
+    };
+
+};
 
 module.exports = new appointment();

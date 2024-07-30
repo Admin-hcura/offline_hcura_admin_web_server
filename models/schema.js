@@ -123,7 +123,12 @@ const { number, required } = require("joi");
   });
 
   let slot = new schema ({
-    date: {type: Date, default: null},
+    date: {type: Date, default: () => {
+      let today = new Date();
+      today.setHours(0, 0, 0, 0); // Set time to 12 AM (midnight)
+      return today;
+    }},
+    appointmentDate : {type: Date, default: null},
     dayId: {type: mongoose.Schema.Types.ObjectId, ref: "TimeSchema", default: null},
     timeId: {type: mongoose.Schema.Types.ObjectId, ref: "DaySchema", default: null},
     day: { type: String, default: null },

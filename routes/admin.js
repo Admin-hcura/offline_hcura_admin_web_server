@@ -66,6 +66,8 @@ router.post("/get/consultation/amount",
 router.post("/validate/promo/code",
   appointmentController.validatePromoCode
 );
-
+router.post("/get/avaliable/slots",
+  appointmentController.avaliableSlots
+);
 
 module.exports = router;

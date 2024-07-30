@@ -56,3 +56,8 @@ exports.consultationTypeRule = Joi.object({
 exports.promoCodeRule = Joi.object({
     promoCode: Joi.string().required().error(new Error("promoCode is required"))
 });
+
+exports.avaliableSlotsRule = Joi.object({
+    selectedDate: Joi.date().required().error(new Error("selectedDate is required")),
+    doctorId: Joi.string().required().error(new Error("doctorId is required"))
+});

@@ -18,7 +18,7 @@ class appointmentDA{
     async blockSlot(slotData){
         try{
             let blockSlot = new slotModel({
-                date: slotData.date,
+                appointmentDate: slotData.date,
                 dayId: slotData.dayId,
                 timeId: slotData.timeId,
                 day: slotData.day,
@@ -783,6 +783,90 @@ class appointmentDA{
           throw e;
         }
     };
+
+    async getRemainingSlotsAndTimings(doctorId, selectedDate) {
+        try {
+            // Step 1: Get all booked slots for the given doctor on the selected date
+            const bookedSlots = await slotModel.aggregate([
+                {
+                    $match: {
+                        doctorId: new mongoose.Types.ObjectId(doctorId),
+                        date: new Date(selectedDate),
+                        isBooked: true,
+                        isActive: true,
+                    },
+                },
+                {
+                    $project: {
+                        timeId: 1,
+                        dayId: 1,
+                    },
+                },
+            ]);
+
+            // Extract booked timeIds and dayIds
+            const bookedTimeIds = bookedSlots.map(slot => slot.timeId);
+            const bookedDayIds = bookedSlots.map(slot => slot.dayId);
+
+            // Step 2: Get all times that are not booked
+            const availableTimes = await timeModel.aggregate([
+                {
+                    $match: {
+                        isActive: true,
+                    },
+                },
+                {
+                    $project: {
+                        slots: {
+                            $filter: {
+                                input: "$slots",
+                                as: "slot",
+                                cond: { $not: [{ $in: ["$$slot._id", bookedTimeIds] }] }
+                            }
+                        }
+                    },
+                }
+            ]);
+
+            // Step 3: Get all days that are not booked
+            const availableDays = await dayModel.aggregate([
+                {
+                    $match: {
+                        _id: { $nin: bookedDayIds },
+                        isActive: true,
+                    },
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        day: 1,
+                    },
+                },
+            ]);
+
+            return {
+                availableTimes,
+                availableDays,
+            };
+        } catch (error) {
+            console.error("Error fetching remaining slots and timings:", error);
+            throw error;
+        }
+    };
+
+// // Example usage
+// const doctorId = 'your-doctor-id-here';
+// const selectedDate = '2024-08-01'; // Replace with the desired date
+
+// getRemainingSlotsAndTimings(doctorId, selectedDate)
+//     .then(result => {
+//         console.log("Available times:", result.availableTimes);
+//         console.log("Available days:", result.availableDays);
+//     })
+//     .catch(error => {
+//         console.error("Error:", error);
+//     });
+
     
 }
 module.exports = new appointmentDA();

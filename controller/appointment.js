@@ -265,7 +265,7 @@ class appointment{
                     } 
                 let payment = await paymentGateway.generatePaymentLinkConsultation(
                     ptDetails.firstName, 
-                    ptDetails.phoneNumber,
+                    body.phoneNumber,
                     ptDetails.emailId,
                     body.payableAmount
                 );
@@ -525,7 +525,16 @@ class appointment{
     };
 
     async packagePayment(req, res, next){
+        try{
+            let body = req.body
+            const { error } = rule.generatePaymentLinkPackageRule.validate(body);
+            if (error){
+              throw Boom.badData(error.message);
+            }
 
+        } catch(e){
+            next(e);
+        }
     };
 
 };

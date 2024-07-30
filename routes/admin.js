@@ -72,8 +72,8 @@ router.post("/get/avaliable/slots",
 router.get("/get/package/homeopathy",
   appointmentController.getPackageList
 );
-// router.get("/payment/package",
-//   appointmentController.packagePayment
-// )
+router.get("/payment/package",
+  appointmentController.packagePayment
+);
 
 module.exports = router;

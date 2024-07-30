@@ -33,6 +33,7 @@ exports.patientIdRule = Joi.object({
 
 exports.paymentConsultationRule = Joi.object({
     paymentDoneBy: Joi.string().required().error(new Error("paymentDoneBy is required")),
+    phoneNumber: Joi.number().required().error(new Error("phoneNumber is required")),
     appointmentId: Joi.string().required().error(new Error("appointmentId is required")),
     patientId: Joi.string().required().error(new Error("patientId is required")),
     paymentFor: Joi.string().required().error(new Error("paymentFor is required")),
@@ -65,7 +66,7 @@ exports.avaliableSlotsRule = Joi.object({
 exports.generatePaymentLinkPackageRule = Joi.object({
     phoneNumber: Joi.number().required().error(new Error ("Phone number is Required")),
     appointmentId: Joi.string().required().error(new Error("appointmentId is Required")),
-    courierCharges: Joi.number().required().error(new Error("courierCharges is Required")),
+    // courierCharges: Joi.number().required().error(new Error("courierCharges is Required")),
     promoCodes: Joi.string().empty("").allow(null).default(null),
     // installements: Joi.number().required().error(new Error("installements is required")),
     remarks: Joi.string().required().error(new Error("remarks is required")),
@@ -74,26 +75,11 @@ exports.generatePaymentLinkPackageRule = Joi.object({
     packageId: Joi.string().required().error(new Error("packageId is Required")),
     paymentMode: Joi.string().valid('cash', 'qr_code', 'swiping_machine', 'online').required().error(new Error("payment Mode is Required")),
     payableAmount: Joi.number().required().error(new Error("payable Amount is Required")),
-    address: Joi.array()
-      .items({
-        fullName: Joi.string().required().error(new Error("Name is required")),
-        countryCode: Joi.string()
-          .required()
-          .error(new Error("Country code is required")),
-        phoneNumber: Joi.number()
-          .required()
-          .error(new Error("Phone number is required")),
-        postCode: Joi.number()
-          .required()
-          .error(new Error("Postcode is required")),
-        houseNameOrNumber: Joi.string()
-          .required()
-          .error(new Error("House name or Number is required")),
-        street: Joi.string().empty("").allow(null),
-        city: Joi.string().required().error(new Error("City is required")),
-        state: Joi.string().required().error(new Error("State is required")),
-      })
-      .min(1)
-      .max(1)
-      .required(),
+    address: Joi.array().items({
+        houseNo: Joi.string().required().error(new Error("houseNo is required")),
+        street: Joi.string().required().error(new Error("street is required")),
+        city: Joi.string().required().error(new Error("city is required")),
+        state: Joi.string().required().error(new Error("state is required")),
+        pinCode: Joi.number().required().error(new Error("pinCode is required")),
+      }).required(),
   });

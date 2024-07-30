@@ -27,10 +27,6 @@ exports.appointmentRule = Joi.object({
     bookedBy: Joi.string().required().error(new Error("bookedBy ID is required")),
 });
 
-exports.patientIdRule = Joi.object({
-    hcuraId: Joi.string().required().error(new Error("hcuraId is required")),
-});
-
 exports.paymentConsultationRule = Joi.object({
     paymentDoneBy: Joi.string().required().error(new Error("paymentDoneBy is required")),
     phoneNumber: Joi.number().required().error(new Error("phoneNumber is required")),
@@ -83,3 +79,13 @@ exports.generatePaymentLinkPackageRule = Joi.object({
         pinCode: Joi.number().required().error(new Error("pinCode is required")),
       }).required(),
   });
+
+  exports.createEstimationRule = Joi.object({
+    patientId: Joi.string().required().error(new Error("patientId is required")),
+    doctorId: Joi.string().required().error(new Error("doctorId is required")),
+    branchId: Joi.string().required().error(new Error("branchId is required")),
+    packageId: Joi.string().required().error(new Error("packageId is required")),
+    createdBy: Joi.string().required().error(new Error("createdBy is required")),
+    treatmentPlan: Joi.string().required().error(new Error("treatmentPlan is required")),
+    estimationAmount: Joi.number().required().error(new Error("estimationAmount is required")),
+});

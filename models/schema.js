@@ -316,6 +316,18 @@ const { number, required } = require("joi");
 
   });
 
+  let estimation = new schema ({
+    patientId: {type: mongoose.Schema.Types.ObjectId, ref: "Patient", default: null},
+    doctorId: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
+    branchId: {type: mongoose.Schema.Types.ObjectId, ref: "Branch", default: null},
+    packageId: {type: mongoose.Schema.Types.ObjectId, ref: "Package", default: null},
+    createdBy: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
+    treatmentPlan: {type: String, default: null},
+    estimationAmount: {type: Number, default: 0},
+    createdOn: { type: Date, default: new Date()},
+    isActive: { type: Boolean, default: true},
+  });
+
   exports.branchesModel = mongoose.model("Branches", branches, "branches");
   exports.roleModel = mongoose.model("Role", role, "role");
   exports.adminModel = mongoose.model("Admin", admin, "admin");
@@ -335,5 +347,6 @@ const { number, required } = require("joi");
   exports.symptomsAllegryModel = mongoose.model("SymptomsAllegry", symptomsAllegry, "symptomsAllegry");
   exports.tempAppointmentModel = mongoose.model("TempAppointment", tempAppointment, "tempAppointment");
   exports.promoCodesModel = mongoose.model("promoCodes", promoCodes, "promoCodes");
+  exports.estimationModel = mongoose.model("estimation", estimation, "Estimation");
 
 }.call(this))

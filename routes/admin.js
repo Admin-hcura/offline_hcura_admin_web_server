@@ -75,5 +75,8 @@ router.get("/get/package/homeopathy",
 router.get("/payment/package",
   appointmentController.packagePayment
 );
+router.post("/create/estimation",
+  appointmentController.insertEstimation
+);
 
 module.exports = router;

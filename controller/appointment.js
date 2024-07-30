@@ -343,7 +343,7 @@ class appointment{
     async getPatientDetails(req, res, next){
         try{
             let body = req.body
-            const {error} = rule.patientIdRule.validate(body);
+            const {error} = rule.hcuraIdRule.validate(body);
             if(error){
                 throw Boom.badData(error.message);
             }
@@ -532,6 +532,20 @@ class appointment{
               throw Boom.badData(error.message);
             }
             let result
+            res.send({ success: true, data: result});
+        } catch(e){
+            next(e);
+        }
+    };
+
+    async insertEstimation(req, res, next){
+        try{
+            let body = req.body
+            const { error } = rule.createEstimationRule.validate(body);
+            if (error){
+              throw Boom.badData(error.message);
+            }
+            let result = await appointmentDA.createEstimation(body);
             res.send({ success: true, data: result});
         } catch(e){
             next(e);

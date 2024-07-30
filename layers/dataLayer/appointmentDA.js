@@ -11,7 +11,8 @@ const moment = require("moment-timezone");
 const { branchesModel, slotModel, occupationModel, promoCodesModel,
     sourceModel, symptomsAllegryModel, tempAppointmentModel,
     statesModel,
-    packageModel} = require("../../models/schema");
+    packageModel,
+    estimationModel} = require("../../models/schema");
 const { startTime } = require("express-pino-logger");
 
 class appointmentDA{
@@ -874,7 +875,24 @@ class appointmentDA{
 
     async getpackageList(){
         try{
-            return await packageModel.find({isActive: true, packageFor: "HOMEOPATHY"})
+            return await packageModel.find({isActive: true, packageFor: "HOMEOPATHY"});
+        } catch(e){
+            throw e;
+        }
+    };
+
+    async createEstimation(body){
+        try{
+            let result = new estimationModel({
+                patientId: body.patientId,
+                doctorId: body.doctorId,
+                branchId: body.branchId,
+                packageId: body.packageId,
+                createdBy: body.createdBy,
+                treatmentPlan: body.treatmentPlan,
+                estimationAmount: body.estimationAmount
+            });
+            return await result.save();
         } catch(e){
             throw e;
         }

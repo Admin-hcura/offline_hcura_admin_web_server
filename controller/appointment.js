@@ -531,7 +531,8 @@ class appointment{
             if (error){
               throw Boom.badData(error.message);
             }
-
+            let result
+            res.send({ success: true, data: result});
         } catch(e){
             next(e);
         }

@@ -80,7 +80,7 @@ const { number, required } = require("joi");
     gender: {type: String, enum: ["Male", "Female", "Others"], required: true },
     emailId: {type:String, required: true},
     phoneNumber: {type: Number, required: true},
-    countryCode: {type: String, default: "+91"},
+    countryCode: {type: String, default: "91"},
     whatsappNumber: {type: Number, default: null},
     stateId: {type: mongoose.Schema.Types.ObjectId, ref: "States", default: null},
     stateName: {type: String, default: null},
@@ -283,6 +283,29 @@ const { number, required } = require("joi");
     createdBy: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
   });
 
+  let packageSubscription = new schema({
+    patientId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+      ref: "Patient",
+    },
+    packageId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+      ref: "Package",
+    },
+    paymentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+      ref: "payment",
+    },
+    startDate : { type: Date, default: null },
+    endDate : { type: Date, default: null},
+    createdOn : { type: Date, default: new Date()},
+    paidOn : { type: Date, default: null},
+    isActive : { type: Boolean, default: true}
+  })
+
   let states = new schema ({
     name: {type: String, default: null},
     stateCode: {type: String, default: null},
@@ -348,5 +371,6 @@ const { number, required } = require("joi");
   exports.tempAppointmentModel = mongoose.model("TempAppointment", tempAppointment, "tempAppointment");
   exports.promoCodesModel = mongoose.model("promoCodes", promoCodes, "promoCodes");
   exports.estimationModel = mongoose.model("estimation", estimation, "Estimation");
+  exports.packageSubscriptionModel = mongoose.model("packageSubscription", packageSubscription, "PackageSubscription");
 
 }.call(this))

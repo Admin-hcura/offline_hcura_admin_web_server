@@ -9,10 +9,8 @@ const paymentModel = require("../../models/schema").paymentModel;
 const mongoose = require("mongoose");
 const moment = require("moment-timezone");
 const { branchesModel, slotModel, occupationModel, promoCodesModel,
-    sourceModel, symptomsAllegryModel, tempAppointmentModel,
-    statesModel,
-    packageModel,
-    estimationModel} = require("../../models/schema");
+    sourceModel, symptomsAllegryModel, tempAppointmentModel, statesModel,
+    packageModel, estimationModel, packageSubscriptionModel} = require("../../models/schema");
 const { startTime } = require("express-pino-logger");
 
 class appointmentDA{
@@ -893,6 +891,31 @@ class appointmentDA{
                 estimationAmount: body.estimationAmount
             });
             return await result.save();
+        } catch(e){
+            throw e;
+        }
+    };
+
+    async changeisActivePackage(_id){
+        try {
+          let result = await packageSubscriptionModel.findOneAndUpdate(
+            {_id: mongoose.Types.ObjectId(_id)},
+            {
+              $set: {
+                isActive: false
+            },
+          },
+          { new: true }
+        );
+         return result;
+        } catch(error) {
+          throw error;
+        }
+    };
+
+    async getPackageDetails(packageId){
+        try{
+            return await packageModel.findOne({isActive: true, _id: packageId});
         } catch(e){
             throw e;
         }

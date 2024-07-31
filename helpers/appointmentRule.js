@@ -59,7 +59,7 @@ exports.avaliableSlotsRule = Joi.object({
     doctorId: Joi.string().required().error(new Error("doctorId is required"))
 });
 
-exports.generatePaymentLinkPackageRule = Joi.object({
+exports.PaymenPackageRule = Joi.object({
     phoneNumber: Joi.number().required().error(new Error ("Phone number is Required")),
     appointmentId: Joi.string().required().error(new Error("appointmentId is Required")),
     // courierCharges: Joi.number().required().error(new Error("courierCharges is Required")),

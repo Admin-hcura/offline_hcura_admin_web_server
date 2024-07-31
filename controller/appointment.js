@@ -11,6 +11,8 @@ const htmlToPDF = require("../helpers/htmlToPDF");
 const emailSender = require("../helpers/emailSender");
 const paymentGateway = require("../helpers/paymentGateway");
 const { sourceModel, occupationModel } = require("../models/schema");
+const scheduler = require("../scheduler/scheduler");
+const schedulers = new scheduler();
 
 class appointment{
     async bookAppointment(req, res, next){
@@ -527,12 +529,46 @@ class appointment{
     async packagePayment(req, res, next){
         try{
             let body = req.body
-            const { error } = rule.generatePaymentLinkPackageRule.validate(body);
+            const { error } = rule.PaymenPackageRule.validate(body);
             if (error){
               throw Boom.badData(error.message);
             }
-            let result
-            res.send({ success: true, data: result});
+            console.log(".....body.......",body);
+            let ptDetails = await appointmentDA.patientDetaiils(body.patientId);
+            console.log(".....ptDetails.......",ptDetails);
+
+            let info = await appointmentDA.getConsultationGST(ptDetails.stateId);
+            console.log("-----info-----",info)
+
+            let appointmentData = await appointmentDA.getApptDetails(body.appointmentId);
+            console.log(".....appointmentData.......",appointmentData);
+
+            let packageDetails = await appointmentDA.getPackageDetails(body.packageId);
+            console.log(".....packageDetails.......",packageDetails);
+
+            let promoCodeResult = await appointmentDA.getPromoCodeList(body.promoCodes);
+            console.log("+++++promoCodeResult+++++++",promoCodeResult);
+
+            let discountPercent = promoCodeResult.discount
+            console.log("=====discountPercent======",discountPercent);
+
+            let discount = ((packageDetails.amount * discountPercent)).toFixed(2);
+            let Discount = discount/100
+            console.log("*****discount*****",Discount);
+
+            let afterRemovingDiscount = (
+                packageDetails.amount - parseFloat(Discount)
+              ).toFixed(2);
+              console.log(",,,,,,,afterRemovingDiscount,,,,,,,",afterRemovingDiscount)
+            
+              let gstAmount = parseFloat(((afterRemovingDiscount * parseFloat(info.consultationGST)) /100).toFixed(2));
+            console.log("......gstAmount.......",gstAmount)
+
+
+
+
+
+            res.send({ success: true, data: ptDetails});
         } catch(e){
             next(e);
         }

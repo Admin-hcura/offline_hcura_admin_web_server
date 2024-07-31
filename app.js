@@ -8,10 +8,11 @@ const compression = require("compression");
 const pino = require("express-pino-logger")();
 const mongoose = require("mongoose");
 const Boom = require("@hapi/boom");
+const appointmentDA = require("./layers/dataLayer/appointmentDA")
 
 let MSM = require("mongo-scheduler-more");
-// let scheduler = require("./scheduler/scheduler");
-// let schedulerObj = new scheduler();
+let scheduler = require("./scheduler/scheduler");
+let schedulerObj = new scheduler();
 
 const routingV1 = require("./routes");
 // const redisClient = require("./config/redisConfiguration");
@@ -38,6 +39,26 @@ async function connectMongo() {
         console.log('MongoDB connected successfully');
       } catch (error) {
         console.error('Error connecting to MongoDB', error);
+      }
+
+      try{
+        let mongoScheduler = new MSM(mongoose.connection, {});
+
+        mongoScheduler.on("error", function (e) {
+        console.log("-------->error", e);
+        });
+
+        mongoScheduler.on(
+          "changeisActiveStatus", 
+          async function(details, event){
+            if(new Date(details.data.endDate) < new Date()){
+              await appointmentDA.changeisActivePackage(details.data._id)
+            }
+        });
+        schedulerObj.startScheduler(mongoScheduler);
+        console.log('Scheduler is Active');
+      } catch(e){
+        console.log('Scheduler is ERROR');
       }
 }
 connectMongo();

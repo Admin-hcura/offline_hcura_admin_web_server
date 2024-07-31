@@ -1,7 +1,8 @@
+const puppeteer = require('puppeteer');
 const html_to_pdf = require("html-pdf-node");
 const moment = require("moment-timezone");
 const constants = require("./constants");
-const visit_us_on = "https://h-cura.com"
+const visit_us_on = "https://h-cura.com";
 
 let options = {
     format: "A4",
@@ -292,8 +293,25 @@ class HtmlToPdfHelper {
         '</div>' +
         "</BODY>" +
         "</HTML>";
-      let file = { content: html };
-      let pdfBuffer = await html_to_pdf.generatePdf(file, options);
+      // let file = { content: html };
+      // let pdfBuffer = await html_to_pdf.generatePdf(file, options);
+      const browser = await puppeteer.launch(options);
+      const page = await browser.newPage();
+
+      await page.setContent(html, { waitUntil: 'networkidle0' });
+
+      const pdfBuffer = await page.pdf({
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '20px',
+          bottom: '20px',
+          left: '20px',
+          right: '20px'
+        }
+      });
+
+      await browser.close();
       return pdfBuffer;
     } catch (e) {
       console.log(e);

@@ -529,7 +529,7 @@ class appointment{
     async packagePayment(req, res, next){
         try{
             let body = req.body
-            const { error } = rule.PaymenPackageRule.validate(body);
+            const { error } = rule.paymenPackageRule.validate(body);
             if (error){
               throw Boom.badData(error.message);
             }
@@ -546,10 +546,13 @@ class appointment{
             let packageDetails = await appointmentDA.getPackageDetails(body.packageId);
             console.log(".....packageDetails.......",packageDetails);
 
+            let discountPercent = 0
+            if(body.promoCodes.length > 0){
+            console.log("+++++body.promoCodes.length+++++++",body.promoCodes.length);
             let promoCodeResult = await appointmentDA.getPromoCodeList(body.promoCodes);
             console.log("+++++promoCodeResult+++++++",promoCodeResult);
-
-            let discountPercent = promoCodeResult.discount
+            discountPercent = promoCodeResult.discount
+            }
             console.log("=====discountPercent======",discountPercent);
 
             let discount = ((packageDetails.amount * discountPercent)).toFixed(2);
@@ -561,14 +564,16 @@ class appointment{
               ).toFixed(2);
               console.log(",,,,,,,afterRemovingDiscount,,,,,,,",afterRemovingDiscount)
             
-              let gstAmount = parseFloat(((afterRemovingDiscount * parseFloat(info.consultationGST)) /100).toFixed(2));
+            let gstAmount = parseFloat(((afterRemovingDiscount * parseFloat(info.consultationGST)) /100).toFixed(2));
             console.log("......gstAmount.......",gstAmount)
 
+            let payable = (
+                parseFloat(afterRemovingDiscount) +
+                parseFloat(gstAmount)).toFixed(2);
 
+            console.log("----payable------",payable)
 
-
-
-            res.send({ success: true, data: ptDetails});
+            res.send({success: true, data: ptDetails});
         } catch(e){
             next(e);
         }

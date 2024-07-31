@@ -89,6 +89,7 @@ class authentication {
             let response = await authentationDAObj.adminIsExistDA(username);
             let roleCode = await authentationDAObj.getroleCodeDA(response.roleId);
             response.roleCode = roleCode.roleCode
+            response.roleName = roleCode.roleName
             if (!roleCode){
                 apiResponse.ServerErrors.error.role_not_found
             }

@@ -71,7 +71,7 @@ router.post("/get/avaliable/slots",
 router.get("/get/package/homeopathy",
   appointmentController.getPackageList
 );
-router.get("/payment/package",
+router.post("/payment/package",
   appointmentController.packagePayment
 );
 router.post("/create/estimation",

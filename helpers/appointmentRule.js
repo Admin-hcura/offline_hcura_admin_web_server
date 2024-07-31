@@ -59,7 +59,7 @@ exports.avaliableSlotsRule = Joi.object({
     doctorId: Joi.string().required().error(new Error("doctorId is required"))
 });
 
-exports.PaymenPackageRule = Joi.object({
+exports.paymenPackageRule = Joi.object({
     phoneNumber: Joi.number().required().error(new Error ("Phone number is Required")),
     appointmentId: Joi.string().required().error(new Error("appointmentId is Required")),
     // courierCharges: Joi.number().required().error(new Error("courierCharges is Required")),
@@ -67,7 +67,7 @@ exports.PaymenPackageRule = Joi.object({
     // installements: Joi.number().required().error(new Error("installements is required")),
     remarks: Joi.string().required().error(new Error("remarks is required")),
     paymentDoneBy: Joi.string().required().error(new Error("paymentDoneBy is required")),
-    userId: Joi.string().required().error(new Error("userId is Required")),
+    patientId: Joi.string().required().error(new Error("userId is Required")),
     packageId: Joi.string().required().error(new Error("packageId is Required")),
     paymentMode: Joi.string().valid('cash', 'qr_code', 'swiping_machine', 'online').required().error(new Error("payment Mode is Required")),
     payableAmount: Joi.number().required().error(new Error("payable Amount is Required")),

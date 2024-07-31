@@ -724,6 +724,20 @@ class authentication {
         }
     };
 
+    async getRoleDetails(req, res, next){
+      try{
+        let body = req.body
+        const { error } = rule.roleIdRule.validate(body);
+        if (error) {
+            throw Boom.badData(error.message);
+        }
+        let result = await authentationDAObj.getRoleDetils(body.roleId);
+        res.send({success: true, data:result});
+      } catch(e){
+        next(e);
+      }
+    };
+
 }
 
 // async function createAdminSession(response, res, userAgent) {

@@ -65,6 +65,9 @@ router.post("/payment/clinic/web_hook",
 router.post("/offline/payment/status", 
     authenticationController.offlinPaymentStatus
 );
+router.post("/get/role/details",
+    authenticationController.getRoleDetails
+);
 
 
 module.exports = router;

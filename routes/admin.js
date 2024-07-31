@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 // const sessionValidator = require("../helpers/SessionValidator");
 const appointmentController = require("../controller/appointment");
-// const reportController = require("../controller/reportController");
 const authenticationController = require("../controller/authentication");
 
 router.get("/", async (req, res) => {

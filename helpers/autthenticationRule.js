@@ -96,9 +96,7 @@ exports.insertPackageRule = Joi.object({
 });
 
 exports.offlinePaymentStatusRule = Joi.object({
-    paymentId: Joi.string()
-      .required()
-      .error(new Error("Payment Id Required")),
+    paymentId: Joi.string().required().error(new Error("Payment Id Required")),
   });
 
 exports.tempAppointmentRule = Joi.object({
@@ -120,3 +118,7 @@ exports.tempAppointmentRule = Joi.object({
     startsOn: Joi.date().required().error(new Error("startsOn is required")),
     expiredOn: Joi.date().required().error(new Error("expiredOn is required")),
 });
+
+exports.roleIdRule = Joi.object({
+    roleId: Joi.string().required().error(new Error("role Id Required")),
+  });

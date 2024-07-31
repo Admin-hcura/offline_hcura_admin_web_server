@@ -316,7 +316,7 @@ class authentationDA {
         } catch(e){
             throw e;
         }
-      };
+    };
 
     async offlineGetStatusDA(relationId) {
         try {
@@ -333,9 +333,9 @@ class authentationDA {
         } catch (e) {
           throw e;
         }
-      };
+    };
 
-      async addpromoCodes(promoCodes){
+    async addpromoCodes(promoCodes){
         try{
             let result = new promoCodesModel({
                 promoCodeName: promoCodes.promoCodeName,
@@ -349,7 +349,15 @@ class authentationDA {
         } catch(e){
             throw e;
         }
-      };
+    };
+
+    async getRoleDetils(roleId){
+        try{
+            return await roleModel.findOne({_id: roleId, isLocked: "ENABLED"});
+        } catch(e){
+            throw e;
+        }
+    }
 
 }
 

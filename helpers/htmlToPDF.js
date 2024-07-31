@@ -293,25 +293,8 @@ class HtmlToPdfHelper {
         '</div>' +
         "</BODY>" +
         "</HTML>";
-      // let file = { content: html };
-      // let pdfBuffer = await html_to_pdf.generatePdf(file, options);
-      const browser = await puppeteer.launch(options);
-      const page = await browser.newPage();
-
-      await page.setContent(html, { waitUntil: 'networkidle0' });
-
-      const pdfBuffer = await page.pdf({
-        format: 'A4',
-        printBackground: true,
-        margin: {
-          top: '20px',
-          bottom: '20px',
-          left: '20px',
-          right: '20px'
-        }
-      });
-
-      await browser.close();
+      let file = { content: html };
+      let pdfBuffer = await html_to_pdf.generatePdf(file, options);
       return pdfBuffer;
     } catch (e) {
       console.log(e);

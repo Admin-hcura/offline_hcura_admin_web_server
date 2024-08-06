@@ -67,7 +67,7 @@ class HtmlToPdfHelper {
         "" +
         "#page_1 {position:relative; overflow: hidden;margin: 162px 0px 1472px 0px;padding: 0px;border: none;width: 3307px;}" +
         "#page_1 #id1_1 {border:none;margin: 0px 0px 0px 0px;padding: 0px;border:none;width: 3132px;overflow: hidden;}" +
-        "#page_1 #id1_2 {border:none;margin: 137px 0px 0px 192px;padding: 0px;border:none;width: 3115px;overflow: hidden;}" +
+        "#page_1 #id1_2 {border:none;margin: 0px 0px 0px 0px;padding: 0px;border:none;width: 0px;overflow: hidden;}" +
         "#page_1 #id1_2 #id1_2_1 {float:left;border: 1px solid #333;margin: 0px 0px 0px 0px;padding: 0px;border:none;width: 2485px;overflow: hidden;}" +
         "#page_1 #id1_2 #id1_2_2 {float:left;border:none;margin: 67px 0px 0px 0px;padding: 0px;border:none;width: 630px;overflow: hidden;}" +
         "#page_1 #id1_3 {border:none;margin: 27px 0px 0px 192px;padding: 0px;border:none;width: 3115px;overflow: hidden;}" +
@@ -146,7 +146,7 @@ class HtmlToPdfHelper {
         "</DIV>" +
         '<DIV id="id1_2">' +
         '<DIV id="id1_2_1">' +
-        '<hr style="border: 0; border-top: 1px solid #000; margin-bottom: 10px;">' +
+        '<hr style="border: 0; border-top: 2px solid #000; width: 100%; margin-bottom: 10px;">' +
         '<P class="p2 ft2">Patient’s Name</P>' +
         '<P class="p3 ft3">' +
         ptfirstName+

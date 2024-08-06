@@ -112,13 +112,14 @@ class appointment{
             console.log(".....appointmentData.......",appointmentData);
             let info = await appointmentDA.getConsultationGST(ptDetails.stateId);
             console.log("-----info-----",info)
-            let promoCodeResult = await appointmentDA.getPromoCodeList(body.promoCodes);
-            console.log("+++++promoCodeResult+++++++",promoCodeResult)
+            let discountPercent = 0
+            if(body.promoCodes.length > 0){
+                let promoCodeResult = await appointmentDA.getPromoCodeList(body.promoCodes);
+                console.log("+++++promoCodeResult+++++++",promoCodeResult)
+                discountPercent = promoCodeResult.discount
+            }
             let consultationfee = await appointmentDA.getAmount(appointmentData[0].consultationType);
             console.log("+++++consultationfee+++++++", consultationfee.amount)
-            // const reducer = (accumulator, currentValue) =>
-            //     accumulator + currentValue.discount;
-            let discountPercent = promoCodeResult.discount
             console.log("=====discountPercent======",discountPercent);
             let discount = ((consultationfee.amount * discountPercent)).toFixed(2);
             let Discount = discount/100
@@ -248,15 +249,6 @@ class appointment{
                             "#" + relationId,
                             updatePaymentDetails.paymentMethod.toUpperCase()
                           );
-                       // // email to patient appointment details
-                        // emailSender.appointmentBookedMail(
-                        //     userInfo[0].patient.firstName,
-                        //     userInfo[0].patient.lastName,
-                        //     userInfo[0].doctor.firstName,
-                        //     userInfo[0].doctor.lastName,
-                        //     userInfo[0].patient.emailId,
-                        //     pdfDetails
-                        //   );
                         
                         res.send({ success: true, data: userInfo});
                   }

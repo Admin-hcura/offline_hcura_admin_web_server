@@ -146,7 +146,7 @@ class HtmlToPdfHelper {
         "</DIV>" +
         '<DIV id="id1_2">' +
         '<DIV id="id1_2_1">' +
-        '<hr style="border: 0; border-top: 2px solid #000; width: 100%; margin-bottom: 10px;">' +
+        // '<hr style="border: 0; border-top: 2px solid #000; width: 100%; margin-bottom: 10px;">' +
         '<P class="p2 ft2">Patient’s Name</P>' +
         '<P class="p3 ft3">' +
         ptfirstName+
@@ -181,7 +181,7 @@ class HtmlToPdfHelper {
         "</P>" +
         '<TABLE cellpadding=0 cellspacing=0 class="t0">' +
         "<TR>" +
-        '<hr style="border: 0; border-top: 2px solid #000; width: 100%; margin-bottom: 10px;">' +
+        // '<hr style="border: 0; border-top: 2px solid #000; width: 100%; margin-bottom: 10px;">' +
         '	<TD class="tr0 td0"><P class="p7 ft7">Date</P></TD>' +
         '	<TD class="tr0 td1"><P class="p7 ft7">Time Slot</P></TD>' +
         '	<TD class="tr0 td2"><P class="p7 ft8">Consultation Fees</P></TD>' +
@@ -204,7 +204,7 @@ class HtmlToPdfHelper {
         "</TABLE>" +
         '<TABLE cellpadding=0 cellspacing=0 class="t2">' +
         "<TR>" +
-        '<hr style="border: 0; border-top: 2px solid #000; width: 100%; margin-bottom: 10px;">' +
+        // '<hr style="border: 0; border-top: 2px solid #000; width: 100%; margin-bottom: 10px;">' +
         '	<TD class="tr2 td6"><P class="p7 ft7">Consultation Fees</P></TD>' + //Discount,GST,Payable Amount
         '	<TD class="tr2 td7"><P class="p10 ft7">' +
         parseFloat(pdfDetails.consultationfee).toFixed(2) +

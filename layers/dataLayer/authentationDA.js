@@ -215,13 +215,13 @@ class authentationDA {
         emailId,
         phoneNumber,
         whatsappNumber,
+        stateName,
         bloodGroup,
         address,
         registeredBy,
         source,
         occupation,
-        stateId,
-        stateName
+        stateId
     ){
         try{
             let result = new patientModel({

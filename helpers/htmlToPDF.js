@@ -72,8 +72,8 @@ class HtmlToPdfHelper {
         "#page_1 #id1_2 #id1_2_2 {float:left;border:none;margin: 67px 0px 0px 0px;padding: 0px;border:none;width: 630px;overflow: hidden;}" +
         "#page_1 #id1_3 {border:none;margin: 27px 0px 0px 192px;padding: 0px;border:none;width: 3115px;overflow: hidden;}" +
         "" +
-        "#page_1 #p1dimg1 {position:absolute;top:39px;left:192px;z-index:-1;width:2935px;height:1908px;}" +
-        "#page_1 #p1dimg1 #p1img1 {width:2935px;height:1908px;}" +
+        "#page_1 #p1dimg1 {position:absolute;top:30px;left:180px;z-index:-1;width:3050px;height:2100px;}" +
+        "#page_1 #p1dimg1 #p1img1 {width:3050px;height:2100px;}" +
         "" +
         '.ft0{font: bold 99px "Times New Roman";color: #231f20;line-height: 113px;}' +
         '.ft1{font: bold 47px "Times New Roman";color: #999999;line-height: 75px;}' +
@@ -90,7 +90,7 @@ class HtmlToPdfHelper {
         '.ft12{font: bold 52px "Times New Roman";color: #999999;line-height: 75px;}' + //fotter
         "" +
         ".p0{text-align: right;padding-right: 5px;margin-top: 0px;margin-bottom: 0px;}" +
-        ".p1{text-align: justify;padding-left: 2000px;margin-top: 64px;margin-bottom: -2px;}" +
+        ".p1{text-align: justify;padding-left: 1700px;margin-top: 64px;margin-bottom: -2px;}" +
         ".p2{text-align: left;margin-top: 0px;margin-bottom: 0px;}" +
         ".p3{text-align: left;margin-top: 44px;margin-bottom: 0px;}" +
         ".p4{text-align: left;margin-top: 153px;margin-bottom: 0px;}" +
@@ -104,7 +104,7 @@ class HtmlToPdfHelper {
         ".p12{text-align: left;margin-top: 226px;margin-bottom: 0px;}" +
         ".p13{text-align: left;padding-left: 2776px;margin-top: 34px;margin-bottom: 0px;}" +
         ".p14{text-align: justify;padding-left: 200px;margin-top: 0px}" + //fotter
-        ".p15{text-align: justify;padding-left: 2200px;margin-top: 0px;margin-bottom: 20px;}" + //fotter
+        ".p15{text-align: justify;padding-left: 1900px;margin-top: 0px;margin-bottom: 20px;}" + //fotter
         "" +
         ".td0{padding: 0px;margin: 0px;width: 787px;vertical-align: bottom;}" +
         ".td1{padding: 0px;margin: 0px;width: 1578px;vertical-align: bottom;}" +
@@ -122,9 +122,9 @@ class HtmlToPdfHelper {
         ".tr4{height: 170px;}" +
         ".tr5{height: 158px;}" +
         "" +
-        '.t0{width: 2934px;margin-top: 279px;font: bold 79px "Arial";color: #202020;}' +
-        '.t1{width: 2933px;margin-left: 2px;margin-top: 79px;font: bold 57px "Arial";}' +
-        '.t2{width: 2935px;margin-top: 100px;font: bold 79px "Arial";color: #202020;}' +
+        '.t0{width: 2934px;margin-top: 279px;font: bold 79px "Times New Roman";color: #202020;}' +
+        '.t1{width: 2933px;margin-left: 2px;margin-top: 79px;font: bold 57px "Times New Roman";}' +
+        '.t2{width: 2935px;margin-top: 100px;font: bold 79px "Times New Roman";color: #202020;}' +
         '.watermark { position: fixed; opacity: 0.2; z-index: -1; }'+
         "" +
         "</STYLE>" +
@@ -285,7 +285,7 @@ class HtmlToPdfHelper {
         '<div class="watermark" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.2;">' +
         '<img src="https://h-cura.s3.ap-south-1.amazonaws.com/logo/H-CuraYellow.png" style="height: 1300px; width: 1300px;" />' +
         '</div>' +
-        '<div class="watermark" style="position: fixed; top: 70%; left: 15%; font-size: 70pt; opacity: 0.2;">' +
+        '<div class="watermark" style="position: fixed; top: 70%; left: 7%; font-size: 70pt; opacity: 0.2;">' +
             'This is a computer-generated document, no signature is required.' +
         '</div>' +
         "</BODY>" +
@@ -435,81 +435,81 @@ class HtmlToPdfHelper {
         "        }" +
         "" +
         "        .ft0 {" +
-        '            font: bold 99px "Arial";' +
+        '            font: bold 99px "Times New Roman";' +
         "            color: #231f20;" +
         "            line-height: 113px;" +
         "        }" +
         "" +
         "        .ft1 {" +
-        '            font: bold 47px "Arial";' +
+        '            font: bold 47px "Times New Roman";' +
         "            color: #999999;" +
         "            line-height: 75px;" +
         "        }" +
         "" +
         "        .ft2 {" +
-        '            font: bold 85px "Arial";' +
+        '            font: bold 85px "Times New Roman";' +
         "            color: #231f20;" +
         "            line-height: 97px;" +
         "        }" +
         "" +
         "        .ft3 {" +
-        '            font: bold 59px "Arial";' +
+        '            font: bold 59px "Times New Roman";' +
         "            color: #231f20;" +
         "            line-height: 69px;" +
         "        }" +
         "" +
         "        .ft4 {" +
-        '            font: bold 53px "Arial";' +
+        '            font: bold 53px "Times New Roman";' +
         "            color: #999999;" +
         "            line-height: 62px;" +
         "        }" +
         "" +
         "        .ft5 {" +
-        '            font: bold 47px "Arial";' +
+        '            font: bold 47px "Times New Roman";' +
         "            color: #828282;" +
         "            line-height: 55px;" +
         "        }" +
         "" +
         "        .ft6 {" +
-        '            font: bold 47px "Arial";' +
+        '            font: bold 47px "Times New Roman";' +
         "            color: #999999;" +
         "            line-height: 55px;" +
         "        }" +
         "" +
         "        .ft7 {" +
-        '            font: bold 79px "Arial";' +
+        '            font: bold 79px "Times New Roman";' +
         "            color: #202020;" +
         "            line-height: 92px;" +
         "        }" +
         "" +
         "        .ft8 {" +
-        '            font: bold 70px "Arial";' +
+        '            font: bold 70px "Times New Roman";' +
         "            color: #202020;" +
         "            line-height: 81px;" +
         "        }" +
         "" +
         "        .ft9 {" +
-        '            font: bold 57px "Arial";' +
+        '            font: bold 57px "Times New Roman";' +
         "            line-height: 66px;" +
         "        }" +
         "" +
         "        .ft10 {" +
-        '            font: 57px "Arial";' +
+        '            font: 57px "Times New Roman";' +
         "            color: #838181;" +
         "            line-height: 65px;" +
         "        }" +
         "" +
         "        .ft11 {" +
-        '            font: 1px "Arial";' +
+        '            font: 1px "Times New Roman";' +
         "            line-height: 63px;" +
         "        }" +
         "" +
         "        .ft12 {" +
-        '            font: 72px "Arial";' +
+        '            font: 72px "Times New Roman";' +
         "            color: #707070;" +
         "            line-height: 77px;" +
         "        }" +
-        '.ft13{font: bold 52px "Arial";color: #999999;line-height: 75px;}' + //fotter
+        '.ft13{font: bold 52px "Times New Roman";color: #999999;line-height: 75px;}' + //fotter
         "" +
         "        .p0 {" +
         "            text-align: right;" +
@@ -745,14 +745,14 @@ class HtmlToPdfHelper {
         "            width: 2935px;" +
         "            margin-left: 4px;" +
         "            margin-top: 279px;" +
-        '            font: bold 70px "Arial";' +
+        '            font: bold 70px "Times New Roman";' +
         "            color: #202020;" +
         "        }" +
         "" +
         "        .t1 {" +
         "            width: 2939px;" +
         "            margin-top: 79px;" +
-        '            font: 57px "Arial";' +
+        '            font: 57px "Times New Roman";' +
         "            color: #838181;" +
         "        }" +
         "" +
@@ -760,7 +760,7 @@ class HtmlToPdfHelper {
         "            width: 2935px;" +
         "            margin-left: 4px;" +
         "            margin-top: 139px;" +
-        '            font: 57px "Arial";' +
+        '            font: 57px "Times New Roman";' +
         "            color: #838181;" +
         "        }" +
         "" +
@@ -768,7 +768,7 @@ class HtmlToPdfHelper {
         "            width: 2935px;" +
         "            margin-left: 4px;" +
         "            margin-top: 124px;" +
-        '            font: 57px "Arial";' +
+        '            font: 57px "Times New Roman";' +
         "            color: #838181;" +
         "        }" +
         "" +
@@ -776,7 +776,7 @@ class HtmlToPdfHelper {
         "            width: 2935px;" +
         "            margin-left: 4px;" +
         "            margin-top: 120px;" +
-        '            font: 57px "Arial";' +
+        '            font: 57px "Times New Roman";' +
         "            color: #838181;" +
         "        }" +
         "" +
@@ -784,7 +784,7 @@ class HtmlToPdfHelper {
         "            width: 2935px;" +
         "            margin-left: 4px;" +
         "            margin-top: 45px;" +
-        '            font: bold 79px "Arial";' +
+        '            font: bold 79px "Times New Roman";' +
         "            color: #202020;" +
         "        }" +
         "    </STYLE>" +

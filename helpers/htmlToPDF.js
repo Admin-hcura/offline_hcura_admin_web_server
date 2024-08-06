@@ -523,7 +523,7 @@ class HtmlToPdfHelper {
         "" +
         "        .p1 {" +
         "            text-align: justify;" +
-        "            padding-left: 2060px;" +
+        "            padding-left: 1700px;" +
         "            margin-top: 64px;" +
         "            margin-bottom: 0px;" +
         "            padding-bottom: 80px;" +
@@ -606,7 +606,7 @@ class HtmlToPdfHelper {
         "            margin-bottom: 0px;" +
         "        }" +
         ".p14{text-align: justify;padding-left: 200px;margin-top: 0px}" + //fotter
-        ".p15{text-align: justify;padding-left: 2200px;margin-top: 20px;margin-bottom: 0px;}" + //fotter
+        ".p15{text-align: justify;padding-left: 1800px;margin-top: 20px;margin-bottom: 0px;}" + //fotter
         "" +
         "        .td0 {" +
         "            padding: 0px;" +
@@ -835,7 +835,7 @@ class HtmlToPdfHelper {
         " yrs, " +
         pdfDetails.gender +
         "</P>" +
-        '            <P class="p6 ft3">Doctor’s Name</P>' +
+        '<P class="p6 ft3">Doctor’s Name : ' +
         // '            <P class="p6 ft3">' +
         docfirstName +
         " " +

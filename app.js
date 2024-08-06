@@ -26,7 +26,6 @@ const port = 7001;
 const app = express();
 
 async function connectMongo() {
-    console.log(".............",process.env.MONGO_URI)
     try {
         await mongoose.connect(
           process.env.MONGO_URI,

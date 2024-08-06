@@ -2,11 +2,6 @@ const moment = require("moment-timezone");
 const mongoose = require("mongoose");
 const mongoSchedulerObjExported = require("../helpers/mongoSchedulerObj");
 
-
-
-
-
-
 class scheduler {
     startScheduler(mongoScheduler) {
         mongoSchedulerObjExported.mongo_scheduler = mongoScheduler;

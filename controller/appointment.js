@@ -2,7 +2,6 @@ const Boom = require("@hapi/boom");
 // const multiparty = require("multiparty");
 const moment = require("moment-timezone");
 const rule = require("../helpers/appointmentRule");
-// const schedulerObj = new scheduler();
 const constants = require("../helpers/constants");
 const appointmentDA = require("../layers/dataLayer/appointmentDA");
 const invoiceGenerator = require("../helpers/invoiceNoGenerater");
@@ -13,6 +12,7 @@ const paymentGateway = require("../helpers/paymentGateway");
 const { sourceModel, occupationModel } = require("../models/schema");
 const scheduler = require("../scheduler/scheduler");
 const schedulers = new scheduler();
+const apiResponse = require("../helpers/apiResponse")
 
 class appointment{
     async bookAppointment(req, res, next){
@@ -571,9 +571,154 @@ class appointment{
                 parseFloat(afterRemovingDiscount) +
                 parseFloat(gstAmount)).toFixed(2);
 
-            console.log("----payable------",payable)
+            console.log("----payable------",payable);
+            let roundedDownPayable = Math.floor(payable);
+            console.log("----payable------",roundedDownPayable);
+            let payableAmount = body.payableAmount
+            if(payable == payableAmount){
+                if(body.paymentMode === "online"){
+                    let payment = await paymentGateway.generatePaymentLinkPackage(
+                        ptDetails.firstName, 
+                        body.phoneNumber,
+                        ptDetails.emailId,
+                        payableAmount
+                    );
+                    if (payment && payment.data.status == constants.value.CREATED){
+                        let paymentObj = {
+                            patientId: body.patientId,
+                            doctorId: appointmentData[0].doctorId,
+                            branchId:  ptDetails.branchId,
+                            appointmentId: body.appointmentId,
+                            paymentDoneBy: body.paymentDoneBy,
+                            paymentFor: "HOMEOPATHY",
+                            promoCodes: body.promoCodes,
+                            payableAmount: payable,
+                            shortUrl: payment.data.short_url,
+                            paymentRelationId: payment.data.id.substring(6),
+                            paymentLinkId: payment.data.id,
+                            paymentStatus: payment.data.status,
+                            afterRemovingGst: afterRemovingDiscount,
+                            GSTAmount: gstAmount,
+                            discount: Discount,
+                            // GSTID: obj.GSTID,
+                        };
+                        let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
+                        let updatePackageDetailsInAppt = appointmentDA.updatePackageDetailsInAppt(
+                            body.appointmentId, addPaymentInfo._id);
+                        
+                        res.send({ success: true, data: addPaymentInfo});
+                    } else{
+                        throw Boom.badData(
+                            apiResponse.ServerErrors.error.payment_not_created
+                        );
+                    }
 
-            res.send({success: true, data: ptDetails});
+                } else {
+                    console.log("-------entered------")
+                    let paymentObj = {
+                        afterRemovingGst: afterRemovingDiscount,
+                        GSTAmount: gstAmount,
+                        discount: Discount,
+                        payableAmount: payable,
+                        paymentDoneBy: body.paymentDoneBy,
+                        remarks: body.remarks,
+                        promoCodes: body.promoCodes,
+                        paymentStatus: constants.value.CREATED,
+                        paymentFor: 'HOMEOPATHY',
+                        shortUrl: null,
+                        paymentRelationId: null,
+                        paymentLinkId: null,
+                        patientId: body.patientId,
+                        doctorId: appointmentData[0].doctorId,
+                        branchId:  ptDetails.branchId,
+                        appointmentId: body.appointmentId,
+                        packageId: body.packageId
+                        // GSTID: obj.GSTID,
+                    };
+                    let addPaymentInfo = await appointmentDA.addPackagePaymentInfo(paymentObj);
+                    console.log("=========  addPaymentInfo  =========",addPaymentInfo)
+                    let PAYMENT_ID = addPaymentInfo._id
+                    let paidOn = moment().format();
+                    let branchCode = await appointmentDA.branchCode(ptDetails.branchId);
+                    console.log("@@@@@@@  branchCode  @@@@@",branchCode)
+                    let invoiceNumber = await invoiceGenerator.generateInvoiceNumber(branchCode.branchCode);
+                    let obj = {
+                        paymentMethod: body.paymentMode,
+                        paymentStatus: "captured",
+                        paymentId: PAYMENT_ID,
+                        paymentRelationId: PAYMENT_ID,
+                        paidOn: paidOn,
+                        appointmentId: body.appointmentId,
+                        paymentLinkId: PAYMENT_ID,
+                        invoiceNumber: invoiceNumber
+                    };
+                    let relationId = obj.paymentRelationId;
+                    let updatePaymentReport = await appointmentDA.updatePaymentByPaymentIdBA(obj);
+                    console.log("=========  updatePaymentReport  =========",updatePaymentReport)
+                    let endDate =  moment(updatePaymentReport.paidOn).add(parseInt(packageDetails.months), 'months');
+                    if (!endDate.isValid()) {
+                      endDate = moment(startDate).endOf('month');
+                    }
+                    let packageSchedules = {
+                        userId: updatePaymentReport.userId,
+                        packageId: updatePaymentReport.packageId,
+                        paymentId: updatePaymentReport._id,
+                        endDate: endDate,
+                        paidOn: updatePaymentReport.paidOn,
+                      }
+                      let insertPackageSchedules = await appointmentDA.insertPackageSchedules(packageSchedules);
+                      console.log("=========  insertPackageSchedules  =========",insertPackageSchedules)
+                      let details ={
+                        endDate: insertPackageSchedules.endDate,
+                        _id: insertPackageSchedules._id
+                      }
+                    //   schedule package is not working
+                    //   await schedulers.changeisActiveStatusPackage(details)
+                      let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
+                        console.log("-------userInfo------",userInfo);
+                      let pdfDetails = {
+                        invoiceNumber: updatePaymentReport.invoiceNumber,
+                        firstName: userInfo[0].patient.firstName,
+                        lastName: userInfo[0].patient.lastName,
+                        paidOn: updatePaymentReport.paidOn,
+                        age: userInfo[0].patient.birthDate,
+                        gender: userInfo[0].patient.gender,
+                        docFirstName: userInfo[0].doctor.firstName,
+                        docLastName: userInfo[0].doctor.lastName,
+                        serviceCharges: updatePaymentReport.serviceCharges,
+                        discount: updatePaymentReport.discount,
+                        GST: "0%", // needs to work on gst
+                        payableAmount: updatePaymentReport.payableAmount,
+                        paymentMethod: updatePaymentReport.paymentMethod,
+                        docQualification: userInfo[0].doctor.qualification,
+                        hcuraId: userInfo[0].patient.hcuraId,
+                        packageName: packageDetails.name,
+                        packageAmount: packageDetails.amount,
+                        docRegstration : userInfo[0].doctor.registrationNumber,
+                        branchPhoneNumber: branchCode.branchPhoneNumber
+                        }
+                        console.log("--------pdfDetails-------", pdfDetails)
+                        emailSender.sendPackagePaymentSuccess(
+                            userInfo[0].patient.firstName,
+                            userInfo[0].patient.emailId,
+                            updatePaymentReport.payableAmount,
+                            "#" + relationId,
+                            updatePaymentReport.paymentMethod,
+                            packageDetails.name,
+                        );
+
+                      let file = await htmlToPDF.generateInvoiceForPackage(pdfDetails);
+                      console.log("111111111111     ",userInfo[0].patient)
+                      emailSender.sendPackageInvoiceEmail(userInfo[0].patient.emailId, file);
+                      console.log("2222222222222")
+                      
+                      console.log("333333333333")
+
+                      res.send({ success: true, data: userInfo});
+                }
+            } else {
+                throw Boom.internal(apiResponse.ServerErrors.error.illegial);
+            }
         } catch(e){
             next(e);
         }

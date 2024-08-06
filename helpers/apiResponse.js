@@ -4,7 +4,7 @@ ServerErrors.error = {
   admin_already_exist : "Admin already exist with this username or emailid or phonenumber or EmpNumber",
   phoneNumber_Exist: "Phone-number already exists",
   branchCode_not_exist: "Branch Code not avaliable",
-//   invalid_otp: "Invalid-OTP",
+  illegial: "Payment Missmatch please contact Admin",
   otp_expired: "OTP-Expired",
 //   invalid_phoneNumber_Otp: "Phone-number OTP is Invalid",
   invalid_Otp: "OTP is Invalid",

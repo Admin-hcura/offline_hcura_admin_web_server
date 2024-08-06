@@ -218,6 +218,43 @@ class Mail{
       }
     };
 
+    async sendPackagePaymentSuccess(
+      userName,
+      emailId,
+      amount,
+      translationId,
+      paymentMethod,
+      packageName
+    ) {
+      try {
+        let info = await this.setUpSmtp();
+        info
+          .sendMail({
+            from: constants.MAIL_CONFIG.auth.user,
+            to: emailId,
+            subject: "H-Cura Package Payment received successfully!",
+            html: (
+              await emailTemplates.sendPackagePaymentSuccess(
+                userName,
+                emailId,
+                amount,
+                translationId,
+                paymentMethod,
+                packageName
+              )
+            ).toString(),
+          })
+          .then(() => {
+            console.log("Email sent");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } catch (e) {
+        console.error("Internal error ", e);
+      }
+    };
+
     async appointmentBookedMail(
       userFirstName,
       userLastName,
@@ -344,6 +381,34 @@ class Mail{
           })
           .then(() => {
             console.log("TempAppt__Email sent To PT");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } catch (e) {
+        console.error("Internal error ", e);
+      }
+    };
+
+    async sendPackageInvoiceEmail(emailId, file) {
+      try {
+        let info = await this.setUpSmtp();
+        info
+          .sendMail({
+            from: constants.MAIL_CONFIG.auth.user,
+            to: [/*constants.MAIL_CONFIG.invoiceEmail,*/ emailId],
+            subject: "H-Cura Package invoice received successfully!",
+            text: "Hi Dear H-Cura consumer Please find the attached file for your reference \n \nThank you.",
+            attachments: [
+              {
+                filename: "packageInvoice.pdf",
+                content: file,
+                contentType: "application/pdf",
+              },
+            ],
+          })
+          .then(() => {
+            console.log("PACKAGE_INVOICE___Email sent");
           })
           .catch((error) => {
             console.error(error);

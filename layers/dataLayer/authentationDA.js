@@ -11,7 +11,8 @@ const saltRounds = 10;
 
 let mongDB = require("mongodb");
 const { consulatationAmountModel, packageModel, paymentModel, tempAppointmentModel,
-     promoCodesModel } = require("../../models/schema");
+     promoCodesModel, 
+     appointmentModel} = require("../../models/schema");
 
 
 class authentationDA {
@@ -354,6 +355,45 @@ class authentationDA {
     async getRoleDetils(roleId){
         try{
             return await roleModel.findOne({_id: roleId, isLocked: "ENABLED"});
+        } catch(e){
+            throw e;
+        }
+    };
+
+    async getPackageDetailsApptId(appointmentId){
+        try{
+            return await appointmentModel.aggregate(
+                [
+                    {
+                      $match: {
+                        _id: appointmentId,
+                        isActive: true
+                      }
+                    },
+                    {
+                      $lookup: {
+                        from: "package",
+                        localField: "packageId",
+                        foreignField: "_id",
+                        as: "packageDetails"
+                      }
+                    },
+                    {
+                      $unwind: {
+                        path: "$packageDetails",
+                        preserveNullAndEmptyArrays: true
+                      }
+                    },
+                    {
+                      $project: {
+                        packageName: "$packageDetails.name",
+                        packageAmount: "$packageDetails.amount",
+                        packageId: "$packageDetails._id",
+                        months: "$packageDetails.months"
+                      }
+                    }
+                  ]
+            );
         } catch(e){
             throw e;
         }

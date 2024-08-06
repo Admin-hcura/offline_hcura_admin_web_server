@@ -920,6 +920,86 @@ class appointmentDA{
             throw e;
         }
     };
+
+    async updatePackageDetailsInAppt(appointmentId, packagePaymentId){
+        try{
+            let result = await appointmentModel.findOneAndUpdate(
+                {_id: appointmentId},
+                { $set: {
+                    packagePaymentId: packagePaymentId
+                }
+            });
+            return result;
+        } catch(e){
+            throw e;
+        }
+    };
+
+    async addPackagePaymentInfo(paymentDetails){
+        try{
+            console.log(".........paymentDetails.paymentFor.........",paymentDetails.paymentFor)
+            let addPaymentInfo = new paymentModel({
+                afterRemovingGst: paymentDetails.afterRemovingGst,
+                GSTAmount: paymentDetails.GSTAmount,
+                discount: paymentDetails.Discount,
+                payableAmount: paymentDetails.payableAmount,
+                paymentDoneBy: paymentDetails.paymentDoneBy,
+                remarks: paymentDetails.remarks,
+                promoCodes: paymentDetails.promoCodes,
+                paymentStatus: paymentDetails.paymentStatus,
+                paymentFor: paymentDetails.paymentFor,
+                shortUrl: paymentDetails.shortUrl,
+                paymentRelationId: paymentDetails.paymentRelationId,
+                paymentLinkId: paymentDetails.paymentLinkId,
+                patientId: paymentDetails.patientId,
+                doctorId: paymentDetails.doctorId,
+                branchId: paymentDetails.branchId,
+                appointmentId: paymentDetails.appointmentId,
+                packageId: paymentDetails.packageId
+            });
+            return await addPaymentInfo.save();
+        } catch(e){
+            throw e;
+        }
+    };
+
+    async updatePaymentByPaymentIdBA(obj){
+        try{
+            let result = await paymentModel.findOneAndUpdate(
+                {_id: obj.paymentId },
+                { $set:{
+                    paymentMethod: obj.paymentMethod,
+                    paymentStatus: obj.paymentStatus,
+                    paymentId: obj.paymentId,
+                    paymentRelationId: obj.paymentRelationId,
+                    paidOn: obj.paidOn,
+                    appointmentId: obj.appointmentId,
+                    paymentLinkId: obj.paymentLinkId,
+                    invoiceNumber: obj.invoiceNumber
+                }},
+                { new: true}
+            );
+            return result;
+        } catch(e){
+            throw e;
+        }
+    };
+
+    async insertPackageSchedules(packageSchedules){
+        try{
+            let addSchedulesDetails = new packageSubscriptionModel({
+                patientId: packageSchedules.patientId,
+                packageId: packageSchedules.packageId,
+                paymentId: packageSchedules.paymentId,
+                startDate: new Date(),
+                endDate: packageSchedules.endDate,
+                paidOn: packageSchedules.paidOn,
+              });
+            return await addSchedulesDetails.save();
+        } catch(e){
+            throw e;
+        }
+    };
     
 }
 module.exports = new appointmentDA();

@@ -538,7 +538,8 @@ class authentication {
                             GST: "0%", // needs to work on gst
                             payableAmount: updatePaymentReport.payableAmount,
                             paymentMethod: updatePaymentDetails.paymentMethod,
-                            docQualification: userInfo[0].doctor.qualification
+                            docQualification: userInfo[0].doctor.qualification,
+                            docRegstration : userInfo[0].doctor.registrationNumber
                         }
                         console.log("+++++++++pdfDetails+++++++",pdfDetails);
                         //INVOICE EMAIL
@@ -571,36 +572,55 @@ class authentication {
                           );
                         
                         res.send({ success: true, data: userInfo});
-                      }else if (
-                        userInfo[0].appointmentFor == constants.value.MEDICINE
-                      ) {
-                        // //INVOICE EMAIL
+                      } else if (userInfo[0].appointmentFor == constants.value.PACKAGE) {
                         // let appointmentDetails =
-                        //   await appointmentBAObj.getInvoiceInfoForMedicineBA(
-                        //     updatePaymentReport._id
-                        //   );
-                        // let packageDetails = await appointmentBAObj.getPackageDetailsAppBA(getStatus.appointmentId)
-                        // let file = await htmlToPDF.generateInvoiceForPackage( appointmentDetails,packageDetails );
-                        // emailSender.sendPackageInvoiceEmail(userInfo[0].user.emailId, file);
-                        // let endDate =  moment(updatePaymentReport.paidOn).add(parseInt(packageDetails[0].months), 'months');
-                        // if (!endDate.isValid()) {
-                        //   endDate = moment(startDate).endOf('month');
-                        //   console.log("End Date:", endDate); 
-                        // }
-                        // let packageSchedules = {
-                        //   userId: updatePaymentReport.userId,
-                        //   packageId: updatePaymentReport.packageId,
-                        //   paymentId: updatePaymentReport._id,
-                        //   endDate: endDate,
-                        //   paidOn: updatePaymentReport.paidOn,
-                        // }
+                          // await appointmentBAObj.getInvoiceInfoForMedicineBA(
+                          //   updatePaymentReport._id
+                          // );
+                        let packageDetails = await authentationDAObj.getPackageDetailsApptId(getStatus.appointmentId);
+                        console.log("------packageDetails----------",packageDetails);
+                        let pdfDetails = {
+                          invoiceNumber: updatePaymentReport.invoiceNumber,
+                          firstName: userInfo[0].patient.firstName,
+                          lastName: userInfo[0].patient.lastName,
+                          paidOn: updatePaymentDetails.paidOn,
+                          age: userInfo[0].patient.birthDate,
+                          gender: userInfo[0].patient.gender,
+                          docFirstName: userInfo[0].doctor.firstName,
+                          docLastName: userInfo[0].doctor.lastName,
+                          serviceCharges: updatePaymentReport.serviceCharges,
+                          discount: updatePaymentReport.discount,
+                          GST: "0%", // needs to work on gst
+                          payableAmount: updatePaymentReport.payableAmount,
+                          paymentMethod: updatePaymentDetails.paymentMethod,
+                          docQualification: userInfo[0].doctor.qualification,
+                          hcuraId: userInfo[0].patient.hcuraId,
+                          packageName: packageDetails[0].name,
+                          packageAmount: packageDetails[0].amount,
+                          docRegstration : userInfo[0].doctor.registrationNumber
+                      }
+                        let file = await htmlToPDF.generateInvoiceForPackage(pdfDetails);
+                        emailSender.sendPackageInvoiceEmail(userInfo[0].user.emailId, file);
+                        let endDate =  moment(updatePaymentReport.paidOn).add(parseInt(packageDetails[0].months), 'months');
+                        console.log("---------------endDate---------",endDate)
+                        if (!endDate.isValid()) {
+                          endDate = moment(startDate).endOf('month');
+                          console.log("End Date:", endDate); 
+                        }
+                        let packageSchedules = {
+                          userId: updatePaymentReport.userId,
+                          packageId: updatePaymentReport.packageId,
+                          paymentId: updatePaymentReport._id,
+                          endDate: endDate,
+                          paidOn: updatePaymentReport.paidOn,
+                        }
                         // let insertPackageSchedules = await appointmentBAObj.insertPackageSchedulesBA(packageSchedules);
                         // let details ={
                         //   endDate: insertPackageSchedules.endDate,
                         //   _id: insertPackageSchedules._id
                         // }
                         // await schedulerObj.changeisActiveStatus(details)
-                        // // order details is getting empty ----------------------
+                        // order details is getting empty ----------------------
                         // let orderResult = await appointmentBAObj.getOrderInfoBA(
                         //   relationId
                         // );

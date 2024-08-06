@@ -264,9 +264,6 @@ class HtmlToPdfHelper {
         pdfDetails.paymentMethod.toUpperCase() +
         "</P>" +
         "</TR>" +
-        // '</TABLE>' +
-        // '<P class="p12 ft7">Payment Method</P>' +
-        // '<P class="p11 ft7">'+appointmentDetails.paymentMethod.toUpperCase()+'</P>' +
         "</DIV>" +
         "</DIV>" +
         // "<!-- Footer section -->" 
@@ -300,7 +297,728 @@ class HtmlToPdfHelper {
       console.log(e);
       throw e;
     }
-  }
+  };
+
+  async generateInvoiceForPackage(pdfDetails) {
+    try {
+      let options = {
+        format: "A4",
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-extensions",
+        ],
+        scale: 0.22,
+      };
+
+      let ptfirstName = pdfDetails.firstName.toUpperCase()
+      let ptlastName = pdfDetails.lastName.toUpperCase()
+      let docfirstName = pdfDetails.docFirstName.toUpperCase()
+      let doclastName = pdfDetails.docLastName.toUpperCase()
+      let docQualification = pdfDetails.docQualification.toUpperCase()
+      let paymentMethod = pdfDetails.paymentMethod.toUpperCase()
+      let packageName = pdfDetails.packageName.toUpperCase()
+      let packageAmount = pdfDetails.packageAmount
+      let roundeddown = Math.floor(pdfDetails.payableAmount);
+      let roundedDown = (pdfDetails.payableAmount - roundeddown)
+
+      let paidOn = moment(pdfDetails.paidOn)
+        .tz(constants.defaultTimezone)
+        .format("DD/MM/YYYY"); //
+      let patientAge = pdfDetails.age
+        ? moment().diff(pdfDetails.age, "years")
+        : "NA";
+      // let paymentId = appointmentDetails.paymentId
+      //   ? appointmentDetails.paymentId
+      //   : "NA";
+      let invoiceNumber = pdfDetails.invoiceNumber
+        ? pdfDetails.invoiceNumber
+        : "NA";
+
+        let watermarkImagePath = "https://h-cura.s3.ap-south-1.amazonaws.com/logo/H-CuraYellow.png"; // Change this to the path of your watermark image
+        let watermarkImageStyle = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.2;"; // Adjust the style as per your requirements
+      let html =
+        '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">' +
+        "<HTML>" +
+        "" +
+        "<HEAD>" +
+        '    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">' +
+        "    <TITLE>pdf-html</TITLE>" +
+        '    <META name="generator" content="BCL easyConverter SDK 5.0.252">' +
+        '    <STYLE type="text/css">' +
+        "        body {" +
+        "            margin-top: 0px;" +
+        "            margin-left: 0px;" +
+        "        }" +
+        "" +
+        "        #page_1 {" +
+        "            position: relative;" +
+        "            overflow: hidden;" +
+        "            margin: 162px 0px 832px 0px;" +
+        "            padding: 0px;" +
+        "            border: none;" +
+        "            width: 3307px;" +
+        "        }" +
+        "" +
+        "        #page_1 #id1_1 {" +
+        "            border: none;" +
+        "            margin: 0px 0px 0px 0px;" +
+        "            padding: 0px;" +
+        "            border: none;" +
+        "            width: 3500px;" +
+        "            /* width: 100%; */" +
+        "            overflow: hidden;" +
+        "            border-bottom: 1px solid black;" +
+        "            /* background-color: antiquewhite; */" +
+        "            margin-right: 10%;" +
+        "        }" +
+        "" +
+        "        #page_1 #id1_2 {" +
+        "            border: none;" +
+        "            margin: 237px 0px 0px 192px;" +
+        "            padding: 0px;" +
+        "            border: none;" +
+        "            width: 3115px;" +
+        "            overflow: hidden;" +
+        "        }" +
+        "" +
+        "        #page_1 #id1_2 #id1_2_1 {" +
+        "            float: left;" +
+        "            border: none;" +
+        "            margin: 0px 0px 0px 0px;" +
+        "            padding: 0px;" +
+        "            border: none;" +
+        "            width: 2485px;" +
+        "            overflow: hidden;" +
+        "        }" +
+        "" +
+        "        #page_1 #id1_2 #id1_2_2 {" +
+        "            float: left;" +
+        "            border: none;" +
+        "            /* margin: 67px 0px 0px 0px; */" +
+        "" +
+        "            padding: 0px;" +
+        "            border: none;" +
+        "            width: 630px;" +
+        "            overflow: hidden;" +
+        "        }" +
+        "" +
+        "        #page_1 #id1_3 {" +
+        "            border: none;" +
+        "            margin: 27px 0px 0px 188px;" +
+        "            padding: 0px;" +
+        "            border: none;" +
+        "            width: 3119px;" +
+        "            overflow: hidden;" +
+        "        }" +
+        "" +
+        "        #page_1 #id1_4 {" +
+        "            border: none;" +
+        "            margin: 34px 0px 0px 2968px;" +
+        "            padding: 0px;" +
+        "            border: none;" +
+        "            width: 339px;" +
+        "            overflow: hidden;" +
+        "        }" +
+        "" +
+        "        #page_1 #p1dimg1 {" +
+        "            position: absolute;" +
+        "            top: 39px;" +
+        "            left: 192px;" +
+        "            z-index: -1;" +
+        "            width: 2935px;" +
+        "            height: 2315px;" +
+        "        }" +
+        "" +
+        "        #page_1 #p1dimg1 #p1img1 {" +
+        "            width: 300px;" +
+        "        }" +
+        "" +
+        "        .ft0 {" +
+        '            font: bold 99px "Arial";' +
+        "            color: #231f20;" +
+        "            line-height: 113px;" +
+        "        }" +
+        "" +
+        "        .ft1 {" +
+        '            font: bold 47px "Arial";' +
+        "            color: #999999;" +
+        "            line-height: 75px;" +
+        "        }" +
+        "" +
+        "        .ft2 {" +
+        '            font: bold 85px "Arial";' +
+        "            color: #231f20;" +
+        "            line-height: 97px;" +
+        "        }" +
+        "" +
+        "        .ft3 {" +
+        '            font: bold 59px "Arial";' +
+        "            color: #231f20;" +
+        "            line-height: 69px;" +
+        "        }" +
+        "" +
+        "        .ft4 {" +
+        '            font: bold 53px "Arial";' +
+        "            color: #999999;" +
+        "            line-height: 62px;" +
+        "        }" +
+        "" +
+        "        .ft5 {" +
+        '            font: bold 47px "Arial";' +
+        "            color: #828282;" +
+        "            line-height: 55px;" +
+        "        }" +
+        "" +
+        "        .ft6 {" +
+        '            font: bold 47px "Arial";' +
+        "            color: #999999;" +
+        "            line-height: 55px;" +
+        "        }" +
+        "" +
+        "        .ft7 {" +
+        '            font: bold 79px "Arial";' +
+        "            color: #202020;" +
+        "            line-height: 92px;" +
+        "        }" +
+        "" +
+        "        .ft8 {" +
+        '            font: bold 70px "Arial";' +
+        "            color: #202020;" +
+        "            line-height: 81px;" +
+        "        }" +
+        "" +
+        "        .ft9 {" +
+        '            font: bold 57px "Arial";' +
+        "            line-height: 66px;" +
+        "        }" +
+        "" +
+        "        .ft10 {" +
+        '            font: 57px "Arial";' +
+        "            color: #838181;" +
+        "            line-height: 65px;" +
+        "        }" +
+        "" +
+        "        .ft11 {" +
+        '            font: 1px "Arial";' +
+        "            line-height: 63px;" +
+        "        }" +
+        "" +
+        "        .ft12 {" +
+        '            font: 72px "Arial";' +
+        "            color: #707070;" +
+        "            line-height: 77px;" +
+        "        }" +
+        '.ft13{font: bold 52px "Arial";color: #999999;line-height: 75px;}' + //fotter
+        "" +
+        "        .p0 {" +
+        "            text-align: right;" +
+        "            margin-right: 10%;" +
+        "            margin-top: 0px;" +
+        "            margin-bottom: 0px;" +
+        "        }" +
+        "" +
+        "        .p1 {" +
+        "            text-align: justify;" +
+        "            padding-left: 2060px;" +
+        "            margin-top: 64px;" +
+        "            margin-bottom: 0px;" +
+        "            padding-bottom: 80px;" +
+        "        }" +
+        "" +
+        "        .p2 {" +
+        "            text-align: left;" +
+        "            margin-top: 0px;" +
+        "            margin-bottom: 0px;" +
+        "        }" +
+        "" +
+        "        .p3 {" +
+        "            text-align: left;" +
+        "            margin-top: 44px;" +
+        "            margin-bottom: 0px;" +
+        "        }" +
+        "" +
+        "        .p4 {" +
+        "            text-align: left;" +
+        "            padding-left: 4px;" +
+        "            margin-top: 0px;" +
+        "            margin-bottom: 0px;" +
+        "        }" +
+        "" +
+        "        .p5 {" +
+        "            text-align: left;" +
+        "            padding-left: 4px;" +
+        "            margin-top: 153px;" +
+        "            margin-bottom: 0px;" +
+        "        }" +
+        "" +
+        "        .p6 {" +
+        "            text-align: left;" +
+        "            padding-left: 4px;" +
+        "            margin-top: 45px;" +
+        "            margin-bottom: 0px;" +
+        "        }" +
+        "" +
+        "        .p7 {" +
+        "            text-align: left;" +
+        "            padding-left: 4px;" +
+        "            margin-top: 28px;" +
+        "            margin-bottom: 0px;" +
+        "        }" +
+        "" +
+        "        .p8 {" +
+        "            text-align: left;" +
+        "            margin-top: 0px;" +
+        "            margin-bottom: 0px;" +
+        "            white-space: nowrap;" +
+        "        }" +
+        "" +
+        "        .p9 {" +
+        "            text-align: right;" +
+        "            margin-top: 0px;" +
+        "            margin-bottom: 0px;" +
+        "            white-space: nowrap;" +
+        "        }" +
+        "" +
+        "        .p10 {" +
+        "            text-align: right;" +
+        "            padding-right: 3px;" +
+        "            margin-top: 0px;" +
+        "            margin-bottom: 0px;" +
+        "            white-space: nowrap;" +
+        "        }" +
+        "" +
+        "        .p11 {" +
+        "            text-align: right;" +
+        "            padding-right: 1px;" +
+        "            margin-top: 0px;" +
+        "            margin-bottom: 0px;" +
+        "            white-space: nowrap;" +
+        "        }" +
+        "" +
+        "        .p12 {" +
+        "            text-align: left;" +
+        "            padding-left: 4px;" +
+        "            margin-top: 104px;" +
+        "            margin-bottom: 0px;" +
+        "        }" +
+        ".p14{text-align: justify;padding-left: 200px;margin-top: 0px}" + //fotter
+        ".p15{text-align: justify;padding-left: 2200px;margin-top: 20px;margin-bottom: 0px;}" + //fotter
+        "" +
+        "        .td0 {" +
+        "            padding: 0px;" +
+        "            margin: 0px;" +
+        "            width: 2764px;" +
+        "            vertical-align: bottom;" +
+        "        }" +
+        "" +
+        "        .td1 {" +
+        "            padding: 0px;" +
+        "            margin: 0px;" +
+        "            width: 171px;" +
+        "            vertical-align: bottom;" +
+        "        }" +
+        "" +
+        "        .td2 {" +
+        "            padding: 0px;" +
+        "            margin: 0px;" +
+        "            width: 1573px;" +
+        "            vertical-align: bottom;" +
+        "        }" +
+        "" +
+        "        .td3 {" +
+        "            padding: 0px;" +
+        "            margin: 0px;" +
+        "            width: 1366px;" +
+        "            vertical-align: bottom;" +
+        "        }" +
+        "" +
+        "        .td4 {" +
+        "            padding: 0px;" +
+        "            margin: 0px;" +
+        "            width: 1644px;" +
+        "            vertical-align: bottom;" +
+        "        }" +
+        "" +
+        "        .td5 {" +
+        "            padding: 0px;" +
+        "            margin: 0px;" +
+        "            width: 1291px;" +
+        "            vertical-align: bottom;" +
+        "        }" +
+        "" +
+        "        .td6 {" +
+        "            padding: 0px;" +
+        "            margin: 0px;" +
+        "            width: 1567px;" +
+        "            vertical-align: bottom;" +
+        "        }" +
+        "" +
+        "        .td7 {" +
+        "            padding: 0px;" +
+        "            margin: 0px;" +
+        "            width: 1368px;" +
+        "            vertical-align: bottom;" +
+        "        }" +
+        "" +
+        "        .td8 {" +
+        "            padding: 0px;" +
+        "            margin: 0px;" +
+        "            width: 1490px;" +
+        "            vertical-align: bottom;" +
+        "        }" +
+        "" +
+        "        .td9 {" +
+        "            padding: 0px;" +
+        "            margin: 0px;" +
+        "            width: 1445px;" +
+        "            vertical-align: bottom;" +
+        "        }" +
+        "" +
+        "        .td10 {" +
+        "            border-bottom: #707070 1px solid;" +
+        "            padding: 0px;" +
+        "            margin: 0px;" +
+        "            width: 1490px;" +
+        "            vertical-align: bottom;" +
+        "        }" +
+        "" +
+        "        .td11 {" +
+        "            border-bottom: #707070 1px solid;" +
+        "            padding: 0px;" +
+        "            margin: 0px;" +
+        "            width: 1445px;" +
+        "            vertical-align: bottom;" +
+        "        }" +
+        "" +
+        "        .td12 {" +
+        "            padding: 0px;" +
+        "            margin: 0px;" +
+        "            width: 1668px;" +
+        "            vertical-align: bottom;" +
+        "        }" +
+        "" +
+        "        .td13 {" +
+        "            padding: 0px;" +
+        "            margin: 0px;" +
+        "            width: 1267px;" +
+        "            vertical-align: bottom;" +
+        "        }" +
+        "" +
+        "        .tr0 {" +
+        "            height: 130px;" +
+        "        }" +
+        "" +
+        "        .tr1 {" +
+        "            height: 77px;" +
+        "        }" +
+        "" +
+        "        .tr2 {" +
+        "            height: 78px;" +
+        "        }" +
+        "" +
+        "        .tr3 {" +
+        "            height: 93px;" +
+        "        }" +
+        "" +
+        "        .tr4 {" +
+        "            height: 63px;" +
+        "        }" +
+        "" +
+        "        .tr5 {" +
+        "            height: 171px;" +
+        "        }" +
+        "" +
+        "        .tr6 {" +
+        "            height: 147px;" +
+        "        }" +
+        "" +
+        "        .tr7 {" +
+        "            height: 146px;" +
+        "        }" +
+        "" +
+        "        .tr8 {" +
+        "            height: 157px;" +
+        "        }" +
+        "" +
+        "        .t0 {" +
+        "            width: 2935px;" +
+        "            margin-left: 4px;" +
+        "            margin-top: 279px;" +
+        '            font: bold 70px "Arial";' +
+        "            color: #202020;" +
+        "        }" +
+        "" +
+        "        .t1 {" +
+        "            width: 2939px;" +
+        "            margin-top: 79px;" +
+        '            font: 57px "Arial";' +
+        "            color: #838181;" +
+        "        }" +
+        "" +
+        "        .t2 {" +
+        "            width: 2935px;" +
+        "            margin-left: 4px;" +
+        "            margin-top: 139px;" +
+        '            font: 57px "Arial";' +
+        "            color: #838181;" +
+        "        }" +
+        "" +
+        "        .t3 {" +
+        "            width: 2935px;" +
+        "            margin-left: 4px;" +
+        "            margin-top: 124px;" +
+        '            font: 57px "Arial";' +
+        "            color: #838181;" +
+        "        }" +
+        "" +
+        "        .t4 {" +
+        "            width: 2935px;" +
+        "            margin-left: 4px;" +
+        "            margin-top: 120px;" +
+        '            font: 57px "Arial";' +
+        "            color: #838181;" +
+        "        }" +
+        "" +
+        "        .t5 {" +
+        "            width: 2935px;" +
+        "            margin-left: 4px;" +
+        "            margin-top: 45px;" +
+        '            font: bold 79px "Arial";' +
+        "            color: #202020;" +
+        "        }" +
+        "    </STYLE>" +
+        "</HEAD>" +
+        "" +
+        '<BODY style="justify-content: center; align-items: center; display: flex;">' +
+        '    <DIV id="page_1">' +
+        '        <DIV id="p1dimg1">' +
+        '            <IMG src="https://h-cura.s3.ap-south-1.amazonaws.com/logo/h-cura-logo.png" id="p1img1">' +
+        "        </DIV>" +
+        '        <DIV id="id1_1">' +
+        '            <P class="p0 ft0">Package</P>' +
+        '            <div style=" display: flex;">' +
+        // '                <P class="p1 ft1">' +
+        // '                    Transaction Id: '+paymentId+' '+
+        // '                </P>' +
+        '                <P class="p1 ft1">' +
+        "                    Invoice Number: " +
+        invoiceNumber +
+        "                </P>" +
+        "            </div>" +
+        "" +
+        "        </DIV>" +
+        '        <DIV id="id1_2">' +
+        '            <DIV id="id1_2_1">' +
+        '                <P class="p2 ft2">Patient’s Name</P>' +
+        '                <P class="p3 ft3">' +
+        ptfirstName +
+        " " +
+        ptlastName +
+        "</P>" +
+        '<P class="p3 ft3">PatientId : ' +
+        pdfDetails.hcuraId +
+        "</P>" +
+        "            </DIV>" +
+        '            <DIV id="id1_2_2">' +
+        '                <P class="p2 ft4">Date : ' +
+        paidOn +
+        "</P>" +
+        "            </DIV>" +
+        "        </DIV>" +
+        '        <DIV id="id1_3">' +
+        '            <P class="p4 ft5">' +
+        patientAge +
+        " yrs, " +
+        pdfDetails.gender +
+        "</P>" +
+        '            <P class="p6 ft3">Doctor’s Name</P>' +
+        // '            <P class="p6 ft3">' +
+        docfirstName +
+        " " +
+        doclastName +
+        " - " +
+        docQualification +
+        "</P>" +
+        '<P class="p6 ft6">Registration Number : ' +
+        pdfDetails.docRegstration +
+        "</P>" +
+        '            <TABLE cellpadding=0 cellspacing=0 class="t0">' +
+        "                <TR>" +
+        '                    <TD class="tr0 td0">' +
+        '                        <P class="p8 ft7">Selected Package</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr0 td1">' +
+        '                        <P class="p8 ft8">Price</P>' +
+        "                    </TD>" +
+        "                </TR>" +
+        "            </TABLE>" +
+        '<TABLE cellpadding=0 cellspacing=0 class="t1">';
+        html +=
+          "<TR>" +
+          '	<TD class="tr3 td2"><P class="p8 ft8">' +
+          packageName +
+          "</P></TD>" +
+          '	<TD class="tr3 td3"><P class="p9 ft7">' +
+          parseFloat(packageAmount).toFixed(2) +
+          "</P></TD>" +
+          "</TR>" +
+          "<TR>" +
+          '	<TD class="tr4 td4"><P class="p3 ft11">&nbsp;</P></TD>' +
+          '	<TD class="tr4 td5"><P class="p3 ft11">&nbsp;</P></TD>' +
+          "</TR>";
+      html += `<IMG src="${watermarkImagePath}" style="${watermarkImageStyle}"> `;
+      html += "</TABLE>";
+
+      html +=
+        '            <TABLE cellpadding=0 cellspacing=0 class="t5">' +
+        "                <TR>" +
+        '                    <TD class="tr5 td12">' +
+        '                        <P class="p8 ft7">Package Fee</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr5 td13">' +
+        '                        <P class="p9 ft7">' +
+        parseFloat(packageAmount).toFixed(2) +
+        "</P>" +
+        "                    </TD>" +
+        "                </TR>" +
+        "                <TR>" +
+        '                    <TD class="tr6 td12">' +
+        '                        <P class="p8 ft7">Service Charge</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr6 td13">' +
+        '                        <P class="p9 ft7">' +
+        "+" +
+        parseFloat(pdfDetails.serviceCharge).toFixed(2) +
+        "</P>" +
+        "                    </TD>" +
+        "                </TR>" +
+        "                <TR>" +
+        '                    <TD class="tr7 td12">' +
+        '                        <P class="p8 ft7">Discount</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr7 td13">' +
+        '                        <P class="p10 ft7">' +
+        "-" +
+        parseFloat(pdfDetails.discount).toFixed(2) +
+        "</P>" +
+        "                    </TD>" +
+        "                </TR>" +
+        "                <TR>" +
+        '                    <TD class="tr6 td12">' +
+        '                        <P class="p8 ft7">GST</P>' + //GST@Nill (GST is exempt for healthcare services)
+        "                    </TD>" +
+        '                    <TD class="tr6 td13">' +
+        '                        <P class="p11 ft7">' +
+        "+" +
+        parseFloat(pdfDetails.GST).toFixed(2) +
+        "</P>" +
+        "                    </TD>" +
+        "                </TR>" +
+        "                <TR>" +
+        '                    <TD class="tr8 td12">' +
+        '                        <P class="p8 ft7">CGST</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr8 td13">' +
+        '                        <P class="p9 ft7">' +
+        "+" +
+        parseFloat(pdfDetails.GST).toFixed(2) +
+        "</P>" +
+        "                    </TD>" +
+        "                </TR>" +
+        "                <TR>" +
+        '                    <TD class="tr8 td12">' +
+        '                        <P class="p8 ft7">IGST</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr8 td13">' +
+        '                        <P class="p9 ft7">' +
+        "+" +
+        parseFloat(pdfDetails.GST).toFixed(2) +
+        "</P>" +
+        "                    </TD>" +
+        "                </TR>" +
+        "                <TR>" +
+        '                    <TD class="tr8 td12">' +
+        '                        <P class="p8 ft7">UGST</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr8 td13">' +
+        '                        <P class="p9 ft7">' +
+        "+" +
+        parseFloat(pdfDetails.GST).toFixed(2) +
+        "</P>" +
+        "                    </TD>" +
+        "                </TR>" +
+        "                <TR>" +
+        '                    <TD class="tr8 td12">' +
+        '                        <P class="p8 ft7">Round off</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr8 td13">' +
+        '                        <P class="p9 ft7">' +
+        "-" +
+        parseFloat(roundedDown).toFixed(2) +
+        "</P>" +
+        "                    </TD>" +
+        "                </TR>" +
+
+        "                <TR>" +
+        '                    <TD class="tr8 td12">' +
+        '                        <P class="p8 ft7">Total Amount</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr8 td13">' +
+        '                        <P class="p9 ft7">' +
+        parseFloat(roundeddown).toFixed(2) +
+        "</P>" +
+        "                    </TD>" +
+        "                </TR>" +
+        "                <TR>" +
+        '                    <TD class="tr8 td12">' +
+        '                        <P class="p8 ft7">&nbsp;</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr8 td13">' +
+        '                        <P class="p9 ft7">&nbsp;</P>' +
+        "                    </TD>" +
+        "                </TR>" +
+        "                <TR>" +
+        '                    <TD class="tr8 td12">' +
+        '                        <P class="p8 ft7">Payment Method</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr8 td13">' +
+        '                        <P class="p9 ft7">' +
+        paymentMethod +
+        "</P>" +
+        "                    </TD>" +
+        "                </TR>" +
+        "            </TABLE>" +
+        "        </DIV>" +
+        "    </DIV>" +
+        // "<!-- Footer section -->" 
+        '<FOOTER style="position: fixed; bottom: 60px; width: 86%;">' +
+            '<DIV class="p14 ft13">' +
+                "Registered & Corporate Office : Sai Towers Building No:779&780, 2nd Floor, Corporation Colony, South End Main Road, 9th Block Jayanagar, LandMark - Opposite to Metro Pillar No:92, Bangalore, Karnataka - 560069."+
+            "</DIV>"+
+            '<DIV class="p1 ft1">'+"    "+
+            "</DIV>"+
+            '<DIV class="p14 ft13">' +
+                "For Booking Appointments Contact us on : "+
+                pdfDetails.branchPhoneNumber +
+            "</DIV>"+
+            '<DIV class="p15 ft1">' +
+                "For more Info visit : "+
+                visit_us_on+
+            "</DIV>"+
+        "</FOOTER>"+
+        "</BODY>" +
+        "" +
+        "</HTML>";
+
+      let file = { content: html };
+      let pdfBuffer = await html_to_pdf.generatePdf(file, options);
+      return pdfBuffer;
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  };
 }
 
 module.exports = new HtmlToPdfHelper();

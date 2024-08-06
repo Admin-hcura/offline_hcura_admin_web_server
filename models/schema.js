@@ -150,6 +150,7 @@ const { number, required } = require("joi");
     prescriptionId: {type: mongoose.Schema.Types.ObjectId, ref: "Prescription", default: null},
     branchId: {type: mongoose.Schema.Types.ObjectId, ref: "Branches", default: null},
     bookedBy: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
+    packageId: {type: mongoose.Schema.Types.ObjectId, ref: "Package", default: null},
     appointmentDate: { type: Date, default: null },
     startTime: { type: Date, default: null },
     endTime: { type: Date, default: null },
@@ -194,11 +195,13 @@ const { number, required } = require("joi");
     paymentDoneBy: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
     dayId: {type: mongoose.Schema.Types.ObjectId, ref: "Day", default: null},
     slotId: {type: mongoose.Schema.Types.ObjectId, ref: "Slot", default: null},
+    packagePaymentId: {type: mongoose.Schema.Types.ObjectId, ref: "Payment", default: null},
+    astheticPaymentId: {type: mongoose.Schema.Types.ObjectId, ref: "Payment", default: null},
     paymentFor: {
         type: String,
         enum: [
           "CONSULTATION",
-          "PACKAGE",
+          "HOMEOPATHY",
           "EXTERNAL_SOURCE",
           "ASTHETIC"
         ],

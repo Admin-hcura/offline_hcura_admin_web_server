@@ -68,8 +68,8 @@ exports.patientRegRule = Joi.object({
     emailId: Joi.string().required().error(new Error("Email Id is required")),
     phoneNumber: Joi.number().required().error(new Error("phone Number is required")),
     whatsappNumber: Joi.number().empty("").allow(null),
-    stateId: Joi.number().required().error(new Error("stateId is required")),
-    stateName: Joi.number().required().error(new Error("stateId is required")),
+    stateId: Joi.string().required().error(new Error("stateId is required")),
+    stateName: Joi.string().required().error(new Error("state name is required")),
     bloodGroup: Joi.string().empty("").allow(null),
     address: Joi.array().items(Joi.object({
         houseNo: Joi.string().empty("").allow(null).default(null),

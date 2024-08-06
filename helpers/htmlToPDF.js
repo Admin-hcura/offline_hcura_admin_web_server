@@ -72,8 +72,8 @@ class HtmlToPdfHelper {
         "#page_1 #id1_2 #id1_2_2 {float:left;border:none;margin: 67px 0px 0px 0px;padding: 0px;border:none;width: 630px;overflow: hidden;}" +
         "#page_1 #id1_3 {border:none;margin: 27px 0px 0px 192px;padding: 0px;border:none;width: 3115px;overflow: hidden;}" +
         "" +
-        "#page_1 #p1dimg1 {position:absolute;top:30px;left:180px;z-index:-1;width:3050px;height:2100px;}" +
-        "#page_1 #p1dimg1 #p1img1 {width:3050px;height:2100px;}" +
+        "#page_1 #p1dimg1 {position:absolute;top:39px;left:192px;z-index:-1;width:2935px;height:1908px;}" +
+        "#page_1 #p1dimg1 #p1img1 {width:3200px;height:2200px;}" +
         "" +
         '.ft0{font: bold 99px "Times New Roman";color: #231f20;line-height: 113px;}' +
         '.ft1{font: bold 47px "Times New Roman";color: #999999;line-height: 75px;}' +

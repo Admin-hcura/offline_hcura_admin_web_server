@@ -244,13 +244,15 @@ class authentication {
     async patientRegistartion(req, res, next) {
         try {
             let body = req.body;
+            console.log("......body......", body);
             const { error } = rule.patientRegRule.validate(body);
             if (error) {
                 throw Boom.badData(error.message);
             }
-    
+            console.log("......error......", error);
             // Check branch code
             let branchDetails = await authentationDAObj.getBrachDetailsDA(body.branchId);
+            console.log("......branchDetails......", branchDetails);
             if (!branchDetails) {
                 throw Boom.conflict(apiResponse.ServerErrors.error.branchCode_not_exist);
             }

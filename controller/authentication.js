@@ -734,7 +734,7 @@ class authentication {
     };
 
     // payment status checking 
-    async offlinPaymentStatus(req, res, next) {
+    async paymentStatus(req, res, next) {
         try {
         let body = req.body;
         const { error } = rule.offlinePaymentStatusRule.validate(body);

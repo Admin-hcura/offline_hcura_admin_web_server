@@ -62,8 +62,8 @@ router.post("/payment/clinic/web_hook",
     authenticationController.getPaymentReportByWebHook
 );
 // offline patment status checking
-router.post("/offline/payment/status", 
-    authenticationController.offlinPaymentStatus
+router.post("/payment/status", 
+    authenticationController.paymentStatus
 );
 router.post("/get/role/details",
     authenticationController.getRoleDetails

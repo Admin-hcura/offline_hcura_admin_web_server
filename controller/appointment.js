@@ -597,7 +597,7 @@ class appointment{
                         let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
                         console.log("------------addPaymentInfo------",addPaymentInfo)
                         let updatePackageDetailsInAppt = await appointmentDA.updatePackageDetailsInAppt(
-                            body.appointmentId, addPaymentInfo._id, packageId);
+                            body.appointmentId, addPaymentInfo._id, body.packageId);
                             console.log("------------updatePackageDetailsInAppt------",updatePackageDetailsInAppt)
                         res.send({ success: true, data: addPaymentInfo});
                     } else{

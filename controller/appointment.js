@@ -632,8 +632,9 @@ class appointment{
                     };
                     let addPaymentInfo = await appointmentDA.addPackagePaymentInfo(paymentObj);
                     console.log("=========  addPaymentInfo  =========",addPaymentInfo)
+                    console.log("=========   body.packageId  =========",body.packageId)
                     let updatePackageDetailsInAppt = await appointmentDA.updatePackageDetailsInAppt(
-                        body.appointmentId, addPaymentInfo._id, packageId);
+                        body.appointmentId, addPaymentInfo._id, body.packageId);
                     console.log("=========  updatePackageDetailsInAppt  =========",updatePackageDetailsInAppt)
                     let PAYMENT_ID = addPaymentInfo._id
                     let paidOn = moment().format();
@@ -729,6 +730,34 @@ class appointment{
             }
             let result = await appointmentDA.createEstimation(body);
             res.send({ success: true, data: result});
+        } catch(e){
+            next(e);
+        }
+    };
+
+    async getPatientDetilsPackage(req, res, next){
+        try{
+            let body = req.body
+            const { error } = rule.hcuraIdRule.validate(body);
+            if (error){
+              throw Boom.badData(error.message);
+            }
+            let result = await appointmentDA.getPatientDetailsPackagePayments(body.hcuraId);
+            res.status(200).send({ status: true, data: result });
+        } catch(e){
+            next(e);
+        }
+    };
+
+    async getPaymentDetailsByApptId(req, res, next){
+        try{
+            let body = req.body
+            const { error } = rule.appointmentIdRule.validate(body);
+            if (error){
+              throw Boom.badData(error.message);
+            }
+            let result =  await appointmentDA.getPaymentDetailsByAppointmentId(body.appointmentId);
+            res.status(200).send({ status: true, data: result });
         } catch(e){
             next(e);
         }

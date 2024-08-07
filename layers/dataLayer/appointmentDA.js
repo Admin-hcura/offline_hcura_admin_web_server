@@ -1003,6 +1003,189 @@ class appointmentDA{
             throw e;
         }
     };
+
+    async getPatientDetailsPackagePayments(hcuraId){
+        try{
+            const hcuraid = hcuraId.replace(/\s+/g, '').toUpperCase();
+            return await patientModel.aggregate(
+                [
+                    {
+                      $match: {
+                        hcuraId: hcuraid,
+                        isDeleted: false
+                      }
+                    },
+                    {
+                      $lookup: {
+                        from: "appointment",
+                        localField: "_id",
+                        foreignField: "patientId",
+                        as: "appointmentDetails"
+                      }
+                    },
+                    {
+                      $unwind: {
+                        path: "$appointmentDetails",
+                        preserveNullAndEmptyArrays: true
+                      }
+                    },
+                    {
+                      $lookup: {
+                        from: "admin",
+                        localField: "appointmentDetails.doctorId",
+                        foreignField: "_id",
+                        as: "doctorDetails"
+                      }
+                    },
+                    {
+                      $unwind: {
+                        path: "$doctorDetails",
+                        preserveNullAndEmptyArrays: true
+                      }
+                    },
+                    {
+                      $project: {
+                        fullName: {
+                          $concat: ["$firstName", " ", "$lastName"]
+                        },
+                        gender: 1,
+                        emailId: 1,
+                        bloodGroup: 1,
+                        birthDate: 1,
+                        hcuraId: 1,
+                        phoneNumber: 1,
+                        doctorId: "$doctorDetails._id",
+                        docFullName: {
+                          $concat: [
+                            "$doctorDetails.firstName",
+                            " ",
+                            "$doctorDetails.lastName"
+                          ]
+                        },
+                        appointmentId: "$appointmentDetails._id",
+                        appointmentNumber:
+                          "$appointmentDetails.appointmentNumber",
+                        appointmentDate:
+                          "$appointmentDetails.appointmentDate"
+                      }
+                    }
+                  ]
+            )
+
+        } catch(e){
+            throw e;
+        }
+    };
+
+    async getPaymentDetailsByAppointmentId(appointmentId){
+        try{
+            return await paymentModel.aggregate(
+                [
+                    {
+                      $match: {
+                        appointmentId: new mongoose.Types.ObjectId(appointmentId),
+                        isDeleted: false
+                      }
+                    },
+                    {
+                      $lookup: {
+                        from: "patient",
+                        localField: "patientId",
+                        foreignField: "_id",
+                        as: "patientDetails"
+                      }
+                    },
+                    {
+                      $unwind: {
+                        path: "$patientDetails",
+                        preserveNullAndEmptyArrays: true
+                      }
+                    },
+                    {
+                      $lookup: {
+                        from: "appointment",
+                        localField: "appointmentId",
+                        foreignField: "_id",
+                        as: "appointmentDetails"
+                      }
+                    },
+                    {
+                      $unwind: {
+                        path: "$appointmentDetails",
+                        preserveNullAndEmptyArrays: true
+                      }
+                    },
+                    {
+                      $lookup: {
+                        from: "package",
+                        localField: "packageId",
+                        foreignField: "_id",
+                        as: "packageDetails"
+                      }
+                    },
+                    {
+                      $unwind: {
+                        path: "$packageDetails",
+                        preserveNullAndEmptyArrays: true
+                      }
+                    },
+                    {
+                      $lookup: {
+                        from: "admin",
+                        localField: "paymentDoneBy",
+                        foreignField: "_id",
+                        as: "paymentDoneDetails"
+                      }
+                    },
+                    {
+                      $unwind: {
+                        path: "$paymentDoneDetails",
+                        preserveNullAndEmptyArrays: true
+                      }
+                    },
+                    {
+                      $project: {
+                        consultationMode:
+                          "$appointmentDetails.consultationMode",
+                        consultationType:
+                          "$appointmentDetails.consultationType",
+                        paymentFor: 1,
+                        payableAmount: 1,
+                        paymentType: "$paymentMethod",
+                        packageName: "$packageDetails.packageName",
+                        discount: 1,
+                        paidOn: 1,
+                        createdOn: 1,
+                        packageId: 1,
+                        paymentDoneBy: {
+                          $concat: [
+                            "$paymentDoneDetails.firstName",
+                            " ",
+                            "$paymentDoneDetails.lastName"
+                          ]
+                        },
+                        userAddress: {
+                          $concat: [
+                            "$patientDetails.firstName",
+                            " ",
+                            "$patientDetails.lastName"
+                          ]
+                        },
+                        phoneNumber: "$patientDetails.phoneNumber",
+                        countryCode: "$patientDetails.countryCode",
+                        houseNo: "$patientDetails.address.houseNo",
+                        street: "$patientDetails.address.street",
+                        city: "$patientDetails.address.city",
+                        state: "$patientDetails.address.state",
+                        pinCode: "$patientDetails.address.pinCode"
+                      }
+                    }
+                  ]
+            )
+        } catch(e){
+            throw e
+        }
+    };
     
 }
 module.exports = new appointmentDA();

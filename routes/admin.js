@@ -77,5 +77,11 @@ router.post("/payment/package",
 router.post("/create/estimation",
   appointmentController.insertEstimation
 );
+router.post("/get/patient/detils/package/payments",
+  appointmentController.getPatientDetilsPackage
+);
+router.post("/get/payment/details/for/particular/appt",
+  appointmentController.getPaymentDetailsByApptId
+);
 
 module.exports = router;

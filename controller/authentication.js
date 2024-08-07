@@ -614,8 +614,8 @@ class authentication {
                           paymentMethod: updatePaymentDetails.paymentMethod,
                           docQualification: userInfo[0].doctor.qualification,
                           hcuraId: userInfo[0].patient.hcuraId,
-                          packageName: packageDetails[0].name,
-                          packageAmount: packageDetails[0].amount,
+                          packageName: packageDetails[0].packageName,
+                          packageAmount: packageDetails[0].packageAmount,
                           docRegstration : userInfo[0].doctor.registrationNumber
                         }
 
@@ -625,7 +625,7 @@ class authentication {
                           updatePaymentReport.payableAmount,
                           "#" + relationId,
                           updatePaymentReport.paymentMethod,
-                          packageDetails[0].name,
+                          packageDetails[0].packageName,
                       );
                         let file = await htmlToPDF.generateInvoiceForPackage(pdfDetails);
                         emailSender.sendPackageInvoiceEmail(userInfo[0].patient.emailId, file);

@@ -576,10 +576,8 @@ class authentication {
                         
                         res.send({ success: true, data: userInfo});
                       } else if (userInfo[0].paymentFor == constants.value.HOMEOPATHY) {
-                        // let appointmentDetails =
-                          // await appointmentBAObj.getInvoiceInfoForMedicineBA(
-                          //   updatePaymentReport._id
-                          // );
+                        
+                        let packageDetails = await authentationDAObj.getPackageDetailsApptId(getStatus.appointmentId);
                         let endDate =  moment(updatePaymentReport.paidOn).add(parseInt(packageDetails[0].months), 'months');
                         console.log("---------------endDate---------",endDate)
                         if (!endDate.isValid()) {
@@ -599,7 +597,6 @@ class authentication {
                           _id: insertPackageSchedules._id
                         }
 
-                        let packageDetails = await authentationDAObj.getPackageDetailsApptId(getStatus.appointmentId);
                         console.log("------packageDetails----------",packageDetails);
                         let pdfDetails = {
                           invoiceNumber: updatePaymentReport.invoiceNumber,

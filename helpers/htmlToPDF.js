@@ -320,7 +320,7 @@ class HtmlToPdfHelper {
       let doclastName = pdfDetails.docLastName.toUpperCase()
       let docQualification = pdfDetails.docQualification.toUpperCase()
       let paymentMethod = pdfDetails.paymentMethod.toUpperCase()
-      let packageName = pdfDetails.packageName.toUpperCase()
+      let packageName = pdfDetails.packageName
       let packageAmount = pdfDetails.packageAmount
       let roundeddown = Math.floor(pdfDetails.payableAmount);
       let roundedDown = (pdfDetails.payableAmount - roundeddown)

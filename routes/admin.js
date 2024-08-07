@@ -83,5 +83,8 @@ router.post("/get/patient/detils/package/payments",
 router.post("/get/payment/details/for/particular/appt",
   appointmentController.getPaymentDetailsByApptId
 );
+router.post("/get/patient/payment/details/for/external",
+  appointmentController.getPatientAndPaymentDetailsForExternal
+);
 
 module.exports = router;

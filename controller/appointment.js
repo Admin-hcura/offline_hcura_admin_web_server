@@ -763,6 +763,20 @@ class appointment{
         }
     };
 
+    async getPatientAndPaymentDetailsForExternal(req, res, next){
+        try{
+            let body = req.body
+            const { error } = rule.hcuraIdRule.validate(body);
+            if (error){
+              throw Boom.badData(error.message);
+            }
+            let result = await appointmentDA.getPatientAndPaymentDetailsForExternal(body.hcuraId);
+            res.status(200).send({ status: true, data: result });
+        } catch(e){
+            next(e);
+        }
+    };
+
 };
 
 module.exports = new appointment();

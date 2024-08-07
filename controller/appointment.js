@@ -595,9 +595,10 @@ class appointment{
                             // GSTID: obj.GSTID,
                         };
                         let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
-                        let updatePackageDetailsInAppt = appointmentDA.updatePackageDetailsInAppt(
+                        console.log("------------addPaymentInfo------",addPaymentInfo)
+                        let updatePackageDetailsInAppt = await appointmentDA.updatePackageDetailsInAppt(
                             body.appointmentId, addPaymentInfo._id);
-                        
+                            console.log("------------updatePackageDetailsInAppt------",updatePackageDetailsInAppt)
                         res.send({ success: true, data: addPaymentInfo});
                     } else{
                         throw Boom.badData(

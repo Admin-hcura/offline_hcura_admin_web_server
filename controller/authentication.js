@@ -575,11 +575,30 @@ class authentication {
                           );
                         
                         res.send({ success: true, data: userInfo});
-                      } else if (userInfo[0].appointmentFor == constants.value.PACKAGE) {
+                      } else if (userInfo[0].paymentFor == constants.value.HOMEOPATHY) {
                         // let appointmentDetails =
                           // await appointmentBAObj.getInvoiceInfoForMedicineBA(
                           //   updatePaymentReport._id
                           // );
+                        let endDate =  moment(updatePaymentReport.paidOn).add(parseInt(packageDetails[0].months), 'months');
+                        console.log("---------------endDate---------",endDate)
+                        if (!endDate.isValid()) {
+                          endDate = moment(startDate).endOf('month');
+                          console.log("End Date:", endDate); 
+                        }
+                        let packageSchedules = {
+                          userId: updatePaymentReport.userId,
+                          packageId: updatePaymentReport.packageId,
+                          paymentId: updatePaymentReport._id,
+                          endDate: endDate,
+                          paidOn: updatePaymentReport.paidOn,
+                        }
+                        let insertPackageSchedules = await appointmentDA.insertPackageSchedules(packageSchedules);
+                        let details ={
+                          endDate: insertPackageSchedules.endDate,
+                          _id: insertPackageSchedules._id
+                        }
+
                         let packageDetails = await authentationDAObj.getPackageDetailsApptId(getStatus.appointmentId);
                         console.log("------packageDetails----------",packageDetails);
                         let pdfDetails = {
@@ -598,62 +617,27 @@ class authentication {
                           paymentMethod: updatePaymentDetails.paymentMethod,
                           docQualification: userInfo[0].doctor.qualification,
                           hcuraId: userInfo[0].patient.hcuraId,
-                          packageName: packageDetails[0].name,
-                          packageAmount: packageDetails[0].amount,
+                          packageName: packageDetails.name,
+                          packageAmount: packageDetails.amount,
                           docRegstration : userInfo[0].doctor.registrationNumber
-                      }
+                        }
+
+                        emailSender.sendPackagePaymentSuccess(
+                          userInfo[0].patient.firstName,
+                          userInfo[0].patient.emailId,
+                          updatePaymentReport.payableAmount,
+                          "#" + relationId,
+                          updatePaymentReport.paymentMethod,
+                          packageDetails.name,
+                      );
                         let file = await htmlToPDF.generateInvoiceForPackage(pdfDetails);
                         emailSender.sendPackageInvoiceEmail(userInfo[0].user.emailId, file);
-                        let endDate =  moment(updatePaymentReport.paidOn).add(parseInt(packageDetails[0].months), 'months');
-                        console.log("---------------endDate---------",endDate)
-                        if (!endDate.isValid()) {
-                          endDate = moment(startDate).endOf('month');
-                          console.log("End Date:", endDate); 
-                        }
-                        let packageSchedules = {
-                          userId: updatePaymentReport.userId,
-                          packageId: updatePaymentReport.packageId,
-                          paymentId: updatePaymentReport._id,
-                          endDate: endDate,
-                          paidOn: updatePaymentReport.paidOn,
-                        }
-                        // let insertPackageSchedules = await appointmentBAObj.insertPackageSchedulesBA(packageSchedules);
-                        // let details ={
-                        //   endDate: insertPackageSchedules.endDate,
-                        //   _id: insertPackageSchedules._id
-                        // }
-                        // await schedulerObj.changeisActiveStatus(details)
-                        // order details is getting empty ----------------------
-                        // let orderResult = await appointmentBAObj.getOrderInfoBA(
-                        //   relationId
-                        // );
-                        // await appointmentBAObj.updateOrderBA(
-                        //   orderResult[0].medicineOrderId,
-                        //   obj,
-                        //   paidOn
-                        // );
                         
-                        // await notificationObj.sendMedicineBookedNotificationToDoctor(
-                        //   userInfo[0].user._id,
-                        //   userInfo[0].doctor._id,
-                        //   userInfo[0].user.firstName,
-                        //   userInfo[0].user.lastName,
-                        //   userInfo[0].doctor.firstName,
-                        //   userInfo[0].doctor.lastName,
-                        //   userInfo[0].appointmentId
-                        // ); //notification
-                        // emailSender.medicineOrderSuccess(
-                        //   userInfo[0].user.firstName,
-                        //   userInfo[0].doctor.firstName,
-                        //   userInfo[0].user.emailId
-                        // );
-                        // emailSender.sendPaymentSuccess(
-                        //   userInfo[0].user.firstName,
-                        //   userInfo[0].user.emailId,
-                        //   userInfo[0].currencySymbol + userInfo[0].payableAmount,
-                        //   "#" + relationId,
-                        //   report.method.toUpperCase()
-                        // ); //notification
+                        
+                        //   schedule package is not working
+                        //   await schedulers.changeisActiveStatusPackage(details)
+
+                        //  need to send medicine email to patient 
                       } else if (userInfo[0].appointmentFor == constants.value.EXTERNAL_SOURCE){
                         //INVOICE EMAIL
                       //  let patientDetails = await appointmentBAObj.userDetailsBA(updatePaymentReport.userId)
@@ -665,7 +649,7 @@ class authentication {
                     ) {
                       if (
                         userInfo[0].appointmentFor == constants.value.CONSULTATION ||
-                        userInfo[0].appointmentFor == constants.value.PACKAGE ||
+                        userInfo[0].appointmentFor == constants.value.HOMEOPATHY ||
                         userInfo[0].appointmentFor == constants.value.EXTERNAL_SOURCE
                       ) {
                         emailSender.paymentFail(

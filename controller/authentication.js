@@ -628,7 +628,7 @@ class authentication {
                           packageDetails.name,
                       );
                         let file = await htmlToPDF.generateInvoiceForPackage(pdfDetails);
-                        emailSender.sendPackageInvoiceEmail(userInfo[0].user.emailId, file);
+                        emailSender.sendPackageInvoiceEmail(userInfo[0].patient.emailId, file);
                         
                         
                         //   schedule package is not working

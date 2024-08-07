@@ -597,7 +597,7 @@ class appointment{
                         let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
                         console.log("------------addPaymentInfo------",addPaymentInfo)
                         let updatePackageDetailsInAppt = await appointmentDA.updatePackageDetailsInAppt(
-                            body.appointmentId, addPaymentInfo._id);
+                            body.appointmentId, addPaymentInfo._id, packageId);
                             console.log("------------updatePackageDetailsInAppt------",updatePackageDetailsInAppt)
                         res.send({ success: true, data: addPaymentInfo});
                     } else{
@@ -630,6 +630,9 @@ class appointment{
                     };
                     let addPaymentInfo = await appointmentDA.addPackagePaymentInfo(paymentObj);
                     console.log("=========  addPaymentInfo  =========",addPaymentInfo)
+                    let updatePackageDetailsInAppt = await appointmentDA.updatePackageDetailsInAppt(
+                        body.appointmentId, addPaymentInfo._id, packageId);
+                    console.log("=========  updatePackageDetailsInAppt  =========",updatePackageDetailsInAppt)
                     let PAYMENT_ID = addPaymentInfo._id
                     let paidOn = moment().format();
                     let branchCode = await appointmentDA.branchCode(ptDetails.branchId);
@@ -658,18 +661,18 @@ class appointment{
                         paymentId: updatePaymentReport._id,
                         endDate: endDate,
                         paidOn: updatePaymentReport.paidOn,
-                      }
-                      let insertPackageSchedules = await appointmentDA.insertPackageSchedules(packageSchedules);
-                      console.log("=========  insertPackageSchedules  =========",insertPackageSchedules)
-                      let details ={
+                    }
+                    let insertPackageSchedules = await appointmentDA.insertPackageSchedules(packageSchedules);
+                    console.log("=========  insertPackageSchedules  =========",insertPackageSchedules)
+                    let details ={
                         endDate: insertPackageSchedules.endDate,
                         _id: insertPackageSchedules._id
-                      }
+                    }
                     //   schedule package is not working
                     //   await schedulers.changeisActiveStatusPackage(details)
-                      let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
-                        console.log("-------userInfo------",userInfo);
-                      let pdfDetails = {
+                    let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
+                    console.log("-------userInfo------",userInfo);
+                    let pdfDetails = {
                         invoiceNumber: updatePaymentReport.invoiceNumber,
                         firstName: userInfo[0].patient.firstName,
                         lastName: userInfo[0].patient.lastName,
@@ -689,25 +692,23 @@ class appointment{
                         packageAmount: packageDetails.amount,
                         docRegstration : userInfo[0].doctor.registrationNumber,
                         branchPhoneNumber: branchCode.branchPhoneNumber
-                        }
-                        console.log("--------pdfDetails-------", pdfDetails)
-                        emailSender.sendPackagePaymentSuccess(
-                            userInfo[0].patient.firstName,
-                            userInfo[0].patient.emailId,
-                            updatePaymentReport.payableAmount,
-                            "#" + relationId,
-                            updatePaymentReport.paymentMethod,
-                            packageDetails.name,
-                        );
+                    }
+                    console.log("--------pdfDetails-------", pdfDetails)
+                    emailSender.sendPackagePaymentSuccess(
+                        userInfo[0].patient.firstName,
+                        userInfo[0].patient.emailId,
+                        updatePaymentReport.payableAmount,
+                        "#" + relationId,
+                        updatePaymentReport.paymentMethod,
+                        packageDetails.name,
+                    );
 
-                      let file = await htmlToPDF.generateInvoiceForPackage(pdfDetails);
-                      console.log("111111111111     ",userInfo[0].patient)
-                      emailSender.sendPackageInvoiceEmail(userInfo[0].patient.emailId, file);
-                      console.log("2222222222222")
-                      
-                      console.log("333333333333")
-
-                      res.send({ success: true, data: userInfo});
+                    let file = await htmlToPDF.generateInvoiceForPackage(pdfDetails);
+                    console.log("111111111111     ",userInfo[0].patient)
+                    emailSender.sendPackageInvoiceEmail(userInfo[0].patient.emailId, file);
+                    console.log("2222222222222")
+                    
+                    res.send({ success: true, data: userInfo});
                 }
             } else {
                 throw Boom.internal(apiResponse.ServerErrors.error.illegial);

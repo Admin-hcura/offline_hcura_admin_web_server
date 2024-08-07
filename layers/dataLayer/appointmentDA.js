@@ -921,12 +921,13 @@ class appointmentDA{
         }
     };
 
-    async updatePackageDetailsInAppt(appointmentId, packagePaymentId){
+    async updatePackageDetailsInAppt(appointmentId, packagePaymentId, packageId){
         try{
             let result = await appointmentModel.findOneAndUpdate(
                 {_id: appointmentId},
                 { $set: {
-                    packagePaymentId: packagePaymentId
+                    packagePaymentId: packagePaymentId,
+                    packageId: packageId
                 }
             });
             return result;

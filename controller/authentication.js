@@ -515,6 +515,8 @@ class authentication {
                     console.log("------appointmentDetails------",appointmentDetails);
                     let consultationfee = await appointmentDA.getAmount(appointmentDetails[0].consultationType);
                     console.log("_________consultationfee________",consultationfee.amount);
+                    let branchCode = await appointmentDA.branchCode(userInfo[0].patient.branchId);
+                    console.log("@@@@@@@  branchCode  @@@@@",branchCode)
                   if (userInfo && userInfo.length > 0) {
                     console.log("------entered----------1");
                     if (
@@ -616,7 +618,8 @@ class authentication {
                           hcuraId: userInfo[0].patient.hcuraId,
                           packageName: packageDetails[0].packageName,
                           packageAmount: packageDetails[0].packageAmount,
-                          docRegstration : userInfo[0].doctor.registrationNumber
+                          docRegstration : userInfo[0].doctor.registrationNumber,
+                          branchPhoneNumber: branchCode.branchPhoneNumber
                         }
 
                         emailSender.sendPackagePaymentSuccess(

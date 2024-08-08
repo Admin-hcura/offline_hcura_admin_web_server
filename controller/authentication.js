@@ -674,7 +674,6 @@ class authentication {
                         let file = await htmlToPDF.generateInvoiceForExternalSource(pdfDetails);
                         emailSender.sendExternalSourceInvoiceEmail(userInfo[0].patient.emailId, file);
                         console.log("---------last-------100",);
-                        res.send({ success: true, data: userInfo});
                       }
                     } else if (
                       report.status.toUpperCase() == constants.PAYMENT_STATUS.FAILED

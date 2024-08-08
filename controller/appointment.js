@@ -785,8 +785,9 @@ class appointment{
               throw Boom.badData(error.message);
             }
             let ptDetails = await appointmentDA.patientDetaiils(body.patientId);
+            console.log("--------ptDetails---------",ptDetails)
             let obj = {
-                emailId: body.emailId,
+                emailId: ptDetails.emailId,
                 phoneNumber: body.phoneNumber,
                 patientId: body.patientId,
                 payableAmount: parseFloat(body.payableAmount),
@@ -796,6 +797,7 @@ class appointment{
                 branchId: body.branchId,
                 firstName : ptDetails.firstName
             };
+            console.log("--------obj---------",obj)
             // GST NOT CALCULATING FOR EXTERNAL PAYMENTS
             let amount = parseFloat(body.payableAmount)
             if(body.paymentMode == 'online'){
@@ -823,7 +825,7 @@ class appointment{
                     );
                   }
             } else {
-                
+
             }
         } catch(e){
             next(e);

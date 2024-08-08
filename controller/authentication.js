@@ -640,8 +640,9 @@ class authentication {
                         //   await schedulers.changeisActiveStatusPackage(details)
 
                         //  need to send medicine email to patient 
-                      } else if (userInfo[0].appointmentFor == constants.value.EXTERNAL_SOURCE){
+                      } else if (userInfo[0].paymentFor == constants.value.EXTERNAL_SOURCE){
                         //INVOICE EMAIL
+                        console.log("------entered----------10");
                         let pdfDetails = {
                           payableAmount: updatePaymentReport.payableAmount,
                           firstName: userInfo[0].patient.firstName,
@@ -660,6 +661,7 @@ class authentication {
                           paymentMethod: updatePaymentDetails.paymentMethod,
                           branchPhoneNumber: branchCode.branchPhoneNumber
                         }
+                        console.log("------pdfDetails----------2",pdfDetails);
                         emailSender.sendExternalSourcePaymentSuccess(
                           userInfo[0].patient.firstName,
                           userInfo[0].patient.emailId,
@@ -668,8 +670,11 @@ class authentication {
                           updatePaymentReport.paymentMethod,
                           updatePaymentReport.remarks,
                         );
+                        console.log("---------entered-------11",);
                         let file = await htmlToPDF.generateInvoiceForExternalSource(pdfDetails);
                         emailSender.sendExternalSourceInvoiceEmail(userInfo[0].patient.emailId, file);
+                        console.log("---------last-------100",);
+                        res.send({ success: true, data: userInfo});
                       }
                     } else if (
                       report.status.toUpperCase() == constants.PAYMENT_STATUS.FAILED

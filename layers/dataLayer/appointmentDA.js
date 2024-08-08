@@ -145,44 +145,44 @@ class appointmentDA{
             console.log(";;;;;;paymentrelation id....",relationId)
             return await paymentModel.aggregate(
                 [
-                    {
-                        $match: isPaymentId
-                          ? {
-                              _id: mongoose.Types.ObjectId(relationId),
-                            }
-                          : {
-                              paymentRelationId: relationId,
-                            },
-                      },
-                    {
-                      $lookup: {
-                        from: "patient",
-                        localField: "patientId",
-                        foreignField: "_id",
-                        as: "patient"
-                      }
-                    },
-                    {
-                      $unwind: {
-                        path: "$patient",
-                        preserveNullAndEmptyArrays: true
-                      }
-                    },
-                    {
-                      $lookup: {
-                        from: "admin",
-                        localField: "doctorId",
-                        foreignField: "_id",
-                        as: "doctor"
-                      }
-                    },
-                    {
-                      $unwind: {
-                        path: "$doctor",
-                        preserveNullAndEmptyArrays: true
-                      }
+                  {
+                    $match: isPaymentId
+                      ? {
+                          _id: mongoose.Types.ObjectId(relationId),
+                        }
+                      : {
+                          paymentRelationId: relationId,
+                        },
+                  },
+                  {
+                    $lookup: {
+                      from: "patient",
+                      localField: "patientId",
+                      foreignField: "_id",
+                      as: "patient"
                     }
-                  ]
+                  },
+                  {
+                    $unwind: {
+                      path: "$patient",
+                      preserveNullAndEmptyArrays: true
+                    }
+                  },
+                  {
+                    $lookup: {
+                      from: "admin",
+                      localField: "doctorId",
+                      foreignField: "_id",
+                      as: "doctor"
+                    }
+                  },
+                  {
+                    $unwind: {
+                      path: "$doctor",
+                      preserveNullAndEmptyArrays: true
+                    }
+                  }
+                ]
             );
         } catch(e){
             throw e;
@@ -1297,7 +1297,30 @@ class appointmentDA{
         } catch(e){
             throw e;
         }
-    }
+    };
+
+    async updatePaymentByPaymentId(obj) {
+      try {
+        let result = await paymentModel.findOneAndUpdate(
+          { _id: obj.paymentId },
+          {
+            $set: {
+              paymentMethod: obj.paymentMethod,
+              paymentStatus: obj.paymentStatus,
+              paymentId: obj.paymentId,
+              paidOn: obj.paidOn,
+              invoiceNumber: obj.invoiceNumber,
+              paymentRelationId: obj.paymentRelationId,
+              paymentLinkId: obj.paymentLinkId,
+            },
+          },
+          { new: true }
+        );
+        return result;
+      } catch (e) {
+        throw e;
+      }
+    };
     
 }
 module.exports = new appointmentDA();

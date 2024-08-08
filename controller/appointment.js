@@ -785,7 +785,6 @@ class appointment{
               throw Boom.badData(error.message);
             }
             let ptDetails = await appointmentDA.patientDetaiils(body.patientId);
-            console.log("--------ptDetails---------",ptDetails)
             let obj = {
                 emailId: ptDetails.emailId,
                 phoneNumber: body.phoneNumber,
@@ -797,7 +796,6 @@ class appointment{
                 branchId: body.branchId,
                 firstName : ptDetails.firstName
             };
-            console.log("--------obj---------",obj)
             // GST NOT CALCULATING FOR EXTERNAL PAYMENTS
             let amount = parseFloat(body.payableAmount)
             if(body.paymentMode == 'online'){
@@ -826,7 +824,70 @@ class appointment{
                     );
                   }
             } else {
-
+                let paymentObj = {
+                    afterRemovingGst: amount,
+                    GST: 0,
+                    payableAmount: amount,
+                    paymentDoneBy: body.paymentDoneBy,
+                    paymentStatus: constants.value.CREATED,
+                    paymentFor: "EXTERNAL_SOURCE",
+                    shortUrl: null,
+                    paymentRelationId: null,
+                    paymentLinkId: null,
+                  };
+                let addPaymentInfo = await appointmentDA.addExternalSourcePaymentInfo(obj, paymentObj);
+                let PAYMENT_ID = addPaymentInfo._id;
+                let paidOn = moment().format();
+                let branchCode = await appointmentDA.branchCode(ptDetails.branchId);
+                let invoiceNumber = await invoiceGenerator.generateInvoiceNumber(branchCode.branchCode);
+                let updatePaymentDetails = {
+                    paymentMethod: body.paymentMode,
+                    paymentStatus: "captured",
+                    paymentId: PAYMENT_ID,
+                    orderId: PAYMENT_ID,
+                    paymentRelationId: PAYMENT_ID,
+                    paidOn: paidOn,
+                    orderedOn: paidOn,
+                    paymentLinkId: PAYMENT_ID,
+                    invoiceNumber: invoiceNumber
+                  };
+                let relationId = updatePaymentDetails.paymentRelationId;
+                let updatePaymentReport = await appointmentDA.updatePaymentByPaymentId(updatePaymentDetails);
+                if (updatePaymentReport && updatePaymentReport != null) {
+                    let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
+                    if (userInfo && userInfo.length > 0) {
+                        let pdfDetails = {
+                            payableAmount: updatePaymentReport.payableAmount,
+                            firstName: userInfo[0].patient.firstName,
+                            lastName: userInfo[0].patient.lastName,
+                            paidOn: updatePaymentDetails.paidOn,
+                            birthDate: userInfo[0].patient.birthDate,
+                            gender: userInfo[0].patient.gender,
+                            remarks: updatePaymentReport.remarks,
+                            invoiceNumber: updatePaymentReport.invoiceNumber,
+                            hcuraId:userInfo[0].patient.hcuraId,
+                            prescribedBy: updatePaymentReport.prescribedBy,
+                            serviceCharge: updatePaymentReport.serviceCharges,
+                            discount: updatePaymentReport.discount,
+                            GST: 0,
+                            courierCharges: updatePaymentReport.courierCharges,
+                            paymentMethod: updatePaymentDetails.paymentMethod,
+                            branchPhoneNumber: branchCode.branchPhoneNumber
+                        }
+                        emailSender.sendExternalSourcePaymentSuccess(
+                            userInfo[0].patient.firstName,
+                            userInfo[0].patient.emailId,
+                            updatePaymentReport.payableAmount,
+                            "#" + relationId,
+                            updatePaymentReport.paymentMethod,
+                            updatePaymentReport.remarks,
+                        );
+                        //INVOICE EMAIL
+                        let file = await htmlToPDF.generateInvoiceForExternalSource( pdfDetails );
+                        emailSender.sendExternalSourceInvoiceEmail(userInfo[0].patient.emailId, file);
+                        res.send({ success: true, data: addPaymentInfo });
+                    } 
+                }
             }
         } catch(e){
             next(e);

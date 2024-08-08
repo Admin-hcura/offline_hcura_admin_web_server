@@ -513,8 +513,8 @@ class authentication {
                     console.log("--------userInfo-----",userInfo);
                     let appointmentDetails = await appointmentDA.getAppointmentDetails(updatePaymentReport.appointmentId);
                     console.log("------appointmentDetails------",appointmentDetails);
-                    let consultationfee = await appointmentDA.getAmount(appointmentDetails[0].consultationType);
-                    console.log("_________consultationfee________",consultationfee.amount);
+                    // let consultationfee = await appointmentDA.getAmount(appointmentDetails[0].consultationType);
+                    // console.log("_________consultationfee________",consultationfee.amount);
                     let branchCode = await appointmentDA.branchCode(userInfo[0].patient.branchId);
                     console.log("@@@@@@@  branchCode  @@@@@",branchCode)
                   if (userInfo && userInfo.length > 0) {
@@ -524,6 +524,8 @@ class authentication {
                     ) {
                       console.log("------entered----------2");
                       if (userInfo[0].paymentFor == constants.value.CONSULTATION) {
+                        let consultationfee = await appointmentDA.getAmount(appointmentDetails[0].consultationType);
+                        console.log("_________consultationfee________",consultationfee.amount);
                         console.log("------entered----------3");
                         let pdfDetails = {
                             invoiceNumber: updatePaymentReport.invoiceNumber,

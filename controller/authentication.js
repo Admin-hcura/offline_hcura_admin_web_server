@@ -629,7 +629,7 @@ class authentication {
                           "#" + relationId,
                           updatePaymentReport.paymentMethod,
                           packageDetails[0].packageName,
-                      );
+                        );
                         let file = await htmlToPDF.generateInvoiceForPackage(pdfDetails);
                         emailSender.sendPackageInvoiceEmail(userInfo[0].patient.emailId, file);
                         
@@ -640,9 +640,34 @@ class authentication {
                         //  need to send medicine email to patient 
                       } else if (userInfo[0].appointmentFor == constants.value.EXTERNAL_SOURCE){
                         //INVOICE EMAIL
-                      //  let patientDetails = await appointmentBAObj.userDetailsBA(updatePaymentReport.userId)
-                      //   let file = await htmlToPDF.generateInvoiceForExternalSource( updatePaymentReport,patientDetails );
-                      //   emailSender.sendExternalSourceInvoiceEmail(userInfo[0].user.emailId, file);
+                        let pdfDetails = {
+                          payableAmount: updatePaymentReport.payableAmount,
+                          firstName: userInfo[0].patient.firstName,
+                          lastName: userInfo[0].patient.lastName,
+                          paidOn: updatePaymentDetails.paidOn,
+                          birthDate: userInfo[0].patient.birthDate,
+                          gender: userInfo[0].patient.gender,
+                          remarks: updatePaymentReport.remarks,
+                          invoiceNumber: updatePaymentReport.invoiceNumber,
+                          hcuraId:userInfo[0].patient.hcuraId,
+                          prescribedBy: updatePaymentReport.prescribedBy,
+                          serviceCharge: updatePaymentReport.serviceCharges,
+                          discount: updatePaymentReport.discount,
+                          GST: 0,
+                          courierCharges: updatePaymentReport.courierCharges,
+                          paymentMethod: updatePaymentDetails.paymentMethod,
+                          branchPhoneNumber: branchCode.branchPhoneNumber
+                        }
+                        emailSender.sendExternalSourcePaymentSuccess(
+                          userInfo[0].patient.firstName,
+                          userInfo[0].patient.emailId,
+                          updatePaymentReport.payableAmount,
+                          "#" + relationId,
+                          updatePaymentReport.paymentMethod,
+                          updatePaymentReport.remarks,
+                        );
+                        let file = await htmlToPDF.generateInvoiceForExternalSource(pdfDetails);
+                        emailSender.sendExternalSourceInvoiceEmail(userInfo[0].patient.emailId, file);
                       }
                     } else if (
                       report.status.toUpperCase() == constants.PAYMENT_STATUS.FAILED
@@ -653,8 +678,8 @@ class authentication {
                         userInfo[0].appointmentFor == constants.value.EXTERNAL_SOURCE
                       ) {
                         emailSender.paymentFail(
-                          userInfo[0].user.firstName,
-                          userInfo[0].user.emailId,
+                          userInfo[0].patient.firstName,
+                          userInfo[0].patient.emailId,
                           userInfo[0].currencySymbol + userInfo[0].payableAmount,
                           "#" + relationId,
                           report.method.toUpperCase()
@@ -671,40 +696,40 @@ class authentication {
                     }
                   }
                 } else {
-                  let updateSubscriptionReport =
-                    await appointmentBAObj.subscriptionUpdateBA(obj);
-                  let doctorInfo = await appointmentBAObj.getDoctorSubscriptionInfoBA(
-                    relationId
-                  );
-                  if (
-                    report.status.toUpperCase() == constants.PAYMENT_STATUS.CAPTURE
-                  ) {
-                    let date = moment(new Date())
-                      .add(1, "year")
-                      .endOf("day")
-                      .format("YYYY-MM-DDTHH:mm:ss.SSSZ");
-                    doctorInfo = await appointmentBAObj.updateSubscriptionToDoctorBA(
-                      date,
-                      doctorInfo[0].doctor._id
-                    );
-                    emailSender.sendPaymentSuccess(
-                      doctorInfo[0].doctor.firstName,
-                      doctorInfo[0].doctor.emailId,
-                      doctorInfo[0].currencySymbol + doctorInfo[0].payableAmount,
-                      "#" + relationId,
-                      report.method.toUpperCase()
-                    ); //notification
-                  } else if (
-                    report.status.toUpperCase() == constants.PAYMENT_STATUS.FAILED
-                  ) {
-                    emailSender.paymentFail(
-                      doctorInfo[0].doctor.firstName,
-                      doctorInfo[0].doctor.emailId,
-                      doctorInfo[0].currencySymbol + doctorInfo[0].payableAmount,
-                      "#" + relationId,
-                      report.method.toUpperCase()
-                    ); //notification
-                  }
+                  // let updateSubscriptionReport =
+                  //   await appointmentBAObj.subscriptionUpdateBA(obj);
+                  // let doctorInfo = await appointmentBAObj.getDoctorSubscriptionInfoBA(
+                  //   relationId
+                  // );
+                  // if (
+                  //   report.status.toUpperCase() == constants.PAYMENT_STATUS.CAPTURE
+                  // ) {
+                  //   let date = moment(new Date())
+                  //     .add(1, "year")
+                  //     .endOf("day")
+                  //     .format("YYYY-MM-DDTHH:mm:ss.SSSZ");
+                  //   doctorInfo = await appointmentBAObj.updateSubscriptionToDoctorBA(
+                  //     date,
+                  //     doctorInfo[0].doctor._id
+                  //   );
+                  //   emailSender.sendPaymentSuccess(
+                  //     doctorInfo[0].doctor.firstName,
+                  //     doctorInfo[0].doctor.emailId,
+                  //     doctorInfo[0].currencySymbol + doctorInfo[0].payableAmount,
+                  //     "#" + relationId,
+                  //     report.method.toUpperCase()
+                  //   ); //notification
+                  // } else if (
+                  //   report.status.toUpperCase() == constants.PAYMENT_STATUS.FAILED
+                  // ) {
+                  //   emailSender.paymentFail(
+                  //     doctorInfo[0].doctor.firstName,
+                  //     doctorInfo[0].doctor.emailId,
+                  //     doctorInfo[0].currencySymbol + doctorInfo[0].payableAmount,
+                  //     "#" + relationId,
+                  //     report.method.toUpperCase()
+                  //   ); //notification
+                  // }
                 }
               }
               res.status(200).send(true);

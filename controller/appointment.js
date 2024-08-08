@@ -777,6 +777,59 @@ class appointment{
         }
     };
 
+    async paymentExternalSource(req, res, next){
+        try{
+            let body = req.body
+            const { error } = rule.paymentExtrnalSourceRule.validate(body);
+            if (error){
+              throw Boom.badData(error.message);
+            }
+            let ptDetails = await appointmentDA.patientDetaiils(body.patientId);
+            let obj = {
+                emailId: body.emailId,
+                phoneNumber: body.phoneNumber,
+                patientId: body.patientId,
+                payableAmount: parseFloat(body.payableAmount),
+                countryCode: ptDetails.countryCode,
+                prescribedBy : body.prescribedBy,
+                remarks : body.remarks,
+                branchId: body.branchId,
+                firstName : ptDetails.firstName
+            };
+            // GST NOT CALCULATING FOR EXTERNAL PAYMENTS
+            let amount = parseFloat(body.payableAmount)
+            if(body.paymentMode == 'online'){
+                let paymentLink = await paymentGateway.externalSourcePayment(obj, amount);
+                if (paymentLink && paymentLink.data.status == constants.value.CREATED) {
+                    let paymentObj = {
+                        paymentDoneBy: body.paymentDoneBy,
+                        paymentFor: "EXTERNAL_SOURCE",
+                        payableAmount: amount,
+                        GST: 0,
+                        afterRemovingGst: amount,
+                        paymentStatus: paymentLink.data.status,
+                        shortUrl: paymentLink.data.short_url,
+                        paymentLinkId: paymentLink.data.id,
+                        paymentRelationId: paymentLink.data.id.substring(6), 
+                    };
+                    let addPaymentInfo = await appointmentDA.addExternalSourcePaymentInfo(
+                      obj,
+                      paymentObj
+                    );
+                    res.send({ success: true, data: addPaymentInfo });
+                  } else {
+                    throw Boom.badData(
+                      apiResponse.ServerErrors.error.payment_not_created
+                    );
+                  }
+            } else {
+                
+            }
+        } catch(e){
+            next(e);
+        }
+    }
+
 };
 
 module.exports = new appointment();

@@ -86,5 +86,8 @@ router.post("/get/payment/details/for/particular/appt",
 router.post("/get/patient/payment/details/for/external",
   appointmentController.getPatientAndPaymentDetailsForExternal
 );
+router.post("/payment/external/source",
+  appointmentController.paymentExternalSource
+);
 
 module.exports = router;

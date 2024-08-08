@@ -1157,6 +1157,7 @@ class appointmentDA{
                         paidOn: 1,
                         createdOn: 1,
                         packageId: 1,
+                        paymentStatus: 1,
                         paymentDoneBy: {
                           $concat: [
                             "$paymentDoneDetails.firstName",
@@ -1273,6 +1274,29 @@ class appointmentDA{
             throw e;
         }
     };
+
+    async addExternalSourcePaymentInfo(obj, paymentObj){
+        try{
+            let addPayment = new paymentModel({
+                patientId: obj.patientId,
+                branchId: obj.branchId,
+                paymentDoneBy: paymentObj.paymentDoneBy,
+                paymentFor: paymentObj.paymentFor,
+                prescribedBy: obj.prescribedBy,
+                remarks: obj.remarks,
+                payableAmount: paymentObj.payableAmount,
+                GSTAmount: paymentObj.GST,
+                afterRemovingGst: paymentObj.afterRemovingGst,                
+                paymentStatus: paymentObj.paymentStatus,
+                shortUrl: paymentObj.shortUrl,
+                paymentLinkId: paymentObj.paymentLinkId,
+                paymentRelationId: paymentObj.paymentRelationId,
+              });
+              return await addPayment.save();
+        } catch(e){
+            throw e;
+        }
+    }
     
 }
 module.exports = new appointmentDA();

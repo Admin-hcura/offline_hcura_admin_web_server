@@ -818,6 +818,7 @@ class appointment{
                       obj,
                       paymentObj
                     );
+                    console.log("++++++++addPaymentInfo++++++",addPaymentInfo)
                     res.send({ success: true, data: addPaymentInfo });
                   } else {
                     throw Boom.badData(

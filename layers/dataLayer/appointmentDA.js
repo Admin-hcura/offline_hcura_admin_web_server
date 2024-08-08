@@ -108,8 +108,6 @@ class appointmentDA{
                         orderId: obj.orderId,
                         paidOn: obj.paidOn,
                         invoiceNumber: obj.invoiceNumber,
-                        paymentRelationId: obj.paymentRelationId,
-                        paymentLinkId: obj.paymentLinkId
                     },
                 },{ new: true}
             );

@@ -207,6 +207,7 @@ const { number, required } = require("joi");
         ],
         default: "CONSULTATION",
       },
+    orderId: {type: String, default: null},
     prescribedBy: {type: String, default: null},
     installments: {type: Number, default: null},
     remarks: {type: String, default: null},

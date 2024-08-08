@@ -99,7 +99,7 @@ class appointmentDA{
     async updatePaymentReport(obj){
         try{
             let result = await paymentModel.findOneAndUpdate(
-                {appointmentId: obj.appointmentId},
+                {paymentRelationId: obj.paymentRelationId},
                 {
                     $set: {
                         paymentMethod: obj.paymentMethod,

@@ -1277,7 +1277,8 @@ class appointmentDA{
 
     async addExternalSourcePaymentInfo(obj, paymentObj){
         try{
-          console.log("-----          ------",paymentObj)
+          console.log("-----    paymentObj      ------",paymentObj)
+          console.log("-----    obj      ------",obj)
             let addPayment = new paymentModel({
                 patientId: obj.patientId,
                 branchId: obj.branchId,

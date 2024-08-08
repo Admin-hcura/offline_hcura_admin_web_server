@@ -505,7 +505,7 @@ class authentication {
                 getStatus.paymentStatus.toUpperCase() !=
                 constants.PAYMENT_STATUS.CAPTURE
               ) {
-                let updatePaymentReport = await appointmentDA.updatePaymentReport(relationId);
+                let updatePaymentReport = await appointmentDA.updatePaymentReport(updatePaymentDetails);
                 console.log("--------updatePaymentReport-----",updatePaymentReport)
                 if (updatePaymentReport && updatePaymentReport != null) {
                   let userInfo =

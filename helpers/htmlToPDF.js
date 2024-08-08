@@ -1323,7 +1323,7 @@ class HtmlToPdfHelper {
         "            margin-bottom: 0px;" +
         "        }" +
         ".p14{text-align: justify;padding-left: 200px;margin-top: 0px}" + //fotter
-        ".p15{text-align: justify;padding-left: 1700px;margin-top: 20px;margin-bottom: 0px;}" + //fotter
+        ".p15{text-align: justify;padding-left: 1900px;margin-top: 20px;margin-bottom: 0px;}" + //fotter
         "" +
         "        .td0 {" +
         "            padding: 0px;" +

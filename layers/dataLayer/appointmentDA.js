@@ -99,17 +99,18 @@ class appointmentDA{
     async updatePaymentReport(obj){
         try{
             let result = await paymentModel.findOneAndUpdate(
-                {paymentRelationId: obj.paymentRelationId},
+                { paymentRelationId: obj.paymentRelationId },
                 {
                     $set: {
-                        paymentMethod: obj.paymentMethod,
-                        paymentStatus: obj.paymentStatus,
-                        paymentId: obj.paymentId,
-                        orderId: obj.orderId,
-                        paidOn: obj.paidOn,
-                        invoiceNumber: obj.invoiceNumber,
+                      paymentMethod: obj.paymentMethod,
+                      paymentStatus: obj.paymentStatus,
+                      paymentId: obj.paymentId,
+                      orderId: obj.orderId,
+                      paidOn: obj.paidOn,
+                      invoiceNumber: obj.invoiceNumber,
                     },
-                },{ new: true}
+                },
+                { new: true}
             );
             return result;
         } catch(e){

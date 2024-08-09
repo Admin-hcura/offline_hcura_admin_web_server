@@ -546,7 +546,9 @@ class authentication {
                             payableAmount: updatePaymentReport.payableAmount,
                             paymentMethod: updatePaymentDetails.paymentMethod,
                             docQualification: userInfo[0].doctor.qualification,
-                            docRegstration : userInfo[0].doctor.registrationNumber
+                            docRegstration : userInfo[0].doctor.registrationNumber,
+                            hcuraId: userInfo[0].patient.hcuraId,
+                            branchPhoneNumber: branchCode.branchPhoneNumber
                         }
                         console.log("+++++++++pdfDetails+++++++",pdfDetails);
                         //INVOICE EMAIL
@@ -578,7 +580,7 @@ class authentication {
                             pdfDetails
                           );
                         
-                        res.send({ success: true, data: userInfo});
+                        // res.send({ success: true, data: userInfo});
                       } else if (userInfo[0].paymentFor == constants.value.HOMEOPATHY) {
                         
                         let packageDetails = await authentationDAObj.getPackageDetailsApptId(getStatus.appointmentId);

@@ -1321,6 +1321,28 @@ class appointmentDA{
         throw e;
       }
     };
+
+    async updatePaymentReportDA(obj){
+      try{
+          let result = await paymentModel.findOneAndUpdate(
+              { appointmentId: obj.appointmentId },
+              {
+                  $set: {
+                    paymentMethod: obj.paymentMethod,
+                    paymentStatus: obj.paymentStatus,
+                    paymentId: obj.paymentId,
+                    orderId: obj.orderId,
+                    paidOn: obj.paidOn,
+                    invoiceNumber: obj.invoiceNumber,
+                  },
+              },
+              { new: true}
+          );
+          return result;
+      } catch(e){
+          throw e;
+      }
+  };
     
 }
 module.exports = new appointmentDA();

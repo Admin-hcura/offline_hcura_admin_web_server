@@ -201,7 +201,7 @@ class appointment{
                   let relationId = updatePaymentDetails.paymentRelationId;
                   console.log("paymentObj.paymentRelationId......",paymentObj.paymentRelationId)
                   console.log("relationId,,,,,,,",relationId)
-                  let updatePaymentReport = await appointmentDA.updatePaymentReport(updatePaymentDetails);
+                  let updatePaymentReport = await appointmentDA.updatePaymentReportDA(updatePaymentDetails);
                   console.log("....updatePaymentReport......",updatePaymentReport)
                   if(updatePaymentReport != null){
                     let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);

@@ -1334,6 +1334,7 @@ class appointmentDA{
                     orderId: obj.orderId,
                     paidOn: obj.paidOn,
                     invoiceNumber: obj.invoiceNumber,
+                    paymentRelationId: obj.paymentRelationId
                   },
               },
               { new: true}

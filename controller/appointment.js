@@ -173,7 +173,6 @@ class appointment{
                   };
                   if(body.consultationType === "FOLLOW-UP"){
                     let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, paymentObj.appointmentId);
-    
                     }
                   let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
                   console.log("----addPaymentInfo----",addPaymentInfo);
@@ -199,7 +198,7 @@ class appointment{
                     invoiceNumber: invoiceNumber
                   };
                   let relationId = updatePaymentDetails.paymentRelationId;
-                  console.log("paymentObj.paymentRelationId......",paymentObj.paymentRelationId)
+                  console.log("paymentObj.paymentRelationId......",updatePaymentDetails.paymentRelationId)
                   console.log("relationId,,,,,,,",relationId)
                   let updatePaymentReport = await appointmentDA.updatePaymentReportDA(updatePaymentDetails);
                   console.log("....updatePaymentReport......",updatePaymentReport)

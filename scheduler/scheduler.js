@@ -16,7 +16,9 @@ class scheduler {
               _id: details._id
             },
           };
-          await mongoSchedulerObjExported.mongo_scheduler.schedule(changeisActivePackage);
+          console.log("mongoSchedulerObjExported-------11111111-----")
+          return await mongoSchedulerObjExported.mongo_scheduler.schedule(changeisActivePackage);
+          console.log("mongoSchedulerObjExported------------")
         } catch (e){
           throw e;
         }

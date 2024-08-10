@@ -671,7 +671,7 @@ class appointment{
                         _id: insertPackageSchedules._id
                     }
                     //   schedule package is not working
-                    //   await schedulers.changeisActiveStatusPackage(details)
+                    await schedulers.changeisActiveStatusPackage(details)
                     let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
                     console.log("-------userInfo------",userInfo);
                     let pdfDetails = {
@@ -891,7 +891,16 @@ class appointment{
         } catch(e){
             next(e);
         }
-    }
+    };
+
+    async getPackagePromocodes(req, res, next){
+        try{
+          let result = await appointmentDA.getPromoListPackage();
+          res.send({success: true, data: result});
+        } catch(e){
+          next(e);
+        }
+    };
 
 };
 

@@ -89,5 +89,8 @@ router.post("/get/patient/payment/details/for/external",
 router.post("/payment/external/source",
   appointmentController.paymentExternalSource
 );
+router.get("/get/package/promo/list",
+  appointmentController.getPackagePromocodes
+);
 
 module.exports = router;

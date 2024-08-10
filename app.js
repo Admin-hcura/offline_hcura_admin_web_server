@@ -26,39 +26,37 @@ const port = 7001;
 const app = express();
 
 async function connectMongo() {
-    try {
-        await mongoose.connect(
-          process.env.MONGO_URI,
-          {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            dbName: process.env.dbName,
-          }
-        );
-        console.log('MongoDB connected successfully');
-      } catch (error) {
-        console.error('Error connecting to MongoDB', error);
+  try{
+    await mongoose.connect(
+      process.env.MONGO_URI,
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        dbName: process.env.dbName,
       }
-
-      try{
-        let mongoScheduler = new MSM(mongoose.connection, {});
-
-        mongoScheduler.on("error", function (e) {
-        console.log("-------->error", e);
-        });
-
-        mongoScheduler.on(
-          "changeisActiveStatus", 
-          async function(details, event){
-            if(new Date(details.data.endDate) < new Date()){
-              await appointmentDA.changeisActivePackage(details.data._id)
-            }
-        });
-        schedulerObj.startScheduler(mongoScheduler);
-        console.log('Scheduler is Active');
-      } catch(e){
-        console.log('Scheduler is ERROR');
-      }
+    );
+    console.log('MongoDB connected successfully')
+  } catch(e){
+    console.log('Error While connecting MongoDB')
+  }
+  
+  try{
+    let mongoScheduler = new MSM(process.env.MONGO_URI, {});
+    mongoScheduler.on("error", function (e) {
+    console.log("-------->error", e);
+    });
+    mongoScheduler.on(
+      "changeisActiveStatus", 
+      async function(details, event){
+        if(new Date(details.data.endDate) < new Date()){
+          await appointmentDA.changeisActivePackage(details.data._id)
+        }
+    });
+    schedulerObj.startScheduler(mongoScheduler);
+    console.log('Scheduler is Active');
+  } catch(e){
+      console.log('Scheduler is ERROR');
+    }
 }
 connectMongo();
 

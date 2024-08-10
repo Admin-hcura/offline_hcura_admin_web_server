@@ -589,7 +589,6 @@ class appointmentDA{
 
     async getPromoListConsultation() {
         try {
-            console.log("........entered");
             return await promoCodesModel.aggregate([
                 {
                     $match: {
@@ -1342,6 +1341,34 @@ class appointmentDA{
           );
           return result;
       } catch(e){
+          throw e;
+      }
+    };
+
+    async getPromoListPackage() {
+      try {
+          return await promoCodesModel.aggregate([
+              {
+                  $match: {
+                      isDeleted: false,
+                      promoCodeFor: "HOMEOPATHY",
+                      $expr: {
+                          $and: [
+                              { $gte: ["$expiredOn", new Date()] },
+                              { $lte: ["$startsOn", new Date()] }
+                          ]
+                      }
+                  },
+              },
+              {
+                  $project: {
+                    promoCodeName: 1,
+                    discount: 1,
+                    promoCodeFor: 1,
+                  },
+              },
+          ]);
+      } catch (e) {
           throw e;
       }
   };

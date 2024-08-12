@@ -85,13 +85,13 @@ const { number, required } = require("joi");
     stateId: {type: mongoose.Schema.Types.ObjectId, ref: "States", default: null},
     stateName: {type: String, default: null},
     bloodGroup: {type: String, default: null},
-    address: {
+    address: [{
       houseNo: { type: String, default: null },
       street: { type: String, default: null },
       city: { type: String, default: null },
       state: { type: String, default: null },
       pinCode: { type: Number, default: null },
-  },
+  }],
     consultationType: {type: String, required: true, default: "OFFLINE", enum: ["OFFLINE", "ONLINE"]},
     registeredBy: {type: mongoose.Schema.Types.ObjectId, required: true, ref: "Admin"},
     registeredOn: {type: Date, default: new Date()},

@@ -49,6 +49,7 @@ class authentationDA {
 
     async addAdminDA(obj){
         try{
+            console.log("-----obj-----")
             let pass = obj.password
             let password = await bcrypt.hash(pass, saltRounds);
             let result = new adminModel({

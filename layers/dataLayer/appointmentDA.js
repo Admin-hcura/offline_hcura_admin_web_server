@@ -1151,7 +1151,7 @@ class appointmentDA{
                         paymentFor: 1,
                         payableAmount: 1,
                         paymentType: "$paymentMethod",
-                        packageName: "$packageDetails.packageName",
+                        packageName: "$packageDetails.name",
                         discount: 1,
                         paidOn: 1,
                         createdOn: 1,
@@ -1180,8 +1180,8 @@ class appointmentDA{
                         pinCode: "$patientDetails.address.pinCode"
                       }
                     }
-                  ]
-            )
+                ]
+            );
         } catch(e){
             throw e
         }
@@ -1238,7 +1238,7 @@ class appointmentDA{
                         },
                         "paymentDetails.packageName": {
                           $arrayElemAt: [
-                            "$packageDetails.packageName",
+                            "$packageDetails.name",
                             0
                           ]
                         },
@@ -1371,7 +1371,7 @@ class appointmentDA{
       } catch (e) {
           throw e;
       }
-  };
+    };
     
 }
 module.exports = new appointmentDA();

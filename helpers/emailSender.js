@@ -396,7 +396,7 @@ class Mail{
         info
           .sendMail({
             from: constants.MAIL_CONFIG.auth.user,
-            to: [/*constants.MAIL_CONFIG.invoiceEmail,*/ emailId],
+            to: [constants.MAIL_CONFIG.invoiceEmail, emailId],
             subject: "H-Cura Package invoice received successfully!",
             text: "Hi Dear H-Cura consumer Please find the attached file for your reference \n \nThank you.",
             attachments: [

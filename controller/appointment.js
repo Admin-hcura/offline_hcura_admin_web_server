@@ -170,23 +170,21 @@ class appointment{
                     GSTAmount: gstAmount,
                     discount: Discount,
                     // GSTID: obj.GSTID,
-                  };
-                  if(body.consultationType === "FOLLOW-UP"){
+                };
+                if(body.consultationType === "FOLLOW-UP"){
                     let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, paymentObj.appointmentId);
-                    }
-                  let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
-                  console.log("----addPaymentInfo----",addPaymentInfo);
-                  let PAYMENT_ID = addPaymentInfo._id;
-                  let confirmAppt = await appointmentDA.confirmAppointment(
-                    appointmentData[0]._id, addPaymentInfo._id );
-                  console.log("++++++confirm Appt+++++",confirmAppt)
-                  let paidOn = moment().format();
-                  let branchCode = await appointmentDA.branchCode(ptDetails.branchId);
-                  console.log("@@@@@@@  branchCode  @@@@@",branchCode)
-                  let invoiceNumber =
-                      await invoiceGenerator.generateInvoiceNumber(branchCode.branchCode);
-                  console.log("*****invoiceNumber*****",invoiceNumber)
-                  let updatePaymentDetails = {
+                }
+                let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
+                console.log("----addPaymentInfo----",addPaymentInfo);
+                let PAYMENT_ID = addPaymentInfo._id;
+                let confirmAppt = await appointmentDA.confirmAppointment(appointmentData[0]._id, addPaymentInfo._id );
+                console.log("++++++confirm Appt+++++",confirmAppt)
+                let paidOn = moment().format();
+                let branchCode = await appointmentDA.branchCode(ptDetails.branchId);
+                console.log("@@@@@@@  branchCode  @@@@@",branchCode)
+                let invoiceNumber =  await invoiceGenerator.generateInvoiceNumber(branchCode.branchCode);
+                console.log("*****invoiceNumber*****",invoiceNumber)
+                let updatePaymentDetails = {
                     paymentMethod: body.paymentMode,
                     paymentStatus: "captured",
                     paymentId: PAYMENT_ID,
@@ -196,13 +194,13 @@ class appointment{
                     appointmentId: appointmentData[0]._id,
                     paymentLinkId: PAYMENT_ID,
                     invoiceNumber: invoiceNumber
-                  };
-                  let relationId = updatePaymentDetails.paymentRelationId;
-                  console.log("paymentObj.paymentRelationId......",updatePaymentDetails.paymentRelationId)
-                  console.log("relationId,,,,,,,",relationId)
-                  let updatePaymentReport = await appointmentDA.updatePaymentReportDA(updatePaymentDetails);
-                  console.log("....updatePaymentReport......",updatePaymentReport)
-                  if(updatePaymentReport != null){
+                };
+                let relationId = updatePaymentDetails.paymentRelationId;
+                console.log("paymentObj.paymentRelationId......",updatePaymentDetails.paymentRelationId)
+                console.log("relationId,,,,,,,",relationId)
+                let updatePaymentReport = await appointmentDA.updatePaymentReportDA(updatePaymentDetails);
+                console.log("....updatePaymentReport......",updatePaymentReport)
+                if(updatePaymentReport != null){
                     let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
                     console.log("-------userInfo------",userInfo);
                     let appointmentDetails = await appointmentDA.getAppointmentDetails(updatePaymentReport.appointmentId);
@@ -210,52 +208,51 @@ class appointment{
                     let consultationfee = await appointmentDA.getAmount(appointmentDetails[0].consultationType);
                     console.log("_________consultationfee________",consultationfee);
                     console.log("****************",userInfo[0].patient)
-                    let pdfDetails = {
-                        invoiceNumber: updatePaymentReport.invoiceNumber,
-                        firstName: userInfo[0].patient.firstName,
-                        lastName: userInfo[0].patient.lastName,
-                        paidOn: updatePaymentDetails.paidOn,
-                        age: userInfo[0].patient.birthDate,
-                        gender: userInfo[0].patient.gender,
-                        docFirstName: userInfo[0].doctor.firstName,
-                        docLastName: userInfo[0].doctor.lastName,
-                        appointmentDate: appointmentDetails[0].appointmentDate,
-                        startTime: appointmentDetails[0].startTime,
-                        endTime: appointmentDetails[0].endTime,
-                        consultationfee: consultationfee.amount,
-                        serviceCharges: updatePaymentReport.serviceCharges,
-                        discount: updatePaymentReport.discount,
-                        GST: "0%", // needs to work on gst
-                        payableAmount: updatePaymentReport.payableAmount,
-                        paymentMethod: updatePaymentDetails.paymentMethod,
-                        hcuraId: userInfo[0].patient.hcuraId,
-                        branchPhoneNumber : branchCode.branchPhoneNumber,
-                        docQualification : userInfo[0].doctor.qualification,
-                        docRegstration : userInfo[0].doctor.registrationNumber
-                    }
-                    console.log(",,,,,,,,,,pdfDetails,,,,,,,,",pdfDetails)
-                    let file = await htmlToPDF.generateInvoiceForConsultation(pdfDetails);
-                        // email to patient consultation invoice
-                        emailSender.sendConsultationInvoiceEmail(
-                            userInfo[0].patient.emailId,
-                            file
-                        );
-                        // email to patient payment success
-                        emailSender.sendPaymentSuccess(
-                            userInfo[0].patient.firstName,
-                            userInfo[0].patient.emailId,
-                            consultationfee.amount,
-                            "#" + relationId,
-                            updatePaymentDetails.paymentMethod.toUpperCase()
-                          );
+                let pdfDetails = {
+                    invoiceNumber: updatePaymentReport.invoiceNumber,
+                    firstName: userInfo[0].patient.firstName,
+                    lastName: userInfo[0].patient.lastName,
+                    paidOn: updatePaymentDetails.paidOn,
+                    age: userInfo[0].patient.birthDate,
+                    gender: userInfo[0].patient.gender,
+                    docFirstName: userInfo[0].doctor.firstName,
+                    docLastName: userInfo[0].doctor.lastName,
+                    appointmentDate: appointmentDetails[0].appointmentDate,
+                    startTime: appointmentDetails[0].startTime,
+                    endTime: appointmentDetails[0].endTime,
+                    consultationfee: consultationfee.amount,
+                    serviceCharges: updatePaymentReport.serviceCharges,
+                    discount: updatePaymentReport.discount,
+                    GST: "0%", // needs to work on gst
+                    payableAmount: updatePaymentReport.payableAmount,
+                    paymentMethod: updatePaymentDetails.paymentMethod,
+                    hcuraId: userInfo[0].patient.hcuraId,
+                    branchPhoneNumber : branchCode.branchPhoneNumber,
+                    docQualification : userInfo[0].doctor.qualification,
+                    docRegstration : userInfo[0].doctor.registrationNumber
+                }
+                console.log(",,,,,,,,,,pdfDetails,,,,,,,,",pdfDetails)
+                let file = await htmlToPDF.generateInvoiceForConsultation(pdfDetails);
+                    // email to patient consultation invoice
+                    emailSender.sendConsultationInvoiceEmail(
+                        userInfo[0].patient.emailId,
+                        file
+                    );
+                    // email to patient payment success
+                    emailSender.sendPaymentSuccess(
+                        userInfo[0].patient.firstName,
+                        userInfo[0].patient.emailId,
+                        consultationfee.amount,
+                        "#" + relationId,
+                        updatePaymentDetails.paymentMethod.toUpperCase()
+                    );
                         
-                        res.send({ success: true, data: userInfo});
+                    res.send({ success: true, data: userInfo});
                   }
-            } 
-            else if (payable == body.payableAmount && payable > 0) {
-                    if(body.consultationType === "FOLLOW-UP"){
-                        let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, appointmentData[0]._id);
-                    } 
+            } else if (payable == body.payableAmount && payable > 0) {
+                if(body.consultationType === "FOLLOW-UP"){
+                    let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, appointmentData[0]._id);
+                } 
                 let payment = await paymentGateway.generatePaymentLinkConsultation(
                     ptDetails.firstName, 
                     body.phoneNumber,
@@ -283,19 +280,116 @@ class appointment{
                     discount: Discount,
                     // GSTID: obj.GSTID,
                 };
-                let addPaymentInfo = await appointmentDA.addPaymentInfo(
-                    paymentObj,
-                    );
+                let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
                 
-                    await appointmentDA.updatePaymentDetailsAppointment(
-                        body.appointmentId, addPaymentInfo._id,); //appointment table
-                    res.send({ success: true, data: addPaymentInfo });
+                await appointmentDA.updatePaymentDetailsAppointment(body.appointmentId, addPaymentInfo._id,); //appointment table
+                res.send({ success: true, data: addPaymentInfo });
                 
                 } else {
-                    throw Boom.badData(
-                        apiResponse.ServerErrors.error.payment_not_created
-                    );
+                    throw Boom.badData(apiResponse.ServerErrors.error.payment_not_created);
                 }
+            } else if(payable == body.payableAmount && payable == 0) {
+                let paymentObj = {
+                    patientId: body.patientId,
+                    doctorId: appointmentData[0].doctorId,
+                    branchId: ptDetails.branchId,
+                    appointmentId: body.appointmentId,
+                    paymentDoneBy: body.paymentDoneBy,
+                    slotId: appointmentData[0].slotId,
+                    dayId: appointmentData[0].dayId,
+                    paymentFor: body.paymentFor,
+                    promoCodes: body.promoCodes,
+                    payableAmount: payable,
+                    shortUrl: null,
+                    paymentRelationId: null,
+                    paymentLinkId: null,
+                    paymentStatus: constants.value.CREATED,
+                    paymentMethod: "zero_payment",
+                    afterRemovingGST: afterRemovingDiscount,
+                    GSTAmount: gstAmount,
+                    discount: Discount,
+                    // GSTID: obj.GSTID,
+                };
+                if(body.consultationType === "FOLLOW-UP"){
+                    let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, paymentObj.appointmentId);
+                }
+                let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
+                console.log("----addPaymentInfo----",addPaymentInfo);
+                let PAYMENT_ID = addPaymentInfo._id;
+                let confirmAppt = await appointmentDA.confirmAppointment(
+                    appointmentData[0]._id, addPaymentInfo._id );
+                console.log("++++++confirm Appt+++++",confirmAppt)
+                let paidOn = moment().format();
+                let branchCode = await appointmentDA.branchCode(ptDetails.branchId);
+                console.log("@@@@@@@  branchCode  @@@@@",branchCode)
+                let invoiceNumber = await invoiceGenerator.generateInvoiceNumber(branchCode.branchCode);
+                console.log("*****invoiceNumber*****",invoiceNumber)
+                let updatePaymentDetails = {
+                    paymentMethod: "zero_payment",
+                    paymentStatus: "captured",
+                    paymentId: PAYMENT_ID,
+                    orderId: PAYMENT_ID,
+                    paymentRelationId: PAYMENT_ID,
+                    paidOn: paidOn,
+                    appointmentId: appointmentData[0]._id,
+                    paymentLinkId: PAYMENT_ID,
+                    invoiceNumber: invoiceNumber
+                };
+                let relationId = updatePaymentDetails.paymentRelationId;
+                console.log("paymentObj.paymentRelationId......",updatePaymentDetails.paymentRelationId)
+                console.log("relationId,,,,,,,",relationId)
+                let updatePaymentReport = await appointmentDA.updatePaymentReportDA(updatePaymentDetails);
+                console.log("....updatePaymentReport......",updatePaymentReport)
+                if(updatePaymentReport != null){
+                    let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
+                    console.log("-------userInfo------",userInfo);
+                    let appointmentDetails = await appointmentDA.getAppointmentDetails(updatePaymentReport.appointmentId);
+                    console.log("------appointmentDetails------",appointmentDetails);
+                    let consultationfee = await appointmentDA.getAmount(appointmentDetails[0].consultationType);
+                    console.log("_________consultationfee________",consultationfee);
+                    console.log("****************",userInfo[0].patient)
+                let pdfDetails = {
+                    invoiceNumber: updatePaymentReport.invoiceNumber,
+                    firstName: userInfo[0].patient.firstName,
+                    lastName: userInfo[0].patient.lastName,
+                    paidOn: updatePaymentDetails.paidOn,
+                    age: userInfo[0].patient.birthDate,
+                    gender: userInfo[0].patient.gender,
+                    docFirstName: userInfo[0].doctor.firstName,
+                    docLastName: userInfo[0].doctor.lastName,
+                    appointmentDate: appointmentDetails[0].appointmentDate,
+                    startTime: appointmentDetails[0].startTime,
+                    endTime: appointmentDetails[0].endTime,
+                    consultationfee: consultationfee.amount,
+                    serviceCharges: updatePaymentReport.serviceCharges,
+                    discount: updatePaymentReport.discount,
+                    GST: "0%", // needs to work on gst
+                    payableAmount: updatePaymentReport.payableAmount,
+                    paymentMethod: updatePaymentDetails.paymentMethod,
+                    hcuraId: userInfo[0].patient.hcuraId,
+                    branchPhoneNumber : branchCode.branchPhoneNumber,
+                    docQualification : userInfo[0].doctor.qualification,
+                    docRegstration : userInfo[0].doctor.registrationNumber
+                }
+                console.log(",,,,,,,,,,pdfDetails,,,,,,,,",pdfDetails)
+                let file = await htmlToPDF.generateInvoiceForConsultation(pdfDetails);
+                    // email to patient consultation invoice
+                    emailSender.sendConsultationInvoiceEmail(
+                        userInfo[0].patient.emailId,
+                        file
+                    );
+                    // email to patient payment success
+                    emailSender.sendPaymentSuccess(
+                        userInfo[0].patient.firstName,
+                        userInfo[0].patient.emailId,
+                        consultationfee.amount,
+                        "#" + relationId,
+                        updatePaymentDetails.paymentMethod.toUpperCase()
+                    );
+                    res.send({ success: true, data: userInfo});
+                }
+            } else {
+                res.status(500).send({ status: false, data: "Payment Method is Wrong Please Contact Tech-Team"});
             }
             // res.status(200).send({ status: true, data: {ptDetails,appointmentData}});
         } catch(e){

@@ -942,7 +942,7 @@ class appointmentDA{
             let addPaymentInfo = new paymentModel({
                 afterRemovingGst: paymentDetails.afterRemovingGst,
                 GSTAmount: paymentDetails.GSTAmount,
-                discount: paymentDetails.Discount,
+                discount: paymentDetails.discount,
                 payableAmount: paymentDetails.payableAmount,
                 paymentDoneBy: paymentDetails.paymentDoneBy,
                 remarks: paymentDetails.remarks,

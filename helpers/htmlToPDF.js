@@ -1240,7 +1240,7 @@ class HtmlToPdfHelper {
         "" +
         "        .p1 {" +
         "            text-align: justify;" +
-        "            padding-left: 2060px;" +
+        "            padding-left: 1960px;" +
         "            margin-top: 64px;" +
         "            margin-bottom: 0px;" +
         "            padding-bottom: 80px;" +
@@ -1612,7 +1612,7 @@ class HtmlToPdfHelper {
         '                    <TD class="tr6 td13">' +
         '                        <P class="p9 ft7">' +
         "+" +
-        parseFloat(pdfDetails.serviceCharge).toFixed(2) +
+        parseFloat(pdfDetails.serviceCharges).toFixed(2) +
         "</P>" +
         "                    </TD>" +
         "                </TR>" +

@@ -99,4 +99,11 @@ exports.paymentExtrnalSourceRule = Joi.object({
     paymentMode: Joi.string().valid('cash', 'qr_code', 'swiping_machine', 'online').required().error(new Error("payment Mode is Required")),
     prescribedBy: Joi.string().required().error(new Error("prescribedBy is Required")),
     paymentDoneBy :Joi.string().required().error(new Error("paymentDoneBy is required")),
-  });
+});
+
+exports.dashboardPtDetailsRule = Joi.object({
+    roleId: Joi.string().required().error(new Error("roleId is required")),
+    branchId: Joi.string().required().error(new Error("branchId is required")),
+    startDate: Joi.string().required().error(new Error("startDate is Required")),
+    endDate :Joi.string().required().error(new Error("startDate is required")),
+});

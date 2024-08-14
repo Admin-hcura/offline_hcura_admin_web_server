@@ -12,7 +12,8 @@ const paymentGateway = require("../helpers/paymentGateway");
 const { sourceModel, occupationModel } = require("../models/schema");
 const scheduler = require("../scheduler/scheduler");
 const schedulers = new scheduler();
-const apiResponse = require("../helpers/apiResponse")
+const apiResponse = require("../helpers/apiResponse");
+const authentationDA = require("../layers/dataLayer/authentationDA");
 
 class appointment{
     async bookAppointment(req, res, next){
@@ -993,6 +994,27 @@ class appointment{
           res.send({success: true, data: result});
         } catch(e){
           next(e);
+        }
+    };
+
+    async getDashboardPTDetails(req, res, next){
+        try{
+            let body = req.body
+            const { error } = rule.dashboardPtDetailsRule.validate(body);
+            if (error){
+              throw Boom.badData(error.message);
+            }
+            let result 
+            if(body.roleId.length >0){
+                let roleDetails = await authentationDA.getroleCodeDA(body.roleId);
+                if(roleDetails.roleName == "SUPER_ADMIN"){
+                    result = await appointmentDA.dashboardAllPtDetailsDA(body)
+                }
+                result = await appointmentDA.dashboardPtDetailsDA(body)
+            }
+            res.send({ success: true, data: result });
+        } catch(e){
+            next(e);
         }
     };
 

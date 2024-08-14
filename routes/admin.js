@@ -92,5 +92,8 @@ router.post("/payment/external/source",
 router.get("/get/package/promo/list",
   appointmentController.getPackagePromocodes
 );
+router.post("/get/dashboard/patient/details",
+  appointmentController.getDashboardPTDetails
+);
 
 module.exports = router;

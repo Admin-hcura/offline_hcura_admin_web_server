@@ -1378,6 +1378,138 @@ class appointmentDA{
           throw e;
       }
     };
+
+    async dashboardPtDetailsDA(body){
+      try{
+        console.log("-----body------",body)
+        return await patientModel.aggregate(
+          [
+            {
+              $facet: {
+                todayCount: [
+                  {
+                    $match: {
+                      branchId: new mongoose.Types.ObjectId(body.branchId),
+                      registeredOn: {
+                        $gte: new Date(body.startDate),
+                        $lt: new Date(body.endDate),
+                      },
+                    },
+                  },
+                  {
+                    $count: "count",
+                  },
+                ],
+                tillYesterdayCount: [
+                  {
+                    $match: {
+                      branchId: new mongoose.Types.ObjectId(body.branchId),
+                      registeredOn: {
+                        $lt: new Date(body.startDate),
+                      },
+                    },
+                  },
+                  {
+                    $count: "count",
+                  },
+                ],
+              },
+            },
+            {
+              $project: {
+                todayCount: {
+                  $ifNull: [
+                    {
+                      $arrayElemAt: [
+                        "$todayCount.count",
+                        0,
+                      ],
+                    },
+                    0,
+                  ],
+                },
+                tillYesterdayCount: {
+                  $ifNull: [
+                    {
+                      $arrayElemAt: [
+                        "$tillYesterdayCount.count",
+                        0,
+                      ],
+                    },
+                    0,
+                  ],
+                },
+              },
+            },
+          ]
+        );
+      } catch(e){
+        throw e;
+      }
+    };
+
+    async dashboardAllPtDetailsDA(body){
+      try{
+        return await patientModel.aggregate(
+          [
+            {
+              $facet: {
+                todayCount: [
+                  {
+                    $match: {
+                      registeredOn: {
+                        $gte: new Date(body.startDate),
+                        $lt: new Date(body.endDate)
+                      }
+                    }
+                  },
+                  {
+                    $count: "count"
+                  }
+                ],
+                tillYesterdayCount: [
+                  {
+                    $match: {
+                      registeredOn: {
+                        $lt: new Date(body.startDate)
+                      }
+                    }
+                  },
+                  {
+                    $count: "count"
+                  }
+                ]
+              }
+            },
+            {
+              $project: {
+                todayCount: {
+                  $ifNull: [
+                    {
+                      $arrayElemAt: ["$todayCount.count", 0]
+                    },
+                    0
+                  ]
+                },
+                tillYesterdayCount: {
+                  $ifNull: [
+                    {
+                      $arrayElemAt: [
+                        "$tillYesterdayCount.count",
+                        0
+                      ]
+                    },
+                    0
+                  ]
+                }
+              }
+            }
+          ]
+        );
+      } catch(e){
+        throw e;
+      }
+    };
     
 }
 module.exports = new appointmentDA();

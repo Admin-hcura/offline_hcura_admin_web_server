@@ -98,6 +98,7 @@ class authentication {
                 apiResponse.ServerErrors.error.user_not_exist_admin
               );
             } else {
+              console.log("-------response------", response)
               let checkPassword = await authentationDAObj.adminPasswordDA(
                 password,
                 response.password
@@ -106,6 +107,7 @@ class authentication {
                 await authentationDAObj.updateAdminFcmTokenDA(response._id, fcmToken);
                 let details = await createAdminSession(response, res, userAgent);
                 details.roleCode = roleCode.roleCode
+                details.roleName = roleCode.roleName
                 res.send({ success: true, data: details });
               } else {
                 throw Boom.conflict(apiResponse.ServerErrors.error.password);

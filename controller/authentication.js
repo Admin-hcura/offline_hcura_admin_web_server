@@ -119,9 +119,8 @@ class authentication {
     async adminLogout(req, res, next){
         try{
             let userId = req.userId;
-            const { error } = rule.logoutRule.validate(body);
-                if (error) {
-                    throw Boom.badData(error.message);
+                if (!userId) {
+                    throw Boom.badData("Please enter userId");
                 }
             await redisClient.del(userId + "_offline_admin_web");
             await authentationDAObj.adminLogoutDA(userId);

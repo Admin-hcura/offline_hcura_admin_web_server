@@ -534,28 +534,34 @@ class appointmentDA{
     async getDoctorsList(){
         try{
             return await roleModel.aggregate(
-                [
-                    {
-                      $match: {
-                        isDeleted: false,
-                        roleName: "DOCTORS"
-                      }
-                    },
-                    {
-                      $lookup: {
-                        from: "admin",
-                        localField: "_id",
-                        foreignField: "roleId",
-                        as: "doctors"
-                      }
-                    },
-                    {
-                      $unwind: {
-                        path: "$doctors",
-                        preserveNullAndEmptyArrays: true
-                      }
-                    }
-                  ]    
+              [
+                {
+                  $match: {
+                    roleName: "DOCTORS",
+                    isDeleted: false
+                  }
+                },
+                {
+                  $lookup: {
+                    from: "admin",
+                    localField: "_id",
+                    foreignField: "roleId",
+                    as: "doctorDetails"
+                  }
+                },
+                // {
+                //   $unwind: {
+                //     path: "$doctorDetails",
+                //     preserveNullAndEmptyArrays: true,
+                //   },
+                // },
+                {
+                  $project: {
+                    doctorDetails: 1,
+                    _id: 0
+                  }
+                }
+              ]    
             );
         } catch(e){
             throw e;

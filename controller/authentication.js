@@ -544,8 +544,8 @@ class authentication {
                             GST: "0%", // needs to work on gst
                             payableAmount: updatePaymentReport.payableAmount,
                             paymentMethod: updatePaymentDetails.paymentMethod,
-                            docQualification: userInfo[0].doctor.qualification,
-                            docRegstration : userInfo[0].doctor.registrationNumber,
+                            docQualification: userInfo[0].doctor.qualifaction,
+                            docRegstration : userInfo[0].doctor.registerationNumber,
                             hcuraId: userInfo[0].patient.hcuraId,
                             branchPhoneNumber: branchCode.branchPhoneNumber
                         }
@@ -617,11 +617,11 @@ class authentication {
                           GST: "0%", // needs to work on gst
                           payableAmount: updatePaymentReport.payableAmount,
                           paymentMethod: updatePaymentDetails.paymentMethod,
-                          docQualification: userInfo[0].doctor.qualification,
+                          docQualification: userInfo[0].doctor.qualifaction,
                           hcuraId: userInfo[0].patient.hcuraId,
                           packageName: packageDetails[0].packageName,
                           packageAmount: packageDetails[0].packageAmount,
-                          docRegstration : userInfo[0].doctor.registrationNumber,
+                          docRegstration : userInfo[0].doctor.registerationNumber,
                           branchPhoneNumber: branchCode.branchPhoneNumber
                         }
 

@@ -514,6 +514,11 @@ class authentication {
                     console.log("--------userInfo-----",userInfo);
                     let appointmentDetails = await appointmentDA.getAppointmentDetails(updatePaymentReport.appointmentId);
                     console.log("------appointmentDetails------",appointmentDetails);
+
+                    // needs to check whether this 2 lines is working or not
+                    let confirmAppt = await appointmentDA.confirmAppointment( updatePaymentReport.appointmentId, updatePaymentReport._id );
+                    console.log("++++++confirm Appt+++++",confirmAppt)
+
                     // let consultationfee = await appointmentDA.getAmount(appointmentDetails[0].consultationType);
                     // console.log("_________consultationfee________",consultationfee.amount);
                     let branchCode = await appointmentDA.branchCode(userInfo[0].patient.branchId);

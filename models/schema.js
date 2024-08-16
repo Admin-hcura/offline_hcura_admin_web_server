@@ -177,6 +177,7 @@ const { number, required } = require("joi");
           "COMPLETED",
           "RESCHEDULE",
           "SCHEDULED",
+          "VISITED"
         ],
         default: "SCHEDULED",
       },

@@ -127,7 +127,7 @@ class appointmentDA{
                 {
                     $set:{
                         paymentId: paymentInfoId,
-                        appointmentStatus: "CONFIRMED"
+                        appointmentStatus: "SCHEDULED"
                     },
                 },{ new: true}
             );

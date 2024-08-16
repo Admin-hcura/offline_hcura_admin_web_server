@@ -95,7 +95,7 @@ router.get("/get/package/promo/list",
 router.post("/get/dashboard/patient/details",
   appointmentController.getDashboardPTDetails
 );
-router.get("/get/all/appointments/:",
+router.get("/get/all/appointments",
   appointmentController.getAllAppt
 );
 

@@ -71,7 +71,7 @@ class appointment{
                 allegires: body.allegires,
                 consultationMode: body.consultationMode,
                 consultationType: body.consultationType,
-                appointmentStatus: "CREATED",
+                appointmentStatus: "SCHEDULED",
                 appointmentNumber: newAppointmentNumber
             }
             let createAppointment = await appointmentDA.createAppointment(obj);
@@ -1013,6 +1013,26 @@ class appointment{
                 result = await appointmentDA.dashboardPtDetailsDA(body)
             }
             res.send({ success: true, data: result });
+        } catch(e){
+            next(e);
+        }
+    };
+
+    async getAllAppt(req, res, next){
+        try{
+            // const { appointmentState } = req.params;
+            const { page, limit, searchKey, fromDate, toDate } = req.query;
+            const obj = { isActive : true };
+            const getAllAppointment = await appointmentDA.getAllApptList(
+                obj,
+                page,
+                limit,
+                searchKey,
+                fromDate,
+                toDate
+            //   appointmentState,
+            );
+            res.status(200).send({ status: true, data: getAllAppointment });
         } catch(e){
             next(e);
         }

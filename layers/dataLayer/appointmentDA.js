@@ -1405,6 +1405,7 @@ class appointmentDA{
                     $match: {
                       branchId: new mongoose.Types.ObjectId(body.branchId),
                       registeredOn: {
+                        $gte: new Date(body.monthStartDate),
                         $lt: new Date(body.startDate),
                       },
                     },
@@ -1508,6 +1509,128 @@ class appointmentDA{
         );
       } catch(e){
         throw e;
+      }
+    };
+
+    async getAllApptList(obj, page, limit, searchKey, fromDate, toDate){
+      try{
+        let match = { $regex: searchKey, $options: "i" };
+        let offset = page * limit;
+        if (fromDate && toDate) {
+          const stDate = new Date(fromDate);
+          const edDate = new Date(toDate);
+          if (stDate != "Invalid Date" && edDate != "Invalid Date") {
+            obj["appointmentDate"] = {
+              $gte: stDate,
+              $lte: edDate,
+            };
+          }
+        }
+        const apptList = await appointmentModel.aggregate(
+          [
+            {
+              $sort: {
+                appointmentDate: -1
+              }
+            },
+            {
+              $match: obj
+            },
+            {
+              $lookup: {
+                from: "admin",
+                localField: "doctorId",
+                foreignField: "_id",
+                as: "doctor"
+              }
+            },
+            {
+              $unwind: {
+                path: "$doctor",
+                preserveNullAndEmptyArrays: true
+              }
+            },
+            {
+              $lookup: {
+                from: "patient",
+                localField: "patientId",
+                foreignField: "_id",
+                as: "patient"
+              }
+            },
+            {
+              $unwind: {
+                path: "$patient",
+                preserveNullAndEmptyArrays: true
+              }
+            },
+            {
+              $lookup: {
+                from: "payment",
+                localField: "paymentId",
+                foreignField: "_id",
+                as: "payment"
+              }
+            },
+            {
+              $unwind: {
+                path: "$payment",
+                preserveNullAndEmptyArrays: true
+              }
+            },
+            {
+              $skip: parseInt(offset),
+            },
+            {
+              $limit: parseInt(limit),
+            },
+            {
+              $project: {
+                appointmentDate: 1,
+                startTime: 1,
+                createdOn: 1,
+                appointmentState: 1,
+                appointmentNumber: 1,
+                appointmentId: 1,
+                doctorFirstName: "$doctor.firstName",
+                doctorLastName: "$doctor.lastName",
+                doctorEmailId: "$doctor.emailId",
+                doctorProfilePic: "$doctor.profilePic",
+                doctorId: "$doctor._id",
+                doctorHcuraDoctorId:
+                  "$doctor.hcuraDoctorId",
+                patientFirstName: "$patient.firstName",
+                patientLastName: "$patient.lastName",
+                patientHcuraId: "$patient.hcuraId",
+                patientId: "$patient._id",
+                paymentMethod: "$payment.paymentMethod",
+                paymentCreatedDate: "$payment.paidOn",
+                paymentPayableAmount:
+                  "$payment.payableAmount",
+                paymentPaymentStatus:
+                  "$payment.paymentStatus",
+                _id: "$_id"
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { appointmentNumber: match },
+                  { doctorFirstName: match },
+                  { doctorLastName: match },
+                  { patientFirstName: match },
+                  { patientLastName: match },
+                  { patientHcuraId: match }
+                ],
+              },
+            },
+          ]
+        );
+      const appCount = await appointmentModel.find(obj).countDocuments();
+      const pageCount = Math.ceil(parseInt(appCount) / parseInt(limit));
+      return { apptList, appCount, pageCount };
+      } catch(e){
+        throw e
       }
     };
     

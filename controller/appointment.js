@@ -72,7 +72,8 @@ class appointment{
                 consultationMode: body.consultationMode,
                 consultationType: body.consultationType,
                 appointmentStatus: "SCHEDULED",
-                appointmentNumber: newAppointmentNumber
+                appointmentNumber: newAppointmentNumber,
+                bookedBy: body.bookedBy
             }
             let createAppointment = await appointmentDA.createAppointment(obj);
             let userInfo = await appointmentDA.patientDetaiils(body.patientId);
@@ -1033,6 +1034,20 @@ class appointment{
             //   appointmentState,
             );
             res.status(200).send({ status: true, data: getAllAppointment });
+        } catch(e){
+            next(e);
+        }
+    };
+
+    async updateAppointmentStatus(req, res, next){
+        try{
+            let body = req.body
+            const { error } = rule.apptStatusRule.validate(body);
+            if (error){
+              throw Boom.badData(error.message);
+            }
+            let result = await appointmentDA.updateAppointmentStatus(body);
+            res.status(200).send({ status: true, data: result });
         } catch(e){
             next(e);
         }

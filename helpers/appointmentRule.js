@@ -1,5 +1,6 @@
 const Joi = require("joi");
 const moment = require("moment-timezone");
+const { updateAppointmentStatus } = require("../controller/appointment");
 
 let now = moment().format("YYYY-MM-DD");
 
@@ -106,4 +107,10 @@ exports.dashboardPtDetailsRule = Joi.object({
     branchId: Joi.string().required().error(new Error("branchId is required")),
     startDate: Joi.string().required().error(new Error("startDate is Required")),
     endDate :Joi.string().required().error(new Error("startDate is required")),
+});
+
+exports.apptStatusRule = Joi.object({
+    updatedBy : Joi.string().required().error(new Error("updatedBy Id is required")),
+    appointmentStatus : Joi.string().required().error(new Error("appointmentStatus Id is required")),
+    appointmentId : Joi.string().required().error(new Error("appointmentId Id is required")),
 });

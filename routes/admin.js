@@ -98,5 +98,8 @@ router.post("/get/dashboard/patient/details",
 router.get("/get/all/appointments",
   appointmentController.getAllAppt
 );
+router.post("/update/appointment/status",
+  appointmentController.updateAppointmentStatus
+);
 
 module.exports = router;

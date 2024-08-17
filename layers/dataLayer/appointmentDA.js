@@ -1250,7 +1250,7 @@ class appointmentDA{
                         },
                         "paymentDetails.packageAmount": {
                           $arrayElemAt: [
-                            "$packageDetails.packageAmount",
+                            "$packageDetails.amount",
                             0
                           ]
                         }
@@ -1631,6 +1631,47 @@ class appointmentDA{
       return { apptList, appCount, pageCount };
       } catch(e){
         throw e
+      }
+    };
+
+    async updateAppointmentStatus(body){
+      try{
+        if(body.appointmentStatus == "CONFIRMED"){
+          let result = await appointmentModel.findOneAndUpdate(
+            {_id: body.appointmentId},
+            {
+                $set:{
+                    appointmentStatus: "CONFIRMED",
+                    confirmedUpdatedBy: body.updatedBy
+                },
+            },{ new: true}
+          );
+        return result;
+        } else if(body.appointmentStatus == "CANCELLED"){
+          let result = await appointmentModel.findOneAndUpdate(
+            {_id: body.appointmentId},
+            {
+                $set:{
+                    appointmentStatus: "CANCELLED",
+                    canceledUpdatedBy: body.updatedBy
+                },
+            },{ new: true}
+          );
+          return result;
+        } else if(body.appointmentStatus == "VISITED"){
+          let result = await appointmentModel.findOneAndUpdate(
+            {_id: body.appointmentId},
+            {
+                $set:{
+                    appointmentStatus: "VISITED",
+                    visitedUpdatedBy: body.updatedBy
+                },
+            },{ new: true}
+          );
+          return result;
+        }
+      } catch(e){
+        throw e;
       }
     };
     

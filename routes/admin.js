@@ -74,6 +74,9 @@ router.get("/get/package/homeopathy",
 router.post("/payment/package",
   appointmentController.packagePayment
 );
+// router.post("/payment/asthetic",
+//   appointmentController.paymentAsthetic
+// );
 router.post("/create/estimation",
   appointmentController.insertEstimation
 );

@@ -11,7 +11,6 @@ exports.appointmentRule = Joi.object({
     day: Joi.string().required().error(new Error("day is required")),
     timeId: Joi.string().required().error(new Error("timeId is required")),
     dayId: Joi.string().required().error(new Error("dayId is required")),
-    branchId: Joi.string().required().error(new Error("branchId is required")),
     appointmentDate: Joi.string().required().error(new Error("appointmentDate is required")),
     startTime: Joi.string().required().error(new Error("startTime is required")),
     endTime: Joi.string().required().error(new Error("endTime is required")),
@@ -93,7 +92,6 @@ exports.paymenPackageRule = Joi.object({
 
 exports.paymentExtrnalSourceRule = Joi.object({
     patientId: Joi.string().required().error(new Error("patientId is Required")),
-    branchId: Joi.string().required().error(new Error("branchId is required")),
     phoneNumber: Joi.number().required().error(new Error ("Phone number is Required")),
     payableAmount: Joi.number().required().error(new Error("payable Amount is Required")),
     remarks: Joi.string().required().error(new Error ("Remarks is Required")),

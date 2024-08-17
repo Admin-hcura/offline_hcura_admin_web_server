@@ -57,13 +57,14 @@ class appointment{
                 // Use the prefix from the first item (assuming all prefixes are the same)
                 newAppointmentNumber = `${existingApptNumbers[0].prefix}${newCountFormatted}`;
                 console.log('New Appointment Number:', newAppointmentNumber);
-            } 
+            }
+            let userInfo = await appointmentDA.patientDetaiils(body.patientId);
             let obj = {
                 patientId: body.patientId,
                 doctorId: body.doctorId,
                 slotId: blockSlot._id,
                 dayId: body.dayId,
-                branchId: body.branchId,
+                branchId: userInfo.branchId,
                 appointmentDate: appointmentDate,
                 startTime: body.startTime,
                 endTime: body.endTime,
@@ -76,7 +77,6 @@ class appointment{
                 bookedBy: body.bookedBy
             }
             let createAppointment = await appointmentDA.createAppointment(obj);
-            let userInfo = await appointmentDA.patientDetaiils(body.patientId);
             let docDetails = await appointmentDA.getDoctorDetails(body.doctorId);
             console.log("......userInfo.......",userInfo);
             console.log("......docDetails.......",docDetails);
@@ -888,7 +888,7 @@ class appointment{
                 countryCode: ptDetails.countryCode,
                 prescribedBy : body.prescribedBy,
                 remarks : body.remarks,
-                branchId: body.branchId,
+                branchId: ptDetails.branchId,
                 firstName : ptDetails.firstName
             };
             // GST NOT CALCULATING FOR EXTERNAL PAYMENTS

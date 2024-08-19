@@ -627,7 +627,7 @@ class authentication {
                           hcuraId: userInfo[0].patient.hcuraId,
                           packageName: packageDetails[0].packageName,
                           packageAmount: packageDetails[0].packageAmount,
-                          docRegstration : userInfo[0].doctor.registerationNumber,
+                          docRegstration : userInfo[0].doctor.registrationNumber,
                           branchPhoneNumber: branchCode.branchPhoneNumber
                         }
 
@@ -721,7 +721,7 @@ class authentication {
                           hcuraId: userInfo[0].patient.hcuraId,
                           packageName: packageDetails[0].packageName,
                           packageAmount: packageDetails[0].packageAmount,
-                          docRegstration : userInfo[0].doctor.registerationNumber,
+                          docRegstration : userInfo[0].doctor.registrationNumber,
                           branchPhoneNumber: branchCode.branchPhoneNumber,
                           SGST: updatePaymentReport.SGST,
                           CGST: updatePaymentReport.CGST,
@@ -738,7 +738,7 @@ class authentication {
                           packageDetails[0].packageName,
                         );
                         let file = await htmlToPDF.generateInvoiceForAsthetic(pdfDetails);
-                        emailSender.sendPackageInvoiceEmail(userInfo[0].patient.emailId, file);
+                        emailSender.sendAstheticInvoiceEmail(userInfo[0].patient.emailId, file);
 
                         //  need to send medicine email to patient 
                       }

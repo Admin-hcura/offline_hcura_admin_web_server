@@ -15,6 +15,8 @@ const htmlToPDF = require("../helpers/htmlToPDF");
 const sendSMS = require("../helpers/sendSMS");
 const moment = require("moment-timezone");
 const appointment = require("./appointment");
+const scheduler = require("../scheduler/scheduler");
+const schedulers = new scheduler();
 
 
 async function redisGet(key) {
@@ -525,9 +527,7 @@ class authentication {
                     console.log("@@@@@@@  branchCode  @@@@@",branchCode)
                   if (userInfo && userInfo.length > 0) {
                     console.log("------entered----------1");
-                    if (
-                      report.status.toUpperCase() == constants.PAYMENT_STATUS.CAPTURE
-                    ) {
+                    if (report.status.toUpperCase() == constants.PAYMENT_STATUS.CAPTURE) {
                       console.log("------entered----------2");
                       if (userInfo[0].paymentFor == constants.value.CONSULTATION) {
                         let consultationfee = await appointmentDA.getAmount(appointmentDetails[0].consultationType);

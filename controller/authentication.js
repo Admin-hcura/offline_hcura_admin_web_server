@@ -516,8 +516,8 @@ class authentication {
                     console.log("------appointmentDetails------",appointmentDetails);
 
                     // needs to check whether this 2 lines is working or not
-                    let confirmAppt = await appointmentDA.confirmAppointment( updatePaymentReport.appointmentId, updatePaymentReport._id );
-                    console.log("++++++confirm Appt+++++",confirmAppt)
+                    // let confirmAppt = await appointmentDA.confirmAppointment( updatePaymentReport.appointmentId, updatePaymentReport._id );
+                    // console.log("++++++confirm Appt+++++",confirmAppt)
 
                     // let consultationfee = await appointmentDA.getAmount(appointmentDetails[0].consultationType);
                     // console.log("_________consultationfee________",consultationfee.amount);
@@ -588,7 +588,6 @@ class authentication {
                         
                         // res.send({ success: true, data: userInfo});
                       } else if (userInfo[0].paymentFor == constants.value.HOMEOPATHY) {
-                        
                         let packageDetails = await authentationDAObj.getPackageDetailsApptId(getStatus.appointmentId);
                         let endDate =  moment(updatePaymentReport.paidOn).add(parseInt(packageDetails[0].months), 'months');
                         console.log("---------------endDate---------",endDate)
@@ -682,14 +681,75 @@ class authentication {
                         let file = await htmlToPDF.generateInvoiceForExternalSource(pdfDetails);
                         emailSender.sendExternalSourceInvoiceEmail(userInfo[0].patient.emailId, file);
                         console.log("---------last-------100",);
+                      } else if (userInfo[0].paymentFor == constants.value.ASTHETIC) {
+                        let packageDetails = await authentationDAObj.getPackageDetailsApptId(getStatus.appointmentId);
+                        let endDate =  moment(updatePaymentReport.paidOn).add(parseInt(packageDetails[0].months), 'months');
+                        console.log("---------------endDate---------",endDate)
+                        if (!endDate.isValid()) {
+                          endDate = moment(startDate).endOf('month');
+                          console.log("End Date:", endDate); 
+                        }
+                        let packageSchedules = {
+                          userId: updatePaymentReport.userId,
+                          packageId: updatePaymentReport.packageId,
+                          paymentId: updatePaymentReport._id,
+                          endDate: endDate,
+                          paidOn: updatePaymentReport.paidOn,
+                        }
+                        let insertPackageSchedules = await appointmentDA.insertPackageSchedules(packageSchedules);
+                        let details ={
+                          endDate: insertPackageSchedules.endDate,
+                          _id: insertPackageSchedules._id
+                        }
+                        // schedulers
+                        await schedulers.changeisActiveStatusPackage(details)
+                        console.log("------packageDetails----------",packageDetails);
+                        let pdfDetails = {
+                          invoiceNumber: updatePaymentReport.invoiceNumber,
+                          firstName: userInfo[0].patient.firstName,
+                          lastName: userInfo[0].patient.lastName,
+                          paidOn: updatePaymentDetails.paidOn,
+                          age: userInfo[0].patient.birthDate,
+                          gender: userInfo[0].patient.gender,
+                          docFirstName: userInfo[0].doctor.firstName,
+                          docLastName: userInfo[0].doctor.lastName,
+                          serviceCharges: updatePaymentReport.serviceCharges,
+                          discount: updatePaymentReport.discount,
+                          payableAmount: updatePaymentReport.payableAmount,
+                          paymentMethod: updatePaymentDetails.paymentMethod,
+                          docQualification: userInfo[0].doctor.qualifaction,
+                          hcuraId: userInfo[0].patient.hcuraId,
+                          packageName: packageDetails[0].packageName,
+                          packageAmount: packageDetails[0].packageAmount,
+                          docRegstration : userInfo[0].doctor.registerationNumber,
+                          branchPhoneNumber: branchCode.branchPhoneNumber,
+                          SGST: updatePaymentReport.SGST,
+                          CGST: updatePaymentReport.CGST,
+                          IGST: updatePaymentReport.IGST,
+                          UGST: updatePaymentReport.UGST,
+                        }
+
+                        emailSender.sendAstheticPaymentSuccess(
+                          userInfo[0].patient.firstName,
+                          userInfo[0].patient.emailId,
+                          updatePaymentReport.payableAmount,
+                          "#" + relationId,
+                          updatePaymentReport.paymentMethod,
+                          packageDetails[0].packageName,
+                        );
+                        let file = await htmlToPDF.generateInvoiceForAsthetic(pdfDetails);
+                        emailSender.sendPackageInvoiceEmail(userInfo[0].patient.emailId, file);
+
+                        //  need to send medicine email to patient 
                       }
                     } else if (
                       report.status.toUpperCase() == constants.PAYMENT_STATUS.FAILED
                     ) {
                       if (
-                        userInfo[0].appointmentFor == constants.value.CONSULTATION ||
-                        userInfo[0].appointmentFor == constants.value.HOMEOPATHY ||
-                        userInfo[0].appointmentFor == constants.value.EXTERNAL_SOURCE
+                        userInfo[0].paymentFor == constants.value.CONSULTATION ||
+                        userInfo[0].paymentFor == constants.value.HOMEOPATHY ||
+                        userInfo[0].paymentFor == constants.value.EXTERNAL_SOURCE ||
+                        userInfo[0].paymentFor == constants.value.ASTHETIC
                       ) {
                         emailSender.paymentFail(
                           userInfo[0].patient.firstName,

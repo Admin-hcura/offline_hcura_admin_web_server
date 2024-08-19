@@ -1,13 +1,22 @@
 const AWS = require("aws-sdk");
 class Constants {}
 
-Constants.MAIL_CONFIG = {
+// Constants.MAIL_CONFIG = {
+//     host: "mail.gmail.com",
+//     auth: {
+//       user: "support@h-cura.com",
+//       pass: "Support@2021!",
+//     },
+//     email: "support@h-cura.com",
+//     invoiceEmail: "admin@h-cura.com",
+//   };
+  Constants.MAIL_CONFIG = {
     host: "mail.gmail.com",
     auth: {
-      user: "support@h-cura.com",
-      pass: "Support@2021!",
+      user: "connect@h-cura.com",
+      pass: "Connect@2024#H",
     },
-    email: "support@h-cura.com",
+    email: "connect@h-cura.com",
     invoiceEmail: "admin@h-cura.com",
   };
 Constants.OTP_STORE_TIME_LIMIT = 60 * 15; //15 Minutes
@@ -28,7 +37,8 @@ Constants.value = {
     RECOMMENDED: "RECOMMENDED",
     ATTENDED: "ATTENDED",
     EXTERNAL_SOURCE: "EXTERNAL_SOURCE",
-    HOMEOPATHY: "HOMEOPATHY"
+    HOMEOPATHY: "HOMEOPATHY",
+    ASTHETIC: "ASTHETIC"
   };
 Constants.PAYMENT_STATUS = {
     CAPTURE: "CAPTURED",

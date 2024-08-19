@@ -74,13 +74,16 @@ router.get("/get/package/homeopathy",
 router.post("/payment/package",
   appointmentController.packagePayment
 );
-// router.post("/payment/asthetic",
-//   appointmentController.paymentAsthetic
-// );
+router.post("/payment/asthetic",
+  appointmentController.paymentAsthetic
+);
 router.post("/create/estimation",
   appointmentController.insertEstimation
 );
 router.post("/get/patient/detils/package/payments",
+  appointmentController.getPatientDetilsPackage
+);
+router.post("/get/patient/detils/asthetic/payments",
   appointmentController.getPatientDetilsPackage
 );
 router.post("/get/payment/details/for/particular/appt",

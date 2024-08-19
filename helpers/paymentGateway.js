@@ -49,7 +49,7 @@ class PaymentGateway {
           let obj = {
             amount: parseFloat(amount) * 100,
             currency: "INR",
-            expire_by: moment().add(2, "days").unix(),
+            expire_by: moment().add(1, "days").unix(),
             customer: {
               name: firstName,
               contact: "+" + "91" + phoneNumber,

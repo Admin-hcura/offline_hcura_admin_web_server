@@ -942,11 +942,26 @@ class appointmentDA{
         }
     };
 
+    async updateAstheticPackageDetailsInAppt(appointmentId, astheticPaymentId, packageId){
+      try{
+          let result = await appointmentModel.findOneAndUpdate(
+              {_id: appointmentId},
+              { $set: {
+                astheticPaymentId: astheticPaymentId,
+                  packageId: packageId
+              }
+          });
+          return result;
+      } catch(e){
+          throw e;
+      }
+  };
+
     async addPackagePaymentInfo(paymentDetails){
         try{
             console.log(".........paymentDetails.paymentFor.........",paymentDetails.paymentFor)
             let addPaymentInfo = new paymentModel({
-                afterRemovingGst: paymentDetails.afterRemovingGst,
+                afterRemovingGST: paymentDetails.afterRemovingGST,
                 GSTAmount: paymentDetails.GSTAmount,
                 discount: paymentDetails.discount,
                 payableAmount: paymentDetails.payableAmount,
@@ -963,7 +978,10 @@ class appointmentDA{
                 doctorId: paymentDetails.doctorId,
                 branchId: paymentDetails.branchId,
                 appointmentId: paymentDetails.appointmentId,
-                packageId: paymentDetails.packageId
+                packageId: paymentDetails.packageId,
+                SGST: paymentDetails.SGST,
+                CGST: paymentDetails.CGST,
+                IGST: paymentDetails.IGST
             });
             return await addPaymentInfo.save();
         } catch(e){

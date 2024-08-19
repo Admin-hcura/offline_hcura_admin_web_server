@@ -705,7 +705,7 @@ class appointment{
                 } else {
                     console.log("-------entered------")
                     let paymentObj = {
-                        afterRemovingGst: afterRemovingDiscount,
+                        afterRemovingGST: afterRemovingDiscount,
                         GSTAmount: gstAmount,
                         discount: Discount,
                         payableAmount: payable,
@@ -811,6 +811,228 @@ class appointment{
             } else {
                 throw Boom.internal(apiResponse.ServerErrors.error.illegial);
             }
+        } catch(e){
+            next(e);
+        }
+    };
+
+    async paymentAsthetic(req, res, next){
+        try{
+            let body = req.body
+            const { error } = rule.paymenPackageRule.validate(body);
+            if (error){
+              throw Boom.badData(error.message);
+            }
+            console.log(".....body.......",body);
+            let ptDetails = await appointmentDA.patientDetaiils(body.patientId);
+            console.log(".....ptDetails.......",ptDetails);
+
+            let info = await appointmentDA.getConsultationGST(ptDetails.stateId);
+            console.log("-----info-----",info)
+
+            let appointmentData = await appointmentDA.getApptDetails(body.appointmentId);
+            console.log(".....appointmentData.......",appointmentData);
+
+            let packageDetails = await appointmentDA.getPackageDetails(body.packageId);
+            console.log(".....packageDetails.......",packageDetails);
+
+            let discountPercent = 0
+            if(body.promoCodes.length > 0){
+            console.log("+++++body.promoCodes.length+++++++",body.promoCodes.length);
+            let promoCodeResult = await appointmentDA.getPromoCodeList(body.promoCodes);
+            console.log("+++++promoCodeResult+++++++",promoCodeResult);
+            discountPercent = promoCodeResult.discount
+            }
+            console.log("=====discountPercent======",discountPercent);
+
+            let discount = ((packageDetails.amount * discountPercent)).toFixed(2);
+            let Discount = discount/100
+            console.log("*****discount*****",Discount);
+
+            let afterRemovingDiscount = (
+                packageDetails.amount - parseFloat(Discount)
+              ).toFixed(2);
+              console.log(",,,,,,,afterRemovingDiscount,,,,,,,",afterRemovingDiscount)
+
+            let gstAmount = 0
+            let CGST = 0
+            let SGST = 0
+            let IGST = 0
+            if(info.stateCode == "KA"){
+                let CGSTSGST = parseFloat(info.CGST) + parseFloat(info.SGST)
+                gstAmount = parseFloat(((afterRemovingDiscount * parseFloat(CGSTSGST)) /100).toFixed(2));
+                CGST = parseFloat((gstAmount/2));
+                SGST = parseFloat((gstAmount/2));
+            } else {
+                gstAmount = parseFloat(((afterRemovingDiscount * parseFloat(info.IGST)) /100).toFixed(2));
+                console.log("......gstAmount.......",gstAmount)
+                IGST = parseFloat((gstAmount));
+            }
+
+            let payable = (
+                parseFloat(afterRemovingDiscount) +
+                parseFloat(gstAmount)).toFixed(2);
+
+            console.log("----payable------",payable);
+            let roundedDownPayable = Math.floor(payable);
+            console.log("----payable------",roundedDownPayable);
+            
+            let payableAmount = body.payableAmount
+            console.log("----payableAmount------",payableAmount);
+            if(roundedDownPayable == payableAmount){
+                if(body.paymentMode === "online"){
+                    let payment = await paymentGateway.generatePaymentLinkPackage(
+                        ptDetails.firstName, 
+                        body.phoneNumber,
+                        ptDetails.emailId,
+                        roundedDownPayable
+                    );
+                    if (payment && payment.data.status == constants.value.CREATED){
+                        let paymentObj = {
+                            patientId: body.patientId,
+                            doctorId: appointmentData[0].doctorId,
+                            branchId:  ptDetails.branchId,
+                            appointmentId: body.appointmentId,
+                            paymentDoneBy: body.paymentDoneBy,
+                            paymentFor: "ASTHETIC",
+                            promoCodes: body.promoCodes,
+                            payableAmount: payable,
+                            packageId: body.packageId,
+                            shortUrl: payment.data.short_url,
+                            paymentRelationId: payment.data.id.substring(6),
+                            paymentLinkId: payment.data.id,
+                            paymentStatus: payment.data.status,
+                            afterRemovingGst: afterRemovingDiscount,
+                            GSTAmount: gstAmount,
+                            discount: Discount,
+                            SGST: SGST,
+                            CGST: CGST,
+                            IGST: IGST
+                            // GSTID: obj.GSTID,
+                        };
+                        let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
+                        console.log("------------addPaymentInfo------",addPaymentInfo)
+                        let updateAstheticPackageDetailsInAppt = await appointmentDA.updateAstheticPackageDetailsInAppt(
+                            body.appointmentId, addPaymentInfo._id, body.packageId);
+                            console.log("------------updateAstheticPackageDetailsInAppt------",updateAstheticPackageDetailsInAppt)
+                        res.send({ success: true, data: addPaymentInfo});
+                    } else{
+                        throw Boom.badData(apiResponse.ServerErrors.error.payment_not_created);
+                    }
+                } else {
+                    console.log("-------entered------")
+                    let paymentObj = {
+                        afterRemovingGST: afterRemovingDiscount,
+                        GSTAmount: gstAmount,
+                        discount: Discount,
+                        payableAmount: payable,
+                        paymentDoneBy: body.paymentDoneBy,
+                        remarks: body.remarks,
+                        promoCodes: body.promoCodes,
+                        paymentStatus: constants.value.CREATED,
+                        paymentFor: 'ASTHETIC',
+                        shortUrl: null,
+                        packageId: body.packageId,
+                        paymentRelationId: null,
+                        paymentLinkId: null,
+                        patientId: body.patientId,
+                        doctorId: appointmentData[0].doctorId,
+                        branchId:  ptDetails.branchId,
+                        appointmentId: body.appointmentId,
+                        SGST: SGST,
+                        CGST: CGST,
+                        IGST: IGST
+                        // GSTID: obj.GSTID,
+                    };
+                    let addPaymentInfo = await appointmentDA.addPackagePaymentInfo(paymentObj);
+                    console.log("=========  addPaymentInfo  =========",addPaymentInfo)
+                    console.log("=========   body.packageId  =========",body.packageId)
+                    let updateAstheticPackageDetailsInAppt = await appointmentDA.updateAstheticPackageDetailsInAppt(
+                        body.appointmentId, addPaymentInfo._id, body.packageId);
+                    console.log("=========  updateAstheticPackageDetailsInAppt  =========",updateAstheticPackageDetailsInAppt)
+                    let PAYMENT_ID = addPaymentInfo._id
+                    let paidOn = moment().format();
+                    let branchCode = await appointmentDA.branchCode(ptDetails.branchId);
+                    console.log("@@@@@@@  branchCode  @@@@@",branchCode)
+                    let invoiceNumber = await invoiceGenerator.generateInvoiceNumber(branchCode.branchCode);
+                    let obj = {
+                        paymentMethod: body.paymentMode,
+                        paymentStatus: "captured",
+                        paymentId: PAYMENT_ID,
+                        paymentRelationId: PAYMENT_ID,
+                        paidOn: paidOn,
+                        appointmentId: body.appointmentId,
+                        paymentLinkId: PAYMENT_ID,
+                        invoiceNumber: invoiceNumber
+                    };
+                    let relationId = obj.paymentRelationId;
+                    let updatePaymentReport = await appointmentDA.updatePaymentByPaymentIdBA(obj);
+                    console.log("=========  updatePaymentReport  =========",updatePaymentReport)
+                    let endDate =  moment(updatePaymentReport.paidOn).add(parseInt(packageDetails.months), 'months');
+                    if (!endDate.isValid()) {
+                      endDate = moment(startDate).endOf('month');
+                    }
+                    let packageSchedules = {
+                        userId: updatePaymentReport.userId,
+                        packageId: updatePaymentReport.packageId,
+                        paymentId: updatePaymentReport._id,
+                        endDate: endDate,
+                        paidOn: updatePaymentReport.paidOn,
+                    }
+                    let insertPackageSchedules = await appointmentDA.insertPackageSchedules(packageSchedules);
+                    console.log("=========  insertPackageSchedules  =========",insertPackageSchedules)
+                    let details ={
+                        endDate: insertPackageSchedules.endDate,
+                        _id: insertPackageSchedules._id
+                    }
+                    // adding schedulers
+                    await schedulers.changeisActiveStatusPackage(details)
+                    let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
+                    console.log("-------userInfo------",userInfo);
+                    let pdfDetails = {
+                        invoiceNumber: updatePaymentReport.invoiceNumber,
+                        firstName: userInfo[0].patient.firstName,
+                        lastName: userInfo[0].patient.lastName,
+                        paidOn: updatePaymentReport.paidOn,
+                        age: userInfo[0].patient.birthDate,
+                        gender: userInfo[0].patient.gender,
+                        docFirstName: userInfo[0].doctor.firstName,
+                        docLastName: userInfo[0].doctor.lastName,
+                        serviceCharges: updatePaymentReport.serviceCharges,
+                        discount: updatePaymentReport.discount,
+                        SGST: updatePaymentReport.SGST,
+                        CGST: updatePaymentReport.CGST,
+                        IGST: updatePaymentReport.IGST,
+                        UGST: updatePaymentReport.UGST,
+                        payableAmount: updatePaymentReport.payableAmount,
+                        paymentMethod: updatePaymentReport.paymentMethod,
+                        docQualification: userInfo[0].doctor.qualification,
+                        hcuraId: userInfo[0].patient.hcuraId,
+                        packageName: packageDetails.name,
+                        packageAmount: packageDetails.amount,
+                        docRegstration : userInfo[0].doctor.registrationNumber,
+                        branchPhoneNumber: branchCode.branchPhoneNumber
+                    }
+                    console.log("--------pdfDetails-------", pdfDetails)
+                    emailSender.sendAstheticPaymentSuccess(
+                        userInfo[0].patient.firstName,
+                        userInfo[0].patient.emailId,
+                        updatePaymentReport.payableAmount,
+                        "#" + relationId,
+                        updatePaymentReport.paymentMethod,
+                        packageDetails.name,
+                    );
+
+                    let file = await htmlToPDF.generateInvoiceForAsthetic(pdfDetails);
+                    console.log("111111111111     ",userInfo[0].patient)
+                    emailSender.sendAstheticInvoiceEmail(userInfo[0].patient.emailId, file);
+                    console.log("2222222222222")
+
+                    res.send({ success: true, data: userInfo});
+                }
+            } else {
+                throw Boom.internal(apiResponse.ServerErrors.error.illegial);
+            } 
         } catch(e){
             next(e);
         }

@@ -623,7 +623,7 @@ class authentication {
                           GST: "0%", // needs to work on gst
                           payableAmount: updatePaymentReport.payableAmount,
                           paymentMethod: updatePaymentDetails.paymentMethod,
-                          docQualification: userInfo[0].doctor.qualifaction,
+                          docQualification: userInfo[0].doctor.qualification,
                           hcuraId: userInfo[0].patient.hcuraId,
                           packageName: packageDetails[0].packageName,
                           packageAmount: packageDetails[0].packageAmount,
@@ -717,7 +717,7 @@ class authentication {
                           discount: updatePaymentReport.discount,
                           payableAmount: updatePaymentReport.payableAmount,
                           paymentMethod: updatePaymentDetails.paymentMethod,
-                          docQualification: userInfo[0].doctor.qualifaction,
+                          docQualification: userInfo[0].doctor.qualification,
                           hcuraId: userInfo[0].patient.hcuraId,
                           packageName: packageDetails[0].packageName,
                           packageAmount: packageDetails[0].packageAmount,
@@ -728,7 +728,7 @@ class authentication {
                           IGST: updatePaymentReport.IGST,
                           UGST: updatePaymentReport.UGST,
                         }
-
+                        console.log("--------pdfDetails-------",pdfDetails)
                         emailSender.sendAstheticPaymentSuccess(
                           userInfo[0].patient.firstName,
                           userInfo[0].patient.emailId,

@@ -113,5 +113,8 @@ router.get("/get/all/appointments",
 router.post("/update/appointment/status",
   appointmentController.updateAppointmentStatus
 );
+router.get("/get/all/appointments/appointmentState",
+  appointmentController.getAllAppointments
+);
 
 module.exports = router;

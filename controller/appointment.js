@@ -1293,6 +1293,25 @@ class appointment{
         }
     };
 
+    async getAllAppointments(req, res, next){
+        try{
+            // const { appointmentState } = req.params;
+            const { appointmentStatus, page, limit, searchKey, fromDate, toDate } = req.query;
+            const obj = { appointmentStatus, isActive : true };
+            const getAllAppointment = await appointmentDA.getAllApptList(
+                obj,
+                page,
+                limit,
+                searchKey,
+                fromDate,
+                toDate,
+            );
+            res.status(200).send({ status: true, data: getAllAppointment });
+        } catch(e){
+            next(e);
+        }
+    };
+
 };
 
 module.exports = new appointment();

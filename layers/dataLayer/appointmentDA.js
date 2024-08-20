@@ -887,6 +887,14 @@ class appointmentDA{
         }
     };
 
+    async getAstheticList(){
+      try{
+          return await packageModel.find({isActive: true, packageFor: "ASTHETIC"});
+      } catch(e){
+          throw e;
+      }
+    };
+
     async createEstimation(body){
         try{
             let result = new estimationModel({
@@ -1378,6 +1386,34 @@ class appointmentDA{
                   $match: {
                       isDeleted: false,
                       promoCodeFor: "HOMEOPATHY",
+                      $expr: {
+                          $and: [
+                              { $gte: ["$expiredOn", new Date()] },
+                              { $lte: ["$startsOn", new Date()] }
+                          ]
+                      }
+                  },
+              },
+              {
+                  $project: {
+                    promoCodeName: 1,
+                    discount: 1,
+                    promoCodeFor: 1,
+                  },
+              },
+          ]);
+      } catch (e) {
+          throw e;
+      }
+    };
+
+    async getPromoListAsthetic() {
+      try {
+          return await promoCodesModel.aggregate([
+              {
+                  $match: {
+                      isDeleted: false,
+                      promoCodeFor: "ASTHETIC",
                       $expr: {
                           $and: [
                               { $gte: ["$expiredOn", new Date()] },

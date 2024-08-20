@@ -71,6 +71,9 @@ router.post("/get/avaliable/slots",
 router.get("/get/package/homeopathy",
   appointmentController.getPackageList
 );
+router.get("/get/package/asthetic",
+  appointmentController.getAstheticList
+);
 router.post("/payment/package",
   appointmentController.packagePayment
 );
@@ -97,6 +100,9 @@ router.post("/payment/external/source",
 );
 router.get("/get/package/promo/list",
   appointmentController.getPackagePromocodes
+);
+router.get("/get/asthetic/promo/list",
+  appointmentController.getAstheticPromocodes
 );
 router.post("/get/dashboard/patient/details",
   appointmentController.getDashboardPTDetails

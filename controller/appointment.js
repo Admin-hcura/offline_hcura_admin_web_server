@@ -613,6 +613,15 @@ class appointment{
         }
     };
 
+    async getAstheticList(req, res, next){
+        try{
+            let result = await appointmentDA.getAstheticList()
+            res.send({ success: true, data: result});
+        } catch(e){
+            next(e);
+        }
+    };
+
     async packagePayment(req, res, next){
         try{
             let body = req.body
@@ -1214,6 +1223,15 @@ class appointment{
     async getPackagePromocodes(req, res, next){
         try{
           let result = await appointmentDA.getPromoListPackage();
+          res.send({success: true, data: result});
+        } catch(e){
+          next(e);
+        }
+    };
+
+    async getAstheticPromocodes(req, res, next){
+        try{
+          let result = await appointmentDA.getPromoListAsthetic();
           res.send({success: true, data: result});
         } catch(e){
           next(e);

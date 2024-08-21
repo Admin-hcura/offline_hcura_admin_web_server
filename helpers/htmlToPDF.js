@@ -875,16 +875,16 @@ class HtmlToPdfHelper {
 
       html +=
         '            <TABLE cellpadding=0 cellspacing=0 class="t5">' +
-        "                <TR>" +
-        '                    <TD class="tr5 td12">' +
-        '                        <P class="p8 ft7">Package Fee</P>' +
-        "                    </TD>" +
-        '                    <TD class="tr5 td13">' +
-        '                        <P class="p9 ft7">' +
-        parseFloat(packageAmount).toFixed(2) +
-        "</P>" +
-        "                    </TD>" +
-        "                </TR>" +
+        // "                <TR>" +
+        // '                    <TD class="tr5 td12">' +
+        // '                        <P class="p8 ft7">Package Fee</P>' +
+        // "                    </TD>" +
+        // '                    <TD class="tr5 td13">' +
+        // '                        <P class="p9 ft7">' +
+        // parseFloat(packageAmount).toFixed(2) +
+        // "</P>" +
+        // "                    </TD>" +
+        // "                </TR>" +
         "                <TR>" +
         '                    <TD class="tr6 td12">' +
         '                        <P class="p8 ft7">Service Charge</P>' +
@@ -994,6 +994,9 @@ class HtmlToPdfHelper {
         "            </TABLE>" +
         "        </DIV>" +
         "    </DIV>" +
+        '<div class="watermark" style="position: fixed; top: 70%; left: 7%; font-size: 70pt; opacity: 0.2;">' +
+            'This is a computer-generated document, no signature is required.' +
+        '</div>' +
         // "<!-- Footer section -->" 
         '<FOOTER style="position: fixed; bottom: 60px; width: 86%;">' +
             '<DIV class="p14 ft13">' +
@@ -1596,16 +1599,16 @@ class HtmlToPdfHelper {
 
       html +=
         '            <TABLE cellpadding=0 cellspacing=0 class="t5">' +
-        "                <TR>" +
-        '                    <TD class="tr5 td12">' +
-        '                        <P class="p8 ft7">Package Fee</P>' +
-        "                    </TD>" +
-        '                    <TD class="tr5 td13">' +
-        '                        <P class="p9 ft7">' +
-        parseFloat(packageAmount).toFixed(2) +
-        "</P>" +
-        "                    </TD>" +
-        "                </TR>" +
+        // "                <TR>" +
+        // '                    <TD class="tr5 td12">' +
+        // '                        <P class="p8 ft7">Package Fee</P>' +
+        // "                    </TD>" +
+        // '                    <TD class="tr5 td13">' +
+        // '                        <P class="p9 ft7">' +
+        // parseFloat(packageAmount).toFixed(2) +
+        // "</P>" +
+        // "                    </TD>" +
+        // "                </TR>" +
         "                <TR>" +
         '                    <TD class="tr6 td12">' +
         '                        <P class="p8 ft7">Service Charge</P>' +
@@ -1715,6 +1718,9 @@ class HtmlToPdfHelper {
         "            </TABLE>" +
         "        </DIV>" +
         "    </DIV>" +
+        '<div class="watermark" style="position: fixed; top: 70%; left: 7%; font-size: 70pt; opacity: 0.2;">' +
+            'This is a computer-generated document, no signature is required.' +
+        '</div>' +
         // "<!-- Footer section -->" 
         '<FOOTER style="position: fixed; bottom: 60px; width: 86%;">' +
             '<DIV class="p14 ft13">' +

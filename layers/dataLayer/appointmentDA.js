@@ -1730,6 +1730,44 @@ class appointmentDA{
         throw e;
       }
     };
+
+    async getStateDetails(branchId){
+      try{
+        let result = await branchesModel.aggregate(
+          [
+            {
+              $match: {
+                _id: new mongoose.Types.ObjectId(branchId),
+                isDeleted: false
+              }
+            },
+            {
+              $lookup: {
+                from: "states",
+                localField: "stateId",
+                foreignField: "_id",
+                as: "stateDetails"
+              }
+            },
+            {
+              $unwind: {
+                path: "$stateDetails",
+                preserveNullAndEmptyArrays: true
+              }
+            },
+            {
+              $project: {
+                _id: 0,
+                stateDetails: 1
+              }
+            }
+          ]
+        );
+        return result;
+      } catch(e){
+        throw e;
+      }
+    }
     
 }
 module.exports = new appointmentDA();

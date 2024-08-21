@@ -116,5 +116,8 @@ router.post("/update/appointment/status",
 router.get("/get/all/appointments/appointmentStatus",
   appointmentController.getAllAppointments
 );
+router.get("/calculate/gst",
+  appointmentController.calculateGst
+);
 
 module.exports = router;

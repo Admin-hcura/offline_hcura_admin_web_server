@@ -1312,6 +1312,39 @@ class appointment{
         }
     };
 
+    async calculateGst(req, res, next){
+        try{
+            const { branchId, amount } = req.query;
+            let result = await appointmentDA.getStateDetails(branchId);
+            let stateDetails = result[0].stateDetails
+            let gstAmount = 0
+            let CGST = 0
+            let SGST = 0
+            let IGST = 0
+            let UGST = 0
+            if(stateDetails.stateCode == "KA"){
+                let CGSTSGST = parseFloat(stateDetails.CGST) + parseFloat(stateDetails.SGST)
+                gstAmount = parseFloat(((amount * parseFloat(CGSTSGST)) /100).toFixed(2));
+                CGST = parseFloat((gstAmount/2));
+                SGST = parseFloat((gstAmount/2));
+            } else {
+                gstAmount = parseFloat(((amount * parseFloat(stateDetails.IGST)) /100).toFixed(2));
+                IGST = parseFloat((gstAmount));
+            }
+            let data = {
+                totalAmount: parseFloat(amount) + parseFloat(gstAmount),
+                gstAmount: gstAmount,
+                CGST: CGST,
+                SGST: SGST,
+                IGST: IGST,
+                UGST: UGST
+            }
+            res.status(200).send({ status: true, data: data });
+        } catch(e){
+            next(e);
+        }
+    };
+
 };
 
 module.exports = new appointment();

@@ -963,7 +963,7 @@ class appointment{
                     let paidOn = moment().format();
                     let branchCode = await appointmentDA.branchCode(ptDetails.branchId);
                     console.log("@@@@@@@  branchCode  @@@@@",branchCode)
-                    let invoiceNumber = await invoiceGenerator.generateInvoiceNumber(branchCode.branchCode);
+                    let invoiceNumber = await invoiceGenerator.generateInvoiceNumberAsthetic(branchCode.branchCode);
                     let obj = {
                         paymentMethod: body.paymentMode,
                         paymentStatus: "captured",

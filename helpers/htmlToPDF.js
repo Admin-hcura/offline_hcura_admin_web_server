@@ -224,37 +224,37 @@ class HtmlToPdfHelper {
         parseFloat(pdfDetails.discount).toFixed(2) +
         "</P></TD>" +
         "</TR>" +
-        "<TR>" +
-        '	<TD class="tr5 td6"><P class="p7 ft7">CGST</P></TD>' + //GST@Nill (GST is exempt for healthcare services)
-        '	<TD class="tr5 td7"><P class="p11 ft7">' +
-        "+" +
-        parseFloat(pdfDetails.GST).toFixed(2) +
-        "</P></TD>" +
-        "</TR>" +
-        "</TR>" +
-        "<TR>" +
-        '	<TD class="tr5 td6"><P class="p7 ft7">SGST</P></TD>' + 
-        '	<TD class="tr5 td7"><P class="p11 ft7">' +
-        "+" +
-        parseFloat(pdfDetails.GST).toFixed(2) +
-        "</P></TD>" +
-        "</TR>" +
-        "</TR>" +
-        "<TR>" +
-        '	<TD class="tr5 td6"><P class="p7 ft7">IGST</P></TD>' + 
-        '	<TD class="tr5 td7"><P class="p11 ft7">' +
-        "+" +
-        parseFloat(pdfDetails.GST).toFixed(2) +
-        "</P></TD>" +
-        "</TR>" +
-        "</TR>" +
-        "<TR>" +
-        '	<TD class="tr5 td6"><P class="p7 ft7">UGST</P></TD>' + 
-        '	<TD class="tr5 td7"><P class="p11 ft7">' +
-        "+" +
-        parseFloat(pdfDetails.GST).toFixed(2) +
-        "</P></TD>" +
-        "</TR>" +
+        // "<TR>" +
+        // '	<TD class="tr5 td6"><P class="p7 ft7">CGST</P></TD>' + //GST@Nill (GST is exempt for healthcare services)
+        // '	<TD class="tr5 td7"><P class="p11 ft7">' +
+        // "+" +
+        // parseFloat(pdfDetails.GST).toFixed(2) +
+        // "</P></TD>" +
+        // "</TR>" +
+        // "</TR>" +
+        // "<TR>" +
+        // '	<TD class="tr5 td6"><P class="p7 ft7">SGST</P></TD>' + 
+        // '	<TD class="tr5 td7"><P class="p11 ft7">' +
+        // "+" +
+        // parseFloat(pdfDetails.GST).toFixed(2) +
+        // "</P></TD>" +
+        // "</TR>" +
+        // "</TR>" +
+        // "<TR>" +
+        // '	<TD class="tr5 td6"><P class="p7 ft7">IGST</P></TD>' + 
+        // '	<TD class="tr5 td7"><P class="p11 ft7">' +
+        // "+" +
+        // parseFloat(pdfDetails.GST).toFixed(2) +
+        // "</P></TD>" +
+        // "</TR>" +
+        // "</TR>" +
+        // "<TR>" +
+        // '	<TD class="tr5 td6"><P class="p7 ft7">UGST</P></TD>' + 
+        // '	<TD class="tr5 td7"><P class="p11 ft7">' +
+        // "+" +
+        // parseFloat(pdfDetails.GST).toFixed(2) +
+        // "</P></TD>" +
+        // "</TR>" +
         "<TR>" +
         '	<TD class="tr5 td6"><P class="p7 ft7">Total Amount</P></TD>' +
         '	<TD class="tr5 td7"><P class="p11 ft7">' +
@@ -288,7 +288,7 @@ class HtmlToPdfHelper {
         '<div class="watermark" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.2;">' +
         '<img src="https://h-cura.s3.ap-south-1.amazonaws.com/logo/H-CuraYellow.png" style="height: 1300px; width: 1300px;" />' +
         '</div>' +
-        '<div class="watermark" style="position: fixed; top: 70%; left: 7%; font-size: 70pt; opacity: 0.2;">' +
+        '<div class="watermark" style="position: fixed; top: 70%; left: 7%; font-size: 70pt; opacity: 0.3;">' +
             'This is a computer-generated document, no signature is required.' +
         '</div>' +
         "</BODY>" +
@@ -907,50 +907,50 @@ class HtmlToPdfHelper {
         "</P>" +
         "                    </TD>" +
         "                </TR>" +
-        "                <TR>" +
-        '                    <TD class="tr6 td12">' +
-        '                        <P class="p8 ft7">SGST</P>' + //GST@Nill (GST is exempt for healthcare services)
-        "                    </TD>" +
-        '                    <TD class="tr6 td13">' +
-        '                        <P class="p11 ft7">' +
-        "+" +
-        parseFloat(pdfDetails.GST).toFixed(2) +
-        "</P>" +
-        "                    </TD>" +
-        "                </TR>" +
-        "                <TR>" +
-        '                    <TD class="tr8 td12">' +
-        '                        <P class="p8 ft7">CGST</P>' +
-        "                    </TD>" +
-        '                    <TD class="tr8 td13">' +
-        '                        <P class="p9 ft7">' +
-        "+" +
-        parseFloat(pdfDetails.GST).toFixed(2) +
-        "</P>" +
-        "                    </TD>" +
-        "                </TR>" +
-        "                <TR>" +
-        '                    <TD class="tr8 td12">' +
-        '                        <P class="p8 ft7">IGST</P>' +
-        "                    </TD>" +
-        '                    <TD class="tr8 td13">' +
-        '                        <P class="p9 ft7">' +
-        "+" +
-        parseFloat(pdfDetails.GST).toFixed(2) +
-        "</P>" +
-        "                    </TD>" +
-        "                </TR>" +
-        "                <TR>" +
-        '                    <TD class="tr8 td12">' +
-        '                        <P class="p8 ft7">UGST</P>' +
-        "                    </TD>" +
-        '                    <TD class="tr8 td13">' +
-        '                        <P class="p9 ft7">' +
-        "+" +
-        parseFloat(pdfDetails.GST).toFixed(2) +
-        "</P>" +
-        "                    </TD>" +
-        "                </TR>" +
+        // "                <TR>" +
+        // '                    <TD class="tr6 td12">' +
+        // '                        <P class="p8 ft7">SGST</P>' + //GST@Nill (GST is exempt for healthcare services)
+        // "                    </TD>" +
+        // '                    <TD class="tr6 td13">' +
+        // '                        <P class="p11 ft7">' +
+        // "+" +
+        // parseFloat(pdfDetails.GST).toFixed(2) +
+        // "</P>" +
+        // "                    </TD>" +
+        // "                </TR>" +
+        // "                <TR>" +
+        // '                    <TD class="tr8 td12">' +
+        // '                        <P class="p8 ft7">CGST</P>' +
+        // "                    </TD>" +
+        // '                    <TD class="tr8 td13">' +
+        // '                        <P class="p9 ft7">' +
+        // "+" +
+        // parseFloat(pdfDetails.GST).toFixed(2) +
+        // "</P>" +
+        // "                    </TD>" +
+        // "                </TR>" +
+        // "                <TR>" +
+        // '                    <TD class="tr8 td12">' +
+        // '                        <P class="p8 ft7">IGST</P>' +
+        // "                    </TD>" +
+        // '                    <TD class="tr8 td13">' +
+        // '                        <P class="p9 ft7">' +
+        // "+" +
+        // parseFloat(pdfDetails.GST).toFixed(2) +
+        // "</P>" +
+        // "                    </TD>" +
+        // "                </TR>" +
+        // "                <TR>" +
+        // '                    <TD class="tr8 td12">' +
+        // '                        <P class="p8 ft7">UGST</P>' +
+        // "                    </TD>" +
+        // '                    <TD class="tr8 td13">' +
+        // '                        <P class="p9 ft7">' +
+        // "+" +
+        // parseFloat(pdfDetails.GST).toFixed(2) +
+        // "</P>" +
+        // "                    </TD>" +
+        // "                </TR>" +
         "                <TR>" +
         '                    <TD class="tr8 td12">' +
         '                        <P class="p8 ft7">Round off</P>' +
@@ -994,7 +994,7 @@ class HtmlToPdfHelper {
         "            </TABLE>" +
         "        </DIV>" +
         "    </DIV>" +
-        '<div class="watermark" style="position: fixed; top: 70%; left: 7%; font-size: 70pt; opacity: 0.2;">' +
+        '<div class="watermark" style="position: fixed; top: 70%; left: 7%; font-size: 70pt; opacity: 0.3;">' +
             'This is a computer-generated document, no signature is required.' +
         '</div>' +
         // "<!-- Footer section -->" 
@@ -1718,7 +1718,7 @@ class HtmlToPdfHelper {
         "            </TABLE>" +
         "        </DIV>" +
         "    </DIV>" +
-        '<div class="watermark" style="position: fixed; top: 70%; left: 7%; font-size: 70pt; opacity: 0.2;">' +
+        '<div class="watermark" style="position: fixed; top: 77%; left: 7%; font-size: 70pt; opacity: 0.3;">' +
             'This is a computer-generated document, no signature is required.' +
         '</div>' +
         // "<!-- Footer section -->" 

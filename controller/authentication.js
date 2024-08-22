@@ -492,7 +492,14 @@ class authentication {
               console.log("........getStatus.......",getStatus);
               let branchDetails = await authentationDAObj.getBrachDetailsDA(getStatus.branchId);
               console.log("........branchDetails.......",branchDetails);
-              let invoiceNumber = await invoiceGenerator.generateInvoiceNumber(branchDetails.branchCode);
+              let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
+              console.log("--------userInfo-----",userInfo);
+              let invoiceNumber
+              if(userInfo[0].paymentFor == constants.value.ASTHETIC){
+                invoiceNumber = await invoiceGenerator.generateInvoiceNumberAsthetic(branchDetails.branchCode);
+              } else {
+                invoiceNumber = await invoiceGenerator.generateInvoiceNumber(branchDetails.branchCode);
+              } 
               let updatePaymentDetails = {
                 paymentMethod: report.method,
                 paymentStatus: report.status,
@@ -511,9 +518,6 @@ class authentication {
                 let updatePaymentReport = await appointmentDA.updatePaymentReport(updatePaymentDetails);
                 console.log("--------updatePaymentReport-----",updatePaymentReport)
                 if (updatePaymentReport && updatePaymentReport != null) {
-                  let userInfo =
-                    await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
-                    console.log("--------userInfo-----",userInfo);
                     let appointmentDetails = await appointmentDA.getAppointmentDetails(updatePaymentReport.appointmentId);
                     console.log("------appointmentDetails------",appointmentDetails);
 

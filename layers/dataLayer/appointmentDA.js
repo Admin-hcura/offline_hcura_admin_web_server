@@ -1568,7 +1568,7 @@ class appointmentDA{
       }
     };
 
-    async getAllApptList(obj, page, limit, searchKey, fromDate, toDate){
+    async getAllApptList(obj, page, limit, searchKey, fromDate, toDate, branchId){
       try{
         let match = { $regex: searchKey, $options: "i" };
         let offset = page * limit;
@@ -1581,6 +1581,9 @@ class appointmentDA{
               $lte: edDate,
             };
           }
+        }
+        if (branchId) {
+          obj["branchId"] = new mongoose.Types.ObjectId(branchId);
         }
         const apptList = await appointmentModel.aggregate(
           [

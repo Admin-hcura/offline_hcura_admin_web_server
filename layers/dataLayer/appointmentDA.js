@@ -8,6 +8,7 @@ const consulatationAmount = require("../../models/schema").consulatationAmountMo
 const paymentModel = require("../../models/schema").paymentModel;
 const mongoose = require("mongoose");
 const moment = require("moment-timezone");
+const authentationDA = require("./authentationDA");
 const { branchesModel, slotModel, occupationModel, promoCodesModel,
     sourceModel, symptomsAllegryModel, tempAppointmentModel, statesModel,
     packageModel, estimationModel, packageSubscriptionModel} = require("../../models/schema");
@@ -1568,7 +1569,7 @@ class appointmentDA{
       }
     };
 
-    async getAllApptList(obj, page, limit, searchKey, fromDate, toDate, branchId){
+    async getAllApptList(obj, page, limit, searchKey, fromDate, toDate, branchId, roleId){
       try{
         let match = { $regex: searchKey, $options: "i" };
         let offset = page * limit;
@@ -1582,8 +1583,9 @@ class appointmentDA{
             };
           }
         }
-        if (branchId) {
-          obj["branchId"] = new mongoose.Types.ObjectId(branchId);
+        let roleDetails = await authentationDA.getroleCodeDA(roleId);
+        if(roleDetails.roleName != "SUPER_ADMIN"){
+            obj["branchId"] = new mongoose.Types.ObjectId(branchId);
         }
         const apptList = await appointmentModel.aggregate(
           [

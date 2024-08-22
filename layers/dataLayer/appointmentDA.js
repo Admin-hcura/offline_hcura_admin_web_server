@@ -1652,7 +1652,7 @@ class appointmentDA{
                 appointmentDate: 1,
                 startTime: 1,
                 createdOn: 1,
-                appointmentState: 1,
+                appointmentStatus: 1,
                 appointmentNumber: 1,
                 appointmentId: 1,
                 doctorFirstName: "$doctor.firstName",

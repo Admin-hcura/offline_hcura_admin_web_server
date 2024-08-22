@@ -1583,9 +1583,11 @@ class appointmentDA{
             };
           }
         }
-        let roleDetails = await authentationDA.getroleCodeDA(roleId);
-        if(roleDetails.roleName != "SUPER_ADMIN"){
-            obj["branchId"] = new mongoose.Types.ObjectId(branchId);
+        if(roleId){
+          let roleDetails = await authentationDA.getroleCodeDA(roleId);
+          if(roleDetails.roleName != "SUPER_ADMIN"){
+              obj["branchId"] = new mongoose.Types.ObjectId(branchId);
+          }
         }
         const apptList = await appointmentModel.aggregate(
           [

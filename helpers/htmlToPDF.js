@@ -1666,7 +1666,7 @@ class HtmlToPdfHelper {
         "                </TR>" +
         "                <TR>" +
         '                    <TD class="tr8 td12">' +
-        '                        <P class="p8 ft7">UGST  @18%</P>' +
+        '                        <P class="p8 ft7">UGST  @9%</P>' +
         "                    </TD>" +
         '                    <TD class="tr8 td13">' +
         '                        <P class="p9 ft7">' +

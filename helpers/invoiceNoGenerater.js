@@ -47,16 +47,16 @@ class invoiceGenerator {
           if (newNo > 9) {
             return `${branchcode}/${newNo}/${moment().format("DD")}/${moment().format(
               "MMM"
-            )}/${moment().format("YYYY")}-SAC999722`;
+            )}/${moment().format("YYYY")}-SAC999729`;
           } else {
             return `${branchcode}/0${newNo}/${moment().format("DD")}/${moment().format(
               "MMM"
-            )}/${moment().format("YYYY")}-SAC999722`;
+            )}/${moment().format("YYYY")}-SAC999729`;
           }
         } else {
           return `${branchcode}/01/${moment().format("DD")}/${moment().format(
             "MMM"
-          )}/${moment().format("YYYY")}-SAC999722`;
+          )}/${moment().format("YYYY")}-SAC999729`;
         }
       } catch (e) {
             throw e;

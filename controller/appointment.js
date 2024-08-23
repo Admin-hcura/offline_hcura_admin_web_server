@@ -1020,7 +1020,7 @@ class appointment{
                         hcuraId: userInfo[0].patient.hcuraId,
                         packageName: packageDetails.name,
                         packageAmount: packageDetails.amount,
-                        docRegstration : userInfo[0].doctor.registrationNumber,
+                        docRegstration : userInfo[0].doctor.registerationNumber,
                         branchPhoneNumber: branchCode.branchPhoneNumber
                     }
                     console.log("--------pdfDetails-------", pdfDetails)

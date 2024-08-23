@@ -230,8 +230,8 @@ class appointment{
                     paymentMethod: updatePaymentDetails.paymentMethod,
                     hcuraId: userInfo[0].patient.hcuraId,
                     branchPhoneNumber : branchCode.branchPhoneNumber,
-                    docQualification : userInfo[0].doctor.qualification,
-                    docRegstration : userInfo[0].doctor.registrationNumber
+                    docQualification : userInfo[0].doctor.qualifaction,
+                    docRegstration : userInfo[0].doctor.registerationNumber
                 }
                 console.log(",,,,,,,,,,pdfDetails,,,,,,,,",pdfDetails)
                 let file = await htmlToPDF.generateInvoiceForConsultation(pdfDetails);

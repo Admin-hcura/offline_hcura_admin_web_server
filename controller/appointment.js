@@ -887,8 +887,9 @@ class appointment{
             console.log("----payable------",roundedDownPayable);
             
             let payableAmount = body.payableAmount
+            let roundedDownPayableAmount = Math.floor(payableAmount);
             console.log("----payableAmount------",payableAmount);
-            if(payable == payableAmount){
+            if(roundedDownPayable == roundedDownPayableAmount){
                 if(body.paymentMode === "online"){
                     let payment = await paymentGateway.generatePaymentLinkPackage(
                         ptDetails.firstName, 

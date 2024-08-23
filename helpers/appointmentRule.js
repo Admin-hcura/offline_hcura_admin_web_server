@@ -42,6 +42,12 @@ exports.hcuraIdRule = Joi.object({
     hcuraId: Joi.string().required().error(new Error("hcuraId is required"))
 });
 
+exports.searchHcuraIdRule = Joi.object({
+    hcuraId: Joi.string().required().error(new Error("hcuraId is required")),
+    roleId: Joi.string().required().error(new Error("roleId is required")),
+    branchId: Joi.string().required().error(new Error("branchId is required"))
+});
+
 exports.appointmentIdRule = Joi.object({
     appointmentId: Joi.string().required().error(new Error("appointmentId is required"))
 });

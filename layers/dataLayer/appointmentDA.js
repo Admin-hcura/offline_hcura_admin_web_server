@@ -1222,88 +1222,93 @@ class appointmentDA{
         }
     };
 
-    async getPatientAndPaymentDetailsForExternal(hcuraId){
+    async getPatientAndPaymentDetailsForExternal(hcuraId, roleId, branchId){
         try{
             const hcuraid = hcuraId.replace(/\s+/g, '').toUpperCase();
+            const filter = {
+              hcuraId: hcuraid,
+              isDeleted: false,
+            };
+            let roleDetails = await authentationDA.getroleCodeDA(roleId);
+            if(roleDetails.roleName != "SUPER_ADMIN"){
+              filter.branchId = new mongoose.Types.ObjectId(branchId);
+            }
             return await patientModel.aggregate(
                 [
-                    {
-                      $match: {
-                        hcuraId: hcuraid,
-                        isDeleted: false
-                      }
-                    },
-                    {
-                      $lookup: {
-                        from: "payment",
-                        localField: "_id",
-                        foreignField: "patientId",
-                        as: "paymentDetails"
-                      }
-                    },
-                    {
-                      $unwind: {
-                        path: "$paymentDetails",
-                        preserveNullAndEmptyArrays: true
-                      }
-                    },
-                    {
-                      $lookup: {
-                        from: "appointment",
-                        localField: "paymentDetails._id",
-                        foreignField: "paymentId",
-                        as: "appointmentDetails"
-                      }
-                    },
-                    {
-                      $lookup: {
-                        from: "package",
-                        localField: "paymentDetails.packageId",
-                        foreignField: "_id",
-                        as: "packageDetails"
-                      }
-                    },
-                    {
-                      $addFields: {
-                        "paymentDetails.consultationMode": {
-                          $arrayElemAt: [
-                            "$appointmentDetails.consultationMode",
-                            0
-                          ]
-                        },
-                        "paymentDetails.packageName": {
-                          $arrayElemAt: [
-                            "$packageDetails.name",
-                            0
-                          ]
-                        },
-                        "paymentDetails.packageAmount": {
-                          $arrayElemAt: [
-                            "$packageDetails.amount",
-                            0
-                          ]
-                        }
-                      }
-                    },
-                    {
-                      $group: {
-                        _id: "$_id",
-                        patientDetails: {
-                          $first: "$$ROOT"
-                        },
-                        paymentDetails: {
-                          $push: "$paymentDetails"
-                        }
-                      }
-                    },
-                    {
-                      $project: {
-                        patientDetails: 1,
-                        paymentDetails: 1
+                  {
+                    $match: filter
+                  },
+                  {
+                    $lookup: {
+                      from: "payment",
+                      localField: "_id",
+                      foreignField: "patientId",
+                      as: "paymentDetails"
+                    }
+                  },
+                  {
+                    $unwind: {
+                      path: "$paymentDetails",
+                      preserveNullAndEmptyArrays: true
+                    }
+                  },
+                  {
+                    $lookup: {
+                      from: "appointment",
+                      localField: "paymentDetails._id",
+                      foreignField: "paymentId",
+                      as: "appointmentDetails"
+                    }
+                  },
+                  {
+                    $lookup: {
+                      from: "package",
+                      localField: "paymentDetails.packageId",
+                      foreignField: "_id",
+                      as: "packageDetails"
+                    }
+                  },
+                  {
+                    $addFields: {
+                      "paymentDetails.consultationMode": {
+                        $arrayElemAt: [
+                          "$appointmentDetails.consultationMode",
+                          0
+                        ]
+                      },
+                      "paymentDetails.packageName": {
+                        $arrayElemAt: [
+                          "$packageDetails.name",
+                          0
+                        ]
+                      },
+                      "paymentDetails.packageAmount": {
+                        $arrayElemAt: [
+                          "$packageDetails.amount",
+                          0
+                        ]
                       }
                     }
+                  },
+                  {
+                    $group: {
+                      _id: "$_id",
+                      patientDetails: {
+                        $first: "$$ROOT"
+                      },
+                      paymentDetails: {
+                        $push: "$paymentDetails"
+                      }
+                    }
+                  },
+                  {
+                    $project: {
+                      patientDetails: 1,
+                      paymentDetails: 1
+                    }
+                  }
                 ]
-            );
+              );
         } catch(e){
             throw e;
         }

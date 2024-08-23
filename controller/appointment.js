@@ -1092,11 +1092,11 @@ class appointment{
     async getPatientAndPaymentDetailsForExternal(req, res, next){
         try{
             let body = req.body
-            const { error } = rule.hcuraIdRule.validate(body);
+            const { error } = rule.searchHcuraIdRule.validate(body);
             if (error){
               throw Boom.badData(error.message);
             }
-            let result = await appointmentDA.getPatientAndPaymentDetailsForExternal(body.hcuraId);
+            let result = await appointmentDA.getPatientAndPaymentDetailsForExternal(body.hcuraId, body.roleId, body.branchId);
             res.status(200).send({ status: true, data: result });
         } catch(e){
             next(e);

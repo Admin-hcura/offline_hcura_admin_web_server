@@ -355,7 +355,7 @@ class appointmentDA{
           }
           pipeline.push({
             $lookup: {
-              from: "appointments",
+              from: "appointment",
               let: { uID: "$_id" },
               pipeline: [
                 { $match: { $expr: { $and: [{ $eq: ["$userId", "$$uID"] }] } } },

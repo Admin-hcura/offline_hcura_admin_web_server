@@ -642,16 +642,21 @@ class appointmentDA{
         }
     };
 
-    async getAppointmentDetailsPaymentDetails(hcuraId){
+    async getAppointmentDetailsPaymentDetails(hcuraId, roleId, branchId){
         try{
             const hcuraid = hcuraId.replace(/\s+/g, '').toUpperCase();
+            const filter = {
+              hcuraId: hcuraid,
+              isDeleted: false,
+            };
+            let roleDetails = await authentationDA.getroleCodeDA(roleId);
+            if(roleDetails.roleName != "SUPER_ADMIN"){
+              filter.branchId = new mongoose.Types.ObjectId(branchId);
+            }
             return await patientModel.aggregate(
                 [
                     {
-                      $match: {
-                        hcuraId: hcuraid,
-                        isDeleted: false
-                      }
+                      $match: filter
                     },
                     {
                       $lookup: {
@@ -1038,16 +1043,21 @@ class appointmentDA{
         }
     };
 
-    async getPatientDetailsPackagePayments(hcuraId){
+    async getPatientDetailsPackagePayments(hcuraId, roleId, branchId){
         try{
             const hcuraid = hcuraId.replace(/\s+/g, '').toUpperCase();
+            const filter = {
+              hcuraId: hcuraid,
+              isDeleted: false,
+            };
+            let roleDetails = await authentationDA.getroleCodeDA(roleId);
+            if(roleDetails.roleName != "SUPER_ADMIN"){
+              filter.branchId = new mongoose.Types.ObjectId(branchId);
+            }
             return await patientModel.aggregate(
                 [
                     {
-                      $match: {
-                        hcuraId: hcuraid,
-                        isDeleted: false
-                      }
+                     $match: filter
                     },
                     {
                       $lookup: {

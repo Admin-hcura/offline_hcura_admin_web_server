@@ -531,11 +531,11 @@ class appointment{
     async getPatientDetailsConsultationPayment(req, res, next){
         try{
             let body = req.body
-            const { error } = rule.hcuraIdRule.validate(body);
+            const { error } = rule.searchHcuraIdRule.validate(body);
             if (error){
               throw Boom.badData(error.message);
             }
-            let obj = await appointmentDA.getAppointmentDetailsPaymentDetails(body.hcuraId);
+            let obj = await appointmentDA.getAppointmentDetailsPaymentDetails(body.hcuraId, body.roleId, body.branchId);
             res.status(200).send({ status: true, data: obj});
         } catch(e){
             next(e);
@@ -1064,11 +1064,11 @@ class appointment{
     async getPatientDetilsPackage(req, res, next){
         try{
             let body = req.body
-            const { error } = rule.hcuraIdRule.validate(body);
+            const { error } = rule.searchHcuraIdRule.validate(body);
             if (error){
               throw Boom.badData(error.message);
             }
-            let result = await appointmentDA.getPatientDetailsPackagePayments(body.hcuraId);
+            let result = await appointmentDA.getPatientDetailsPackagePayments(body.hcuraId, body.roleId, body.branchId);
             res.status(200).send({ status: true, data: result });
         } catch(e){
             next(e);

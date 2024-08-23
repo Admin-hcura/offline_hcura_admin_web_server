@@ -1016,7 +1016,7 @@ class appointment{
                         UGST: updatePaymentReport.UGST,
                         payableAmount: updatePaymentReport.payableAmount,
                         paymentMethod: updatePaymentReport.paymentMethod,
-                        docQualification: userInfo[0].doctor.qualification,
+                        docQualification: userInfo[0].doctor.qualifaction,
                         hcuraId: userInfo[0].patient.hcuraId,
                         packageName: packageDetails.name,
                         packageAmount: packageDetails.amount,

@@ -358,7 +358,7 @@ class appointmentDA{
               from: "appointment",
               let: { uID: "$_id" },
               pipeline: [
-                { $match: { $expr: { $and: [{ $eq: ["$userId", "$$uID"] }] } } },
+                { $match: { $expr: { $and: [{ $eq: ["$patientId", "$$uID"] }] } } },
                 { $sort: { appointmentDate: -1 } },
                 { $limit: 1 },
                 { $project: { lastDate: "$appointmentDate" } },

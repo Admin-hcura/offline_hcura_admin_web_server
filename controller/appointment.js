@@ -793,11 +793,11 @@ class appointment{
                         GST: "0%", // needs to work on gst
                         payableAmount: updatePaymentReport.payableAmount,
                         paymentMethod: updatePaymentReport.paymentMethod,
-                        docQualification: userInfo[0].doctor.qualification,
+                        docQualification: userInfo[0].doctor.qualifaction,
                         hcuraId: userInfo[0].patient.hcuraId,
                         packageName: packageDetails.name,
                         packageAmount: packageDetails.amount,
-                        docRegstration : userInfo[0].doctor.registrationNumber,
+                        docRegstration : userInfo[0].doctor.registerationNumber,
                         branchPhoneNumber: branchCode.branchPhoneNumber
                     }
                     console.log("--------pdfDetails-------", pdfDetails)

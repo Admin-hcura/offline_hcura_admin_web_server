@@ -342,7 +342,7 @@ class appointmentDA{
         }
     };
 
-    async getPatientList(type, page, limit, search) {
+    async getPatientList(type, page, limit, search, roleId, branchId) {
         let offset = (page - 1) * limit;
         try {
           let pipeline = [];
@@ -350,6 +350,14 @@ class appointmentDA{
             pipeline.push({
               $match: {
                 isDeleted: false,
+              },
+            });
+          }
+          let roleDetails = await authentationDA.getroleCodeDA(roleId);
+          if(roleDetails.roleName != "SUPER_ADMIN"){
+            pipeline.push({
+              $match: {
+                branchId: new mongoose.Types.ObjectId(branchId),
               },
             });
           }

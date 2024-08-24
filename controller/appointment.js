@@ -404,11 +404,15 @@ class appointment{
           const payload = req.body;
           let page = payload.page;
           let limit = constants.pageConstants.pageLength;
+          let roleId = payload.roleId
+          let branchId = payload.branchId
           const patientList = await appointmentDA.getPatientList(
             payload.type,
             page,
             limit,
-            payload.search
+            payload.search,
+            roleId,
+            branchId
           );
           let sendObj = {
             metaData: {

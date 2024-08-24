@@ -436,11 +436,11 @@ class appointment{
     async getPatientDetails(req, res, next){
         try{
             let body = req.body
-            const {error} = rule.hcuraIdRule.validate(body);
+            const {error} = rule.searchHcuraIdRule.validate(body);
             if(error){
                 throw Boom.badData(error.message);
             }
-            let patientDetails = await appointmentDA.getpatientDetailsDA(body.hcuraId);
+            let patientDetails = await appointmentDA.getpatientDetailsDA(body.hcuraId, body.roleId, body.branchId);
             res.status(200).send({ status: true, data: patientDetails});
         } catch(e){
             next(e);

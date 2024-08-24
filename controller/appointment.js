@@ -1267,7 +1267,7 @@ class appointment{
     async getAllAppt(req, res, next){
         try{
             // const { appointmentState } = req.params;
-            const { page, limit, searchKey, fromDate, toDate } = req.query;
+            const { page, limit, searchKey, fromDate, toDate, branchId, roleId} = req.query;
             const obj = { isActive : true };
             const getAllAppointment = await appointmentDA.getAllApptList(
                 obj,
@@ -1275,8 +1275,9 @@ class appointment{
                 limit,
                 searchKey,
                 fromDate,
-                toDate
-            //   appointmentState,
+                toDate,
+                branchId,
+                roleId
             );
             res.status(200).send({ status: true, data: getAllAppointment });
         } catch(e){

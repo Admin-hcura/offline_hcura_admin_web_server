@@ -1797,7 +1797,7 @@ class appointmentDA{
       } catch(e){
         throw e;
       }
-    }
+    };
     
 }
 module.exports = new appointmentDA();

@@ -579,19 +579,11 @@ class appointmentDA{
         }
     };
 
-    async getpatientDetailsDA(hcuraId, roleId, branchId){
+    async getpatientDetailsDA(hcuraId){
         try{
-          const query = { 
-            hcuraId: hcuraId, 
-            isDeleted: false 
-          };
-          let roleDetails = await authentationDA.getroleCodeDA(roleId);
-          if(roleDetails.roleName != "SUPER_ADMIN"){
-            query.branchId = new mongoose.Types.ObjectId(branchId);
-          }
-          return await patientModel.find({query});
+          return await patientModel.find({hcuraId: hcuraId, isDeleted: false});
         } catch(e){
-            throw e;
+          throw e;
         }
     };
     

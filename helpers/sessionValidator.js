@@ -41,8 +41,12 @@ class sessionValidator {
     //     }
     // };
     async validateAdminSession(req, res, next) {
-      try {
+    try {
         const authToken = req.headers["authToken"];
+        console.log("------------------------",req.headers["authToken"])
+        if (!authToken) {
+            throw Boom.unauthorized('authToken is missing');
+        }
         const { sessionId } = authToken;
         console.log("------------------------",sessionId)
         let userId = getUserIdFromSessionId(sessionId); // Implement this function to extract user ID

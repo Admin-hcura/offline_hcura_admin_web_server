@@ -41,30 +41,30 @@ class sessionValidator {
     //     }
     // };
     async validateAdminSession(req, res, next) {
-    try {
-        const authToken = req.headers["authToken"];
-        console.log("------------------------",req.headers["authToken"])
-        if (!authToken) {
-            throw Boom.unauthorized('authToken is missing');
-        }
-        const { sessionId } = authToken;
-        console.log("------------------------",sessionId)
-        let userId = getUserIdFromSessionId(sessionId); // Implement this function to extract user ID
-        let extractedSession = getSessionPartFromSessionId(sessionId);
-        let sessionData = await redisClient.get(userId + "_offline_admin_web");
-        if (!sessionData) {
+        try {
+            const authToken = req.headers["authtoken"];
+            console.log("-----------authToken-------------",authToken)
+            if (!authToken) {
+                throw Boom.unauthorized('authToken is missing');
+            }
+            const { sessionId } = authToken;
+            console.log("------------------------",sessionId)
+            let userId = getUserIdFromSessionId(sessionId); // Implement this function to extract user ID
+            let extractedSession = getSessionPartFromSessionId(sessionId);
+            let sessionData = await redisClient.get(userId + "_offline_admin_web");
+            if (!sessionData) {
+                throw Boom.unauthorized(apiResponse.ServerErrors.error.session_expired);
+            }
+            let session = JSON.parse(sessionData);
+            if (session.sessionId !== extractedSession || session.sessionId === null) {
             throw Boom.unauthorized(apiResponse.ServerErrors.error.session_expired);
+            }
+            req.user = session; // Attach session data to request
+            next();
+        } catch (e) {
+        next(e);
         }
-        let session = JSON.parse(sessionData);
-        if (session.sessionId !== extractedSession || session.sessionId === null) {
-          throw Boom.unauthorized(apiResponse.ServerErrors.error.session_expired);
-        }
-        req.user = session; // Attach session data to request
-        next();
-    } catch (e) {
-      next(e);
     }
-  }
 }
 
 function getUserIdFromSessionId(sessionId) {

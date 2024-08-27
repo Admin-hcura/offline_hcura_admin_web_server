@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-// const sessionValidator = require("../helpers/SessionValidator");
+const sessionValidator = require("../helpers/sessionValidator");
 const appointmentController = require("../controller/appointment");
 const authenticationController = require("../controller/authentication");
 
@@ -9,114 +9,151 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/patient/registration",
+  sessionValidator.validateAdminSession,
   authenticationController.patientRegistartion
 );
 router.post("/book/appointment",
+  sessionValidator.validateAdminSession,
   appointmentController.bookAppointment
 );
 router.post("/patient/search/list",
+  sessionValidator.validateAdminSession,
   appointmentController.getPatientList
 );
 router.post("/patient/details",
+  sessionValidator.validateAdminSession,
   appointmentController.getPatientDetails
 );
 router.post("/payment/consultation",
+  sessionValidator.validateAdminSession,
   appointmentController.paymentConsultation
 );
 router.post("/insert/occupation",
+  sessionValidator.validateAdminSession,
   appointmentController.insertOccupation
 );
 router.post("/insert/source",
+  sessionValidator.validateAdminSession,
   appointmentController.insertSource
 );
 router.post("/insert/states",
+  sessionValidator.validateAdminSession,
   appointmentController.insertStates
 )
 router.get("/source/occuption/list",
+  sessionValidator.validateAdminSession,
   appointmentController.getSourceOccuptionList
 );
 router.get("/state/list",
+  sessionValidator.validateAdminSession,
   appointmentController.getStateList
 );
 router.post("/insert/symptoms/allegires",
+  sessionValidator.validateAdminSession,
   appointmentController.insertSymptomsAllergies
 );
 router.get("/symptoms/allegires/list",
+  sessionValidator.validateAdminSession,
   appointmentController.getSymptomsAllegiresList
 );
 router.post("/book/temperory/appointment",
+  sessionValidator.validateAdminSession,
   authenticationController.bookTempAppointment
 );
 router.get("/doctors/list",
+  sessionValidator.validateAdminSession,
   appointmentController.getDoctorsList
 );
 router.get("/consultation/promo/list",
+  sessionValidator.validateAdminSession,
   appointmentController.getConsultationPromocodes
 );
 router.post("/get/patient/details/consultation/payment",
+  sessionValidator.validateAdminSession,
   appointmentController.getPatientDetailsConsultationPayment
 );
 router.post("/get/payemnt/details/appointment",
+  sessionValidator.validateAdminSession,
   appointmentController.getPaymentDetailsAppointment
 );
 router.post("/get/consultation/amount",
+  sessionValidator.validateAdminSession,
   appointmentController.getConsultationAmount
 );
 router.post("/validate/promo/code",
+  sessionValidator.validateAdminSession,
   appointmentController.validatePromoCode
 );
 router.post("/get/avaliable/slots",
+  sessionValidator.validateAdminSession,
   appointmentController.avaliableSlots
 );
 router.get("/get/package/homeopathy",
+  sessionValidator.validateAdminSession,
   appointmentController.getPackageList
 );
 router.get("/get/package/asthetic",
+  sessionValidator.validateAdminSession,
   appointmentController.getAstheticList
 );
 router.post("/payment/package",
+  sessionValidator.validateAdminSession,
   appointmentController.packagePayment
 );
 router.post("/payment/asthetic",
+  sessionValidator.validateAdminSession,
   appointmentController.paymentAsthetic
 );
 router.post("/create/estimation",
+  sessionValidator.validateAdminSession,
   appointmentController.insertEstimation
 );
 router.post("/get/patient/detils/package/payments",
+  sessionValidator.validateAdminSession,
   appointmentController.getPatientDetilsPackage
 );
 router.post("/get/patient/detils/asthetic/payments",
+  sessionValidator.validateAdminSession,
   appointmentController.getPatientDetilsPackage
 );
 router.post("/get/payment/details/for/particular/appt",
+  sessionValidator.validateAdminSession,
   appointmentController.getPaymentDetailsByApptId
 );
 router.post("/get/patient/payment/details/for/external",
+  sessionValidator.validateAdminSession,
   appointmentController.getPatientAndPaymentDetailsForExternal
 );
 router.post("/payment/external/source",
+  sessionValidator.validateAdminSession,
   appointmentController.paymentExternalSource
 );
 router.get("/get/package/promo/list",
+  sessionValidator.validateAdminSession,
   appointmentController.getPackagePromocodes
 );
 router.get("/get/asthetic/promo/list",
+  sessionValidator.validateAdminSession,
   appointmentController.getAstheticPromocodes
 );
 router.post("/get/dashboard/patient/details",
+  sessionValidator.validateAdminSession,
   appointmentController.getDashboardPTDetails
 );
 router.get("/get/all/appointments",
+  sessionValidator.validateAdminSession,
   appointmentController.getAllAppt
 );
 router.post("/update/appointment/status",
+  sessionValidator.validateAdminSession,
   appointmentController.updateAppointmentStatus
 );
 router.get("/get/all/appointments/appointmentStatus",
+  sessionValidator.validateAdminSession,
   appointmentController.getAllAppointments
 );
 router.get("/calculate/gst",
+  sessionValidator.validateAdminSession,
   appointmentController.calculateGst
 );
 

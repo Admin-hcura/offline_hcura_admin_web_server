@@ -9,19 +9,23 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/insert/branch",
+    sessionValidator.validateAdminSession,
     authenticationController.insertBranch
 );
 router.post("/insert/roles",
+    sessionValidator.validateAdminSession,
     authenticationController.insertRole
 );
 router.post("/add/admin",
+    sessionValidator.validateAdminSession,
     authenticationController.addAdmin
 );
 router.post("/admin/login",
-    // sessionValidator.validateAdminSession,
+    sessionValidator.validateAdminSession,
     authenticationController.adminLogin
 );
 router.post("/admin/logout",
+    sessionValidator.validateAdminSession,
     authenticationController.adminLogout
 )
 router.post("/forget/password",
@@ -35,26 +39,32 @@ router.get("/branch/list",
     authenticationController.getBranchList
 );
 router.get("/role/list",
+    sessionValidator.validateAdminSession,
     authenticationController.getRoleList
 );
 // To insert timings
 router.post("/insert/time",
+    sessionValidator.validateAdminSession,
     authenticationController.insertTime
 );
 // To insert Day
 router.post("/insert/day",
+    sessionValidator.validateAdminSession,
     authenticationController.insertDay
 );
 // to insert promocodes
 router.post("/insert/promocodes",
+    sessionValidator.validateAdminSession,
     authenticationController.insertPromoCodes
 );
 // to insert consultation Amount
 router.post("/insert/consultation/amount",
+    sessionValidator.validateAdminSession,
     authenticationController.insertConsultationAmount
 );
 // to insert package 
 router.post("/insert/package",
+    sessionValidator.validateAdminSession,
     authenticationController.insertPackage
 );
 // WEBHOOK
@@ -63,9 +73,11 @@ router.post("/payment/clinic/web_hook",
 );
 // offline patment status checking
 router.post("/payment/status", 
+    sessionValidator.validateAdminSession,
     authenticationController.paymentStatus
 );
 router.post("/get/role/details",
+    sessionValidator.validateAdminSession,
     authenticationController.getRoleDetails
 );
 

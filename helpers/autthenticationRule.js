@@ -40,7 +40,7 @@ exports.addAdminRule = Joi.object({
 });
 
 exports.sessionRules = Joi.object({
-    authtoken: Joi.string().required().error(new Error("authtoken is required")),
+    authToken: Joi.string().required().error(new Error("authToken is required")),
 });
 
 exports.updatePasswordRule = Joi.object({

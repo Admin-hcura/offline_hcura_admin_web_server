@@ -47,7 +47,7 @@ class sessionValidator {
             if (!authToken) {
                 throw Boom.unauthorized('authToken is missing');
             }
-            const { sessionId } = authToken;
+            const sessionId = authToken;
             console.log("------------------------",sessionId)
             let userId = getUserIdFromSessionId(sessionId); // Implement this function to extract user ID
             let extractedSession = getSessionPartFromSessionId(sessionId);

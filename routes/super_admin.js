@@ -21,11 +21,9 @@ router.post("/add/admin",
     authenticationController.addAdmin
 );
 router.post("/admin/login",
-    sessionValidator.validateAdminSession,
     authenticationController.adminLogin
 );
 router.post("/admin/logout",
-    sessionValidator.validateAdminSession,
     authenticationController.adminLogout
 )
 router.post("/forget/password",

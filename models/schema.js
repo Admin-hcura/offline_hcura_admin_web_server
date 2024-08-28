@@ -338,7 +338,7 @@ const { number, required } = require("joi");
 
   let promoCodes = new schema({
     promoCodeName: { type: String, required: true, unique: true},
-    promoCodeFor: { type: String, enum: ["CONSULTATION", "HOMEOPATHY", "ASTHETIC"], default:null },
+    promoCodeFor: { type: String, enum: ["CONSULTATION", "HOMEOPATHY", "ASTHETIC"], default:"HOMEOPATHY" },
     discount: { type: Number, default: null},
     startsOn: { type: Date, default: null},
     expiredOn: { type: Date, default: null},

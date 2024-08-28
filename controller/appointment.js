@@ -840,7 +840,9 @@ class appointment{
             let ptDetails = await appointmentDA.patientDetaiils(body.patientId);
             console.log(".....ptDetails.......",ptDetails);
 
-            let info = await appointmentDA.getConsultationGST(ptDetails.stateId);
+            let branchDetails = await appointmentDA.branchCode(ptDetails.branchId)
+
+            let info = await appointmentDA.getConsultationGST(branchDetails.stateId);
             console.log("-----info-----",info)
 
             let appointmentData = await appointmentDA.getApptDetails(body.appointmentId);
@@ -1350,6 +1352,22 @@ class appointment{
             res.status(200).send({ status: true, data: data });
         } catch(e){
             next(e);
+        }
+    };
+
+    async getDashboardData(req, res, next) {
+        try {
+          let body = req.body;
+          const { error } = rule.dashboard.validate(body);
+          if (error) {
+            throw Boom.badData(error.message);
+          }
+          let aptCount = await appointmentDA.getDashboardAptCount(body);
+          
+          let sendObj = {aptCount: aptCount};
+          res.status(200).send({ status: true, data: sendObj });
+        } catch (e) {
+          next(e);
         }
     };
 

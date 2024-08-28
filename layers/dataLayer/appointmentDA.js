@@ -1798,6 +1798,111 @@ class appointmentDA{
         throw e;
       }
     };
+
+    async getDashboardAptCount(data) {
+      try {
+        let obj = {
+          startTime: data.startDate,
+          endTime: data.endDate,
+          isActive: true
+        }
+        if(data.roleId){
+          let roleDetails = await authentationDA.getroleCodeDA(data.roleId);
+          if(roleDetails.roleName != "SUPER_ADMIN"){
+              obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
+          }
+        }
+        let pipeline = [
+          {
+            $match: obj
+          },
+          {
+            $project: {
+              completed: {
+                $cond: [
+                  {
+                    $eq: ["$appointmentStatus", "COMPLETED"],
+                  },
+                  1,
+                  0,
+                ],
+              },
+              rescheduled: {
+                $cond: [
+                  {
+                    $eq: ["$appointmentStatus", "RESCHEDULE"],
+                  },
+                  1,
+                  0,
+                ],
+              },
+              cancelled: {
+                $cond: [
+                  {
+                    $eq: ["$appointmentStatus", "CANCELLED"],
+                  },
+                  1,
+                  0,
+                ],
+              },
+              confirmed: {
+                $cond: [
+                  {
+                    $eq: ["$appointmentStatus", "CONFIRMED"],
+                  },
+                  1,
+                  0,
+                ],
+              },
+              scheduled: {
+                $cond: [
+                  {
+                    $eq: ["$appointmentStatus", "SCHEDULED"],
+                  },
+                  1,
+                  0,
+                ],
+              },
+              visited: {
+                $cond: [
+                  {
+                    $eq: ["$appointmentStatus", "VISITED"],
+                  },
+                  1,
+                  0,
+                ],
+              },
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              completed: {
+                $sum: "$completed",
+              },
+              rescheduled: {
+                $sum: "$rescheduled",
+              },
+              cancelled: {
+                $sum: "$cancelled",
+              },
+              confirmed: {
+                $sum: "$confirmed",
+              },
+              scheduled: {
+                $sum: "$scheduled",
+              },
+              visited: {
+                $sum: "$visited",
+              },
+            },
+          },
+        ];
+        return await appointmentModel.aggregate(pipeline);
+      } catch (e) {
+        throw e;
+      }
+    };
     
 }
 module.exports = new appointmentDA();

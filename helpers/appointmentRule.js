@@ -118,3 +118,10 @@ exports.apptStatusRule = Joi.object({
     appointmentStatus : Joi.string().required().error(new Error("appointmentStatus Id is required")),
     appointmentId : Joi.string().required().error(new Error("appointmentId Id is required")),
 });
+
+exports.dashboard = Joi.object({
+    startDate: Joi.string().required().error(new Error("Start date is required")),
+    endDate: Joi.string().required().error(new Error("End date is required")),
+    roleId: Joi.string().required().error(new Error("roleId is required")),
+    branchId: Joi.string().required().error(new Error("branchId is required")),
+});

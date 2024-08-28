@@ -156,5 +156,9 @@ router.get("/calculate/gst",
   sessionValidator.validateAdminSession,
   appointmentController.calculateGst
 );
+router.post("/get/dashboard/appointmentstatus/data",
+  // sessionValidator.validateAdminSession,
+  appointmentController.getDashboardData
+)
 
 module.exports = router;

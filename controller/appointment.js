@@ -112,7 +112,8 @@ class appointment{
             console.log(".....body.appointmentId.......",body.appointmentId);
             let appointmentData = await appointmentDA.getApptDetails(body.appointmentId)
             console.log(".....appointmentData.......",appointmentData);
-            let info = await appointmentDA.getConsultationGST(ptDetails.stateId);
+            let branchDetails = await appointmentDA.branchCode(ptDetails.branchId)
+            let info = await appointmentDA.getConsultationGST(branchDetails.stateId);
             console.log("-----info-----",info)
             let discountPercent = 0
             if(body.promoCodes.length > 0){
@@ -637,7 +638,8 @@ class appointment{
             let ptDetails = await appointmentDA.patientDetaiils(body.patientId);
             console.log(".....ptDetails.......",ptDetails);
 
-            let info = await appointmentDA.getConsultationGST(ptDetails.stateId);
+            let branchDetails = await appointmentDA.branchCode(ptDetails.branchId);
+            let info = await appointmentDA.getConsultationGST(branchDetails.stateId);
             console.log("-----info-----",info)
 
             let appointmentData = await appointmentDA.getApptDetails(body.appointmentId);

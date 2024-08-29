@@ -1802,9 +1802,9 @@ class appointmentDA{
     async getDashboardAptCount(data) {
       try {
         let obj = {
-          startTime: new Date(data.startDate),
-          endTime: new Date(data.endDate),
-          isActive: true
+          isActive: true,
+          startTime: { $gte: new Date(data.startDate) },
+          endTime: { $lte: new Date(data.endDate) }
         };
         if (data.roleId) {
           let roleDetails = await authentationDA.getroleCodeDA(data.roleId);

@@ -1934,9 +1934,9 @@ class appointmentDA{
                         $cond: [{ $eq: ["$paymentFor", "CONSULTATION"] }, "$total", 0]
                       }
                     },
-                    hemopathyTotal: {
+                    homepathyTotal: {
                       $sum: {
-                        $cond: [{ $eq: ["$paymentFor", "HEMOPATHY"] }, "$total", 0]
+                        $cond: [{ $eq: ["$paymentFor", "HOMEOPATHY"] }, "$total", 0]
                       }
                     },
                     externalSourceTotal: {

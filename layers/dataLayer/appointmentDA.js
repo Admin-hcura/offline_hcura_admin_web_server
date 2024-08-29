@@ -1873,8 +1873,6 @@ class appointmentDA{
           }
         }
     
-        console.log("------obj-----", obj);
-    
         let pipeline = [
           { $match: obj },
           {
@@ -1928,44 +1926,44 @@ class appointmentDA{
     
                     astheticTotal: {
                       $sum: {
-                        $cond: [{ $eq: ["$paymentFor", "ASTHETIC"] }, "$payableAmount", 0]
+                        $cond: [{ $eq: ["$paymentFor", "ASTHETIC"] }, "$total", 0]
                       }
                     },
                     consultationTotal: {
                       $sum: {
-                        $cond: [{ $eq: ["$paymentFor", "CONSULTATION"] }, "$payableAmount", 0]
+                        $cond: [{ $eq: ["$paymentFor", "CONSULTATION"] }, "$total", 0]
                       }
                     },
                     hemopathyTotal: {
                       $sum: {
-                        $cond: [{ $eq: ["$paymentFor", "HEMOPATHY"] }, "$payableAmount", 0]
+                        $cond: [{ $eq: ["$paymentFor", "HEMOPATHY"] }, "$total", 0]
                       }
                     },
                     externalSourceTotal: {
                       $sum: {
-                        $cond: [{ $eq: ["$paymentFor", "EXTERNAL_SOURCE"] }, "$payableAmount", 0]
+                        $cond: [{ $eq: ["$paymentFor", "EXTERNAL_SOURCE"] }, "$total", 0]
                       }
                     },
                     cashTotal: {
                       $sum: {
-                        $cond: [{ $eq: ["$paymentMethod", "cash"] }, "$payableAmount", 0]
+                        $cond: [{ $eq: ["$paymentMethod", "cash"] }, "$total", 0]
                       }
                     },
                     qrCodeTotal: {
                       $sum: {
-                        $cond: [{ $eq: ["$paymentMethod", "qr_code"] }, "$payableAmount", 0]
+                        $cond: [{ $eq: ["$paymentMethod", "qr_code"] }, "$total", 0]
                       }
                     },
                     swippingMachineTotal: {
                       $sum: {
-                        $cond: [{ $eq: ["$paymentMethod", "swipping_machine"] }, "$payableAmount", 0]
+                        $cond: [{ $eq: ["$paymentMethod", "swipping_machine"] }, "$total", 0]
                       }
                     },
                     otherMethodsTotal: {
                       $sum: {
                         $cond: [
                           { $not: [{ $in: ["$paymentMethod", ["cash", "qr_code", "swipping_machine"]] }] },
-                          "$payableAmount",
+                          "$total",
                           0
                         ]
                       }
@@ -1976,11 +1974,7 @@ class appointmentDA{
             }
           }
         ];
-    
         let result = await paymentModel.aggregate(pipeline);
-        console.log("Debug Information:", result[0].debug);
-        console.log("Aggregated Results:", result[0].results);
-    
         return result[0].results;
       } catch (e) {
         throw e;

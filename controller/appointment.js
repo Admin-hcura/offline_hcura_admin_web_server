@@ -1382,7 +1382,7 @@ class appointment{
             }
             console.log("------body-----",body)
             let revenueCount = await appointmentDA.getDashboardRevenueCount(body);
-            console.log("------aptCount-----",aptCount)
+            console.log("------revenueCount-----",revenueCount)
             res.status(200).send({ status: true, data: revenueCount });
         } catch (e) {
           next(e);

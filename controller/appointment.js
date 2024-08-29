@@ -1357,17 +1357,29 @@ class appointment{
         }
     };
 
-    async getDashboardData(req, res, next) {
+    async getDashboardDataAptCount(req, res, next) {
         try {
-          let body = req.body;
-          const { error } = rule.dashboard.validate(body);
-          if (error) {
-            throw Boom.badData(error.message);
-          }
-          let aptCount = await appointmentDA.getDashboardAptCount(body);
-          
-          let sendObj = {aptCount: aptCount};
-          res.status(200).send({ status: true, data: sendObj });
+            let body = req.body;
+            const { error } = rule.dashboard.validate(body);
+            if (error) {
+                throw Boom.badData(error.message);
+            }
+            let aptCount = await appointmentDA.getDashboardAptCount(body);
+            res.status(200).send({ status: true, data: aptCount });
+        } catch (e) {
+          next(e);
+        }
+    };
+
+    async getDashboardDataRevenueCount(req, res, next) {
+        try {
+            let body = req.body;
+            const { error } = rule.dashboard.validate(body);
+            if (error) {
+                throw Boom.badData(error.message);
+            }
+            let revenueCount = await appointmentDA.getDashboardRevenueCount(body);
+            res.status(200).send({ status: true, data: revenueCount });
         } catch (e) {
           next(e);
         }

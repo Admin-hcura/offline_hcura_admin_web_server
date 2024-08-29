@@ -1904,70 +1904,66 @@ class appointmentDA{
       }
     };
 
-    // async getDashboardRevenueCount(data) {
-    //   try {
-    //     let obj = {
-    //       startTime: data.startDate,
-    //       endTime: data.endDate,
-    //       isActive: true
-    //     }
-    //     if(data.roleId){
-    //       let roleDetails = await authentationDA.getroleCodeDA(data.roleId);
-    //       if(roleDetails.roleName != "SUPER_ADMIN"){
-    //           obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
-    //       }
-    //     }
-    //     let pipeline = [
-    //       {
-    //         $match: {
-    //           createdOn: {
-    //             $gte: new Date(data.startDate),
-    //             $lte: new Date(data.endDate),
-    //           },
-    //           isDelete: "NO",
-    //         },
-    //       },
-    //       {
-    //         $project: {
-    //           refunded: {
-    //           $toDouble: "$refundAmount",
-    //           },
-    //           total: {
-    //           $toDouble: "$payableAmount",
-    //           },
-    //           completed: {
-    //             $cond: [
-    //               {
-    //                 $eq: ["$paymentStatus", "captured"],
-    //               },
-    //               {
-    //                 $toDouble: "$payableAmount",
-    //               },
-    //               0,
-    //             ],
-    //           },
-    //         },
-    //       },
-    //       {
-    //         $group: {
-    //           _id: null,
-    //           refunded: {
-    //             $sum: "$refunded",
-    //           },
-    //           total: {
-    //             $sum: "$total",
-    //           },
-    //           completed: {
-    //             $sum: "$completed",
-    //           },
-    //         },
-    //       },
-    //     ];
-    //     return await paymentModel.aggregate(pipeline);
-    //   } catch (e) {
-    //     throw e;
-    //   }
-    // };
+    async getDashboardRevenueCount(data) {
+      try {
+        let obj = {
+          createdOn: {
+            $gte: new Date(data.startDate),
+            $lte: new Date(data.endDate),
+          },
+          isDelete: false
+        }
+        if(data.roleId){
+          let roleDetails = await authentationDA.getroleCodeDA(data.roleId);
+          if(roleDetails.roleName != "SUPER_ADMIN"){
+              obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
+          }
+        }
+        let pipeline = [
+          {
+            $match: obj
+          },
+          {
+            $project: {
+              refunded: {
+              $toDouble: "$refundAmount",
+              },
+              total: {
+              $toDouble: "$payableAmount",
+              },
+              completed: {
+                $cond: [
+                  {
+                    $eq: ["$paymentStatus", "captured"],
+                  },
+                  {
+                    $toDouble: "$payableAmount",
+                  },
+                  0,
+                ],
+              },
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              refunded: {
+                $sum: "$refunded",
+              },
+              total: {
+                $sum: "$total",
+              },
+              completed: {
+                $sum: "$completed",
+              },
+            },
+          },
+        ];
+        return await paymentModel.aggregate(pipeline);
+      } catch (e) {
+        throw e;
+      }
+    };
     
 }
 module.exports = new appointmentDA();

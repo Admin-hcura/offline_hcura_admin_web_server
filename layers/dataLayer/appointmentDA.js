@@ -1864,7 +1864,7 @@ class appointmentDA{
             $gte: new Date(data.startDate),
             $lte: new Date(data.endDate),
           },
-          isDelete: false
+          isDeleted: false
         };
         if (data.roleId) {
           let roleDetails = await authentationDA.getroleCodeDA(data.roleId);

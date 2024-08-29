@@ -1855,7 +1855,7 @@ class appointmentDA{
       } catch (e) {
         throw e;
       }
-    }
+    };
     
     async getDashboardRevenueCount(data) {
       try {
@@ -1878,80 +1878,114 @@ class appointmentDA{
         let pipeline = [
           { $match: obj },
           {
-            $project: {
-              refunded: { $toDouble: "$refundAmount" },
-              total: { $toDouble: "$payableAmount" },
-              completed: {
-                $cond: [
-                  { $eq: ["$paymentStatus", "captured"] },
-                  { $toDouble: "$payableAmount" },
-                  0
-                ],
-              },
-              paymentFor: 1,
-              paymentMethod: 1,
-            },
-          },
-          {
-            $group: {
-              _id: null,
-              refunded: { $sum: "$refunded" },
-              total: { $sum: "$total" },
-              completed: { $sum: "$completed" },
+            $facet: {
+              debug: [
+                {
+                  $project: {
+                    refunded: { $toDouble: "$refundAmount" },
+                    total: { $toDouble: "$payableAmount" },
+                    completed: {
+                      $cond: [
+                        { $eq: ["$paymentStatus", "captured"] },
+                        { $toDouble: "$payableAmount" },
+                        0
+                      ],
+                    },
+                    paymentFor: 1,
+                    paymentMethod: 1,
+                  },
+                },
+                {
+                  $addFields: {
+                    debugPaymentFor: "$paymentFor",
+                    debugPaymentMethod: "$paymentMethod",
+                    debugPayableAmount: "$payableAmount"
+                  }
+                }
+              ],
+              results: [
+                {
+                  $project: {
+                    refunded: { $toDouble: "$refundAmount" },
+                    total: { $toDouble: "$payableAmount" },
+                    completed: {
+                      $cond: [
+                        { $eq: ["$paymentStatus", "captured"] },
+                        { $toDouble: "$payableAmount" },
+                        0
+                      ],
+                    },
+                    paymentFor: 1,
+                    paymentMethod: 1,
+                  },
+                },
+                {
+                  $group: {
+                    _id: null,
+                    refunded: { $sum: "$refunded" },
+                    total: { $sum: "$total" },
+                    completed: { $sum: "$completed" },
     
-              astheticTotal: {
-                $sum: {
-                  $cond: [{ $eq: ["$paymentFor", "ASTHETIC"] }, "$payableAmount", 0]
+                    astheticTotal: {
+                      $sum: {
+                        $cond: [{ $eq: ["$paymentFor", "ASTHETIC"] }, "$payableAmount", 0]
+                      }
+                    },
+                    consultationTotal: {
+                      $sum: {
+                        $cond: [{ $eq: ["$paymentFor", "CONSULTATION"] }, "$payableAmount", 0]
+                      }
+                    },
+                    hemopathyTotal: {
+                      $sum: {
+                        $cond: [{ $eq: ["$paymentFor", "HEMOPATHY"] }, "$payableAmount", 0]
+                      }
+                    },
+                    externalSourceTotal: {
+                      $sum: {
+                        $cond: [{ $eq: ["$paymentFor", "EXTERNAL_SOURCE"] }, "$payableAmount", 0]
+                      }
+                    },
+                    cashTotal: {
+                      $sum: {
+                        $cond: [{ $eq: ["$paymentMethod", "cash"] }, "$payableAmount", 0]
+                      }
+                    },
+                    qrCodeTotal: {
+                      $sum: {
+                        $cond: [{ $eq: ["$paymentMethod", "qr_code"] }, "$payableAmount", 0]
+                      }
+                    },
+                    swippingMachineTotal: {
+                      $sum: {
+                        $cond: [{ $eq: ["$paymentMethod", "swipping_machine"] }, "$payableAmount", 0]
+                      }
+                    },
+                    otherMethodsTotal: {
+                      $sum: {
+                        $cond: [
+                          { $not: [{ $in: ["$paymentMethod", ["cash", "qr_code", "swipping_machine"]] }] },
+                          "$payableAmount",
+                          0
+                        ]
+                      }
+                    },
+                  },
                 }
-              },
-              consultationTotal: {
-                $sum: {
-                  $cond: [{ $eq: ["$paymentFor", "CONSULTATION"] }, "$payableAmount", 0]
-                }
-              },
-              hemopathyTotal: {
-                $sum: {
-                  $cond: [{ $eq: ["$paymentFor", "HEMOPATHY"] }, "$payableAmount", 0]
-                }
-              },
-              externalSourceTotal: {
-                $sum: {
-                  $cond: [{ $eq: ["$paymentFor", "EXTERNAL_SOURCE"] }, "$payableAmount", 0]
-                }
-              },
-              cashTotal: {
-                $sum: {
-                  $cond: [{ $eq: ["$paymentMethod", "cash"] }, "$payableAmount", 0]
-                }
-              },
-              qrCodeTotal: {
-                $sum: {
-                  $cond: [{ $eq: ["$paymentMethod", "qr_code"] }, "$payableAmount", 0]
-                }
-              },
-              swippingMachineTotal: {
-                $sum: {
-                  $cond: [{ $eq: ["$paymentMethod", "swipping_machine"] }, "$payableAmount", 0]
-                }
-              },
-              otherMethodsTotal: {
-                $sum: {
-                  $cond: [
-                    { $not: [{ $in: ["$paymentMethod", ["cash", "qr_code", "swipping_machine"]] }] },
-                    "$payableAmount",
-                    0
-                  ]
-                }
-              },
-            },
-          },
+              ]
+            }
+          }
         ];
-        return await paymentModel.aggregate(pipeline);
+    
+        let result = await paymentModel.aggregate(pipeline);
+        console.log("Debug Information:", result[0].debug);
+        console.log("Aggregated Results:", result[0].results);
+    
+        return result[0].results;
       } catch (e) {
         throw e;
       }
-    }
-    
-      
+    };
+
 }
 module.exports = new appointmentDA();

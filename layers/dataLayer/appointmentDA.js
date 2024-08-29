@@ -1812,7 +1812,6 @@ class appointmentDA{
             obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
           }
         }
-        console.log("-------obj-------",obj)
         let pipeline = [
           {
             $match: obj
@@ -1854,12 +1853,10 @@ class appointmentDA{
     
         return await appointmentModel.aggregate(pipeline);
       } catch (e) {
-        console.error("Error in getDashboardAptCount:", e.message);
         throw e;
       }
     }
     
-
     async getDashboardRevenueCount(data) {
       try {
         let obj = {
@@ -1868,13 +1865,14 @@ class appointmentDA{
             $lte: new Date(data.endDate),
           },
           isDelete: false
-        }
-        if(data.roleId){
+        };
+        if (data.roleId) {
           let roleDetails = await authentationDA.getroleCodeDA(data.roleId);
-          if(roleDetails.roleName != "SUPER_ADMIN"){
-              obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
+          if (roleDetails.roleName !== "SUPER_ADMIN" && data.branchId) {
+            obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
           }
         }
+        console.log("------obj-----",obj)
         let pipeline = [
           {
             $match: obj
@@ -1882,20 +1880,16 @@ class appointmentDA{
           {
             $project: {
               refunded: {
-              $toDouble: "$refundAmount",
+                $toDouble: "$refundAmount",
               },
               total: {
-              $toDouble: "$payableAmount",
+                $toDouble: "$payableAmount",
               },
               completed: {
                 $cond: [
-                  {
-                    $eq: ["$paymentStatus", "captured"],
-                  },
-                  {
-                    $toDouble: "$payableAmount",
-                  },
-                  0,
+                  { $eq: ["$paymentStatus", "captured"] },
+                  { $toDouble: "$payableAmount" },
+                  0
                 ],
               },
             },
@@ -1903,15 +1897,9 @@ class appointmentDA{
           {
             $group: {
               _id: null,
-              refunded: {
-                $sum: "$refunded",
-              },
-              total: {
-                $sum: "$total",
-              },
-              completed: {
-                $sum: "$completed",
-              },
+              refunded: { $sum: "$refunded" },
+              total: { $sum: "$total" },
+              completed: { $sum: "$completed" }
             },
           },
         ];
@@ -1920,6 +1908,6 @@ class appointmentDA{
         throw e;
       }
     };
-    
+      
 }
 module.exports = new appointmentDA();

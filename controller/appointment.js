@@ -1364,9 +1364,9 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            console.log("------body-----",body)
+            
             let aptCount = await appointmentDA.getDashboardAptCount(body);
-            console.log("------aptCount-----",aptCount)
+            
             res.status(200).send({ status: true, data: aptCount });
         } catch (e) {
           next(e);
@@ -1380,7 +1380,9 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
+            console.log("------body-----",body)
             let revenueCount = await appointmentDA.getDashboardRevenueCount(body);
+            console.log("------aptCount-----",aptCount)
             res.status(200).send({ status: true, data: revenueCount });
         } catch (e) {
           next(e);

@@ -1802,8 +1802,8 @@ class appointmentDA{
     async getDashboardAptCount(data) {
       try {
         let obj = {
-          startTime: data.startDate,
-          endTime: data.endDate,
+          startTime: new Date(data.startDate),
+          endTime: new Date(data.endDate),
           isActive: true
         };
         if (data.roleId) {

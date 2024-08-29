@@ -769,7 +769,7 @@ class appointment{
                       endDate = moment(startDate).endOf('month');
                     }
                     let packageSchedules = {
-                        userId: updatePaymentReport.userId,
+                        patientId: updatePaymentReport.patientId,
                         packageId: updatePaymentReport.packageId,
                         paymentId: updatePaymentReport._id,
                         endDate: endDate,

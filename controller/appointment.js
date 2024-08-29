@@ -1364,7 +1364,9 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
+            console.log("------body-----",body)
             let aptCount = await appointmentDA.getDashboardAptCount(body);
+            console.log("------aptCount-----",aptCount)
             res.status(200).send({ status: true, data: aptCount });
         } catch (e) {
           next(e);

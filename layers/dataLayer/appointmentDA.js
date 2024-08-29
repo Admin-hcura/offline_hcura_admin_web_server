@@ -1805,13 +1805,14 @@ class appointmentDA{
           startTime: data.startDate,
           endTime: data.endDate,
           isActive: true
-        }
-        if(data.roleId){
+        };
+        if (data.roleId) {
           let roleDetails = await authentationDA.getroleCodeDA(data.roleId);
-          if(roleDetails.roleName != "SUPER_ADMIN"){
-              obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
+          if (roleDetails.roleName !== "SUPER_ADMIN" && data.branchId) {
+            obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
           }
         }
+        console.log("-------obj-------",obj)
         let pipeline = [
           {
             $match: obj
@@ -1819,90 +1820,45 @@ class appointmentDA{
           {
             $project: {
               completed: {
-                $cond: [
-                  {
-                    $eq: ["$appointmentStatus", "COMPLETED"],
-                  },
-                  1,
-                  0,
-                ],
+                $cond: [{ $eq: ["$appointmentStatus", "COMPLETED"] }, 1, 0]
               },
               rescheduled: {
-                $cond: [
-                  {
-                    $eq: ["$appointmentStatus", "RESCHEDULE"],
-                  },
-                  1,
-                  0,
-                ],
+                $cond: [{ $eq: ["$appointmentStatus", "RESCHEDULE"] }, 1, 0]
               },
               cancelled: {
-                $cond: [
-                  {
-                    $eq: ["$appointmentStatus", "CANCELLED"],
-                  },
-                  1,
-                  0,
-                ],
+                $cond: [{ $eq: ["$appointmentStatus", "CANCELLED"] }, 1, 0]
               },
               confirmed: {
-                $cond: [
-                  {
-                    $eq: ["$appointmentStatus", "CONFIRMED"],
-                  },
-                  1,
-                  0,
-                ],
+                $cond: [{ $eq: ["$appointmentStatus", "CONFIRMED"] }, 1, 0]
               },
               scheduled: {
-                $cond: [
-                  {
-                    $eq: ["$appointmentStatus", "SCHEDULED"],
-                  },
-                  1,
-                  0,
-                ],
+                $cond: [{ $eq: ["$appointmentStatus", "SCHEDULED"] }, 1, 0]
               },
               visited: {
-                $cond: [
-                  {
-                    $eq: ["$appointmentStatus", "VISITED"],
-                  },
-                  1,
-                  0,
-                ],
-              },
-            },
+                $cond: [{ $eq: ["$appointmentStatus", "VISITED"] }, 1, 0]
+              }
+            }
           },
           {
             $group: {
               _id: null,
-              completed: {
-                $sum: "$completed",
-              },
-              rescheduled: {
-                $sum: "$rescheduled",
-              },
-              cancelled: {
-                $sum: "$cancelled",
-              },
-              confirmed: {
-                $sum: "$confirmed",
-              },
-              scheduled: {
-                $sum: "$scheduled",
-              },
-              visited: {
-                $sum: "$visited",
-              },
-            },
-          },
+              completed: { $sum: "$completed" },
+              rescheduled: { $sum: "$rescheduled" },
+              cancelled: { $sum: "$cancelled" },
+              confirmed: { $sum: "$confirmed" },
+              scheduled: { $sum: "$scheduled" },
+              visited: { $sum: "$visited" }
+            }
+          }
         ];
+    
         return await appointmentModel.aggregate(pipeline);
       } catch (e) {
+        console.error("Error in getDashboardAptCount:", e.message);
         throw e;
       }
-    };
+    }
+    
 
     async getDashboardRevenueCount(data) {
       try {

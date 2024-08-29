@@ -1872,19 +1872,15 @@ class appointmentDA{
             obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
           }
         }
-        console.log("------obj-----",obj)
+    
+        console.log("------obj-----", obj);
+    
         let pipeline = [
-          {
-            $match: obj
-          },
+          { $match: obj },
           {
             $project: {
-              refunded: {
-                $toDouble: "$refundAmount",
-              },
-              total: {
-                $toDouble: "$payableAmount",
-              },
+              refunded: { $toDouble: "$refundAmount" },
+              total: { $toDouble: "$payableAmount" },
               completed: {
                 $cond: [
                   { $eq: ["$paymentStatus", "captured"] },
@@ -1892,6 +1888,8 @@ class appointmentDA{
                   0
                 ],
               },
+              paymentFor: 1,
+              paymentMethod: 1,
             },
           },
           {
@@ -1899,7 +1897,52 @@ class appointmentDA{
               _id: null,
               refunded: { $sum: "$refunded" },
               total: { $sum: "$total" },
-              completed: { $sum: "$completed" }
+              completed: { $sum: "$completed" },
+    
+              astheticTotal: {
+                $sum: {
+                  $cond: [{ $eq: ["$paymentFor", "ASTHETIC"] }, "$payableAmount", 0]
+                }
+              },
+              consultationTotal: {
+                $sum: {
+                  $cond: [{ $eq: ["$paymentFor", "CONSULTATION"] }, "$payableAmount", 0]
+                }
+              },
+              hemopathyTotal: {
+                $sum: {
+                  $cond: [{ $eq: ["$paymentFor", "HEMOPATHY"] }, "$payableAmount", 0]
+                }
+              },
+              externalSourceTotal: {
+                $sum: {
+                  $cond: [{ $eq: ["$paymentFor", "EXTERNAL_SOURCE"] }, "$payableAmount", 0]
+                }
+              },
+              cashTotal: {
+                $sum: {
+                  $cond: [{ $eq: ["$paymentMethod", "cash"] }, "$payableAmount", 0]
+                }
+              },
+              qrCodeTotal: {
+                $sum: {
+                  $cond: [{ $eq: ["$paymentMethod", "qr_code"] }, "$payableAmount", 0]
+                }
+              },
+              swippingMachineTotal: {
+                $sum: {
+                  $cond: [{ $eq: ["$paymentMethod", "swipping_machine"] }, "$payableAmount", 0]
+                }
+              },
+              otherMethodsTotal: {
+                $sum: {
+                  $cond: [
+                    { $not: [{ $in: ["$paymentMethod", ["cash", "qr_code", "swipping_machine"]] }] },
+                    "$payableAmount",
+                    0
+                  ]
+                }
+              },
             },
           },
         ];
@@ -1907,7 +1950,8 @@ class appointmentDA{
       } catch (e) {
         throw e;
       }
-    };
+    }
+    
       
 }
 module.exports = new appointmentDA();

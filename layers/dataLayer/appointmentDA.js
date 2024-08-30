@@ -1858,7 +1858,7 @@ class appointmentDA{
     async getDashboardRevenueCount(data) {
       try {
         let obj = {
-          createdOn: {
+          paidOn: {
             $gte: new Date(data.startDate),
             $lte: new Date(data.endDate),
           },

@@ -868,25 +868,23 @@ class appointmentDA{
             ]);
 
             // Step 3: Get all days that are not booked
-            const availableDays = await dayModel.aggregate([
-                {
-                    $match: {
-                        _id: { $nin: bookedDayIds },
-                        isActive: true,
-                    },
-                },
-                {
-                    $project: {
-                        _id: 1,
-                        day: 1,
-                    },
-                },
-            ]);
+            // const availableDays = await dayModel.aggregate([
+            //     {
+            //         $match: {
+            //             _id: { $nin: bookedDayIds },
+            //             isActive: true,
+            //         },
+            //     },
+            //     {
+            //         $project: {
+            //             _id: 1,
+            //             day: 1,
+            //         },
+            //     },
+            // ]);
+            const availableDays = await dayModel.find({isActive: true});
 
-            return {
-                availableTimes,
-                availableDays,
-            };
+            return { availableTimes, availableDays };
         } catch (error) {
             console.error("Error fetching remaining slots and timings:", error);
             throw error;

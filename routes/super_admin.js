@@ -62,7 +62,7 @@ router.post("/insert/consultation/amount",
 );
 // to insert package 
 router.post("/insert/package",
-    sessionValidator.validateAdminSession,
+    // sessionValidator.validateAdminSession,
     authenticationController.insertPackage
 );
 // WEBHOOK

@@ -1980,5 +1980,113 @@ class appointmentDA{
       }
     };
 
+    async getPatientListTemp(type, page, limit, search, roleId, branchId) {
+      let offset = (page - 1) * limit;
+      try {
+        let pipeline = [];
+        if (type != "ALL") {
+          pipeline.push({
+            $match: {
+              isDeleted: false,
+            },
+          });
+        }
+        let roleDetails = await authentationDA.getroleCodeDA(roleId);
+        if(roleDetails.roleName != "SUPER_ADMIN"){
+          pipeline.push({
+            $match: {
+              branchId: new mongoose.Types.ObjectId(branchId),
+            },
+          });
+        }
+        if (search != "") {
+          let or = [
+            {
+              hcuraTId: { $regex: search, $options: "i" },
+            },
+            {
+              firstName: { $regex: search, $options: "i" },
+            },
+            {
+              lastName: { $regex: search, $options: "i" },
+            },
+            {
+              phoneNumber: { $regex: search, $options: "i" },
+            },
+          ];
+          pipeline.push({
+              $addFields: {
+                phoneNumberStr: { $toString: "$phoneNumber" }, 
+              },
+            });
+          pipeline.push({
+            $match: {
+              $or: [
+                {
+                  hcuraTId: { $regex: search, $options: "i" },
+                },
+                {
+                  firstName: { $regex: search, $options: "i" },
+                },
+                {
+                  lastName: { $regex: search, $options: "i" },
+                },
+                {
+                  phoneNumberStr: { $regex: search, $options: "i" }, 
+                },
+              ],
+            },
+          });
+        }
+
+        pipeline.push({
+          $lookup: {
+            from: "admin", 
+            localField: "doctorId", 
+            foreignField: "_id", 
+            as: "doctorDetails",
+          },
+        });
+
+        pipeline.push({
+          $unwind: {
+            path: "$doctorDetails",
+            preserveNullAndEmptyArrays: true,
+          },
+        });
+
+        pipeline.push({
+          $project: {
+            hcuraTId: 1,
+            firstName: 1,
+            lastName: 1,
+            phoneNumber: 1,
+            doctorfirstName: "$doctorDetails.firstName",
+            doctorlastName: "$doctorDetails.lastName",
+            registeredOn: 1,
+            gender: 1,
+            complaint: 1,
+            appointmentDate: 1,
+            isConverted: 1
+          },
+        });
+
+        pipeline.push({
+          $facet: {
+            metadata: [{ $count: "total" }, { $addFields: { page: page } }],
+            data: [
+              { $sort: { registeredOn: -1 } },
+              { $skip: offset },
+              { $limit: limit },
+            ],
+          },
+        });
+        let listData = await tempAppointmentModel.aggregate(pipeline);
+        return listData;
+      } catch (e) {
+        throw e;
+      }
+    };
+
 }
 module.exports = new appointmentDA();

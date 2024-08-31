@@ -164,5 +164,9 @@ router.post("/get/dashboard/data/revenue/count",
   sessionValidator.validateAdminSession,
   appointmentController.getDashboardDataRevenueCount
 );
+router.post("temp/patient/search/list",
+  sessionValidator.validateAdminSession,
+  appointmentController.getPatientListTempAppointment
+);
 
 module.exports = router;

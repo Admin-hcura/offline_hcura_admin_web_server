@@ -1387,6 +1387,40 @@ class appointment{
         }
     };
 
+    async getPatientListTempAppointment(req, res, next) {
+        try {
+          const payload = req.body;
+          let page = payload.page;
+          let limit = constants.pageConstants.pageLength;
+          let roleId = payload.roleId
+          let branchId = payload.branchId
+          const patientList = await appointmentDA.getPatientListTemp(
+            payload.type,
+            page,
+            limit,
+            payload.search,
+            roleId,
+            branchId
+          );
+          let sendObj = {
+            metaData: {
+              page:
+                patientList[0].metadata.length > 0
+                  ? patientList[0].metadata[0].page
+                  : 1,
+              total:
+                patientList[0].metadata.length > 0
+                  ? patientList[0].metadata[0].total
+                  : 0,
+            },
+            patientList: patientList[0].data,
+          };
+          res.status(200).send({ status: true, data: sendObj });
+        } catch (e) {
+          next(e);
+        }
+    };
+
 };
 
 module.exports = new appointment();

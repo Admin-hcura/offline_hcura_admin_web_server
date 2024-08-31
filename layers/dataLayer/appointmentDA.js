@@ -1222,6 +1222,7 @@ class appointmentDA{
                             "$patientDetails.lastName"
                           ]
                         },
+                        stateName: "$patientDetails.stateName",
                         phoneNumber: "$patientDetails.phoneNumber",
                         countryCode: "$patientDetails.countryCode",
                         houseNo: "$patientDetails.address.houseNo",

@@ -95,6 +95,7 @@ const { number, required } = require("joi");
     consultationType: {type: String, required: true, default: "OFFLINE", enum: ["OFFLINE", "ONLINE"]},
     registeredBy: {type: mongoose.Schema.Types.ObjectId, required: true, ref: "Admin"},
     registeredOn: {type: Date, default: new Date()},
+    createdOn: {type: Date, default: new Date()},
     source: {type: String, default: null},
     occupation: {type: String, default: null},
     lockedBy: {type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin"},

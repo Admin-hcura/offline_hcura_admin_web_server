@@ -52,7 +52,7 @@ router.post("/insert/day",
 );
 // to insert promocodes
 router.post("/insert/promocodes",
-    sessionValidator.validateAdminSession,
+    // sessionValidator.validateAdminSession,
     authenticationController.insertPromoCodes
 );
 // to insert consultation Amount

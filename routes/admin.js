@@ -168,5 +168,9 @@ router.post("/temp/patient/search/list",
   sessionValidator.validateAdminSession,
   appointmentController.getPatientListTempAppointment
 );
+router.post("/change/temp/appt/status",
+  sessionValidator.validateAdminSession,
+  appointmentController.getPatientListTempAppointment
+);
 
 module.exports = router;

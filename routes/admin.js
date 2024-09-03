@@ -170,7 +170,7 @@ router.post("/temp/patient/search/list",
 );
 router.post("/change/temp/appt/status",
   sessionValidator.validateAdminSession,
-  appointmentController.getPatientListTempAppointment
+  appointmentController.changeisActiveStatusTemp
 );
 
 module.exports = router;

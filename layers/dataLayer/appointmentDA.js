@@ -1982,6 +1982,7 @@ class appointmentDA{
 
     async getPatientListTemp(type, page, limit, search, roleId, branchId) {
       let offset = (page - 1) * limit;
+      console.log("----type, page, limit, search, roleId, branchId------",type, page, limit, search, roleId, branchId)
       try {
         let pipeline = [];
         if (type != "ALL") {

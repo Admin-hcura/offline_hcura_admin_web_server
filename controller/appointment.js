@@ -1394,6 +1394,7 @@ class appointment{
           let limit = constants.pageConstants.pageLength;
           let roleId = payload.roleId
           let branchId = payload.branchId
+          console.log("------payload-------",payload)
           const patientList = await appointmentDA.getPatientListTemp(
             payload.type,
             page,
@@ -1415,6 +1416,7 @@ class appointment{
             },
             patientList: patientList[0].data,
           };
+          console.log("------patientList-------",patientList);
           res.status(200).send({ status: true, data: sendObj });
         } catch (e) {
           next(e);

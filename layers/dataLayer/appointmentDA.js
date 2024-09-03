@@ -2089,5 +2089,22 @@ class appointmentDA{
       }
     };
 
+    async changeisActiveStatusTemp(obj){
+      try{
+        let result = await tempAppointmentModel.findOneAndUpdate(
+          {_id: obj.patientId},
+          {
+              $set:{
+                isConverted: obj.isConverted,
+                updatedBy: obj.updatedBy
+              },
+          },{ new: true}
+        );
+        return result;
+      } catch(e){
+        throw e;
+      }
+    };
+
 }
 module.exports = new appointmentDA();

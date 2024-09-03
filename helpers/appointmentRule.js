@@ -125,3 +125,9 @@ exports.dashboard = Joi.object({
     roleId: Joi.string().required().error(new Error("roleId is required")),
     branchId: Joi.string().required().error(new Error("branchId is required")),
 });
+
+exports.changeStatusisCompletedTemp = Joi.object({
+    patientId: Joi.string().required().error(new Error("patientId is required")),
+    updatedBy: Joi.string().required().error(new Error("updatedBy is required")),
+    isConverted: Joi.boolean().required().error(new Error("isConverted (true/false) is required"))
+});

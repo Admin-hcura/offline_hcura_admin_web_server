@@ -1423,6 +1423,20 @@ class appointment{
         }
     };
 
+    async changeisActiveStatusTemp(req, res, next){
+        try{
+            let body = req.body;
+            const { error } = rule.changeStatusisCompletedTemp.validate(body);
+            if (error) {
+                throw Boom.badData(error.message);
+            }
+            let result = await appointmentDA.changeisActiveStatusTemp(body);
+            res.status(200).send({ status: true, data: result });
+        } catch(e){
+            next(e);
+        }
+    };
+
 };
 
 module.exports = new appointment();

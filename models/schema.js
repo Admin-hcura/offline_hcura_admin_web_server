@@ -287,6 +287,7 @@ const { number, required } = require("joi");
     createdOn: {type: Date, default: new Date()},
     isActive: {type: Boolean, default: true},
     isConverted: {type: Boolean, default: false},
+    updatedBy: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
   });
 
   let package = new schema ({

@@ -164,7 +164,7 @@ router.post("/get/dashboard/data/revenue/count",
   sessionValidator.validateAdminSession,
   appointmentController.getDashboardDataRevenueCount
 );
-router.post("temp/patient/search/list",
+router.post("/temp/patient/search/list",
   sessionValidator.validateAdminSession,
   appointmentController.getPatientListTempAppointment
 );

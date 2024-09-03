@@ -86,14 +86,21 @@ exports.paymenPackageRule = Joi.object({
       }).required(),
   });
 
-  exports.createEstimationRule = Joi.object({
+exports.createEstimationRule = Joi.object({
     patientId: Joi.string().required().error(new Error("patientId is required")),
     doctorId: Joi.string().required().error(new Error("doctorId is required")),
     branchId: Joi.string().required().error(new Error("branchId is required")),
-    packageId: Joi.string().required().error(new Error("packageId is required")),
     createdBy: Joi.string().required().error(new Error("createdBy is required")),
-    treatmentPlan: Joi.string().required().error(new Error("treatmentPlan is required")),
-    estimationAmount: Joi.number().required().error(new Error("estimationAmount is required")),
+    homeopathy: Joi.array().items(Joi.object({
+        packageName: Joi.string().empty("").allow(null).default(null),
+        amount: Joi.number().empty("").allow(null).default(null),
+        packageId: Joi.string().empty("").allow(null).default(null),
+    })),
+    asthetic: Joi.array().items(Joi.object({
+        packageName: Joi.string().empty("").allow(null).default(null),
+        amount: Joi.number().empty("").allow(null).default(null),
+        packageId: Joi.string().empty("").allow(null).default(null),
+    })),
 });
 
 exports.paymentExtrnalSourceRule = Joi.object({

@@ -913,11 +913,10 @@ class appointmentDA{
                 patientId: body.patientId,
                 doctorId: body.doctorId,
                 branchId: body.branchId,
-                packageId: body.packageId,
                 createdBy: body.createdBy,
-                treatmentPlan: body.treatmentPlan,
-                estimationAmount: body.estimationAmount
-            });
+                homeopathy: body.homeopathy,
+                asthetic: body.asthetic
+              });
             return await result.save();
         } catch(e){
             throw e;

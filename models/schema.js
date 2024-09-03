@@ -361,10 +361,21 @@ const { number, required } = require("joi");
     patientId: {type: mongoose.Schema.Types.ObjectId, ref: "Patient", default: null},
     doctorId: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
     branchId: {type: mongoose.Schema.Types.ObjectId, ref: "Branch", default: null},
-    packageId: {type: mongoose.Schema.Types.ObjectId, ref: "Package", default: null},
     createdBy: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
-    treatmentPlan: {type: String, default: null},
-    estimationAmount: {type: Number, default: 0},
+    homeopathy: [
+      {
+        packageName : { type: String, default: null},
+        amount : { type: Number, default: null},
+        packageId: {type: mongoose.Schema.Types.ObjectId, ref: "Package", default: null},
+      }
+    ],
+    asthetic: [
+      {
+        packageName : { type: String, default: null},
+        amount : { type: Number, default: null},
+        packageId: {type: mongoose.Schema.Types.ObjectId, ref: "Package", default: null},
+      }
+    ],
     createdOn: { type: Date, default: new Date()},
     isActive: { type: Boolean, default: true},
   });

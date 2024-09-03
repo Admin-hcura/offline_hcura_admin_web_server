@@ -1988,7 +1988,7 @@ class appointmentDA{
         if (type != "ALL") {
           pipeline.push({
             $match: {
-              isDeleted: false,
+              isActive: true,
             },
           });
         }

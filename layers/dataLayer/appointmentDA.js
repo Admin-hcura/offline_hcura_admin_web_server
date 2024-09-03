@@ -2064,7 +2064,7 @@ class appointmentDA{
             phoneNumber: 1,
             doctorfirstName: "$doctorDetails.firstName",
             doctorlastName: "$doctorDetails.lastName",
-            registeredOn: 1,
+            createdOn: 1,
             gender: 1,
             complaint: 1,
             appointmentDate: 1,
@@ -2076,7 +2076,7 @@ class appointmentDA{
           $facet: {
             metadata: [{ $count: "total" }, { $addFields: { page: page } }],
             data: [
-              { $sort: { registeredOn: -1 } },
+              { $sort: { createdOn: -1 } },
               { $skip: offset },
               { $limit: limit },
             ],

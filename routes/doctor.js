@@ -12,10 +12,17 @@ router.post("/insert/casestudy/data",
   // sessionValidator.validateAdminSession,
   appointmentController.insertCaseStudy
 );
-
 router.post("/insert/casestudy/suggestion/prescription",
   // sessionValidator.validateAdminSession,
   appointmentController.insertCaseStudySuggestionPrescription
+);
+router.post("/insert/prescription",
+  // sessionValidator.validateAdminSession,
+  appointmentController.insertPrescription
+);
+router.post("/get/patient/details/casestudy",
+  // sessionValidator.validateAdminSession,
+  appointmentController.getPtDetailsCasestudy
 );
 
 module.exports = router;

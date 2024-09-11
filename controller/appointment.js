@@ -1468,6 +1468,34 @@ class appointment{
         }
     };
 
+    async insertPrescription(req, res, next){
+        try{
+            let body = req.body;
+            const { error } = doctorRule.insertPrescriptionRule.validate(body);
+            if (error){
+                throw Boom.badData(error.message);
+            }
+            let prescriptionDetails = await appointmentDA.insertPrescription(body)
+            res.status(200).send({ status: true, data: prescriptionDetails });
+        } catch(e){
+            next(e);
+        }
+    };
+
+    async getPtDetailsCasestudy(req, res, next){
+        try{
+            let body = req.body;
+            const { error } = doctorRule.searchHcuraIdRule.validate(body);
+            if (error){
+                throw Boom.badData(error.message);
+            }
+            let details = await appointmentDA.getPatientDetailsCaseStudy(body)
+            res.status(200).send({ status: true, data: details });
+        } catch(e){
+            next(e);
+        }
+    };
+
 };
 
 module.exports = new appointment();

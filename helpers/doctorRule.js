@@ -77,6 +77,7 @@ exports.insertCaseStudySuggestionPrescriptionRule = Joi.object({
     patientId: Joi.string().required().error(new Error("patientId  Required")),
     appointmentId: Joi.string().required().error(new Error("appointmentId is Required")),
     doctorId: Joi.string().required().error(new Error("doctorId  Required")),
+    branchId: Joi.string().required().error(new Error("branchId  Required")),
     createdBy: Joi.string().required().error(new Error("createdBy is Required")),
     followupSheets: Joi.array().items(Joi.object({
       followupNotes: Joi.string().required().error(new Error("followupNotes is Required")),
@@ -84,4 +85,33 @@ exports.insertCaseStudySuggestionPrescriptionRule = Joi.object({
     })),
     remarks: Joi.string().required().error(new Error("remarks is Required")),
     curedCaseSummary: Joi.string().empty("").allow(null).default(null),
+});
+exports.insertPrescriptionRule = Joi.object({
+    patientId: Joi.string().required().error(new Error("patientId  Required")),
+    appointmentId: Joi.string().required().error(new Error("appointmentId is Required")),
+    doctorId: Joi.string().required().error(new Error("doctorId  Required")),
+    branchId: Joi.string().required().error(new Error("branchId  Required")),
+    createdBy: Joi.string().required().error(new Error("createdBy is Required")),
+    medicines: Joi.array().items(Joi.object({
+        originalName: Joi.string().allow(null).default(null),
+        medicinesName: Joi.string().allow(null).default(null),
+        dosage: Joi.array().items(Joi.object({
+            morning: Joi.string().allow(null).default(null),
+            afternoon: Joi.string().allow(null).default(null),
+            night: Joi.string().allow(null).default(null)
+        })),
+        time: Joi.string().allow(null).default(null),
+        days: Joi.string().allow(null).default(null),
+    })).required().error(new Error("Medicines are required")),
+    expiryDate: Joi.string().required().error(new Error("Expiry Date is Required")), 
+    consultationSummary: Joi.string().required().error(new Error("consultationSummary  is Required")),
+    instructions: Joi.string().required().error(new Error("instructions  is Required")),
+    diagnostics: Joi.array().items(Joi.string()).default([]), 
+    diagnosis: Joi.array().items(Joi.string()).required().error(new Error("diagnosis  is Required")),
+    followUpDate: Joi.date().required().error(new Error("Followup Date is Required")),
+});
+exports.searchHcuraIdRule = Joi.object({
+    hcuraId: Joi.string().required().error(new Error("hcuraId is required")),
+    roleId: Joi.string().required().error(new Error("roleId is required")),
+    branchId: Joi.string().required().error(new Error("branchId is required"))
 });

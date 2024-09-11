@@ -346,6 +346,7 @@ const increment = require('mongoose-increment')(mongoose);
 
   let prescription = new schema ({
     patientId: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Patient"},
+    appointmentId: {type: mongoose.Schema.Types.ObjectId, ref: "Appointment", default: null},
     doctorId: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin" },
     createdBy: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin"},
     updatedBy: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin"},
@@ -440,6 +441,7 @@ const increment = require('mongoose-increment')(mongoose);
       default: null,
       ref: "Patient",
     },
+    branchId: {type: mongoose.Schema.Types.ObjectId, ref: "Branch", default: null},
     appointmentId: {
       type: schema.Types.ObjectId,
       ref: "Appointment",

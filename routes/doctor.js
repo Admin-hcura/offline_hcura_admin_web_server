@@ -1,14 +1,21 @@
 const express = require("express");
 const router = express.Router();
-// const sessionValidator = require("../helpers/SessionValidator");
-// const doctorController = require("../controller/doctorController");
-// const appointmentController = require("../controller/appointment");
-// const dashBoardController = require("../controller/dashBoard");
-// const liveConsultationController = require("../controller/liveConsultation");
-// const notificationsController = require("../controller/notificationsController");
+const sessionValidator = require("../helpers/sessionValidator");
+const appointmentController = require("../controller/appointment");
+const authenticationController = require("../controller/authentication");
 
 router.get("/", async (req, res) => {
   res.send({ service: "H-cura admin_offline_server", status: "Running" });
 });
+
+router.post("/insert/casestudy/data",
+  // sessionValidator.validateAdminSession,
+  appointmentController.insertCaseStudy
+);
+
+router.post("/insert/casestudy/suggestion/prescription",
+  // sessionValidator.validateAdminSession,
+  appointmentController.insertCaseStudySuggestionPrescription
+);
 
 module.exports = router;

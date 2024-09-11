@@ -11,7 +11,8 @@ const moment = require("moment-timezone");
 const authentationDA = require("./authentationDA");
 const { branchesModel, slotModel, occupationModel, promoCodesModel,
     sourceModel, symptomsAllegryModel, tempAppointmentModel, statesModel,
-    packageModel, estimationModel, packageSubscriptionModel} = require("../../models/schema");
+    packageModel, estimationModel, packageSubscriptionModel, caseStudyModel,
+    suggestionPrescriptionModel} = require("../../models/schema");
 const { startTime } = require("express-pino-logger");
 
 class appointmentDA{
@@ -2104,6 +2105,196 @@ class appointmentDA{
         throw e;
       }
     };
+
+    // insert data to case study (PART-1)
+    async insertCaseStudyDA(obj){
+      try {
+        const caseStudyDetails = await caseStudyModel.findOne({ patientId :new mongoose.Types.ObjectId(obj.patientId) });
+        if (caseStudyDetails) {
+          return {
+            message: "Details already exist with this user ID",
+            data: caseStudyDetails
+        };
+        }
+        let addCaseStudy = new caseStudyModel({
+          patientId: obj.patientId,
+          appointmentId: obj.appointmentId,
+          doctorId: obj.doctorId,
+          createdBy: obj.createdBy,
+          bloodPressure: obj.bloodPressure,
+          height: obj.height,
+          weight: obj.weight,
+          consultationSummary: obj.consultationSummary,
+          presentComplaint: obj.presentComplaint,
+          symptoms: obj.symptoms,
+          pastHistory: obj.pastHistory,
+          anyInjuryOrFracture:obj.anyInjuryOrFracture,
+          anyHospitalisation: obj.anyHospitalisation,
+          vaccinationsOrBirthHistory: obj.vaccinationsOrBirthHistory,
+          anyAllergy: obj.anyAllergy,
+          familyHistory: obj.familyHistory,
+          ageofMenarche: obj.ageofMenarche,
+          Lmp: obj.Lmp,
+          daysofFlow: obj.daysofFlow,
+          quality: obj.quality,
+          pain: obj.pain,
+          character: obj.character,
+          associatedSymptoms: obj.associatedSymptoms,
+          leucorrhoea: obj.leucorrhoea,
+          pregnancyHistory: obj.pregnancyHistory,
+          appetitte: obj.appetitte,
+          stool: obj.stool,
+          desire: obj.desire,
+          urine: obj.urine,
+          aversion: obj.aversion,
+          sweat: obj.sweat,
+          thirst: obj.thirst,
+          sleep: obj.sleep,
+          thermal: obj.thermal,
+          dreams: obj.dreams,
+          addiction: obj.addiction,
+          intermediateRelationship: obj.intermediateRelationship,
+          mentalGenerals: obj.mentalGenerals,
+          totalityofSymptoms: obj.totalityofSymptoms,
+          investigation: obj.investigation,
+          diagnosis: obj.diagnosis,
+          treatmentAdvice: obj.treatmentAdvice,
+          treatmentAdviceAmount: obj.treatmentAdviceAmount,
+          dietAdviceAndRegimen: obj.dietAdviceAndRegimen,
+          suggestion: obj.suggestion,
+        });
+        return await addCaseStudy.save();
+      } catch (e) {
+        throw e;
+      }
+    };
+
+    async getPatientDetailsCaseStudyDA(data){
+      try{
+        const hcuraid = data.hcuraId.replace(/\s+/g, '').toUpperCase();
+        let obj = {
+          hcuraId: hcuraid,
+          isDeleted: false
+        }
+        if (data.roleId) {
+          let roleDetails = await authentationDA.getroleCodeDA(data.roleId);
+          if (roleDetails.roleName !== "SUPER_ADMIN" && data.branchId) {
+            obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
+          }
+        }
+        return await patientModel.aggregate(
+          [
+            {
+              $match: obj
+            },
+            {
+              $lookup: {
+                from: "appointment",
+                localField: "_id",
+                foreignField: "patientId",
+                as: "appointmentDetails",
+              },
+            },
+            {
+              $unwind: {
+                path: "$appointmentDetails",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $lookup: {
+                from: "admin",
+                localField: "appointmentDetails.doctorId",
+                foreignField: "_id",
+                as: "doctorDetails",
+              },
+            },
+            {
+              $unwind: {
+                path: "$doctorDetails",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $lookup: {
+                from: "caseStudy",
+                localField: "_id",
+                foreignField: "patientId",
+                as: "caseStudydetails",
+              },
+            },
+            {
+              $unwind: {
+                path: "$caseStudydetails",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $lookup: {
+                from: "suggestionPrescription",
+                localField: "appointmentDetails._id",
+                foreignField: "appointmentId",
+                as: "suggestionPrescription",
+              },
+            },
+            {
+              $unwind: {
+                path: "$suggestionPrescription",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $project: {
+                firstName: 1,
+                lastName: 1,
+                gender: 1,
+                emailId: 1,
+                bloodGroup: 1,
+                hcuraId: 1,
+                birthDate: 1,
+                suggestionPrescription:
+                  { $ifNull: ["$suggestionPrescription.createdOn", null] },
+                prescriptionCreatedOn:
+                  "$appointmentDetails.prescriptionCreatedOn",
+                appointmentNumber:
+                  "$appointmentDetails.appointmentNumber",
+                appointmentId: "$appointmentDetails._id",
+                appointmentDate:
+                  "$appointmentDetails.appointmentDate",
+                appointmentState:
+                  "$appointmentDetails.appointmentState",
+                startTime: "$appointmentDetails.startTime",
+                doctorFirstName: "$doctorDetails.firstName",
+                doctorLastName: "$doctorDetails.lastName",
+                doctorId: "$doctorDetails._id",
+                caseStudydetails: "$caseStudydetails",
+                suggestionPrescriptionDetails:
+                  "$suggestionPrescription",
+              },
+            },
+          ]
+        );
+      }catch(e) {
+        throw e;
+      }
+    };
+
+    async insertCaseStudySuggestionPrescription(data){
+      try{
+        let casestudySuggestionPrescription = new suggestionPrescriptionModel({
+          patientId: data.patientId,
+          appointmentId: data.appointmentId,
+          doctorId: data.doctorId,
+          createdBy: data.createdBy,
+          followupSheets: data.followupSheets,
+          remarks: data.remark,
+          curedCaseSummary: data.curedCaseSummary
+        });
+        return await casestudySuggestionPrescription.save();
+      } catch(e){
+        throw e;
+      }
+    }
 
 }
 module.exports = new appointmentDA();

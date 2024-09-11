@@ -301,13 +301,13 @@ class authentication {
             );
     
             // Send welcome email
-            await emailSender.patientWelcomeEmail(
-                patientReg.firstName,
-                patientReg.lastName,
-                hcuraId,
-                patientReg.emailId,
-                patientReg.phoneNumber
-            );
+            // await emailSender.patientWelcomeEmail(
+            //     patientReg.firstName,
+            //     patientReg.lastName,
+            //     hcuraId,
+            //     patientReg.emailId,
+            //     patientReg.phoneNumber
+            // );
     
             res.send({ success: true, data: patientReg });
     
@@ -365,7 +365,7 @@ class authentication {
             let docDetails = await appointmentDA.getDoctorDetails(body.doctorId);
             console.log(".....booked...", booked);
             console.log(".....docDetails...", docDetails);
-            let SMSToPatient = await sendSMS.sendSMSAppointmentBookedToPT(booked, docDetails);
+            // let SMSToPatient = await sendSMS.sendSMSAppointmentBookedToPT(booked, docDetails);
             // let SMSToDoctor = await sendSMS.sendSMSTempAppointmentBookedToDoc(booked, docDetails);
             // sms to doctor
             emailSender.sendTempAppointmentBookedEmailToAdmin(booked, docDetails);

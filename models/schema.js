@@ -1,18 +1,13 @@
 const { number, required } = require("joi");
 
 (function(){
-//   const mongoose = require("mongoose");
   const mongoose = require('mongoose');
-//   mongoose.set("useCreateIndex", true);
   const schema = mongoose.Schema;
   const moment = require("moment-timezone");
 //   var mongooseIncrement = require("mongoose-increment");
 //   var increment = mongooseIncrement(mongoose);
 //   const mongoose = require('mongoose');
-  const increment = require('mongoose-increment')(mongoose);
-  
-//   const Schema = mongoose.Schema;
-  
+const increment = require('mongoose-increment')(mongoose);  
 
   let branches = new schema ({
     branchCode: {type: String, required: true,unique: true },
@@ -57,7 +52,7 @@ const { number, required } = require("joi");
         type: String,
         enum: ["ENABLED", "DISABLED"],
         default: "ENABLED",
-      },
+    },
     roleId: {type: mongoose.Schema.Types.ObjectId, ref: "Role", required: true},
     branchId: {type: mongoose.Schema.Types.ObjectId, ref: "Branches", required: true},
     lockedBy: {type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin"},
@@ -91,7 +86,7 @@ const { number, required } = require("joi");
       city: { type: String, default: null },
       state: { type: String, default: null },
       pinCode: { type: Number, default: null },
-  }],
+    }],
     consultationType: {type: String, required: true, default: "OFFLINE", enum: ["OFFLINE", "ONLINE"]},
     registeredBy: {type: mongoose.Schema.Types.ObjectId, required: true, ref: "Admin"},
     registeredOn: {type: Date, default: new Date()},
@@ -349,12 +344,132 @@ const { number, required } = require("joi");
     isDeleted: { type: Boolean, default: false},
   });
 
-  let caseSheet = new schema ({
-
+  let prescription = new schema ({
+    patientId: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Patient"},
+    doctorId: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin" },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin"},
+    updatedBy: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin"},
+    branchId: { type: mongoose.Schema.Types.ObjectId, ref: "Branch", default: null},
+    createdOn : { type: Date, default: new Date()},
+    expiryDate: { type: String, default: null },
+    consultationSummary: { type: String, default: null },
+    instructions: {type: String, default: null},
+    diagnostics: [],
+    diagnosis: [],
+    medicines: [
+      {
+        originalName: { type: String, default: null},
+        medicinesName: { type: String, default: null },
+        dosage: [],
+        time: { type: String, default: null },
+        days: { type: String, default: null },
+      },
+    ],
   });
 
-  let prescription = new schema ({
+  // CASESTUDY PART - 1
+  let caseStudy = new schema({
+    patientId: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Patient"},
+    doctorId: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin" },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin"},
+    branchId: { type: mongoose.Schema.Types.ObjectId, ref: "Branch", default: null},
+    createdOn : { type: Date, default: new Date()},
+    bloodPressure : { type: String, default: null},
+    height : { type: String, default: null},
+    weight : { type: String, default: null},
+    // consultationSummary : { type: String, default: null},
+    // presentComplaint : { type: String, default: null},
+    // symptoms : [
+    //   {
+    //     symptoms : { type: String, default: null},
+    //     location : { type: String, default: null},
+    //     sensation : { type: String, default: null},
+    //     modalities : { type: String, default: null},
+    //     concomitants : { type: String, default: null},
+    //   }
+    // ],
+    pastHistory : { type: String, default: null},
+    anyInjuryOrFracture : { type: String, default: null},
+    anyHospitalisation : { type: String, default: null},
+    anyAllergy : { type: String, default: null},
+    vaccinationsOrBirthHistory : { type: String, default: null},
+    familyHistory : { type: String, default: null}, 
+    // Menstrual History
+    ageofMenarche : { type: String, default: null},
+    Lmp : { type: String, default: null},
+    daysofFlow : { type: String, default: null},
+    quality : { type: String, default: null},
+    pain : { type: String, default: null},
+    character : { type: String, default: null},
+    associatedSymptoms : { type: String, default: null},
+    leucorrhoea : { type: String, default: null},
+    pregnancyHistory : { type: String, default: null},
+    //  Physical Generals
+    appetitte : { type: String, default: null},
+    stool : { type: String, default: null},
+    desire : { type: String, default: null},
+    urine : { type: String, default: null},
+    aversion : { type: String, default: null},
+    sweat : { type: String, default: null},
+    thirst : { type: String, default: null},
+    sleep : { type: String, default: null},
+    thermal  : { type: String, default: null},
+    dreams : { type: String, default: null},
+    addiction : { type: String, default: null},
+    sexualActivity : { type: String, default: null},
+    intermediateRelationship : { type: String, default: null},
+    mentalGenerals : { type: String, default: null},
+    investigation : { type: String, default: null},
+    diagnosis : { type: String, default: null},
+    treatmentAdvice : { type: String, default: null},
+    treatmentAdviceAmount : { type: String, default: null},
+    dietAdviceAndRegimen: [ 
+      {
+        dos : { type: String, default: null},
+        donts : { type: String, default: null}
+      }
+    ],
+    suggestion : { type: String, default: null},
+    totalityofSymptoms : { type: String, default: null},
+  });
 
+  // CASESTUDY PART - 2
+  let suggestionPrescription = new schema({
+    patientId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+      ref: "Patient",
+    },
+    appointmentId: {
+      type: schema.Types.ObjectId,
+      ref: "Appointment",
+      default: null,
+    },
+    doctorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+      ref: "Admin",
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+      ref: "Admin",
+    },
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+      ref: "Admin",
+    },
+    updatedOn : { type: Date, default: null },
+    createdOn : { type: Date, default: new Date()},
+    followupSheets : [
+      {
+        followupNotes : { type: String, default: null},
+        prescriptions : { type: String, default: null},
+      }
+    ],
+    remarks : { type: String, default: null},
+    curedCaseSummary : { type: String, default: null},
   });
 
   let estimation = new schema ({
@@ -401,5 +516,7 @@ const { number, required } = require("joi");
   exports.promoCodesModel = mongoose.model("promoCodes", promoCodes, "promoCodes");
   exports.estimationModel = mongoose.model("estimation", estimation, "Estimation");
   exports.packageSubscriptionModel = mongoose.model("packageSubscription", packageSubscription, "PackageSubscription");
+  exports.caseStudyModel = mongoose.model("CaseStudy", caseStudy, "caseStudy");
+  exports.suggestionPrescriptionModel = mongoose.model("SuggestionPrescription", suggestionPrescription, "suggestionPrescription");
 
 }.call(this))

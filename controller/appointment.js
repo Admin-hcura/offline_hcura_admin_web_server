@@ -2,6 +2,7 @@ const Boom = require("@hapi/boom");
 // const multiparty = require("multiparty");
 const moment = require("moment-timezone");
 const rule = require("../helpers/appointmentRule");
+const doctorRule = require("../helpers/doctorRule");
 const constants = require("../helpers/constants");
 const appointmentDA = require("../layers/dataLayer/appointmentDA");
 const invoiceGenerator = require("../helpers/invoiceNoGenerater");
@@ -91,7 +92,7 @@ class appointment{
                 startTime : createAppointment.startTime
             }
             // email to patient appointment details
-                emailSender.sendAppointmentConformedEmailToPT(details);
+                // emailSender.sendAppointmentConformedEmailToPT(details);
             // email to docors 
                 emailSender.sendAppointmentBookedEmailToDoctor(details);
 
@@ -231,8 +232,8 @@ class appointment{
                     paymentMethod: updatePaymentDetails.paymentMethod,
                     hcuraId: userInfo[0].patient.hcuraId,
                     branchPhoneNumber : branchCode.branchPhoneNumber,
-                    docQualification : userInfo[0].doctor.qualifaction,
-                    docRegstration : userInfo[0].doctor.registerationNumber
+                    docQualification : userInfo[0].doctor.qualification,
+                    docRegstration : userInfo[0].doctor.registrationNumber
                 }
                 console.log(",,,,,,,,,,pdfDetails,,,,,,,,",pdfDetails)
                 let file = await htmlToPDF.generateInvoiceForConsultation(pdfDetails);
@@ -242,13 +243,13 @@ class appointment{
                         file
                     );
                     // email to patient payment success
-                    emailSender.sendPaymentSuccess(
-                        userInfo[0].patient.firstName,
-                        userInfo[0].patient.emailId,
-                        consultationfee.amount,
-                        "#" + relationId,
-                        updatePaymentDetails.paymentMethod.toUpperCase()
-                    );
+                    // emailSender.sendPaymentSuccess(
+                    //     userInfo[0].patient.firstName,
+                    //     userInfo[0].patient.emailId,
+                    //     consultationfee.amount,
+                    //     "#" + relationId,
+                    //     updatePaymentDetails.paymentMethod.toUpperCase()
+                    // );
                         
                     res.send({ success: true, data: userInfo});
                   }
@@ -382,13 +383,13 @@ class appointment{
                         file
                     );
                     // email to patient payment success
-                    emailSender.sendPaymentSuccess(
-                        userInfo[0].patient.firstName,
-                        userInfo[0].patient.emailId,
-                        consultationfee.amount,
-                        "#" + relationId,
-                        updatePaymentDetails.paymentMethod.toUpperCase()
-                    );
+                    // emailSender.sendPaymentSuccess(
+                    //     userInfo[0].patient.firstName,
+                    //     userInfo[0].patient.emailId,
+                    //     consultationfee.amount,
+                    //     "#" + relationId,
+                    //     updatePaymentDetails.paymentMethod.toUpperCase()
+                    // );
                     res.send({ success: true, data: userInfo});
                 }
             } else {
@@ -807,14 +808,14 @@ class appointment{
                         branchPhoneNumber: branchCode.branchPhoneNumber
                     }
                     console.log("--------pdfDetails-------", pdfDetails)
-                    emailSender.sendPackagePaymentSuccess(
-                        userInfo[0].patient.firstName,
-                        userInfo[0].patient.emailId,
-                        updatePaymentReport.payableAmount,
-                        "#" + relationId,
-                        updatePaymentReport.paymentMethod,
-                        packageDetails.name,
-                    );
+                    // emailSender.sendPackagePaymentSuccess(
+                    //     userInfo[0].patient.firstName,
+                    //     userInfo[0].patient.emailId,
+                    //     updatePaymentReport.payableAmount,
+                    //     "#" + relationId,
+                    //     updatePaymentReport.paymentMethod,
+                    //     packageDetails.name,
+                    // );
 
                     let file = await htmlToPDF.generateInvoiceForPackage(pdfDetails);
                     console.log("111111111111     ",userInfo[0].patient)
@@ -1032,14 +1033,14 @@ class appointment{
                         branchPhoneNumber: branchCode.branchPhoneNumber
                     }
                     console.log("--------pdfDetails-------", pdfDetails)
-                    emailSender.sendAstheticPaymentSuccess(
-                        userInfo[0].patient.firstName,
-                        userInfo[0].patient.emailId,
-                        updatePaymentReport.payableAmount,
-                        "#" + relationId,
-                        updatePaymentReport.paymentMethod,
-                        packageDetails.name,
-                    );
+                    // emailSender.sendAstheticPaymentSuccess(
+                    //     userInfo[0].patient.firstName,
+                    //     userInfo[0].patient.emailId,
+                    //     updatePaymentReport.payableAmount,
+                    //     "#" + relationId,
+                    //     updatePaymentReport.paymentMethod,
+                    //     packageDetails.name,
+                    // );
 
                     let file = await htmlToPDF.generateInvoiceForAsthetic(pdfDetails);
                     console.log("111111111111     ",userInfo[0].patient)
@@ -1209,14 +1210,14 @@ class appointment{
                             paymentMethod: updatePaymentDetails.paymentMethod,
                             branchPhoneNumber: branchCode.branchPhoneNumber
                         }
-                        emailSender.sendExternalSourcePaymentSuccess(
-                            userInfo[0].patient.firstName,
-                            userInfo[0].patient.emailId,
-                            updatePaymentReport.payableAmount,
-                            "#" + relationId,
-                            updatePaymentReport.paymentMethod,
-                            updatePaymentReport.remarks,
-                        );
+                        // emailSender.sendExternalSourcePaymentSuccess(
+                        //     userInfo[0].patient.firstName,
+                        //     userInfo[0].patient.emailId,
+                        //     updatePaymentReport.payableAmount,
+                        //     "#" + relationId,
+                        //     updatePaymentReport.paymentMethod,
+                        //     updatePaymentReport.remarks,
+                        // );
                         //INVOICE EMAIL
                         let file = await htmlToPDF.generateInvoiceForExternalSource( pdfDetails );
                         emailSender.sendExternalSourceInvoiceEmail(userInfo[0].patient.emailId, file);
@@ -1434,6 +1435,36 @@ class appointment{
             res.status(200).send({ status: true, data: result });
         } catch(e){
             next(e);
+        }
+    };
+
+    // insert case study (PART - 1 )
+    async insertCaseStudy(req, res, next){
+        try{
+        let body = req.body;
+        const { error } = doctorRule.insertCaseStudyRule.validate(body);
+        if (error){
+            throw Boom.badData(error.message);
+        }
+        let caseStudyDetails = await appointmentDA.insertCaseStudyDA(body);
+        res.status(200).send({ status: true, data: caseStudyDetails });
+        } catch(e) {
+        next(e);
+        }
+    };
+
+    // insert case study (PART - 2 )
+    async insertCaseStudySuggestionPrescription(req, res, next){
+        try{
+        let body = req.body;
+        const { error } = doctorRule.insertCaseStudySuggestionPrescriptionRule.validate(body);
+        if (error){
+            throw Boom.badData(error.message);
+        }
+        let caseStudyDetails = await appointmentDA.insertCaseStudySuggestionPrescription(body);
+        res.status(200).send({ status: true, data: caseStudyDetails });
+        } catch(e) {
+        next(e);
         }
     };
 

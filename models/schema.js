@@ -505,7 +505,6 @@ const increment = require('mongoose-increment')(mongoose);
   exports.appointmentModel = mongoose.model("Appointment", appointment, "appointment");
   exports.paymentModel = mongoose.model("Payment", payment, "payment");
   exports.packageModel = mongoose.model("Package", package, "package");
-  exports.caseSheetModel = mongoose.model("CaseSheet", caseSheet, "caseSheet");
   exports.prescriptionModel = mongoose.model("Prescription", prescription, "prescription");
   exports.consulatationAmountModel = mongoose.model("ConsulatationAmount", consulatationAmount, "consulatationAmount");
   exports.sourceModel = mongoose.model("Source", source, "source");

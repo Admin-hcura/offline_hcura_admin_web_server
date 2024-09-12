@@ -2446,5 +2446,30 @@ class appointmentDA{
       }
     };
 
+    async updateSuggestionPrescription(obj){
+      try{
+        let result = await suggestionPrescriptionModel.findOneAndUpdate(
+          { _id: new mongoose.Types.ObjectId(obj.suggestionPrescriptionId) },
+          {
+            $set: {
+              updatedOn: new Date(),
+              updatedBy: obj.updatedBy,
+              followupSheets: obj.followupSheets,
+              remarks: obj.remarks,
+              curedCaseSummary: obj.curedCaseSummary,
+            },
+          },
+          { new: true }
+        );
+        if (result == null) {
+          return { status: false, message: 'No document modified.' };
+      } else {
+          return { status: true, data: result };
+      }
+      } catch (e) {
+        throw e;
+      }
+    }
+
 }
 module.exports = new appointmentDA();

@@ -252,6 +252,7 @@ class authentationDA {
     async getroleCodeDA(roleId){
         try{
             let result = await roleModel.findOne({ _id : roleId});
+            console.log("----resultrole-----",result)
             return result;
         } catch(e){
             throw e;

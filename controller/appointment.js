@@ -1496,6 +1496,20 @@ class appointment{
         }
     };
 
+    async updateSuggestionPrescription(req, res, next){
+        try{
+          let body = req.body;
+          const { error } = doctorRule.updateSuggestionPrescriptionRule.validate(body);
+          if (error){
+            throw Boom.badData(error.message);
+          }
+          let obj = await appointmentDA.updateSuggestionPrescription(body);
+          res.status(200).send({ status: true, data: obj });
+        } catch(e) {
+          next(e);
+        }
+    };
+
 };
 
 module.exports = new appointment();

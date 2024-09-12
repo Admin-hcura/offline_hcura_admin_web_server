@@ -66,11 +66,11 @@ exports.updateSuggestionPrescriptionRule = Joi.object({
     suggestionPrescriptionId: Joi.string().required().error(new Error("suggestionPrescription Id  Required")),
     updatedBy: Joi.string().required().error(new Error("Updated By is Required")),
     followupSheets: Joi.array().items(Joi.object({
-      followupNotes: Joi.string().empty("").allow(null).default(null),
-      prescriptions: Joi.string().empty("").allow(null).default(null),
+      followupNotes: Joi.string().required().error(new Error("followupNotes is Required")),
+      prescriptions: Joi.string().required().error(new Error("followup prescriptions is Required")),
     })),
-    remarks: Joi.string().empty("").allow(null).default(null),
-    curedCaseSummary: Joi.string().empty("").allow(null).default(null),
+    remarks: Joi.string().required().error(new Error("remarks is Required")),
+    curedCaseSummary: Joi.string().required().error(new Error("curedCaseSummary is Required")),
 });
 // casestudy part 2
 exports.insertCaseStudySuggestionPrescriptionRule = Joi.object({

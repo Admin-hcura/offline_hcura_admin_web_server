@@ -1490,7 +1490,7 @@ class appointment{
                 throw Boom.badData(error.message);
             }
             console.log("-----body-----",body)
-            let details = await appointmentDA.getPatientDetailsCaseStudy(body.hcuraid, body.roleId, body.branchId)
+            let details = await appointmentDA.getPatientDetailsCaseStudy(body.hcuraId, body.roleId, body.branchId)
             res.status(200).send({ status: true, data: details });
         } catch(e){
             next(e);

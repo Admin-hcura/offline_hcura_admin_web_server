@@ -2311,7 +2311,8 @@ class appointmentDA{
           instructions: details.instructions,
           diagnostics: details.diagnostics,
           diagnosis: details.diagnosis,
-          medicines: details.medicines
+          medicines: details.medicines,
+          followUpDate: details.followUpDate
         });
         return await data.save();
       } catch(e){
@@ -2462,9 +2463,9 @@ class appointmentDA{
         );
         if (result == null) {
           return { status: false, message: 'No document modified.' };
-      } else {
+        } else {
           return { status: true, data: result };
-      }
+        }
       } catch (e) {
         throw e;
       }
@@ -2476,7 +2477,44 @@ class appointmentDA{
       } catch (error) {
         throw error;
       }
-    }
+    };
+
+    async updatePrescription(obj){
+      try{
+        let result = await prescriptionModel.findOneAndUpdate(
+          { _id: new mongoose.Types.ObjectId(obj.prescriptionId) },
+          {
+            $set: {
+              updatedOn: new Date(),
+              updatedBy: obj.updatedBy,
+              expiryDate: obj.expiryDate,
+              consultationSummary: obj.consultationSummary,
+              instructions: obj.instructions,
+              diagnostics: obj.diagnostics,
+              diagnosis: obj.diagnosis,
+              followUpDate: obj.followUpDate,
+              medicines: obj.medicines
+            },
+          },
+          { new: true }
+        );
+        if (result == null) {
+          return { status: false, message: 'No document modified.' };
+        } else {
+          return { status: true, data: result };
+        }
+      } catch(e){
+        throw e;
+      }
+    };
+
+    async getPrescriptionDetails(prescriptionId){
+      try {
+        return await prescriptionModel.findOne({ _id: new mongoose.Types.ObjectId(prescriptionId)});
+      } catch (error) {
+        throw error;
+      }
+    };
 
 }
 module.exports = new appointmentDA();

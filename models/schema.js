@@ -366,6 +366,7 @@ const increment = require('mongoose-increment')(mongoose);
         days: { type: String, default: null },
       },
     ],
+    followUpDate: { type: Date, default: null },
   });
 
   // CASESTUDY PART - 1

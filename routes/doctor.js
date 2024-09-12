@@ -32,5 +32,13 @@ router.get("/get/casestudy/details",
   // sessionValidator.validateAdminSession,
   appointmentController.getCaseStudyDetails
 );
+router.post("/update/prescription",
+  // sessionValidator.validateAdminSession,
+  appointmentController.updatePrescription
+);
+router.get("/get/prescription/details",
+  // sessionValidator.validateAdminSession,
+  appointmentController.getPrescriptionDetails
+);
 
 module.exports = router;

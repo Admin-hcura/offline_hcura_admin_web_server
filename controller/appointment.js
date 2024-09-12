@@ -1521,6 +1521,30 @@ class appointment{
         }
     };
 
+    async updatePrescription(req, res, next){
+        try{
+            let body = req.body;
+            const { error } = doctorRule.updatePrescriptionRule.validate(body);
+            if (error){
+                throw Boom.badData(error.message);
+            }
+            let prescriptionDetails = await appointmentDA.updatePrescription(body)
+            res.status(200).send({ status: true, data: prescriptionDetails });
+        } catch(e){
+            next(e);
+        }
+    };
+
+    async getPrescriptionDetails(req, res, next){
+        try{
+            const { prescriptionId } = req.query;
+            let obj = await appointmentDA.getPrescriptionDetails(prescriptionId);
+            res.status(200).send({ status: true, data: obj });
+        } catch(e) {
+          next(e);
+        }
+    };
+
 };
 
 module.exports = new appointment();

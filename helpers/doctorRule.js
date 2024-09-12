@@ -118,3 +118,24 @@ exports.searchHcuraIdRule = Joi.object({
 exports.getCaseStudyDetailsRule = Joi.object({
     caseStudyId: Joi.string().required().error(new Error("Case Study Id is Required"))
 });
+exports.updatePrescriptionRule = Joi.object({
+    prescriptionId: Joi.string().required().error(new Error("prescriptionId is Required")),
+    updatedBy: Joi.string().required().error(new Error("updatedBy is Required")),
+    medicines: Joi.array().items(Joi.object({
+        originalName: Joi.string().allow(null).default(null),
+        medicinesName: Joi.string().allow(null).default(null),
+        dosage: Joi.array().items(Joi.object({
+            morning: Joi.string().allow(null).default(null),
+            afternoon: Joi.string().allow(null).default(null),
+            night: Joi.string().allow(null).default(null)
+        })),
+        time: Joi.string().allow(null).default(null),
+        days: Joi.string().allow(null).default(null),
+    })).required().error(new Error("Medicines are required")),
+    expiryDate: Joi.string().required().error(new Error("Expiry Date is Required")), 
+    consultationSummary: Joi.string().required().error(new Error("consultationSummary  is Required")),
+    instructions: Joi.string().required().error(new Error("instructions  is Required")),
+    diagnostics: Joi.array().items(Joi.string()).default([]), 
+    diagnosis: Joi.array().items(Joi.string()).required().error(new Error("diagnosis  is Required")),
+    followUpDate: Joi.date().required().error(new Error("Followup Date is Required")),
+});

@@ -2326,10 +2326,10 @@ class appointmentDA{
           hcuraId: hcuraid,
           isDeleted: false,
         };
-        let roleDetails = await authentationDA.getroleCodeDA(roleId);
-        if(roleDetails.roleName != "SUPER_ADMIN"){
-          filter.branchId = new mongoose.Types.ObjectId(branchId);
-        }
+        // let roleDetails = await authentationDA.getroleCodeDA(roleId);
+        // if(roleDetails.roleName != "SUPER_ADMIN"){
+        //   filter.branchId = new mongoose.Types.ObjectId(branchId);
+        // }
         return await patientModel.aggregate(
           [
             [

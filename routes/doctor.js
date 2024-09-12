@@ -28,5 +28,9 @@ router.post("/update/suggestion/prescription",
   // sessionValidator.validateAdminSession,
   appointmentController.updateSuggestionPrescription
 );
+router.get("/get/casestudy/details",
+  // sessionValidator.validateAdminSession,
+  appointmentController.getCaseStudyDetails
+);
 
 module.exports = router;

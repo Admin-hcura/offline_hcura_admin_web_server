@@ -115,3 +115,6 @@ exports.searchHcuraIdRule = Joi.object({
     roleId: Joi.string().required().error(new Error("roleId is required")),
     branchId: Joi.string().required().error(new Error("branchId is required"))
 });
+exports.getCaseStudyDetailsRule = Joi.object({
+    caseStudyId: Joi.string().required().error(new Error("Case Study Id is Required"))
+});

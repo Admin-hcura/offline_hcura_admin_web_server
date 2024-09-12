@@ -2468,6 +2468,14 @@ class appointmentDA{
       } catch (e) {
         throw e;
       }
+    };
+
+    async getCaseStudyDetails(caseStudyId){
+      try {
+        return await caseStudyModel.findOne({ _id: new mongoose.Types.ObjectId(caseStudyId)});
+      } catch (error) {
+        throw error;
+      }
     }
 
 }

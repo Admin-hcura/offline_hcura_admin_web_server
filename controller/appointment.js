@@ -804,7 +804,7 @@ class appointment{
                         hcuraId: userInfo[0].patient.hcuraId,
                         packageName: packageDetails.name,
                         packageAmount: packageDetails.amount,
-                        docRegstration : userInfo[0].doctor.registrationNumber,
+                        docRegstration : userInfo[0].doctor.registerationNumber,
                         branchPhoneNumber: branchCode.branchPhoneNumber
                     }
                     console.log("--------pdfDetails-------", pdfDetails)
@@ -1506,6 +1506,16 @@ class appointment{
           }
           let obj = await appointmentDA.updateSuggestionPrescription(body);
           res.status(200).send({ status: true, data: obj });
+        } catch(e) {
+          next(e);
+        }
+    };
+
+    async getCaseStudyDetails(req, res, next){
+        try{
+            const { caseStudyId } = req.query;
+            let obj = await appointmentDA.getCaseStudyDetails(caseStudyId);
+            res.status(200).send({ status: true, data: obj });
         } catch(e) {
           next(e);
         }

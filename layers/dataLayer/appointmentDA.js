@@ -2319,8 +2319,9 @@ class appointmentDA{
       }
     };
 
-    async getPatientDetailsCaseStudy(hcuraid, roleId, branchId){
+    async getPatientDetailsCaseStudy(hcuraId, roleId, branchId){
       try{
+        const hcuraid = hcuraId.replace(/\s+/g, '').toUpperCase();
         const filter = {
           hcuraId: hcuraid,
           isDeleted: false,

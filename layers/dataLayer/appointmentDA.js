@@ -2326,120 +2326,118 @@ class appointmentDA{
           hcuraId: hcuraid,
           isDeleted: false,
         };
-        // let roleDetails = await authentationDA.getroleCodeDA(roleId);
-        // if(roleDetails.roleName != "SUPER_ADMIN"){
-        //   filter.branchId = new mongoose.Types.ObjectId(branchId);
-        // }
+        let roleDetails = await authentationDA.getroleCodeDA(roleId);
+        if(roleDetails.roleName != "SUPER_ADMIN"){
+          filter.branchId = new mongoose.Types.ObjectId(branchId);
+        }
         return await patientModel.aggregate(
           [
-            [
-              {
-                $match: filter
-              },
-              {
-                $lookup: {
-                  from: "appointment",
-                  localField: "_id",
-                  foreignField: "patientId",
-                  as: "appointmentDetails"
-                }
-              },
-              {
-                $unwind: {
-                  path: "$appointmentDetails",
-                  preserveNullAndEmptyArrays: true
-                }
-              },
-              {
-                $lookup: {
-                  from: "admin",
-                  localField: "appointmentDetails.doctorId",
-                  foreignField: "_id",
-                  as: "doctorDetails"
-                }
-              },
-              {
-                $unwind: {
-                  path: "$doctorDetails",
-                  preserveNullAndEmptyArrays: true
-                }
-              },
-              {
-                $lookup: {
-                  from: "caseStudy",
-                  localField: "_id",
-                  foreignField: "patientId",
-                  as: "casestudyDetails"
-                }
-              },
-              {
-                $unwind: {
-                  path: "$casestudyDetails",
-                  preserveNullAndEmptyArrays: true
-                }
-              },
-              {
-                $lookup: {
-                  from: "suggestionPrescription",
-                  localField: "appointmentDetails._id",
-                  foreignField: "appointmentId",
-                  as: "suggestionPrescription"
-                }
-              },
-              {
-                $unwind: {
-                  path: "$suggestionPrescription",
-                  preserveNullAndEmptyArrays: true
-                }
-              },
-              {
-                $lookup: {
-                  from: "prescription",
-                  localField: "appointmentDetails._id",
-                  foreignField: "appointmentId",
-                  as: "prescriptionDetails"
-                }
-              },
-              {
-                $unwind: {
-                  path: "$prescriptionDetails",
-                  preserveNullAndEmptyArrays: true
-                }
-              },
-              {
-                $project: {
-                  firstName: 1,
-                  lastName: 1,
-                  gender: 1,
-                  emailId: 1,
-                  bloodGroup: 1,
-                  hcuraId: 1,
-                  birthDate: 1,
-                  suggestionPrescription: {
-                    $ifNull: ["$suggestionPrescription.createdOn", null]
-                  },
-                  prescriptionCreatedOn: {
-                    $ifNull: ["$prescriptionDetails.createdOn", null]
-                  },
-                  appointmentNumber:
-                    "$appointmentDetails.appointmentNumber",
-                  appointmentId: "$appointmentDetails._id",
-                  appointmentDate:
-                    "$appointmentDetails.appointmentDate",
-                  appointmentStatus:
-                    "$appointmentDetails.appointmentStatus",
-                  appointmentStartTime:
-                    "$appointmentDetails.startTime",
-                  docFirstName: "$doctorDetails.firstName",
-                  docLastName: "$doctorDetails.lastName",
-                  doctorId: "$doctorDetails._id",
-                  casestudyDetails: "$casestudyDetails",
-                  suggestionPrescription:
-                    "$suggestionPrescription",
-                  prescriptionDetails: "$prescriptionDetails"
-                }
+            {
+              $match: filter
+            },
+            {
+              $lookup: {
+                from: "appointment",
+                localField: "_id",
+                foreignField: "patientId",
+                as: "appointmentDetails"
               }
-            ]
+            },
+            {
+              $unwind: {
+                path: "$appointmentDetails",
+                preserveNullAndEmptyArrays: true
+              }
+            },
+            {
+              $lookup: {
+                from: "admin",
+                localField: "appointmentDetails.doctorId",
+                foreignField: "_id",
+                as: "doctorDetails"
+              }
+            },
+            {
+              $unwind: {
+                path: "$doctorDetails",
+                preserveNullAndEmptyArrays: true
+              }
+            },
+            {
+              $lookup: {
+                from: "caseStudy",
+                localField: "_id",
+                foreignField: "patientId",
+                as: "casestudyDetails"
+              }
+            },
+            {
+              $unwind: {
+                path: "$casestudyDetails",
+                preserveNullAndEmptyArrays: true
+              }
+            },
+            {
+              $lookup: {
+                from: "suggestionPrescription",
+                localField: "appointmentDetails._id",
+                foreignField: "appointmentId",
+                as: "suggestionPrescription"
+              }
+            },
+            {
+              $unwind: {
+                path: "$suggestionPrescription",
+                preserveNullAndEmptyArrays: true
+              }
+            },
+            {
+              $lookup: {
+                from: "prescription",
+                localField: "appointmentDetails._id",
+                foreignField: "appointmentId",
+                as: "prescriptionDetails"
+              }
+            },
+            {
+              $unwind: {
+                path: "$prescriptionDetails",
+                preserveNullAndEmptyArrays: true
+              }
+            },
+            {
+              $project: {
+                firstName: 1,
+                lastName: 1,
+                gender: 1,
+                emailId: 1,
+                bloodGroup: 1,
+                hcuraId: 1,
+                birthDate: 1,
+                suggestionPrescription: {
+                  $ifNull: ["$suggestionPrescription.createdOn", null]
+                },
+                prescriptionCreatedOn: {
+                  $ifNull: ["$prescriptionDetails.createdOn", null]
+                },
+                appointmentNumber:
+                  "$appointmentDetails.appointmentNumber",
+                appointmentId: "$appointmentDetails._id",
+                appointmentDate:
+                  "$appointmentDetails.appointmentDate",
+                appointmentStatus:
+                  "$appointmentDetails.appointmentStatus",
+                appointmentStartTime:
+                  "$appointmentDetails.startTime",
+                docFirstName: "$doctorDetails.firstName",
+                docLastName: "$doctorDetails.lastName",
+                doctorId: "$doctorDetails._id",
+                casestudyDetails: "$casestudyDetails",
+                suggestionPrescription:
+                  "$suggestionPrescription",
+                prescriptionDetails: "$prescriptionDetails"
+              }
+            }
           ]
         );
       } catch(e){

@@ -28,7 +28,7 @@ router.post("/update/suggestion/prescription",
   // sessionValidator.validateAdminSession,
   appointmentController.updateSuggestionPrescription
 );
-router.get("/get/casestudy/details",
+router.post("/get/casestudy/details",
   // sessionValidator.validateAdminSession,
   appointmentController.getCaseStudyDetails
 );
@@ -36,9 +36,13 @@ router.post("/update/prescription",
   // sessionValidator.validateAdminSession,
   appointmentController.updatePrescription
 );
-router.get("/get/prescription/details",
+router.post("/get/prescription/details",
   // sessionValidator.validateAdminSession,
   appointmentController.getPrescriptionDetails
+);
+router.post("/get/package/schedule/details/pateint",
+  // sessionValidator.validateAdminSession,
+  appointmentController.getPackageScheduleDetails
 );
 
 module.exports = router;

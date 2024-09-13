@@ -2562,5 +2562,49 @@ class appointmentDA{
       }
     };
 
+    async getPackageScheduleDetails(patientId){
+      try{
+        return packageSubscriptionModel.aggregate(
+          [
+            {
+              $match: {
+                patientId: new mongoose.Types.ObjectId(patientId),
+                isActive: true,
+              },
+            },
+            {
+              $lookup: {
+                from: "package",
+                localField: "packageId",
+                foreignField: "_id",
+                as: "packageDetails",
+              },
+            },
+            {
+              $unwind: {
+                path: "$packageDetails",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $project: {
+                patientId: 1,
+                packageId: 1,
+                paymentId: 1,
+                startDate: 1,
+                endDate: 1,
+                createdOn: 1,
+                paidOn: 1,
+                isActive: 1,
+                packageName: "$packageDetails.name",
+              },
+            },
+          ]
+        )
+      } catch(e){
+        throw e;
+      }
+    }
+
 }
 module.exports = new appointmentDA();

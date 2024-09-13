@@ -139,3 +139,6 @@ exports.updatePrescriptionRule = Joi.object({
     diagnosis: Joi.array().items(Joi.string()).required().error(new Error("diagnosis  is Required")),
     followUpDate: Joi.date().required().error(new Error("Followup Date is Required")),
 });
+exports.getPackageScheduleDetailsRule = Joi.object({
+    patientId: Joi.string().required().error(new Error("patientId is Required"))
+});

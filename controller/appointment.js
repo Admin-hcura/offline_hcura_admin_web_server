@@ -1513,8 +1513,8 @@ class appointment{
 
     async getCaseStudyDetails(req, res, next){
         try{
-            const { caseStudyId } = req.query;
-            let obj = await appointmentDA.getCaseStudyDetails(caseStudyId);
+            let body = req.body;
+            let obj = await appointmentDA.getCaseStudyDetails(body.caseStudyId);
             res.status(200).send({ status: true, data: obj });
         } catch(e) {
           next(e);
@@ -1537,8 +1537,8 @@ class appointment{
 
     async getPrescriptionDetails(req, res, next){
         try{
-            const { prescriptionId } = req.query;
-            let obj = await appointmentDA.getPrescriptionDetails(prescriptionId);
+            let body = req.body;
+            let obj = await appointmentDA.getPrescriptionDetails(body.prescriptionId);
             res.status(200).send({ status: true, data: obj });
         } catch(e) {
           next(e);
@@ -1552,6 +1552,24 @@ class appointment{
             res.status(200).send({ status: true, data: obj });
         } catch(e){
             next(e)
+        }
+    };
+
+    async getPackageScheduleDetails(req, res, next){
+        try{
+          let body = req.body
+          const { error } = doctorRule.getPackageScheduleDetailsRule.validate(body);
+          if (error){
+            throw Boom.badData(error.message);
+          }
+          let details = await appointmentDA.getPackageScheduleDetails(body.patientId)
+          if (details && details.length === 0) {
+            return res.status(404).json({ message: "Package Schdule Details Not Avaliable" });
+        } else {
+            return res.status(200).json({status: true, data: details });
+        }
+        } catch(e){
+          next(e);
         }
     };
 

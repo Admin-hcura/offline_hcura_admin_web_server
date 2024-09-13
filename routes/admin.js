@@ -172,5 +172,9 @@ router.post("/change/temp/appt/status",
   sessionValidator.validateAdminSession,
   appointmentController.changeisActiveStatusTemp
 );
+router.get("/get/doctor/list",
+  sessionValidator.validateAdminSession,
+  appointmentController.getDoctorList
+);
 
 module.exports = router;

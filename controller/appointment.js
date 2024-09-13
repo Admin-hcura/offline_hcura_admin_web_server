@@ -1545,6 +1545,16 @@ class appointment{
         }
     };
 
+    async getDoctorList(req, res, next){
+        try{
+            const { branchId, roleId } = req.query;
+            let obj = await appointmentDA.getDoctorList(branchId, roleId);
+            res.status(200).send({ status: true, data: obj });
+        } catch(e){
+            next(e)
+        }
+    };
+
 };
 
 module.exports = new appointment();

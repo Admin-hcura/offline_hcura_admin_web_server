@@ -2604,7 +2604,16 @@ class appointmentDA{
       } catch(e){
         throw e;
       }
-    }
+    };
+
+    async getSuggestionPrescriptionDetails(appointmentId){
+      try {
+        return await suggestionPrescriptionModel.findOne({ appointmentId: new mongoose.Types.ObjectId(appointmentId) },
+        {"followupSheets._id":0 });
+      } catch (error) {
+        throw error;
+      }
+    };
 
 }
 module.exports = new appointmentDA();

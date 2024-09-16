@@ -1573,6 +1573,20 @@ class appointment{
         }
     };
 
+    async getSuggestionPrescriptionDetails(req, res, next){
+        try{
+            let body = req.body
+            const { error } = doctorRule.appointmentIdRule.validate(body);
+            if (error){
+              throw Boom.badData(error.message);
+            }
+            let result = await appointmentDA.getSuggestionPrescriptionDetails(body.appointmentId);
+            return res.status(200).json({status: true, data: result });
+        } catch(e){
+            next(e);
+        }
+    };
+
 };
 
 module.exports = new appointment();

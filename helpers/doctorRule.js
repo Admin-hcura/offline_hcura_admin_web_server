@@ -142,3 +142,6 @@ exports.updatePrescriptionRule = Joi.object({
 exports.getPackageScheduleDetailsRule = Joi.object({
     patientId: Joi.string().required().error(new Error("patientId is Required"))
 });
+exports.appointmentIdRule = Joi.object({
+    appointmentId: Joi.string().required().error(new Error("patientId is Required"))
+});

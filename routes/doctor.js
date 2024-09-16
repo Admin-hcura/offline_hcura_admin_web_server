@@ -44,5 +44,10 @@ router.post("/get/package/schedule/details/pateint",
   // sessionValidator.validateAdminSession,
   appointmentController.getPackageScheduleDetails
 );
+router.post(
+  "/get/suggestion/prescription/data",
+  sessionValidator.validateDoctorSession,
+  appointmentController.getSuggestionPrescriptionDetails
+);
 
 module.exports = router;

@@ -46,7 +46,7 @@ router.post("/get/package/schedule/details/pateint",
 );
 router.post(
   "/get/suggestion/prescription/data",
-  sessionValidator.validateDoctorSession,
+  // sessionValidator.validateAdminSession,
   appointmentController.getSuggestionPrescriptionDetails
 );
 

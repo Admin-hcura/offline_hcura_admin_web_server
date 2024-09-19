@@ -122,12 +122,12 @@ class authentication {
 
     async adminLogout(req, res, next){
         try{
-            let userId = req.userId;
-                if (!userId) {
-                    throw Boom.badData("Please enter userId");
-                }
-            await redisClient.del(userId + "_offline_admin_web");
-            await authentationDAObj.adminLogoutDA(userId);
+            let patientId = req.patientId;
+              if (!patientId) {
+                throw Boom.badData("Please enter patientId");
+              }
+            await redisClient.del(patientId + "_offline_admin_web");
+            await authentationDAObj.adminLogoutDA(patientId);
             res.send({ success: true, message: 'Logged out successfully'});
         } catch(e){
             next(e);
@@ -370,7 +370,7 @@ class authentication {
             // sms to doctor
             emailSender.sendTempAppointmentBookedEmailToAdmin(booked, docDetails);
 
-            res.send({success: true, data: {booked, SMSToPatient}});
+            res.send({success: true, data: booked});
         } catch (e) {
             next(e);
         }

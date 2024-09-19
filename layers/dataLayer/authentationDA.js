@@ -259,10 +259,10 @@ class authentationDA {
         }
     };
 
-    async adminLogoutDA(userId){
+    async adminLogoutDA(patientId){
         try{
             return await adminModel.updateOne(
-                { _id: userId },
+                { _id: patientId },
                 { $set: { fcmToken: "" } }
               );
         } catch(e){

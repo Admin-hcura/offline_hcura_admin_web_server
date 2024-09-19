@@ -173,7 +173,7 @@ router.post("/change/temp/appt/status",
   appointmentController.changeisActiveStatusTemp
 );
 router.get("/get/doctor/list",
-  sessionValidator.validateAdminSession,
+  // sessionValidator.validateAdminSession,
   appointmentController.getDoctorList
 );
 

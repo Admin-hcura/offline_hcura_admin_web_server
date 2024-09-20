@@ -631,11 +631,11 @@ class appointment{
     async packagePayment(req, res, next){
         try{
             let body = req.body
+            console.log(".....body.......",body);
             const { error } = rule.paymenPackageRule.validate(body);
             if (error){
               throw Boom.badData(error.message);
             }
-            console.log(".....body.......",body);
             let ptDetails = await appointmentDA.patientDetaiils(body.patientId);
             console.log(".....ptDetails.......",ptDetails);
 

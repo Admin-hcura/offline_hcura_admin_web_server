@@ -1130,111 +1130,124 @@ class appointmentDA{
 
     async getPaymentDetailsByAppointmentId(appointmentId){
         try{
-            return await paymentModel.aggregate(
-                [
-                    {
-                      $match: {
-                        appointmentId: new mongoose.Types.ObjectId(appointmentId),
-                        isDeleted: false
-                      }
-                    },
-                    {
-                      $lookup: {
-                        from: "patient",
-                        localField: "patientId",
-                        foreignField: "_id",
-                        as: "patientDetails"
-                      }
-                    },
-                    {
-                      $unwind: {
-                        path: "$patientDetails",
-                        preserveNullAndEmptyArrays: true
-                      }
-                    },
-                    {
-                      $lookup: {
-                        from: "appointment",
-                        localField: "appointmentId",
-                        foreignField: "_id",
-                        as: "appointmentDetails"
-                      }
-                    },
-                    {
-                      $unwind: {
-                        path: "$appointmentDetails",
-                        preserveNullAndEmptyArrays: true
-                      }
-                    },
-                    {
-                      $lookup: {
-                        from: "package",
-                        localField: "packageId",
-                        foreignField: "_id",
-                        as: "packageDetails"
-                      }
-                    },
-                    {
-                      $unwind: {
-                        path: "$packageDetails",
-                        preserveNullAndEmptyArrays: true
-                      }
-                    },
-                    {
-                      $lookup: {
-                        from: "admin",
-                        localField: "paymentDoneBy",
-                        foreignField: "_id",
-                        as: "paymentDoneDetails"
-                      }
-                    },
-                    {
-                      $unwind: {
-                        path: "$paymentDoneDetails",
-                        preserveNullAndEmptyArrays: true
-                      }
-                    },
-                    {
-                      $project: {
-                        consultationMode:
-                          "$appointmentDetails.consultationMode",
-                        consultationType:
-                          "$appointmentDetails.consultationType",
-                        paymentFor: 1,
-                        payableAmount: 1,
-                        paymentType: "$paymentMethod",
-                        packageName: "$packageDetails.name",
-                        discount: 1,
-                        paidOn: 1,
-                        createdOn: 1,
-                        packageId: 1,
-                        paymentStatus: 1,
-                        paymentDoneBy: {
-                          $concat: [
-                            "$paymentDoneDetails.firstName",
-                            " ",
-                            "$paymentDoneDetails.lastName"
-                          ]
-                        },
-                        userAddress: {
-                          $concat: [
-                            "$patientDetails.firstName",
-                            " ",
-                            "$patientDetails.lastName"
-                          ]
-                        },
-                        stateName: "$patientDetails.stateName",
-                        phoneNumber: "$patientDetails.phoneNumber",
-                        countryCode: "$patientDetails.countryCode",
-                        houseNo: "$patientDetails.address.houseNo",
-                        street: "$patientDetails.address.street",
-                        city: "$patientDetails.address.city",
-                        state: "$patientDetails.address.state",
-                        pinCode: "$patientDetails.address.pinCode"
-                      }
-                    }
-                ]
-            );
+          return await paymentModel.aggregate(
+            [
+              {
+                $match: {
+                  appointmentId: new mongoose.Types.ObjectId(appointmentId),
+                  isDeleted: false
+                }
+              },
+              {
+                $lookup: {
+                  from: "patient",
+                  localField: "patientId",
+                  foreignField: "_id",
+                  as: "patientDetails"
+                }
+              },
+              {
+                $unwind: {
+                  path: "$patientDetails",
+                  preserveNullAndEmptyArrays: true
+                }
+              },
+              {
+                $lookup: {
+                  from: "appointment",
+                  localField: "appointmentId",
+                  foreignField: "_id",
+                  as: "appointmentDetails"
+                }
+              },
+              {
+                $unwind: {
+                  path: "$appointmentDetails",
+                  preserveNullAndEmptyArrays: true
+                }
+              },
+              {
+                $lookup: {
+                  from: "package",
+                  localField: "packageId",
+                  foreignField: "_id",
+                  as: "packageDetails"
+                }
+              },
+              {
+                $unwind: {
+                  path: "$packageDetails",
+                  preserveNullAndEmptyArrays: true
+                }
+              },
+              {
+                $lookup: {
+                  from: "admin",
+                  localField: "paymentDoneBy",
+                  foreignField: "_id",
+                  as: "paymentDoneDetails"
+                }
+              },
+              {
+                $unwind: {
+                  path: "$paymentDoneDetails",
+                  preserveNullAndEmptyArrays: true
+                }
+              },
+              {
+                $project: {
+                  consultationMode: "$appointmentDetails.consultationMode",
+                  consultationType: "$appointmentDetails.consultationType",
+                  paymentFor: 1,
+                  payableAmount: 1,
+                  paymentType: "$paymentMethod",
+                  packageName: "$packageDetails.name",
+                  discount: 1,
+                  paidOn: 1,
+                  createdOn: 1,
+                  packageId: 1,
+                  paymentStatus: 1,
+                  paymentDoneBy: {
+                    $concat: [
+                      "$paymentDoneDetails.firstName",
+                      " ",
+                      "$paymentDoneDetails.lastName"
+                    ]
+                  },
+                  userAddress: {
+                    $concat: [
+                      "$patientDetails.firstName",
+                      " ",
+                      "$patientDetails.lastName"
+                    ]
+                  },
+                  stateName: "$patientDetails.stateName",
+                  phoneNumber: "$patientDetails.phoneNumber",
+                  countryCode: "$patientDetails.countryCode",
+                  houseNo: {
+                    $arrayElemAt: [
+                      "$patientDetails.address.houseNo", 0 ]
+                  },
+                  street: {
+                    $arrayElemAt: [
+                      "$patientDetails.address.street", 0 ]
+                  },
+                  city: {
+                    $arrayElemAt: [
+                      "$patientDetails.address.city", 0 ]
+                  },
+                  state: {
+                    $arrayElemAt: [
+                      "$patientDetails.address.state",  0 ]
+                  },
+                  pinCode: {
+                    $arrayElemAt: [
+                      "$patientDetails.address.pinCode", 0 ]
+                  }
+                }
+              }
+            ]
+          );
         } catch(e){
             throw e
         }

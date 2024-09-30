@@ -14,7 +14,7 @@ const increment = require('mongoose-increment')(mongoose);
     branchName: {type: String, required: true,unique: true },
     branchPhoneNumber: {type: Number, required: true },
     stateId: {type: mongoose.Schema.Types.ObjectId, ref: "States", required: true},
-    createdOn: {type: Date, default: Date.now},
+    createdOn: {type: Date, default: new Date ()},
     location: {type: String, required: true},
     isDeleted: {type: Boolean, default: false },
     isLocked: {
@@ -28,7 +28,7 @@ const increment = require('mongoose-increment')(mongoose);
   let role = new schema ({
     roleName: {type: String, required: true, unique: true },
     roleCode: {type: String, required: true,unique: true },
-    createdOn: {type: Date, default: Date.now},
+    createdOn: {type: Date, default: new Date ()},
     isDeleted: {type: Boolean, default: false },
     isLocked: {
         type: String,
@@ -46,7 +46,7 @@ const increment = require('mongoose-increment')(mongoose);
     phoneNumber: {type: String, required: true, unique: true},
     birthDate: {type: Date, required: true},
     fcmToken: {type: String, default: null},
-    createdOn: {type: Date, default: Date.now},
+    createdOn: {type: Date, default: new Date ()},
     isDeleted: {type: Boolean, default: false},
     isLocked: {
         type: String,
@@ -89,8 +89,8 @@ const increment = require('mongoose-increment')(mongoose);
     }],
     consultationType: {type: String, required: true, default: "OFFLINE", enum: ["OFFLINE", "ONLINE"]},
     registeredBy: {type: mongoose.Schema.Types.ObjectId, required: true, ref: "Admin"},
-    registeredOn: {type: Date, default: Date.now},
-    createdOn: {type: Date, default: Date.now},
+    registeredOn: {type: Date, default: new Date ()},
+    createdOn: {type: Date, default: new Date ()},
     source: {type: String, default: null},
     occupation: {type: String, default: null},
     lockedBy: {type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin"},
@@ -109,18 +109,18 @@ const increment = require('mongoose-increment')(mongoose);
         },
       ],
     isActive: {type: Boolean, default: true},
-    createdOn: {type: Date, default: Date.now},
+    createdOn: {type: Date, default: new Date ()},
   });
 
   let day = new schema ({
     day: { type: String, default: null },
-    createdOn: {type: Date, default: Date.now},
+    createdOn: {type: Date, default: new Date ()},
     isActive: {type: Boolean, default: true},
   });
 
   let slot = new schema ({
     date: {type: Date, default: () => {
-      let today = Date.now;
+      let today = new Date ();
       today.setHours(0, 0, 0, 0); // Set time to 12 AM (midnight)
       return today;
     }},
@@ -131,7 +131,7 @@ const increment = require('mongoose-increment')(mongoose);
     startTime: { type: String, default: null },
     endTime: { type: String, default: null },
     doctorId: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
-    createdOn: {type: Date, default: Date.now},
+    createdOn: {type: Date, default: new Date ()},
     isBooked: { type: Boolean, default: true },
     isActive: {type: Boolean, default: true},
   });
@@ -184,7 +184,7 @@ const increment = require('mongoose-increment')(mongoose);
     rescheduleUpdatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null },
     canceledUpdatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null },
     completedUpdatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null },
-    createdOn: {type: Date, default: Date.now },
+    createdOn: {type: Date, default: new Date () },
     visitedClinic: {type: Boolean, default: false},
     isCompleted: {type: Boolean, default: false},
     isActive: {type: Boolean, default: true},
@@ -234,8 +234,8 @@ const increment = require('mongoose-increment')(mongoose);
     courierCharges: {type: Number, default: 0},
     serviceCharges: {type: Number, default: 0},
     invoiceNumber: {type: String, default: null},
-    createdOn: {type: Date, default: Date.now},
-    paidOn: {type: Date, default: Date.now},
+    createdOn: {type: Date, default: new Date ()},
+    paidOn: {type: Date, default: new Date ()},
     isDeleted: {type: Boolean, default: false},
     refundId: {type: String, default: null},
     refundAmount: {type: Number, default: null},
@@ -247,18 +247,18 @@ const increment = require('mongoose-increment')(mongoose);
     type: {type: String, default: null},
     amount: {type: Number, default: null},
     isActive: {type: Boolean, default: true},
-    createdOn: {type: Date, default: Date.now},
+    createdOn: {type: Date, default: new Date ()},
   });
 
   let occupation = new schema({
     name: {type: String, default: null},
-    createdOn: {type: Date, default: Date.now},
+    createdOn: {type: Date, default: new Date ()},
     isActive: {type: Boolean, default: true},
   });
 
   let source = new schema({
     name: {type: String, default: null},
-    createdOn: {type: Date, default: Date.now},
+    createdOn: {type: Date, default: new Date ()},
     isActive: {type: Boolean, default: true},
   })
 
@@ -279,7 +279,7 @@ const increment = require('mongoose-increment')(mongoose);
     doctorId: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
     branchId: {type: mongoose.Schema.Types.ObjectId, ref: "Branches", default: null},
     bookedBy: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
-    createdOn: {type: Date, default: Date.now},
+    createdOn: {type: Date, default: new Date ()},
     isActive: {type: Boolean, default: true},
     isConverted: {type: Boolean, default: false},
     updatedBy: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
@@ -291,7 +291,7 @@ const increment = require('mongoose-increment')(mongoose);
     months: { type: Number, default: 0},
     amount: { type: Number, default: 0},
     installments: { type: Number, default: 0},
-    createdOn: { type: Date, default: Date.now },
+    createdOn: { type: Date, default: new Date () },
     isActive: { type: Boolean, default: true},
     createdBy: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
   });
@@ -314,7 +314,7 @@ const increment = require('mongoose-increment')(mongoose);
     },
     startDate : { type: Date, default: null },
     endDate : { type: Date, default: null},
-    createdOn : { type: Date, default: Date.now},
+    createdOn : { type: Date, default: new Date ()},
     paidOn : { type: Date, default: null},
     isActive : { type: Boolean, default: true}
   })
@@ -330,7 +330,7 @@ const increment = require('mongoose-increment')(mongoose);
     UGST: {type: Number, default: null},
     IGST: {type: Number, default: null},
     isActive: {type: Boolean, default: true},
-    createdOn: {type: Date, default: Date.now},
+    createdOn: {type: Date, default: new Date ()},
   });
 
   let promoCodes = new schema({
@@ -339,7 +339,7 @@ const increment = require('mongoose-increment')(mongoose);
     discount: { type: Number, default: null},
     startsOn: { type: Date, default: null},
     expiredOn: { type: Date, default: null},
-    createdOn: { type: Date, default: Date.now},
+    createdOn: { type: Date, default: new Date ()},
     deleteOn: { type: Date, default: null},
     isDeleted: { type: Boolean, default: false},
   });
@@ -351,7 +351,7 @@ const increment = require('mongoose-increment')(mongoose);
     createdBy: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin"},
     updatedBy: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin"},
     branchId: { type: mongoose.Schema.Types.ObjectId, ref: "Branch", default: null},
-    createdOn : { type: Date, default: Date.now},
+    createdOn : { type: Date, default: new Date ()},
     expiryDate: { type: String, default: null },
     consultationSummary: { type: String, default: null },
     instructions: {type: String, default: null},
@@ -375,7 +375,7 @@ const increment = require('mongoose-increment')(mongoose);
     doctorId: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin" },
     createdBy: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin"},
     branchId: { type: mongoose.Schema.Types.ObjectId, ref: "Branch", default: null},
-    createdOn : { type: Date, default: Date.now},
+    createdOn : { type: Date, default: new Date ()},
     bloodPressure : { type: String, default: null},
     height : { type: String, default: null},
     weight : { type: String, default: null},
@@ -464,7 +464,7 @@ const increment = require('mongoose-increment')(mongoose);
       ref: "Admin",
     },
     updatedOn : { type: Date, default: null },
-    createdOn : { type: Date, default: Date.now},
+    createdOn : { type: Date, default: new Date ()},
     followupSheets : [
       {
         followupNotes : { type: String, default: null},
@@ -494,7 +494,7 @@ const increment = require('mongoose-increment')(mongoose);
         packageId: {type: mongoose.Schema.Types.ObjectId, ref: "Package", default: null},
       }
     ],
-    createdOn: { type: Date, default: Date.now},
+    createdOn: { type: Date, default: new Date ()},
     isActive: { type: Boolean, default: true},
   });
 

@@ -156,33 +156,32 @@ class Mail{
       }
     };
 
-    async sendConsultationInvoiceEmail(emailId, file) {
-      try {
-        let info = await this.setUpSmtp();
-        info.sendMail({
-            from: constants.MAIL_CONFIG.auth.user,
-            to: [constants.MAIL_CONFIG.invoiceEmail],
-            // to: [constants.MAIL_CONFIG.invoiceEmail, emailId],
-            subject: "H-Cura Consultation_invoice received successfully!",
-            text: "Hi Dear H-Cura consumer Please find the attached file for your reference \n \nThank you.",
-            attachments: [
-              {
-                filename: "Consultation_invoice.pdf",
-                content: file,
-                contentType: "application/pdf",
-              },
-            ],
-          })
-          .then(() => {
-            console.log("INVOICE___Email sent");
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      } catch (e) {
-        console.error("Internal error ", e);
-      }
-    };
+  async sendConsultationInvoiceEmail(emailId, file) {
+    try {
+      let info = await this.setUpSmtp();
+      info.sendMail({
+        from: constants.MAIL_CONFIG.auth.user,
+        to: [constants.MAIL_CONFIG.invoiceEmail, emailId],
+        subject: "H-Cura Consultation_invoice received successfully!",
+        text: "Hi Dear H-Cura consumer Please find the attached file for your reference \n \nThank you.",
+          attachments: [
+            {
+              filename: "Consultation_invoice.pdf",
+              content: file,
+              contentType: "application/pdf",
+            },
+          ],
+        })
+        .then(() => {
+          console.log("INVOICE___Email sent");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } catch (e) {
+      console.error("Internal error ", e);
+    }
+  };
 
     async sendPaymentSuccess(
       userName,
@@ -428,129 +427,113 @@ class Mail{
       }
     };
 
-    async sendPackageInvoiceEmail(emailId, file) {
-      try {
-        let info = await this.setUpSmtp();
-        info
-          .sendMail({
-            from: constants.MAIL_CONFIG.auth.user,
-            to: [constants.MAIL_CONFIG.invoiceEmail],
-            // to: [constants.MAIL_CONFIG.invoiceEmail, emailId],
-            subject: "H-Cura Package invoice received successfully!",
-            text: "Hi Dear H-Cura consumer Please find the attached file for your reference \n \nThank you.",
-            attachments: [
-              {
-                filename: "Package_Invoice.pdf",
-                content: file,
-                contentType: "application/pdf",
-              },
-            ],
-          })
-          .then(() => {
-            console.log("PACKAGE_INVOICE___Email sent");
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      } catch (e) {
-        console.error("Internal error ", e);
-      }
-    };
+  async sendPackageInvoiceEmail(emailId, file) {
+    try {
+      let info = await this.setUpSmtp();
+      info
+        .sendMail({
+          from: constants.MAIL_CONFIG.auth.user,
+          to: [constants.MAIL_CONFIG.invoiceEmail, emailId],
+          subject: "H-Cura Package invoice received successfully!",
+          text: "Hi Dear H-Cura consumer Please find the attached file for your reference \n \nThank you.",
+          attachments: [
+            {
+              filename: "Package_Invoice.pdf",
+              content: file,
+              contentType: "application/pdf",
+            },
+          ],
+        })
+        .then(() => {
+          console.log("PACKAGE_INVOICE___Email sent");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } catch (e) {
+      console.error("Internal error ", e);
+    }
+  };
 
-    async sendAstheticInvoiceEmail(emailId, file) {
-      try {
-        let info = await this.setUpSmtp();
-        info
-          .sendMail({
-            from: constants.MAIL_CONFIG.auth.user,
-            to: [constants.MAIL_CONFIG.invoiceEmail],
-            // to: [constants.MAIL_CONFIG.invoiceEmail, emailId],
-            subject: "H-Cura Asthetic invoice received successfully!",
-            text: "Hi Dear H-Cura consumer Please find the attached file for your reference \n \nThank you.",
-            attachments: [
-              {
-                filename: "Asthetic_Invoice.pdf",
-                content: file,
-                contentType: "application/pdf",
-              },
-            ],
-          })
-          .then(() => {
-            console.log("ASTHETIC_INVOICE___Email sent");
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      } catch (e) {
-        console.error("Internal error ", e);
-      }
-    };
+  async sendAstheticInvoiceEmail(emailId, file) {
+    try {
+      let info = await this.setUpSmtp();
+      info.sendMail({
+        from: constants.MAIL_CONFIG.auth.user,
+        to: [constants.MAIL_CONFIG.invoiceEmail, emailId],
+        subject: "H-Cura Asthetic invoice received successfully!",
+        text: "Hi Dear H-Cura consumer Please find the attached file for your reference \n \nThank you.",
+        attachments: [
+          {
+            filename: "Asthetic_Invoice.pdf",
+            content: file,
+            contentType: "application/pdf",
+          },
+        ],
+      })
+      .then(() => {
+        console.log("ASTHETIC_INVOICE___Email sent");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    } catch (e) {
+      console.error("Internal error ", e);
+    }
+  };
 
-    async sendExternalSourceInvoiceEmail(emailId, file) {
-      try {
-        let info = await this.setUpSmtp();
-        info
-          .sendMail({
-            from: constants.MAIL_CONFIG.auth.user,
-            to: [constants.MAIL_CONFIG.invoiceEmail],
-            // to: [constants.MAIL_CONFIG.invoiceEmail, emailId],
-            subject: "H-Cura Homeo invoice received successfully!",
-            text: "Hi Dear H-Cura consumer Please find the attached file for your reference \n \nThank you.",
-            attachments: [
-              {
-                filename: "Homeo_Invoice.pdf",
-                content: file,
-                contentType: "application/pdf",
-              },
-            ],
-          })
-          .then(() => {
-            console.log("EXTERNAL_SOURCE_INVOICE___Email sent");
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      } catch (e) {
-        console.error("Internal error ", e);
-      }
-    };
+  async sendExternalSourceInvoiceEmail(emailId, file) {
+    try {
+      let info = await this.setUpSmtp();
+      info.sendMail({
+        from: constants.MAIL_CONFIG.auth.user,
+        to: [constants.MAIL_CONFIG.invoiceEmail, emailId],
+        subject: "H-Cura Homeo invoice received successfully!",
+        text: "Hi Dear H-Cura consumer Please find the attached file for your reference \n \nThank you.",
+        attachments: [
+          {
+            filename: "Homeo_Invoice.pdf",
+            content: file,
+            contentType: "application/pdf",
+          },
+        ],
+      })
+      .then(() => {
+        console.log("EXTERNAL_SOURCE_INVOICE___Email sent");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    } catch (e) {
+      console.error("Internal error ", e);
+    }
+  };
 
-    async sendExternalSourcePaymentSuccess(
-      userName,
-      emailId,
-      amount,
-      translationId,
-      paymentMethod,
-      items
-    ) {
-      try {
-        let info = await this.setUpSmtp();
-        info
-          .sendMail({
-            from: constants.MAIL_CONFIG.auth.user,
-            to: emailId,
-            subject: "H-Cura Homeo Payment received successfully!",
-            html: (
-              await emailTemplates.sendHomeoPaymentSuccess(
-                userName,
-                emailId,
-                amount,
-                translationId,
-                paymentMethod,
-                items
-              )
-            ).toString(),
-          })
-          .then(() => {
-            console.log("Homeo payment success Email sent");
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-      } catch (e) {
-        console.error("Internal error ", e);
-      }
-    };
+  async sendExternalSourcePaymentSuccess(userName, emailId, amount, translationId, paymentMethod, items) {
+    try {
+      let info = await this.setUpSmtp();
+      info.sendMail({
+        from: constants.MAIL_CONFIG.auth.user,
+        to: emailId,
+        subject: "H-Cura Homeo Payment received successfully!",
+        html: (await emailTemplates.sendHomeoPaymentSuccess(
+          userName,
+          emailId,
+          amount,
+          translationId,
+          paymentMethod,
+          items)).toString(),
+      })
+      .then(() => {
+        console.log("Homeo payment success Email sent");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    } catch (e) {
+      console.error("Internal error ", e);
+    }
+  };
 }
 
 module.exports = new Mail();

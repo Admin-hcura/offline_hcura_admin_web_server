@@ -92,7 +92,7 @@ class appointment{
                 startTime : createAppointment.startTime
             }
             // email to patient appointment details
-                // emailSender.sendAppointmentConformedEmailToPT(details);
+                emailSender.sendAppointmentConformedEmailToPT(details);
             // email to docors 
                 emailSender.sendAppointmentBookedEmailToDoctor(details);
 
@@ -243,13 +243,13 @@ class appointment{
                         file
                     );
                     // email to patient payment success
-                    // emailSender.sendPaymentSuccess(
-                    //     userInfo[0].patient.firstName,
-                    //     userInfo[0].patient.emailId,
-                    //     consultationfee.amount,
-                    //     "#" + relationId,
-                    //     updatePaymentDetails.paymentMethod.toUpperCase()
-                    // );
+                    emailSender.sendPaymentSuccess(
+                        userInfo[0].patient.firstName,
+                        userInfo[0].patient.emailId,
+                        consultationfee.amount,
+                        "#" + relationId,
+                        updatePaymentDetails.paymentMethod.toUpperCase()
+                    );
                         
                     res.send({ success: true, data: userInfo});
                   }
@@ -383,13 +383,13 @@ class appointment{
                         file
                     );
                     // email to patient payment success
-                    // emailSender.sendPaymentSuccess(
-                    //     userInfo[0].patient.firstName,
-                    //     userInfo[0].patient.emailId,
-                    //     consultationfee.amount,
-                    //     "#" + relationId,
-                    //     updatePaymentDetails.paymentMethod.toUpperCase()
-                    // );
+                    emailSender.sendPaymentSuccess(
+                        userInfo[0].patient.firstName,
+                        userInfo[0].patient.emailId,
+                        consultationfee.amount,
+                        "#" + relationId,
+                        updatePaymentDetails.paymentMethod.toUpperCase()
+                    );
                     res.send({ success: true, data: userInfo});
                 }
             } else {
@@ -808,14 +808,14 @@ class appointment{
                         branchPhoneNumber: branchCode.branchPhoneNumber
                     }
                     console.log("--------pdfDetails-------", pdfDetails)
-                    // emailSender.sendPackagePaymentSuccess(
-                    //     userInfo[0].patient.firstName,
-                    //     userInfo[0].patient.emailId,
-                    //     updatePaymentReport.payableAmount,
-                    //     "#" + relationId,
-                    //     updatePaymentReport.paymentMethod,
-                    //     packageDetails.name,
-                    // );
+                    emailSender.sendPackagePaymentSuccess(
+                        userInfo[0].patient.firstName,
+                        userInfo[0].patient.emailId,
+                        updatePaymentReport.payableAmount,
+                        "#" + relationId,
+                        updatePaymentReport.paymentMethod,
+                        packageDetails.name,
+                    );
 
                     let file = await htmlToPDF.generateInvoiceForPackage(pdfDetails);
                     console.log("111111111111     ",userInfo[0].patient)
@@ -1033,14 +1033,14 @@ class appointment{
                         branchPhoneNumber: branchCode.branchPhoneNumber
                     }
                     console.log("--------pdfDetails-------", pdfDetails)
-                    // emailSender.sendAstheticPaymentSuccess(
-                    //     userInfo[0].patient.firstName,
-                    //     userInfo[0].patient.emailId,
-                    //     updatePaymentReport.payableAmount,
-                    //     "#" + relationId,
-                    //     updatePaymentReport.paymentMethod,
-                    //     packageDetails.name,
-                    // );
+                    emailSender.sendAstheticPaymentSuccess(
+                        userInfo[0].patient.firstName,
+                        userInfo[0].patient.emailId,
+                        updatePaymentReport.payableAmount,
+                        "#" + relationId,
+                        updatePaymentReport.paymentMethod,
+                        packageDetails.name,
+                    );
 
                     let file = await htmlToPDF.generateInvoiceForAsthetic(pdfDetails);
                     console.log("111111111111     ",userInfo[0].patient)
@@ -1210,14 +1210,14 @@ class appointment{
                             paymentMethod: updatePaymentDetails.paymentMethod,
                             branchPhoneNumber: branchCode.branchPhoneNumber
                         }
-                        // emailSender.sendExternalSourcePaymentSuccess(
-                        //     userInfo[0].patient.firstName,
-                        //     userInfo[0].patient.emailId,
-                        //     updatePaymentReport.payableAmount,
-                        //     "#" + relationId,
-                        //     updatePaymentReport.paymentMethod,
-                        //     updatePaymentReport.remarks,
-                        // );
+                        emailSender.sendExternalSourcePaymentSuccess(
+                            userInfo[0].patient.firstName,
+                            userInfo[0].patient.emailId,
+                            updatePaymentReport.payableAmount,
+                            "#" + relationId,
+                            updatePaymentReport.paymentMethod,
+                            updatePaymentReport.remarks,
+                        );
                         //INVOICE EMAIL
                         let file = await htmlToPDF.generateInvoiceForExternalSource( pdfDetails );
                         emailSender.sendExternalSourceInvoiceEmail(userInfo[0].patient.emailId, file);

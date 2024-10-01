@@ -380,7 +380,7 @@ const increment = require('mongoose-increment')(mongoose);
     height : { type: String, default: null},
     weight : { type: String, default: null},
     // consultationSummary : { type: String, default: null},
-    // presentComplaint : { type: String, default: null},
+    presentComplaint : { type: String, default: null},
     // symptoms : [
     //   {
     //     symptoms : { type: String, default: null},

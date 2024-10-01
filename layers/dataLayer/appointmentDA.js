@@ -2139,6 +2139,7 @@ class appointmentDA{
           bloodPressure: obj.bloodPressure,
           height: obj.height,
           weight: obj.weight,
+          presentComplaint: obj.presentComplaint,
           consultationSummary: obj.consultationSummary,
           presentComplaint: obj.presentComplaint,
           symptoms: obj.symptoms,

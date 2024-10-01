@@ -13,7 +13,7 @@ exports.insertCaseStudyRule = Joi.object({
     weight: Joi.string().required().error(new Error("weight Required")),
     height: Joi.string().required().error(new Error("height Required")),
     // consultationSummary: Joi.string().required().error(new Error("consultationSummary Required")),
-    // presentComplaint: Joi.string().required().error(new Error("presentComplaint Required")),
+    presentComplaint: Joi.string().required().error(new Error("presentComplaint Required")),
     // symptoms: Joi.array().items(Joi.object({
     //   symptoms: Joi.string().empty("").allow(null).default(null),
     //   location: Joi.string().empty("").allow(null).default(null),

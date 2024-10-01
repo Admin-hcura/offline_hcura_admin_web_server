@@ -7,7 +7,7 @@ exports.insertCaseStudyRule = Joi.object({
     patientId: Joi.string().required().error(new Error("patientId is Required")),
     appointmentId: Joi.string().required().error(new Error("appointmentId is Required")),
     doctorId: Joi.string().required().error(new Error("doctorId is Required")),
-    doneBy: Joi.string().required().error(new Error("doneBy Id required")),
+    createdBy: Joi.string().required().error(new Error("createdBy Id required")),
     branchId: Joi.string().required().error(new Error("branchId is Required")),
     bloodPressure: Joi.string().required().error(new Error("Blood Pressure Required")),
     weight: Joi.string().required().error(new Error("weight Required")),

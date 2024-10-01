@@ -2134,7 +2134,7 @@ class appointmentDA{
           patientId: obj.patientId,
           appointmentId: obj.appointmentId,
           doctorId: obj.doctorId,
-          createdBy: obj.doneBy,
+          createdBy: obj.createdBy,
           branchId:obj.branchId,
           bloodPressure: obj.bloodPressure,
           height: obj.height,

@@ -1446,6 +1446,7 @@ class appointment{
         if (error){
             throw Boom.badData(error.message);
         }
+        console.log("body--------",body)
         let caseStudyDetails = await appointmentDA.insertCaseStudyDA(body);
         res.status(200).send({ status: true, data: caseStudyDetails });
         } catch(e) {

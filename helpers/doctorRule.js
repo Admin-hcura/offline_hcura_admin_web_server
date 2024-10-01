@@ -4,7 +4,7 @@ const moment = require("moment-timezone");
 let now = moment().format("YYYY-MM-DD");
 
 exports.insertCaseStudyRule = Joi.object({
-    patientId: Joi.string().required().error(new Error("UserId is Required")),
+    patientId: Joi.string().required().error(new Error("patientId is Required")),
     appointmentId: Joi.string().required().error(new Error("appointmentId is Required")),
     doctorId: Joi.string().required().error(new Error("doctorId is Required")),
     createdBy: Joi.string().required().error(new Error("createdBy Id required")),

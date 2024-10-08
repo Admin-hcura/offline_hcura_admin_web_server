@@ -129,7 +129,7 @@ exports.apptStatusRule = Joi.object({
 exports.dashboard = Joi.object({
     startDate: Joi.string().required().error(new Error("Start date is required")),
     endDate: Joi.string().required().error(new Error("End date is required")),
-    roleId: Joi.string().required().error(new Error("roleId is required")),
+    all: Joi.string().required().error(new Error("all is required")),
     branchId: Joi.string().required().error(new Error("branchId is required")),
 });
 

@@ -1877,13 +1877,13 @@ class appointmentDA{
             $gte: new Date(data.startDate),
             $lte: new Date(data.endDate),
           },
-          isDeleted: false
+          isDeleted : false
         };
-        if (data.roleId) {
-          let roleDetails = await authentationDA.getroleCodeDA(data.roleId);
-          if (roleDetails.roleName !== "SUPER_ADMIN" && data.branchId) {
+        if (data.all !== "YES") {
+          // let roleDetails = await authentationDA.getroleCodeDA(data.roleId);
+          // if (roleDetails.roleName !== "SUPER_ADMIN" && data.branchId) {
             obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
-          }
+          // }
         }
     
         let pipeline = [

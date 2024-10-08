@@ -176,5 +176,9 @@ router.get("/get/doctor/list",
   // sessionValidator.validateAdminSession,
   appointmentController.getDoctorList
 );
+router.get("/get/payment/details",
+  // sessionValidator.validateAdminSession,
+  appointmentController.getpaymentDetailsForPdf
+);
 
 module.exports = router;

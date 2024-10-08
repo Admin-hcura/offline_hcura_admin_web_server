@@ -15,7 +15,7 @@ const scheduler = require("../scheduler/scheduler");
 const schedulers = new scheduler();
 const apiResponse = require("../helpers/apiResponse");
 const authentationDA = require("../layers/dataLayer/authentationDA");
-
+const { ObjectId } = require('mongodb');
 class appointment{
     async bookAppointment(req, res, next){
         try{
@@ -1552,7 +1552,7 @@ class appointment{
             let obj = await appointmentDA.getDoctorList(branchId, roleId);
             res.status(200).send({ status: true, data: obj });
         } catch(e){
-            next(e)
+            next(e);
         }
     };
 
@@ -1583,6 +1583,21 @@ class appointment{
             }
             let result = await appointmentDA.getSuggestionPrescriptionDetails(body.appointmentId);
             return res.status(200).json({status: true, data: result });
+        } catch(e){
+            next(e);
+        }
+    };
+
+    async getpaymentDetailsForPdf(req, res, next){
+        try{
+            const { paymentId } = req.query;
+            if (!ObjectId.isValid(paymentId)) {
+                return res.status(400).json({
+                  error: "Invalid paymentId format. Must be a 24 character hex string."
+                });
+            }
+            let obj = await appointmentDA.getPaymentDetails(paymentId);
+            return res.status(200).send({ status: true, data: obj });
         } catch(e){
             next(e);
         }

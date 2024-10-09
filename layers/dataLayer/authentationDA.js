@@ -68,7 +68,8 @@ class authentationDA {
                 gender: obj.gender,
                 qualifaction: obj.qualifaction,
                 specilazation: obj.specilazation,
-                experience: obj.experience
+                experience: obj.experience,
+                createdOn: new Date()
             });
             return await result.save();
         } catch(e) {
@@ -82,7 +83,7 @@ class authentationDA {
                 $and: [
                     { $or: [{ email: email }, { username: username }, { phoneNumber: phoneNumber }, {EmpNumber: EmpNumber}] },
                     { isDeleted: false }
-                  ]
+                ]
             });
             return result;
         } catch(e){
@@ -96,7 +97,7 @@ class authentationDA {
                 $and: [
                     { $or: [{ username: username }] },
                     { isDeleted: false }
-                  ]
+                ]
             });
             return result;
         } catch(e){
@@ -108,9 +109,9 @@ class authentationDA {
         try {
             let passwordCheck = await bcrypt.compare(password, dbPassword);
             return passwordCheck;
-          } catch (e) {
+        } catch (e) {
             throw e;
-          }
+        }
     };
 
     async updateAdminFcmTokenDA(id, token){
@@ -119,9 +120,9 @@ class authentationDA {
               { _id: id },
               { $set: { fcmToken: token } }
             );
-          } catch (e) {
+        } catch (e) {
             throw e;
-          }
+        }
     };
 
     async updatePasswordDA(data){
@@ -131,9 +132,9 @@ class authentationDA {
               { _id: data.userId },
               { $set: { password: password } }
             );
-          } catch (e) {
+        } catch (e) {
             throw e;
-          }
+        }
     };
 
     async branchListDA(){
@@ -172,8 +173,7 @@ class authentationDA {
                     'hcuraId': 1
                   }
                 }
-              ]
-            );
+            ]);
             return result;
         } catch (e) {
             throw e;
@@ -189,8 +189,7 @@ class authentationDA {
                     'hcuraTId': 1
                   }
                 }
-              ]
-            );
+            ]);
             return result;
         } catch (e) {
             throw e;
@@ -242,6 +241,8 @@ class authentationDA {
                 registeredBy: registeredBy,
                 source: source,
                 occupation: occupation,
+                createdOn: new Date(),
+                registeredOn: new Date()
             });
             return await result.save();
         } catch(e){
@@ -264,7 +265,7 @@ class authentationDA {
             return await adminModel.updateOne(
                 { _id: patientId },
                 { $set: { fcmToken: "" } }
-              );
+            );
         } catch(e){
             throw e;
         }
@@ -274,6 +275,7 @@ class authentationDA {
         try{
             let result = new timeModel({
                 slots: body.slots,
+                createdOn: new Date(),
             });
             return await result.save();
         } catch(e){
@@ -284,7 +286,8 @@ class authentationDA {
     async insertDay(body){
         try{
             let result = new dayModel({
-                day: body.day
+                day: body.day,
+                createdOn: new Date()
             });
             return await result.save();
         } catch(e){
@@ -297,6 +300,7 @@ class authentationDA {
             let result = new consulatationAmountModel({
                 type: body.type,
                 amount: body.amount,
+                createdOn: new Date(),
             });
             return await result.save();
         } catch(e){
@@ -313,7 +317,8 @@ class authentationDA {
                 months: body.months,
                 amount: body.amount,
                 installments: body.installments,
-                createdBy: body.createdBy
+                createdBy: body.createdBy,
+                createdOn: new Date()
             });
             return await result.save();
         } catch(e){
@@ -346,7 +351,8 @@ class authentationDA {
                 discount: promoCodes.discount,
                 promoCodeFor: promoCodes.promoCodeFor,
                 startsOn: promoCodes.startsOn,
-                expiredOn: promoCodes.expiredOn
+                expiredOn: promoCodes.expiredOn,
+                createdOn: new Date()
             });
             return await result.save();
         } catch(e){
@@ -394,12 +400,12 @@ class authentationDA {
                         months: "$packageDetails.months"
                       }
                     }
-                  ]
+                ]
             );
         } catch(e){
             throw e;
         }
-    }
+    };
 
 }
 

@@ -15,83 +15,87 @@ const { branchesModel, slotModel, occupationModel, promoCodesModel,
     suggestionPrescriptionModel,
     prescriptionModel} = require("../../models/schema");
 const { startTime } = require("express-pino-logger");
+let createdOn = moment().format();
 
 class appointmentDA{
 
-    async blockSlot(slotData){
-        try{
-            let blockSlot = new slotModel({
-                appointmentDate: slotData.date,
-                dayId: slotData.dayId,
-                timeId: slotData.timeId,
-                day: slotData.day,
-                startTime: slotData.startTime,
-                endTime: slotData.endTime,
-                doctorId: slotData.doctorId
-            });
-            return await blockSlot.save();
-        } catch(e){
-            throw e;
-        }
+  async blockSlot(slotData){
+    try{
+      let blockSlot = new slotModel({
+        appointmentDate: slotData.date,
+        dayId: slotData.dayId,
+        timeId: slotData.timeId,
+        day: slotData.day,
+        startTime: slotData.startTime,
+        endTime: slotData.endTime,
+        doctorId: slotData.doctorId,
+        createdOn: createdOn
+      });
+      return await blockSlot.save();
+    } catch(e){
+      throw e;
     }
+  };
 
-    async createAppointment(obj){
-        try{
-            let result = new appointmentModel({
-                patientId: obj.patientId,
-                doctorId: obj.doctorId,
-                slotId: obj.slotId,
-                dayId: obj.dayId,
-                branchId: obj.branchId,
-                appointmentDate: obj.appointmentDate,
-                startTime: obj.startTime,
-                endTime: obj.endTime,
-                symptoms: obj.symptoms,
-                allegires: obj.allegires,
-                consultationMode: obj.consultationMode,
-                consultationType: obj.consultationType,
-                appointmentStatus: obj.appointmentStatus,
-                bookedBy: obj.bookedBy,
-                appointmentNumber: obj.appointmentNumber
-            });
-            return await result.save();
-        } catch(e){
-            throw e;
-        }
-    };
+  async createAppointment(obj){
+    try{
+      let result = new appointmentModel({
+        patientId: obj.patientId,
+        doctorId: obj.doctorId,
+        slotId: obj.slotId,
+        dayId: obj.dayId,
+        branchId: obj.branchId,
+        appointmentDate: obj.appointmentDate,
+        startTime: obj.startTime,
+        endTime: obj.endTime,
+        symptoms: obj.symptoms,
+        allegires: obj.allegires,
+        consultationMode: obj.consultationMode,
+        consultationType: obj.consultationType,
+        appointmentStatus: obj.appointmentStatus,
+        bookedBy: obj.bookedBy,
+        appointmentNumber: obj.appointmentNumber,
+        createdOn: createdOn
+      });
+      return await result.save();
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async addPaymentInfo(obj){
-        try{
-            let addPaymentInfo = new paymentModel({
-                patientId: obj.patientId,
-                doctorId: obj.doctorId,
-                branchId: obj.branchId,
-                appointmentId: obj.appointmentId,
-                paymentDoneBy: obj.paymentDoneBy,
-                dayId: obj.dayId,
-                slotId: obj.slotId,
-                packageId: obj.packageId,
-                paymentFor: obj.paymentFor,
-                promoCodes: obj.promoCodes,
-                payableAmount: obj.payableAmount,
-                shortUrl: obj.shortUrl,
-                paymentRelationId: obj.paymentRelationId,
-                paymentLinkId: obj.paymentLinkId,
-                paymentDoneBy: obj.paymentDoneBy,
-                discount: obj.discount,
-                GSTAmount: obj.GSTAmount,
-                SGST: obj.SGST,
-                CGST: obj.CGST,
-                IGST: obj.IGST,
-                afterRemovingGST: obj.afterRemovingGST,
-                paymentMethod: obj.paymentMethod,
-                paymentStatus: obj.paymentStatus,
-            });
-            return await addPaymentInfo.save();
-        } catch(e){
-            throw e;
-        }
-    };
+  async addPaymentInfo(obj){
+    try{
+      let addPaymentInfo = new paymentModel({
+        patientId: obj.patientId,
+        doctorId: obj.doctorId,
+        branchId: obj.branchId,
+        appointmentId: obj.appointmentId,
+        paymentDoneBy: obj.paymentDoneBy,
+        dayId: obj.dayId,
+        slotId: obj.slotId,
+        packageId: obj.packageId,
+        paymentFor: obj.paymentFor,
+        promoCodes: obj.promoCodes,
+        payableAmount: obj.payableAmount,
+        shortUrl: obj.shortUrl,
+        paymentRelationId: obj.paymentRelationId,
+        paymentLinkId: obj.paymentLinkId,
+        paymentDoneBy: obj.paymentDoneBy,
+        discount: obj.discount,
+        GSTAmount: obj.GSTAmount,
+        SGST: obj.SGST,
+        CGST: obj.CGST,
+        IGST: obj.IGST,
+        afterRemovingGST: obj.afterRemovingGST,
+        paymentMethod: obj.paymentMethod,
+        paymentStatus: obj.paymentStatus,
+        createdOn: createdOn
+      });
+      return await addPaymentInfo.save();
+    } catch(e){
+      throw e;
+    }
+  };
 
     async branchCode(branchId){
         try{
@@ -124,135 +128,127 @@ class appointmentDA{
         }
     };
 
-    async confirmAppointment(appointmentId, paymentInfoId){
-        console.log("!!!!!!!!!!!!!!!!!!!",appointmentId)
-        try{
-            let result = await appointmentModel.findOneAndUpdate(
-                {_id: appointmentId},
-                {
-                    $set:{
-                        paymentId: paymentInfoId,
-                        appointmentStatus: "SCHEDULED"
-                    },
-                },{ new: true}
-            );
-            return result;
-        } catch(e){
-            throw e;
-        }
-    };
+  async confirmAppointment(appointmentId, paymentInfoId){
+    try{
+      let result = await appointmentModel.findOneAndUpdate(
+        {_id: appointmentId},
+        {
+          $set:{
+            paymentId: paymentInfoId,
+            appointmentStatus: "SCHEDULED"
+            },
+        },{ new: true}
+      );
+      return result;
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async getuserInfoWithpaymentRelationId(relationId, isPaymentId){
-        try{
-            if (relationId instanceof mongoose.Types.ObjectId) {
-                relationId = relationId.toString();
+  async getuserInfoWithpaymentRelationId(relationId, isPaymentId){
+    try{
+      if (relationId instanceof mongoose.Types.ObjectId) {
+        relationId = relationId.toString();
+      }
+      return await paymentModel.aggregate(
+        [
+          {
+            $match: isPaymentId
+              ? {
+                _id: mongoose.Types.ObjectId(relationId),
+                }
+              : {
+                paymentRelationId: relationId,
+                },
+          },
+          {
+            $lookup: {
+              from: "patient",
+              localField: "patientId",
+              foreignField: "_id",
+              as: "patient"
             }
-            console.log(";;;;;;ispaymentid;;;;;",isPaymentId);
-            console.log(";;;;;;paymentrelation id....",relationId)
-            return await paymentModel.aggregate(
-                [
-                  {
-                    $match: isPaymentId
-                      ? {
-                          _id: mongoose.Types.ObjectId(relationId),
-                        }
-                      : {
-                          paymentRelationId: relationId,
-                        },
-                  },
-                  {
-                    $lookup: {
-                      from: "patient",
-                      localField: "patientId",
-                      foreignField: "_id",
-                      as: "patient"
-                    }
-                  },
-                  {
-                    $unwind: {
-                      path: "$patient",
-                      preserveNullAndEmptyArrays: true
-                    }
-                  },
-                  {
-                    $lookup: {
-                      from: "admin",
-                      localField: "doctorId",
-                      foreignField: "_id",
-                      as: "doctor"
-                    }
-                  },
-                  {
-                    $unwind: {
-                      path: "$doctor",
-                      preserveNullAndEmptyArrays: true
-                    }
-                  }
-                ]
-            );
-        } catch(e){
-            throw e;
-        }
-    };
+          },
+          {
+            $unwind: {
+              path: "$patient",
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $lookup: {
+              from: "admin",
+              localField: "doctorId",
+              foreignField: "_id",
+              as: "doctor"
+            }
+          },
+          {
+            $unwind: {
+            path: "$doctor",
+            preserveNullAndEmptyArrays: true
+            }
+          }
+      ]);
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async getLastInvoiceNo(branchCode){
-        try {
-            console.log("-------branchCode----------", branchCode)
-            return await paymentModel.aggregate([
-                {
-                    $match: {
-                        isDeleted: false,
-                        // Match the branch code dynamically
-                        invoiceNumber: {
-                            $regex: `^${branchCode}/`
-                        }
-                    }
-                },
-                {
-                    $project: {
-                        // Extract the part after the branch code
-                        invoiceNumberPart: {
-                            $arrayElemAt: [
-                                {
-                                    $split: [
-                                        {
-                                            $arrayElemAt: [
-                                                {
-                                                    $split: ["$invoiceNumber", "/"]
-                                                },
-                                                1
-                                            ]
-                                        },
-                                        "/"
-                                    ]
-                                },
-                                0
-                            ]
-                        }
-                    }
-                },
-                {
-                    $project: {
-                        invoiceNumber: {
-                            $toInt: "$invoiceNumberPart"
-                        },
-                        _id: 0
-                    }
-                },
-                {
-                    $sort: {
-                        invoiceNumber: -1
-                    }
-                },
+  async getLastInvoiceNo(branchCode){
+    try {
+      return await paymentModel.aggregate([
+        {
+          $match: {
+            isDeleted: false,
+            invoiceNumber: {
+              $regex: `^${branchCode}/`
+            }
+          }
+        },
+        {
+          $project: {
+            invoiceNumberPart: {
+            $arrayElemAt: [
+              {
+                $split: [
+                  {
+                    $arrayElemAt: [
+                      {
+                        $split: ["$invoiceNumber", "/"]
+                      },
+                      1
+                    ]
+                  },
+                  "/"
+                ]
+              },
+              0
+            ]
+          }
+        }
+      },
+      {
+        $project: {
+          invoiceNumber: {
+            $toInt: "$invoiceNumberPart"
+            },
+            _id: 0
+        }
+        },
+        {
+          $sort: {
+            invoiceNumber: -1
+          }
+        },
                 // {
                 //     $limit: 1
                 // }
-            ]);
-        } catch (e) {
-            throw e;
-        }
-        
-    };
+      ]);
+   } catch (e) {
+      throw e;
+    }      
+  };
 
     async getAppointmentDetails(appointmentId){
         try{
@@ -290,462 +286,459 @@ class appointmentDA{
         }
     };
 
-    async getAmount(consultationType){
-        try{
-            console.log("-----consultationType-----",consultationType)
-            return await consulatationAmount.findOne({type: consultationType, isActive: true});
-        } catch(e){
-            throw e;
-        }
-    };
+  async getAmount(consultationType){
+    try{
+      return await consulatationAmount.findOne({type: consultationType, isActive: true});
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async updateFollowupId(patientId, appointmentId){
-        try{
-            console.log("----patientId, appointmentId-----",patientId, appointmentId)
-            const result = await appointmentModel.findOneAndUpdate(
-                {
-                  patientId: new mongoose.Types.ObjectId(patientId),
-                  isActive: true,
-                },
-                {
-                  $set: { followupId: appointmentId}
-                },
-                {
-                  sort: { createdOn: -1 },
-                  returnDocument: 'after' // This will return the document after the update
-                }
-              );
-              return result;
-        } catch(e){
-            throw e;
+  async updateFollowupId(patientId, appointmentId){
+    try{
+      const result = await appointmentModel.findOneAndUpdate(
+        {
+          patientId: new mongoose.Types.ObjectId(patientId),
+          isActive: true,
+        },
+        {
+          $set: { followupId: appointmentId}
+        },
+        {
+          sort: { createdOn: -1 },
+          returnDocument: 'after' // This will return the document after the update
         }
-    };
+      );
+      return result;
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async patientDetaiils(patientId){
-        try{
-            return await patientModel.findOne({ _id: patientId, isDeleted: false});
-        } catch(e){
-            throw e;
-        }
-    };
+  async patientDetaiils(patientId){
+    try{
+      return await patientModel.findOne({ _id: patientId, isDeleted: false});
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async updatePaymentDetailsAppointment(appointmentId, paymentId){
-        try{
-            const result = await appointmentModel.findOneAndUpdate(
-                {_id: appointmentId},
-                { $set: {
-                    paymentId: paymentId,
-                    appointmentStatus: "CONFIRMED"
-                }
-            });
-            return result;
-        } catch(e){
-            throw e;
-        }
-    };
-
-    async getPatientList(type, page, limit, search, roleId, branchId) {
-        let offset = (page - 1) * limit;
-        try {
-          let pipeline = [];
-          if (type != "ALL") {
-            pipeline.push({
-              $match: {
-                isDeleted: false,
-              },
-            });
+  async updatePaymentDetailsAppointment(appointmentId, paymentId){
+    try{
+      const result = await appointmentModel.findOneAndUpdate(
+        {_id: appointmentId},
+        { $set: {
+          paymentId: paymentId,
+          appointmentStatus: "CONFIRMED"
           }
-          let roleDetails = await authentationDA.getroleCodeDA(roleId);
-          if(roleDetails.roleName != "SUPER_ADMIN"){
-            pipeline.push({
-              $match: {
-                branchId: new mongoose.Types.ObjectId(branchId),
-              },
-            });
-          }
+        });
+      return result;
+    } catch(e){
+      throw e;
+    }
+  };
+
+  async getPatientList(type, page, limit, search, roleId, branchId) {
+    let offset = (page - 1) * limit;
+      try {
+        let pipeline = [];
+        if (type != "ALL") {
           pipeline.push({
-            $lookup: {
-              from: "appointment",
-              let: { uID: "$_id" },
-              pipeline: [
-                { $match: { $expr: { $and: [{ $eq: ["$patientId", "$$uID"] }] } } },
-                { $sort: { appointmentDate: -1 } },
-                { $limit: 1 },
-                { $project: { lastDate: "$appointmentDate" } },
-              ],
-              as: "lastAppointment",
+            $match: {
+              isDeleted: false,
             },
           });
-          if (search != "") {
-            let or = [
-              {
-                hcuraId: { $regex: search, $options: "i" },
-              },
-              {
-                firstName: { $regex: search, $options: "i" },
-              },
-              {
-                lastName: { $regex: search, $options: "i" },
-              },
-              {
-                phoneNumber: { $regex: search, $options: "i" },
-              },
-            ];
-            pipeline.push({
-                $addFields: {
-                  phoneNumberStr: { $toString: "$phoneNumber" }, // Convert phoneNumber to string
+        }
+        let roleDetails = await authentationDA.getroleCodeDA(roleId);
+        if(roleDetails.roleName != "SUPER_ADMIN"){
+          pipeline.push({
+            $match: {
+              branchId: new mongoose.Types.ObjectId(branchId),
+            },
+          });
+        }
+        pipeline.push({
+          $lookup: {
+            from: "appointment",
+            let: { uID: "$_id" },
+            pipeline: [
+              { $match: { $expr: { $and: [{ $eq: ["$patientId", "$$uID"] }] } } },
+              { $sort: { appointmentDate: -1 } },
+              { $limit: 1 },
+              { $project: { lastDate: "$appointmentDate" } },
+            ],
+            as: "lastAppointment",
+          },
+        });
+        if (search != "") {
+          let or = [
+            {
+              hcuraId: { $regex: search, $options: "i" },
+            },
+            {
+              firstName: { $regex: search, $options: "i" },
+            },
+            {
+              lastName: { $regex: search, $options: "i" },
+            },
+            {
+              phoneNumber: { $regex: search, $options: "i" },
+            },
+          ];
+          pipeline.push({
+            $addFields: {
+              phoneNumberStr: { $toString: "$phoneNumber" }, // Convert phoneNumber to string
+            },
+          });
+          pipeline.push({
+            $match: {
+              $or: [
+                {
+                  hcuraId: { $regex: search, $options: "i" },
                 },
-              });
-              pipeline.push({
-                $match: {
-                  $or: [
-                    {
-                      hcuraId: { $regex: search, $options: "i" },
-                    },
-                    {
-                      firstName: { $regex: search, $options: "i" },
-                    },
-                    {
-                      lastName: { $regex: search, $options: "i" },
-                    },
-                    {
-                      phoneNumberStr: { $regex: search, $options: "i" }, // Use phoneNumberStr for search
-                    },
-                  ],
+                {
+                  firstName: { $regex: search, $options: "i" },
                 },
-              });
+                {
+                  lastName: { $regex: search, $options: "i" },
+                },
+                {
+                  phoneNumberStr: { $regex: search, $options: "i" }, // Use phoneNumberStr for search
+                },
+              ],
+            },
+          });
             // pipeline.push({
             //   $match: {
             //     $or: or,
             //   },
             // });
-          }
-          pipeline.push({
-            $facet: {
-              metadata: [{ $count: "total" }, { $addFields: { page: page } }],
-              data: [
-                { $sort: { registeredOn: -1 } },
-                { $skip: offset },
-                { $limit: limit },
-              ],
-            },
-          });
-          let listData = await patientModel.aggregate(pipeline);
-          return listData;
-        } catch (e) {
-          throw e;
         }
-    };
+        pipeline.push({
+          $facet: {
+            metadata: [{ $count: "total" }, { $addFields: { page: page } }],
+            data: [
+              { $sort: { registeredOn: -1 } },
+              { $skip: offset },
+              { $limit: limit },
+            ],
+          },
+        });
+      let listData = await patientModel.aggregate(pipeline);
+      return listData;
+    } catch (e) {
+      throw e;
+    }
+  };
 
-    async insertOccuption(body){
-        try{
-            let result = new occupationModel({
-                name: body.name,
-            });
-            return await result.save();
-        } catch(e){
-            throw e;
-        }
-    };
+  async insertOccuption(body){
+    try{
+      let result = new occupationModel({
+        name: body.name,
+        createdOn: createdOn
+      });
+      return await result.save();
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async insertSource(body){
-        try{
-            let result = new sourceModel({
-                name: body.name,
-            });
-            return await result.save();
-        } catch(e){
-            throw e;
-        }
-    };
+  async insertSource(body){
+    try{
+      let result = new sourceModel({
+        name: body.name,
+        createdOn: createdOn
+      });
+      return await result.save();
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async getSourceOccuptionList(){
-        try{
-            let source = await sourceModel.find({isActive: true},{_id: 0, name: 1});
-            let occupation = await occupationModel.find({isActive: true},{_id: 0, name: 1});
-            return {source, occupation};
-        } catch(e){
-            throw e;
-        }
-    };
+  async getSourceOccuptionList(){
+    try{
+      let source = await sourceModel.find({isActive: true},{_id: 0, name: 1});
+      let occupation = await occupationModel.find({isActive: true},{_id: 0, name: 1});
+      return {source, occupation};
+    } catch(e){
+      throw e;
+    }
+  };
     
-    async insertStates(body){
-        try{
-            let result = new statesModel({
-                name : body.name,
-                stateCode: body.stateCode,
-                stateId: body.stateId,
-                consultationGST: body.consultationGST,
-                packageGST: body.packageGST,
-                CGST: body.CGST,
-                SGST: body.SGST,
-                UGST: body.UGST,
-                IGST: body.IGST,
-            });
-            return await result.save();
-        } catch(e){
-            throw e;        
-        }
-    };
+  async insertStates(body){
+    try{
+      let result = new statesModel({
+        name : body.name,
+        stateCode: body.stateCode,
+        stateId: body.stateId,
+        consultationGST: body.consultationGST,
+        packageGST: body.packageGST,
+        CGST: body.CGST,
+        SGST: body.SGST,
+        UGST: body.UGST,
+        IGST: body.IGST,
+        createdOn: createdOn
+      });
+      return await result.save();
+    } catch(e){
+      throw e;        
+    }
+  };
 
-    async getStateList(){
-        try{
-            return await statesModel.find({isActive: true});
-        } catch(e){
-            throw e
-        }
-    };
+  async getStateList(){
+    try{
+      return await statesModel.find({isActive: true});
+    } catch(e){
+      throw e
+    }
+  };
 
-    async insertSymptomsAllergiesDA(body){
-        try{
-            let result = new symptomsAllegryModel({
-                symptoms: body.symptoms,
-                allegires: body.allegires
-            });
-            return await result.save();
-        } catch(e){
-            throw e;
-        }
-    };
+  async insertSymptomsAllergiesDA(body){
+    try{
+      let result = new symptomsAllegryModel({
+        symptoms: body.symptoms,
+        allegires: body.allegires
+      });
+      return await result.save();
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async getSymptomsAllegiresList(){
-        try{
-            return await symptomsAllegryModel.find({isActive: true});
-        } catch(e){
-            throw e;
-        }
-    };
+  async getSymptomsAllegiresList(){
+    try{
+      return await symptomsAllegryModel.find({isActive: true});
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async bookedDetails(details, hcuraTId){
-        try{
-            let result = new tempAppointmentModel({
-                firstName: details.firstName,
-                lastName: details.lastName,
-                gender: details.gender,
-                phoneNumber: details.phoneNumber,
-                complaint: details.complaint,
-                appointmentDate: details.appointmentDate,
-                doctorId: details.doctorId,
-                branchId: details.branchId,
-                bookedBy: details.bookedBy,
-                hcuraTId: hcuraTId
-            });
-            return await result.save();
-        } catch(e){
-            throw e;
-        }
-    };
+  async bookedDetails(details, hcuraTId){
+    try{
+      let result = new tempAppointmentModel({
+        firstName: details.firstName,
+        lastName: details.lastName,
+        gender: details.gender,
+        phoneNumber: details.phoneNumber,
+        complaint: details.complaint,
+        appointmentDate: details.appointmentDate,
+        doctorId: details.doctorId,
+        branchId: details.branchId,
+        bookedBy: details.bookedBy,
+        hcuraTId: hcuraTId,
+        createdOn: createdOn
+      });
+      return await result.save();
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async getDoctorDetails(docId){
-        try{
-            return await adminModel.findOne({_id: docId, isDeleted: false});
-        } catch(e){
-            throw e;
-        }
-    };
+  async getDoctorDetails(docId){
+    try{
+      return await adminModel.findOne({_id: docId, isDeleted: false});
+    } catch(e){
+      throw e;
+      }
+  };
 
-    async getDoctorsList(){
-        try{
-            return await roleModel.aggregate(
-              [
-                {
-                  $match: {
-                    roleName: "DOCTORS",
-                    isDeleted: false
-                  }
-                },
-                {
-                  $lookup: {
-                    from: "admin",
-                    localField: "_id",
-                    foreignField: "roleId",
-                    as: "doctorDetails"
-                  }
-                },
-                // {
-                //   $unwind: {
-                //     path: "$doctorDetails",
-                //     preserveNullAndEmptyArrays: true,
-                //   },
-                // },
-                {
-                  $project: {
-                    doctorDetails: 1,
-                    _id: 0
-                  }
-                }
-              ]    
-            );
-        } catch(e){
-            throw e;
-        }
-    };
-
-    async getpatientDetailsDA(hcuraId){
-        try{
-          return await patientModel.find({hcuraId: hcuraId, isDeleted: false});
-        } catch(e){
-          throw e;
-        }
-    };
-    
-    async getAppointmentNumber(){
-        try{
-            let result = await appointmentModel.aggregate([
-                {
-                  '$project': {
-                    '_id': 0, 
-                    'appointmentNumber': 1
-                  }
-                }
-              ]
-            );
-            return result;
-        } catch(e){
-            throw e;
-        }
-    };
-
-    async getPromoListConsultation() {
-        try {
-            return await promoCodesModel.aggregate([
-                {
-                    $match: {
-                        isDeleted: false,
-                        promoCodeFor: "CONSULTATION",
-                        $expr: {
-                            $and: [
-                                { $gte: ["$expiredOn", new Date()] },
-                                { $lte: ["$startsOn", new Date()] }
-                            ]
-                        }
-                    },
-                },
-                {
-                    $project: {
-                      promoCodeName: 1,
-                      discount: 1,
-                      promoCodeFor: 1,
-                    },
-                },
-            ]);
-        } catch (e) {
-            throw e;
-        }
-    };
-
-    async getConsultationGST(stateId){
-        try{
-            console.log("------stateId-----",stateId)
-            return await statesModel.findOne({_id: stateId, isActive: true})
-        } catch(e){
-            throw e;
-        }
-    };
-
-    async getPromoCodeList(promoCodes){
-        try{
-            console.log("------promoCodes-----",promoCodes)
-            return await promoCodesModel.findOne({_id: promoCodes, isDeleted: false})
-        } catch(e){
-            throw e;
-        }
-    };
-
-    async getAppointmentDetailsPaymentDetails(hcuraId, roleId, branchId){
-        try{
-            const hcuraid = hcuraId.replace(/\s+/g, '').toUpperCase();
-            const filter = {
-              hcuraId: hcuraid,
-              isDeleted: false,
-            };
-            let roleDetails = await authentationDA.getroleCodeDA(roleId);
-            if(roleDetails.roleName != "SUPER_ADMIN"){
-              filter.branchId = new mongoose.Types.ObjectId(branchId);
+  async getDoctorsList(){
+    try{
+      return await roleModel.aggregate(
+        [
+          {
+            $match: {
+              roleName: "DOCTORS",
+              isDeleted: false
             }
-            return await patientModel.aggregate(
-                [
-                    {
-                      $match: filter
-                    },
-                    {
-                      $lookup: {
-                        from: "appointment",
-                        localField: "_id",
-                        foreignField: "patientId",
-                        as: "appointmentDetails"
-                      }
-                    },
-                    {
-                      $unwind: {
-                        path: "$appointmentDetails",
-                        preserveNullAndEmptyArrays: true
-                      }
-                    },
-                    {
-                      $lookup: {
-                        from: "admin",
-                        localField: "appointmentDetails.doctorId",
-                        foreignField: "_id",
-                        as: "doctorDetails"
-                      }
-                    },
-                    {
-                      $unwind: {
-                        path: "$doctorDetails",
-                        preserveNullAndEmptyArrays: true
-                      }
-                    },
-                    {
-                      $lookup: {
-                        from: "consulatationAmount",
-                        localField:
-                          "appointmentDetails.consultationType",
-                        foreignField: "type",
-                        as: "consultationAmount"
-                      }
-                    },
-                    {
-                      $unwind: {
-                        path: "$consultationAmount",
-                        preserveNullAndEmptyArrays: true
-                      }
-                    },
-                    {
-                      $project: {
-                        fullName: {
-                          $concat: ["$firstName", " ", "$lastName"]
-                        },
-                        emailId: 1,
-                        hcuraId: 1,
-                        gender: 1,
-                        birthDate: 1,
-                        phoneNumber: 1,
-                        consultationAmount:
-                          "$consultationAmount.amount",
-                        consultationType:
-                          "$appointmentDetails.consultationType",
-                        doctorId: "$doctorDetails._id",
-                        doctorFullName: {
-                          $concat: [
-                            "$doctorDetails.firstName",
-                            " ",
-                            "$doctorDetails.lastName"
-                          ]
-                        },
-                        appointmentId: "$appointmentDetails._id",
-                        appointmentNumber:
-                          "$appointmentDetails.appointmentNumber",
-                        appointmentdate:
-                          "$appointmentDetails.appointmentDate"
-                      }
-                    }
-                  ]
-                );
-        } catch(e){
-            throw e;
+          },
+          {
+            $lookup: {
+              from: "admin",
+              localField: "_id",
+              foreignField: "roleId",
+              as: "doctorDetails"
+            }
+          },
+          // {
+          //   $unwind: {
+          //     path: "$doctorDetails",
+          //     preserveNullAndEmptyArrays: true,
+          //   },
+          // },
+          {
+            $project: {
+              doctorDetails: 1,
+              _id: 0
+            }
+          }
+        ]    
+      );
+    } catch(e){
+      throw e;
+    }
+  };
+
+  async getpatientDetailsDA(hcuraId){
+    try{
+      return await patientModel.find({hcuraId: hcuraId, isDeleted: false});
+    } catch(e){
+      throw e;
+    }
+  };
+    
+  async getAppointmentNumber(){
+    try{
+      let result = await appointmentModel.aggregate([
+        {
+          '$project': {
+          '_id': 0, 
+          'appointmentNumber': 1
+          }
         }
-    };
+      ]);
+      return result;
+    } catch(e){
+      throw e;
+    }
+  };
+
+  async getPromoListConsultation() {
+    try {
+      return await promoCodesModel.aggregate([
+        {
+          $match: {
+            isDeleted: false,
+            promoCodeFor: "CONSULTATION",
+            $expr: {
+              $and: [
+                { $gte: ["$expiredOn", new Date()] },
+                { $lte: ["$startsOn", new Date()] }
+              ]
+            }
+          },
+        },
+        {
+          $project: {
+            promoCodeName: 1,
+            discount: 1,
+            promoCodeFor: 1,
+          },
+         },
+      ]);
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  async getConsultationGST(stateId){
+    try{
+      return await statesModel.findOne({_id: stateId, isActive: true})
+    } catch(e){
+      throw e;
+    }
+  };
+
+  async getPromoCodeList(promoCodes){
+    try{
+      return await promoCodesModel.findOne({_id: promoCodes, isDeleted: false})
+    } catch(e){
+      throw e;
+    }
+  };
+
+  async getAppointmentDetailsPaymentDetails(hcuraId, roleId, branchId){
+    try{
+      const hcuraid = hcuraId.replace(/\s+/g, '').toUpperCase();
+      const filter = {
+        hcuraId: hcuraid,
+        isDeleted: false,
+      };
+      let roleDetails = await authentationDA.getroleCodeDA(roleId);
+      if(roleDetails.roleName != "SUPER_ADMIN"){
+        filter.branchId = new mongoose.Types.ObjectId(branchId);
+      }
+      return await patientModel.aggregate([
+        {
+          $match: filter
+        },
+        {
+          $lookup: {
+            from: "appointment",
+            localField: "_id",
+            foreignField: "patientId",
+            as: "appointmentDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$appointmentDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "admin",
+            localField: "appointmentDetails.doctorId",
+            foreignField: "_id",
+            as: "doctorDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$doctorDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "consulatationAmount",
+            localField:
+              "appointmentDetails.consultationType",
+            foreignField: "type",
+            as: "consultationAmount"
+          }
+        },
+        {
+          $unwind: {
+            path: "$consultationAmount",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $project: {
+            fullName: {
+              $concat: ["$firstName", " ", "$lastName"]
+            },
+            emailId: 1,
+            hcuraId: 1,
+            gender: 1,
+            birthDate: 1,
+            phoneNumber: 1,
+            consultationAmount:
+              "$consultationAmount.amount",
+            consultationType:
+              "$appointmentDetails.consultationType",
+            doctorId: "$doctorDetails._id",
+            doctorFullName: {
+              $concat: [
+                "$doctorDetails.firstName",
+                " ",
+                "$doctorDetails.lastName"
+              ]
+            },
+            appointmentId: "$appointmentDetails._id",
+            appointmentNumber:
+              "$appointmentDetails.appointmentNumber",
+            appointmentdate:
+              "$appointmentDetails.appointmentDate"
+          }
+        }
+      ]);
+    } catch(e){
+      throw e;
+    }
+  };
 
     async getAppointmentPaymentDetails(appointmentId){
         try{
@@ -811,19 +804,19 @@ class appointmentDA{
         }
     };
 
-    async validatePromoCode(code) {
-        try {
-          let currentDate = moment().tz("UTC").format(process.env.dateformat);
-          return await promoCodesModel.findOne({
-            promoCodeName: code,
-            isDeleted: false,
-            startsOn: { $lte: new Date(currentDate) },
-            expiredOn: { $gte: new Date(currentDate) },
-          });
-        } catch (e) {
-          throw e;
-        }
-    };
+  async validatePromoCode(code) {
+    try {
+      let currentDate = moment().tz("UTC").format(process.env.dateformat);
+      return await promoCodesModel.findOne({
+        promoCodeName: code,
+        isDeleted: false,
+        startsOn: { $lte: new Date(currentDate) },
+        expiredOn: { $gte: new Date(currentDate) },
+      });
+    } catch (e) {
+      throw e;
+    }
+  };
 
     async getRemainingSlotsAndTimings(doctorId, selectedDate) {
         try {
@@ -893,124 +886,125 @@ class appointmentDA{
         }
     };
 
-    async getpackageList(){
-        try{
-            return await packageModel.find({isActive: true, packageFor: "HOMEOPATHY"});
-        } catch(e){
-            throw e;
-        }
-    };
+  async getpackageList(){
+    try{
+      return await packageModel.find({isActive: true, packageFor: "HOMEOPATHY"});
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async getAstheticList(){
-      try{
-          return await packageModel.find({isActive: true, packageFor: "ASTHETIC"});
-      } catch(e){
-          throw e;
-      }
-    };
+  async getAstheticList(){
+    try{
+      return await packageModel.find({isActive: true, packageFor: "ASTHETIC"});
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async createEstimation(body){
-        try{
-            let result = new estimationModel({
-                patientId: body.patientId,
-                doctorId: body.doctorId,
-                branchId: body.branchId,
-                createdBy: body.createdBy,
-                homeopathy: body.homeopathy,
-                asthetic: body.asthetic
-              });
-            return await result.save();
-        } catch(e){
-            throw e;
-        }
-    };
+  async createEstimation(body){
+    try{
+      let result = new estimationModel({
+        patientId: body.patientId,
+        doctorId: body.doctorId,
+        branchId: body.branchId,
+        createdBy: body.createdBy,
+        homeopathy: body.homeopathy,
+        asthetic: body.asthetic,
+        createdOn: createdOn
+      });
+      return await result.save();
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async changeisActivePackage(_id){
-        try {
-          let result = await packageSubscriptionModel.findOneAndUpdate(
-            {_id: mongoose.Types.ObjectId(_id)},
-            {
-              $set: {
-                isActive: false
-            },
+  async changeisActivePackage(_id){
+    try {
+      let result = await packageSubscriptionModel.findOneAndUpdate(
+        {_id: mongoose.Types.ObjectId(_id)},
+        {
+          $set: {
+            isActive: false
           },
-          { new: true }
-        );
-         return result;
-        } catch(error) {
-          throw error;
-        }
-    };
+        },
+        { new: true }
+      );
+      return result;
+    } catch(error) {
+      throw error;
+    }
+  };
 
-    async getPackageDetails(packageId){
-        try{
-            return await packageModel.findOne({isActive: true, _id: packageId});
-        } catch(e){
-            throw e;
-        }
-    };
+  async getPackageDetails(packageId){
+    try{
+      return await packageModel.findOne({isActive: true, _id: packageId});
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async updatePackageDetailsInAppt(appointmentId, packagePaymentId, packageId){
-        try{
-            let result = await appointmentModel.findOneAndUpdate(
-                {_id: appointmentId},
-                { $set: {
-                    packagePaymentId: packagePaymentId,
-                    packageId: packageId
-                }
-            });
-            return result;
-        } catch(e){
-            throw e;
-        }
-    };
+  async updatePackageDetailsInAppt(appointmentId, packagePaymentId, packageId){
+    try{
+      let result = await appointmentModel.findOneAndUpdate(
+        {_id: appointmentId},
+        { $set: {
+          packagePaymentId: packagePaymentId,
+          packageId: packageId
+          }
+        });
+      return result;
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async updateAstheticPackageDetailsInAppt(appointmentId, astheticPaymentId, packageId){
-      try{
-          let result = await appointmentModel.findOneAndUpdate(
-              {_id: appointmentId},
-              { $set: {
-                astheticPaymentId: astheticPaymentId,
-                  packageId: packageId
-              }
-          });
-          return result;
-      } catch(e){
-          throw e;
-      }
-    };
+  async updateAstheticPackageDetailsInAppt(appointmentId, astheticPaymentId, packageId){
+    try{
+      let result = await appointmentModel.findOneAndUpdate(
+        {_id: appointmentId},
+        { $set: {
+          astheticPaymentId: astheticPaymentId,
+          packageId: packageId
+          }
+        });
+      return result;
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async addPackagePaymentInfo(paymentDetails){
-        try{
-            console.log(".........paymentDetails.paymentFor.........",paymentDetails.paymentFor)
-            let addPaymentInfo = new paymentModel({
-                afterRemovingGST: paymentDetails.afterRemovingGST,
-                GSTAmount: paymentDetails.GSTAmount,
-                discount: paymentDetails.discount,
-                payableAmount: paymentDetails.payableAmount,
-                paymentDoneBy: paymentDetails.paymentDoneBy,
-                remarks: paymentDetails.remarks,
-                packageId: paymentDetails.packageId,
-                promoCodes: paymentDetails.promoCodes,
-                paymentStatus: paymentDetails.paymentStatus,
-                paymentFor: paymentDetails.paymentFor,
-                shortUrl: paymentDetails.shortUrl,
-                paymentRelationId: paymentDetails.paymentRelationId,
-                paymentLinkId: paymentDetails.paymentLinkId,
-                patientId: paymentDetails.patientId,
-                doctorId: paymentDetails.doctorId,
-                branchId: paymentDetails.branchId,
-                appointmentId: paymentDetails.appointmentId,
-                packageId: paymentDetails.packageId,
-                SGST: paymentDetails.SGST,
-                CGST: paymentDetails.CGST,
-                IGST: paymentDetails.IGST
-            });
-            return await addPaymentInfo.save();
-        } catch(e){
-            throw e;
-        }
-    };
+  async addPackagePaymentInfo(paymentDetails){
+    try{
+      let addPaymentInfo = new paymentModel({
+        afterRemovingGST: paymentDetails.afterRemovingGST,
+        GSTAmount: paymentDetails.GSTAmount,
+        discount: paymentDetails.discount,
+        payableAmount: paymentDetails.payableAmount,
+        paymentDoneBy: paymentDetails.paymentDoneBy,
+        remarks: paymentDetails.remarks,
+        packageId: paymentDetails.packageId,
+        promoCodes: paymentDetails.promoCodes,
+        paymentStatus: paymentDetails.paymentStatus,
+        paymentFor: paymentDetails.paymentFor,
+        shortUrl: paymentDetails.shortUrl,
+        paymentRelationId: paymentDetails.paymentRelationId,
+        paymentLinkId: paymentDetails.paymentLinkId,
+        patientId: paymentDetails.patientId,
+        doctorId: paymentDetails.doctorId,
+        branchId: paymentDetails.branchId,
+        appointmentId: paymentDetails.appointmentId,
+        packageId: paymentDetails.packageId,
+        SGST: paymentDetails.SGST,
+        CGST: paymentDetails.CGST,
+        IGST: paymentDetails.IGST,
+        createdOn: createdOn
+      });
+      return await addPaymentInfo.save();
+    } catch(e){
+      throw e;
+    }
+  };
 
     async updatePaymentByPaymentIdBA(obj){
         try{
@@ -1034,21 +1028,22 @@ class appointmentDA{
         }
     };
 
-    async insertPackageSchedules(packageSchedules){
-        try{
-            let addSchedulesDetails = new packageSubscriptionModel({
-                patientId: packageSchedules.patientId,
-                packageId: packageSchedules.packageId,
-                paymentId: packageSchedules.paymentId,
-                startDate: new Date(),
-                endDate: packageSchedules.endDate,
-                paidOn: packageSchedules.paidOn,
-              });
-            return await addSchedulesDetails.save();
-        } catch(e){
-            throw e;
-        }
-    };
+  async insertPackageSchedules(packageSchedules){
+    try{
+      let addSchedulesDetails = new packageSubscriptionModel({
+        patientId: packageSchedules.patientId,
+        packageId: packageSchedules.packageId,
+        paymentId: packageSchedules.paymentId,
+        startDate: new Date(),
+        endDate: packageSchedules.endDate,
+        paidOn: packageSchedules.paidOn,
+        createdOn: createdOn
+      });
+      return await addSchedulesDetails.save();
+    } catch(e){
+      throw e;
+    }
+  };
 
     async getPatientDetailsPackagePayments(hcuraId, roleId, branchId){
         try{
@@ -1345,30 +1340,29 @@ class appointmentDA{
         }
     };
 
-    async addExternalSourcePaymentInfo(obj, paymentObj){
-        try{
-          console.log("-----    paymentObj      ------",paymentObj)
-          console.log("-----    obj      ------",obj)
-            let addPayment = new paymentModel({
-                patientId: obj.patientId,
-                branchId: obj.branchId,
-                paymentDoneBy: paymentObj.paymentDoneBy,
-                paymentFor: paymentObj.paymentFor,
-                prescribedBy: obj.prescribedBy,
-                remarks: obj.remarks,
-                payableAmount: paymentObj.payableAmount,
-                GSTAmount: paymentObj.GST,
-                afterRemovingGst: paymentObj.afterRemovingGst,                
-                paymentStatus: paymentObj.paymentStatus,
-                shortUrl: paymentObj.shortUrl,
-                paymentLinkId: paymentObj.paymentLinkId,
-                paymentRelationId: paymentObj.paymentRelationId,
-              });
-              return await addPayment.save();
-        } catch(e){
-            throw e;
-        }
-    };
+  async addExternalSourcePaymentInfo(obj, paymentObj){
+    try{
+      let addPayment = new paymentModel({
+        patientId: obj.patientId,
+        branchId: obj.branchId,
+        paymentDoneBy: paymentObj.paymentDoneBy,
+        paymentFor: paymentObj.paymentFor,
+        prescribedBy: obj.prescribedBy,
+        remarks: obj.remarks,
+        payableAmount: paymentObj.payableAmount,
+        GSTAmount: paymentObj.GST,
+        afterRemovingGst: paymentObj.afterRemovingGst,                
+        paymentStatus: paymentObj.paymentStatus,
+        shortUrl: paymentObj.shortUrl,
+        paymentLinkId: paymentObj.paymentLinkId,
+        paymentRelationId: paymentObj.paymentRelationId,
+        createdOn: createdOn
+      });
+      return await addPayment.save();
+    } catch(e){
+      throw e;
+    }
+  };
 
     async updatePaymentByPaymentId(obj) {
       try {
@@ -1474,7 +1468,6 @@ class appointmentDA{
 
     async dashboardPtDetailsDA(body){
       try{
-        console.log("-----body------",body)
         return await patientModel.aggregate(
           [
             {
@@ -1996,7 +1989,6 @@ class appointmentDA{
 
     async getPatientListTemp(type, page, limit, search, roleId, branchId) {
       let offset = (page - 1) * limit;
-      console.log("----type, page, limit, search, roleId, branchId------",type, page, limit, search, roleId, branchId)
       try {
         let pipeline = [];
         if (type != "ALL") {
@@ -2121,70 +2113,71 @@ class appointmentDA{
     };
 
     // insert data to case study (PART-1)
-    async insertCaseStudyDA(obj){
-      try {
-        const caseStudyDetails = await caseStudyModel.findOne({ patientId :new mongoose.Types.ObjectId(obj.patientId) });
-        if (caseStudyDetails) {
-          return {
-            message: "Details already exist with this user ID",
-            data: caseStudyDetails
-        };
-        }
-        let addCaseStudy = new caseStudyModel({
-          patientId: obj.patientId,
-          appointmentId: obj.appointmentId,
-          doctorId: obj.doctorId,
-          createdBy: obj.createdBy,
-          branchId:obj.branchId,
-          bloodPressure: obj.bloodPressure,
-          height: obj.height,
-          weight: obj.weight,
-          presentComplaint: obj.presentComplaint,
-          consultationSummary: obj.consultationSummary,
-          presentComplaint: obj.presentComplaint,
-          symptoms: obj.symptoms,
-          pastHistory: obj.pastHistory,
-          anyInjuryOrFracture:obj.anyInjuryOrFracture,
-          anyHospitalisation: obj.anyHospitalisation,
-          vaccinationsOrBirthHistory: obj.vaccinationsOrBirthHistory,
-          anyAllergy: obj.anyAllergy,
-          familyHistory: obj.familyHistory,
-          ageofMenarche: obj.ageofMenarche,
-          Lmp: obj.Lmp,
-          daysofFlow: obj.daysofFlow,
-          quality: obj.quality,
-          pain: obj.pain,
-          character: obj.character,
-          associatedSymptoms: obj.associatedSymptoms,
-          leucorrhoea: obj.leucorrhoea,
-          pregnancyHistory: obj.pregnancyHistory,
-          appetitte: obj.appetitte,
-          stool: obj.stool,
-          desire: obj.desire,
-          urine: obj.urine,
-          aversion: obj.aversion,
-          sweat: obj.sweat,
-          thirst: obj.thirst,
-          sleep: obj.sleep,
-          thermal: obj.thermal,
-          dreams: obj.dreams,
-          addiction: obj.addiction,
-          sexualActivity: obj.sexualActivity,
-          intermediateRelationship: obj.intermediateRelationship,
-          mentalGenerals: obj.mentalGenerals,
-          totalityofSymptoms: obj.totalityofSymptoms,
-          investigation: obj.investigation,
-          diagnosis: obj.diagnosis,
-          treatmentAdvice: obj.treatmentAdvice,
-          treatmentAdviceAmount: obj.treatmentAdviceAmount,
-          dietAdviceAndRegimen: obj.dietAdviceAndRegimen,
-          suggestion: obj.suggestion,
-        });
-        return await addCaseStudy.save();
-      } catch (e) {
-        throw e;
+  async insertCaseStudyDA(obj){
+    try {
+      const caseStudyDetails = await caseStudyModel.findOne({ patientId :new mongoose.Types.ObjectId(obj.patientId) });
+      if (caseStudyDetails) {
+        return {
+          message: "Details already exist with this user ID",
+          data: caseStudyDetails
+      };
       }
-    };
+      let addCaseStudy = new caseStudyModel({
+        patientId: obj.patientId,
+        appointmentId: obj.appointmentId,
+        doctorId: obj.doctorId,
+        createdBy: obj.createdBy,
+        branchId:obj.branchId,
+        bloodPressure: obj.bloodPressure,
+        height: obj.height,
+        weight: obj.weight,
+        presentComplaint: obj.presentComplaint,
+        consultationSummary: obj.consultationSummary,
+        presentComplaint: obj.presentComplaint,
+        symptoms: obj.symptoms,
+        pastHistory: obj.pastHistory,
+        anyInjuryOrFracture:obj.anyInjuryOrFracture,
+        anyHospitalisation: obj.anyHospitalisation,
+        vaccinationsOrBirthHistory: obj.vaccinationsOrBirthHistory,
+        anyAllergy: obj.anyAllergy,
+        familyHistory: obj.familyHistory,
+        ageofMenarche: obj.ageofMenarche,
+        Lmp: obj.Lmp,
+        daysofFlow: obj.daysofFlow,
+        quality: obj.quality,
+        pain: obj.pain,
+        character: obj.character,
+        associatedSymptoms: obj.associatedSymptoms,
+        leucorrhoea: obj.leucorrhoea,
+        pregnancyHistory: obj.pregnancyHistory,
+        appetitte: obj.appetitte,
+        stool: obj.stool,
+        desire: obj.desire,
+        urine: obj.urine,
+        aversion: obj.aversion,
+        sweat: obj.sweat,
+        thirst: obj.thirst,
+        sleep: obj.sleep,
+        thermal: obj.thermal,
+        dreams: obj.dreams,
+        addiction: obj.addiction,
+        sexualActivity: obj.sexualActivity,
+        intermediateRelationship: obj.intermediateRelationship,
+        mentalGenerals: obj.mentalGenerals,
+        totalityofSymptoms: obj.totalityofSymptoms,
+        investigation: obj.investigation,
+        diagnosis: obj.diagnosis,
+        treatmentAdvice: obj.treatmentAdvice,
+        treatmentAdviceAmount: obj.treatmentAdviceAmount,
+        dietAdviceAndRegimen: obj.dietAdviceAndRegimen,
+        suggestion: obj.suggestion,
+        createdOn: createdOn
+      });
+      return await addCaseStudy.save();
+    } catch (e) {
+      throw e;
+    }
+  };
 
     // async getPatientDetailsCaseStudyDA(data){
     //   try{
@@ -2296,45 +2289,47 @@ class appointmentDA{
     //   }
     // };
 
-    async insertCaseStudySuggestionPrescription(data){
-      try{
-        let casestudySuggestionPrescription = new suggestionPrescriptionModel({
-          patientId: data.patientId,
-          appointmentId: data.appointmentId,
-          doctorId: data.doctorId,
-          createdBy: data.createdBy,
-          followupSheets: data.followupSheets,
-          remarks: data.remarks,
-          branchId: data.branchId,
-          curedCaseSummary: data.curedCaseSummary
-        });
-        return await casestudySuggestionPrescription.save();
-      } catch(e){
-        throw e;
-      }
-    };
+  async insertCaseStudySuggestionPrescription(data){
+    try{
+      let casestudySuggestionPrescription = new suggestionPrescriptionModel({
+        patientId: data.patientId,
+        appointmentId: data.appointmentId,
+        doctorId: data.doctorId,
+        createdBy: data.createdBy,
+        followupSheets: data.followupSheets,
+        remarks: data.remarks,
+        branchId: data.branchId,
+        curedCaseSummary: data.curedCaseSummary,
+        createdOn: createdOn
+      });
+      return await casestudySuggestionPrescription.save();
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async insertPrescription(details){
-      try{
-        let data = new prescriptionModel({
-          patientId: details.patientId,
-          appointmentId: details.appointmentId,
-          doctorId: details.doctorId,
-          createdBy: details.createdBy,
-          branchId: details.branchId,
-          expiryDate: details.expiryDate,
-          consultationSummary: details.consultationSummary,
-          instructions: details.instructions,
-          diagnostics: details.diagnostics,
-          diagnosis: details.diagnosis,
-          medicines: details.medicines,
-          followUpDate: details.followUpDate
-        });
-        return await data.save();
-      } catch(e){
-        throw e;
-      }
-    };
+  async insertPrescription(details){
+    try{
+      let data = new prescriptionModel({
+        patientId: details.patientId,
+        appointmentId: details.appointmentId,
+        doctorId: details.doctorId,
+        createdBy: details.createdBy,
+        branchId: details.branchId,
+        expiryDate: details.expiryDate,
+        consultationSummary: details.consultationSummary,
+        instructions: details.instructions,
+        diagnostics: details.diagnostics,
+        diagnosis: details.diagnosis,
+        medicines: details.medicines,
+        followUpDate: details.followUpDate,
+        createdOn: createdOn
+      });
+      return await data.save();
+    } catch(e){
+      throw e;
+    }
+  };
 
     async getPatientDetailsCaseStudy(hcuraId, roleId, branchId){
       try{
@@ -2487,13 +2482,13 @@ class appointmentDA{
       }
     };
 
-    async getCaseStudyDetails(caseStudyId){
-      try {
-        return await caseStudyModel.findOne({ _id: new mongoose.Types.ObjectId(caseStudyId)});
-      } catch (error) {
-        throw error;
-      }
-    };
+  async getCaseStudyDetails(caseStudyId){
+    try {
+      return await caseStudyModel.findOne({ _id: new mongoose.Types.ObjectId(caseStudyId)});
+    } catch (error) {
+      throw error;
+    }
+  };
 
     async updatePrescription(obj){
       try{
@@ -2524,13 +2519,13 @@ class appointmentDA{
       }
     };
 
-    async getPrescriptionDetails(prescriptionId){
-      try {
-        return await prescriptionModel.findOne({ _id: new mongoose.Types.ObjectId(prescriptionId)});
-      } catch (error) {
-        throw error;
-      }
-    };
+  async getPrescriptionDetails(prescriptionId){
+    try {
+      return await prescriptionModel.findOne({ _id: new mongoose.Types.ObjectId(prescriptionId)});
+    } catch (error) {
+      throw error;
+    }
+  };
 
     async getDoctorList(branchId, roleId){
       try{
@@ -2622,14 +2617,14 @@ class appointmentDA{
       }
     };
 
-    async getSuggestionPrescriptionDetails(appointmentId){
-      try {
-        return await suggestionPrescriptionModel.findOne({ appointmentId: new mongoose.Types.ObjectId(appointmentId) },
-        {"followupSheets._id":0 });
-      } catch (error) {
-        throw error;
-      }
-    };
+  async getSuggestionPrescriptionDetails(appointmentId){
+    try {
+      return await suggestionPrescriptionModel.findOne({ appointmentId: new mongoose.Types.ObjectId(appointmentId) },
+      {"followupSheets._id":0 });
+    } catch (error) {
+      throw error;
+    }
+  };
 
   async getPaymentDetails(paymentId){
     try{

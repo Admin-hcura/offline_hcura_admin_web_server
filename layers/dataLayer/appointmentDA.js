@@ -2526,51 +2526,55 @@ class appointmentDA{
     }
   };
 
-    async getDoctorList(branchId, roleId){
-      try{
-        const filter = {
-          isDeleted: false,
-        };
-        let roleDetails = await authentationDA.getroleCodeDA(roleId);
-        if(roleDetails.roleName != "SUPER_ADMIN"){
-          filter.branchId = new mongoose.Types.ObjectId(branchId);
-        }
-        let result = await adminModel.aggregate(
-          [
-            {
-              $match: filter
-            },
-            {
-              $lookup: {
-                from: "role",
-                localField: "roleId",
-                foreignField: "_id",
-                as: "roleDetails"
-              }
-            },
-            {
-              $unwind: {
-                path: "$roleDetails",
-                preserveNullAndEmptyArrays: true
-              }
-            },
-            {
-              $match: {
-                "roleDetails.roleName": "DOCTORS"
-              }
-            },
-            {
-              $project: {
-                roleDetails: 0
-              }
-            }
-          ]
-        );
-        return result;
-      } catch(e){
-        throw e;
+  async getDoctorList(branchId, roleId){
+    try{
+      const filter = {
+        isDeleted: false,
+      };
+      let roleDetails = await authentationDA.getroleCodeDA(roleId);
+      if(roleDetails.roleName != "SUPER_ADMIN"){
+        filter.branchId = new mongoose.Types.ObjectId(branchId);
       }
-    };
+      let result = await adminModel.aggregate(
+        [
+          {
+            $match: filter
+          },
+          {
+            $lookup: {
+              from: "role",
+              localField: "roleId",
+              foreignField: "_id",
+              as: "roleDetails"
+            }
+          },
+          {
+            $unwind: {
+              path: "$roleDetails",
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $match: {
+              "roleDetails.roleName": "DOCTORS"
+            }
+          },
+          {
+            $project: {
+              _id: 1, 
+              firstName: 1,
+              lastName: 1,
+              gender: 1,
+              roleDetails: 0
+            }
+          }
+        ]
+      );
+      return result;
+    } catch(e){
+      throw e;
+    }
+  };
 
     async getPackageScheduleDetails(patientId){
       try{

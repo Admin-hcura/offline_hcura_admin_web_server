@@ -114,8 +114,8 @@ exports.paymentExtrnalSourceRule = Joi.object({
 });
 
 exports.dashboardPtDetailsRule = Joi.object({
-    roleId: Joi.string().required().error(new Error("roleId is required")),
-    branchId: Joi.string().required().error(new Error("branchId is required")),
+    all: Joi.string().required().error(new Error("all is required")),
+    branchId: Joi.string().empty("").allow(null).default(null),
     startDate: Joi.string().required().error(new Error("startDate is Required")),
     endDate :Joi.string().required().error(new Error("startDate is required")),
 });
@@ -130,7 +130,7 @@ exports.dashboard = Joi.object({
     startDate: Joi.string().required().error(new Error("Start date is required")),
     endDate: Joi.string().required().error(new Error("End date is required")),
     all: Joi.string().required().error(new Error("all is required")),
-    branchId: Joi.string().required().error(new Error("branchId is required")),
+    branchId: Joi.string().empty("").allow(null).default(null),
 });
 
 exports.changeStatusisCompletedTemp = Joi.object({

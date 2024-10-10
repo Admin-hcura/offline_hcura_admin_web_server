@@ -1256,12 +1256,13 @@ class appointment{
               throw Boom.badData(error.message);
             }
             let result 
-            if(body.roleId.length >0){
-                let roleDetails = await authentationDA.getroleCodeDA(body.roleId);
-                if(roleDetails.roleName == "SUPER_ADMIN"){
+            if(body.all == "YES"){
+                // let roleDetails = await authentationDA.getroleCodeDA(body.roleId);
+                // if(roleDetails.roleName == "SUPER_ADMIN"){
                     result = await appointmentDA.dashboardAllPtDetailsDA(body)
-                }
-                result = await appointmentDA.dashboardPtDetailsDA(body)
+                // }
+            }else{
+                result = await appointmentDA.dashboardPtDetailsDA(body);
             }
             res.send({ success: true, data: result });
         } catch(e){

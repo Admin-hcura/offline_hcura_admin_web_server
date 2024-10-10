@@ -1466,137 +1466,137 @@ class appointmentDA{
       }
     };
 
-    async dashboardPtDetailsDA(body){
-      try{
-        return await patientModel.aggregate(
-          [
-            {
-              $facet: {
-                todayCount: [
-                  {
-                    $match: {
-                      branchId: new mongoose.Types.ObjectId(body.branchId),
-                      registeredOn: {
-                        $gte: new Date(body.startDate),
-                        $lt: new Date(body.endDate),
-                      },
+  async dashboardPtDetailsDA(body){
+    try{
+      return await patientModel.aggregate(
+        [
+          {
+            $facet: {
+              todayCount: [
+                {
+                  $match: {
+                    branchId: new mongoose.Types.ObjectId(body.branchId),
+                    registeredOn: {
+                      $gte: new Date(body.startDate),
+                      $lt: new Date(body.endDate),
                     },
                   },
-                  {
-                    $count: "count",
+                },
+                {
+                  $count: "count",
+                },
+              ],
+              tillYesterdayCount: [
+                {
+                  $match: {
+                    branchId: new mongoose.Types.ObjectId(body.branchId),
+                    registeredOn: {
+                      $gte: new Date(body.monthStartDate),
+                      $lt: new Date(body.startDate),
+                    },
                   },
+                },
+                {
+                  $count: "count",
+                },
+              ],
+            },
+          },
+          {
+            $project: {
+              todayCount: {
+                $ifNull: [
+                  {
+                    $arrayElemAt: [
+                      "$todayCount.count",
+                      0,
+                    ],
+                  },
+                  0,
                 ],
-                tillYesterdayCount: [
+              },
+              tillYesterdayCount: {
+                $ifNull: [
                   {
-                    $match: {
-                      branchId: new mongoose.Types.ObjectId(body.branchId),
-                      registeredOn: {
-                        $gte: new Date(body.monthStartDate),
-                        $lt: new Date(body.startDate),
-                      },
-                    },
+                    $arrayElemAt: [
+                      "$tillYesterdayCount.count",
+                      0,
+                    ],
                   },
-                  {
-                    $count: "count",
-                  },
+                  0,
                 ],
               },
             },
-            {
-              $project: {
-                todayCount: {
-                  $ifNull: [
-                    {
-                      $arrayElemAt: [
-                        "$todayCount.count",
-                        0,
-                      ],
-                    },
-                    0,
-                  ],
-                },
-                tillYesterdayCount: {
-                  $ifNull: [
-                    {
-                      $arrayElemAt: [
-                        "$tillYesterdayCount.count",
-                        0,
-                      ],
-                    },
-                    0,
-                  ],
-                },
-              },
-            },
-          ]
-        );
-      } catch(e){
-        throw e;
-      }
-    };
+          },
+        ]
+      );
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async dashboardAllPtDetailsDA(body){
-      try{
-        return await patientModel.aggregate(
-          [
-            {
-              $facet: {
-                todayCount: [
-                  {
-                    $match: {
-                      registeredOn: {
-                        $gte: new Date(body.startDate),
-                        $lt: new Date(body.endDate)
-                      }
+  async dashboardAllPtDetailsDA(body){
+    try{
+      return await patientModel.aggregate(
+        [
+          {
+            $facet: {
+              todayCount: [
+                {
+                  $match: {
+                    registeredOn: {
+                      $gte: new Date(body.startDate),
+                      $lt: new Date(body.endDate)
                     }
-                  },
-                  {
-                    $count: "count"
                   }
-                ],
-                tillYesterdayCount: [
-                  {
-                    $match: {
-                      registeredOn: {
-                        $lt: new Date(body.startDate)
-                      }
+                },
+                {
+                  $count: "count"
+                }
+              ],
+              tillYesterdayCount: [
+                {
+                  $match: {
+                    registeredOn: {
+                      $lt: new Date(body.startDate)
                     }
-                  },
-                  {
-                    $count: "count"
                   }
+                },
+                {
+                  $count: "count"
+                }
+              ]
+            }
+          },
+          {
+            $project: {
+              todayCount: {
+                $ifNull: [
+                  {
+                    $arrayElemAt: ["$todayCount.count", 0]
+                  },
+                  0
+                ]
+              },
+              tillYesterdayCount: {
+                $ifNull: [
+                  {
+                    $arrayElemAt: [
+                      "$tillYesterdayCount.count",
+                      0
+                    ]
+                  },
+                  0
                 ]
               }
-            },
-            {
-              $project: {
-                todayCount: {
-                  $ifNull: [
-                    {
-                      $arrayElemAt: ["$todayCount.count", 0]
-                    },
-                    0
-                  ]
-                },
-                tillYesterdayCount: {
-                  $ifNull: [
-                    {
-                      $arrayElemAt: [
-                        "$tillYesterdayCount.count",
-                        0
-                      ]
-                    },
-                    0
-                  ]
-                }
-              }
             }
-          ]
-        );
-      } catch(e){
-        throw e;
-      }
-    };
+          }
+        ]
+      );
+    } catch(e){
+      throw e;
+    }
+  };
 
     async getAllApptList(obj, page, limit, searchKey, fromDate, toDate, branchId, roleId){
       try{
@@ -1805,63 +1805,62 @@ class appointmentDA{
       }
     };
 
-    async getDashboardAptCount(data) {
-      try {
-        let obj = {
-          isActive: true,
-          startTime: { $gte: new Date(data.startDate) },
-          endTime: { $lte: new Date(data.endDate) }
-        };
-        if (data.roleId) {
-          let roleDetails = await authentationDA.getroleCodeDA(data.roleId);
-          if (roleDetails.roleName !== "SUPER_ADMIN" && data.branchId) {
-            obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
+  async getDashboardAptCount(data) {
+    try {
+      let obj = {
+        isActive: true,
+        startTime: { $gte: new Date(data.startDate) },
+        endTime: { $lte: new Date(data.endDate) }
+      };
+      if (data.all !== "YES") {
+        // let roleDetails = await authentationDA.getroleCodeDA(data.roleId);
+        // if (roleDetails.roleName !== "SUPER_ADMIN" && data.branchId) {
+          obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
+        // }
+      }
+      let pipeline = [
+        {
+          $match: obj
+        },
+        {
+          $project: {
+            completed: {
+              $cond: [{ $eq: ["$appointmentStatus", "COMPLETED"] }, 1, 0]
+            },
+            rescheduled: {
+              $cond: [{ $eq: ["$appointmentStatus", "RESCHEDULE"] }, 1, 0]
+            },
+            cancelled: {
+              $cond: [{ $eq: ["$appointmentStatus", "CANCELLED"] }, 1, 0]
+            },
+            confirmed: {
+              $cond: [{ $eq: ["$appointmentStatus", "CONFIRMED"] }, 1, 0]
+            },
+            scheduled: {
+              $cond: [{ $eq: ["$appointmentStatus", "SCHEDULED"] }, 1, 0]
+            },
+            visited: {
+              $cond: [{ $eq: ["$appointmentStatus", "VISITED"] }, 1, 0]
+            }
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            completed: { $sum: "$completed" },
+            rescheduled: { $sum: "$rescheduled" },
+            cancelled: { $sum: "$cancelled" },
+            confirmed: { $sum: "$confirmed" },
+            scheduled: { $sum: "$scheduled" },
+            visited: { $sum: "$visited" }
           }
         }
-        let pipeline = [
-          {
-            $match: obj
-          },
-          {
-            $project: {
-              completed: {
-                $cond: [{ $eq: ["$appointmentStatus", "COMPLETED"] }, 1, 0]
-              },
-              rescheduled: {
-                $cond: [{ $eq: ["$appointmentStatus", "RESCHEDULE"] }, 1, 0]
-              },
-              cancelled: {
-                $cond: [{ $eq: ["$appointmentStatus", "CANCELLED"] }, 1, 0]
-              },
-              confirmed: {
-                $cond: [{ $eq: ["$appointmentStatus", "CONFIRMED"] }, 1, 0]
-              },
-              scheduled: {
-                $cond: [{ $eq: ["$appointmentStatus", "SCHEDULED"] }, 1, 0]
-              },
-              visited: {
-                $cond: [{ $eq: ["$appointmentStatus", "VISITED"] }, 1, 0]
-              }
-            }
-          },
-          {
-            $group: {
-              _id: null,
-              completed: { $sum: "$completed" },
-              rescheduled: { $sum: "$rescheduled" },
-              cancelled: { $sum: "$cancelled" },
-              confirmed: { $sum: "$confirmed" },
-              scheduled: { $sum: "$scheduled" },
-              visited: { $sum: "$visited" }
-            }
-          }
-        ];
-    
-        return await appointmentModel.aggregate(pipeline);
-      } catch (e) {
-        throw e;
-      }
-    };
+      ];
+      return await appointmentModel.aggregate(pipeline);
+    } catch (e) {
+      throw e;
+    }
+  };
     
     async getDashboardRevenueCount(data) {
       try {

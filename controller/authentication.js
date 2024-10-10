@@ -368,20 +368,20 @@ class authentication {
     }
   };
     
-    async getBranchList(req, res, next){
-        try{
-            let branchList = await authentationDAObj.branchListDA();
-            if (!branchList) {
-                throw Boom.conflict(
-                  apiResponse.ServerErrors.error.branches_not_found
-                );
-              } else {
-                res.send({ success: true, data: branchList});
-              }
-        } catch (e){
-            next(e);
-        }
-    };
+  async getBranchList(req, res, next){
+    try{
+      let branchList = await authentationDAObj.branchListDA();
+      if (!branchList) {
+        throw Boom.conflict(
+          apiResponse.ServerErrors.error.branches_not_found
+        );
+      } else {
+        res.send({ success: true, data: branchList});
+      }
+    } catch (e){
+      next(e);
+    }
+  };
 
     async getRoleList(req, res, next){
         try{

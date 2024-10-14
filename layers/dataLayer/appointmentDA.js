@@ -2565,7 +2565,7 @@ class appointmentDA{
               firstName: 1,
               lastName: 1,
               gender: 1,
-              roleDetails: 0
+              // roleDetails: 0
             }
           }
         ]

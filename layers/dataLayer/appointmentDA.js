@@ -97,36 +97,36 @@ class appointmentDA{
     }
   };
 
-    async branchCode(branchId){
-        try{
-            return await branchesModel.findOne({_id: branchId, isDeleted: false});
-        } catch(e){
-            throw e;
-        }
-    };
+  async branchCode(branchId){
+    try{
+      return await branchesModel.findOne({_id: branchId, isDeleted: false});
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async updatePaymentReport(obj){
-        try{
-            let result = await paymentModel.findOneAndUpdate(
-                { paymentRelationId: obj.paymentRelationId },
-                {
-                    $set: {
-                      paymentMethod: obj.paymentMethod,
-                      paymentStatus: obj.paymentStatus,
-                      paymentId: obj.paymentId,
-                      orderId: obj.orderId,
-                      paidOn: obj.paidOn,
-                      invoiceNumber: obj.invoiceNumber,
-                      paymentRelationId: obj.paymentRelationId
-                    },
-                },
-                { new: true}
-            );
-            return result;
-        } catch(e){
-            throw e;
-        }
-    };
+  async updatePaymentReport(obj){
+    try{
+      let result = await paymentModel.findOneAndUpdate(
+        { paymentRelationId: obj.paymentRelationId },
+        {
+          $set: {
+          paymentMethod: obj.paymentMethod,
+          paymentStatus: obj.paymentStatus,
+          paymentId: obj.paymentId,
+          orderId: obj.orderId,
+          paidOn: obj.paidOn,
+          invoiceNumber: obj.invoiceNumber,
+          paymentRelationId: obj.paymentRelationId
+          },
+        },
+        { new: true}
+      );
+      return result;
+    } catch(e){
+      throw e;
+    }
+  };
 
   async confirmAppointment(appointmentId, paymentInfoId){
     try{
@@ -250,41 +250,37 @@ class appointmentDA{
     }      
   };
 
-    async getAppointmentDetails(appointmentId){
-        try{
-            let result = await appointmentModel.aggregate(
-                [
-                    {
-                      $match: {
-                        _id: appointmentId,
-                        isActive: true
-                      }
-                    }
-                  ]
-            ); 
-            return result;
-        } catch(e){
-            throw e;
+  async getAppointmentDetails(appointmentId){
+    try{
+      let result = await appointmentModel.aggregate([
+        {
+          $match: {
+            _id: appointmentId,
+            isActive: true
+          }
         }
-    };
+      ]); 
+      return result;
+    } catch(e){
+      throw e;
+    }
+  };
 
-    async getApptDetails(appointmentId){
-        try{
-            let result = await appointmentModel.aggregate(
-                [
-                    {
-                      $match: {
-                        _id: new mongoose.Types.ObjectId(appointmentId),
-                        isActive: true
-                      }
-                    }
-                  ]
-            ); 
-            return result;
-        } catch(e){
-            throw e;
+  async getApptDetails(appointmentId){
+    try{
+      let result = await appointmentModel.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(appointmentId),
+            isActive: true
+          }
         }
-    };
+      ]); 
+      return result;
+    } catch(e){
+      throw e;
+    }
+  };
 
   async getAmount(consultationType){
     try{
@@ -740,69 +736,64 @@ class appointmentDA{
     }
   };
 
-    async getAppointmentPaymentDetails(appointmentId){
-        try{
-            return await paymentModel.aggregate(
-                [
-                    {
-                      $match: {
-                        appointmentId: new mongoose.Types.ObjectId(appointmentId),
-                        isDeleted: false
-                      }
-                    },
-                    {
-                      $lookup: {
-                        from: "patient",
-                        localField: "patientId",
-                        foreignField: "_id",
-                        as: "patientDetails"
-                      }
-                    },
-                    {
-                      $unwind: {
-                        path: "$patientDetails",
-                        preserveNullAndEmptyArrays: true
-                      }
-                    },
-                    {
-                      $lookup: {
-                        from: "appointment",
-                        localField: "appointmentId",
-                        foreignField: "_id",
-                        as: "appointmentDetails"
-                      }
-                    },
-                    {
-                      $unwind: {
-                        path: "$appointmentDetails",
-                        preserveNullAndEmptyArrays: true
-                      }
-                    },
-                    {
-                      $project: {
-                        callMode:
-                          "$appointmentDetils.consultationMode",
-                        paymentFor: 1,
-                        payableAmount: 1,
-                        discount: 1,
-                        paymentType: "$paymentMethod",
-                        paidOn: 1,
-                        createdOn: 1,
-                        paymentStatus: 1,
-                        consultationMode:
-                          "$appointmentDetails.consultationType",
-                        paymentDoneBy: 1,
-                        invoiceNumber: 1,
-                        appointmentNumber:
-                          "$appointmentDetails.appointmentNumber"
-                      }
-                    }
-                ]
-            );
-        } catch(e){
-            throw e;
+  async getAppointmentPaymentDetails(appointmentId){
+    try{
+      return await paymentModel.aggregate([
+        {
+          $match: {
+            appointmentId: new mongoose.Types.ObjectId(appointmentId),
+            isDeleted: false
+          }
+        },
+        {
+          $lookup: {
+            from: "patient",
+            localField: "patientId",
+            foreignField: "_id",
+            as: "patientDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$patientDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "appointment",
+            localField: "appointmentId",
+            foreignField: "_id",
+            as: "appointmentDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$appointmentDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $project: {
+            callMode: "$appointmentDetils.consultationMode",
+            paymentFor: 1,
+            payableAmount: 1,
+            discount: 1,
+            paymentType: "$paymentMethod",
+            paidOn: 1,
+            createdOn: 1,
+            paymentStatus: 1,
+            consultationMode: "$appointmentDetails.consultationType",
+            paymentDoneBy: 1,
+            invoiceNumber: 1,
+            appointmentNumber: "$appointmentDetails.appointmentNumber"
+          }
         }
-    };
+      ]);
+    } catch(e){
+      throw e;
+    }
+  };
 
   async validatePromoCode(code) {
     try {
@@ -818,73 +809,73 @@ class appointmentDA{
     }
   };
 
-    async getRemainingSlotsAndTimings(doctorId, selectedDate) {
-        try {
-            // Step 1: Get all booked slots for the given doctor on the selected date
-            const bookedSlots = await slotModel.aggregate([
-                {
-                    $match: {
-                        doctorId: new mongoose.Types.ObjectId(doctorId),
-                        date: new Date(selectedDate),
-                        isBooked: true,
-                        isActive: true,
-                    },
-                },
-                {
-                    $project: {
-                        timeId: 1,
-                        dayId: 1,
-                    },
-                },
-            ]);
+  async getRemainingSlotsAndTimings(doctorId, selectedDate) {
+    try {
+      // Step 1: Get all booked slots for the given doctor on the selected date
+      const bookedSlots = await slotModel.aggregate([
+        {
+          $match: {
+            doctorId: new mongoose.Types.ObjectId(doctorId),
+            date: new Date(selectedDate),
+            isBooked: true,
+            isActive: true,
+          },
+        },
+        {
+          $project: {
+            timeId: 1,
+            dayId: 1,
+          },
+        },
+      ]);
 
-            // Extract booked timeIds and dayIds
-            const bookedTimeIds = bookedSlots.map(slot => slot.timeId);
-            const bookedDayIds = bookedSlots.map(slot => slot.dayId);
+      // Extract booked timeIds and dayIds
+      const bookedTimeIds = bookedSlots.map(slot => slot.timeId);
+      const bookedDayIds = bookedSlots.map(slot => slot.dayId);
 
-            // Step 2: Get all times that are not booked
-            const availableTimes = await timeModel.aggregate([
-                {
-                    $match: {
-                        isActive: true,
-                    },
-                },
-                {
-                    $project: {
-                        slots: {
-                            $filter: {
-                                input: "$slots",
-                                as: "slot",
-                                cond: { $not: [{ $in: ["$$slot._id", bookedTimeIds] }] }
-                            }
-                        }
-                    },
-                }
-            ]);
-
-            // Step 3: Get all days that are not booked
-            // const availableDays = await dayModel.aggregate([
-            //     {
-            //         $match: {
-            //             _id: { $nin: bookedDayIds },
-            //             isActive: true,
-            //         },
-            //     },
-            //     {
-            //         $project: {
-            //             _id: 1,
-            //             day: 1,
-            //         },
-            //     },
-            // ]);
-            const availableDays = await dayModel.find({isActive: true});
-
-            return { availableTimes, availableDays };
-        } catch (error) {
-            console.error("Error fetching remaining slots and timings:", error);
-            throw error;
+      // Step 2: Get all times that are not booked
+      const availableTimes = await timeModel.aggregate([
+        {
+          $match: {
+          isActive: true,
+          },
+        },
+        {
+          $project: {
+            slots: {
+              $filter: {
+                input: "$slots",
+                as: "slot",
+                cond: { $not: [{ $in: ["$$slot._id", bookedTimeIds] }] }
+              }
+            }
+          },
         }
-    };
+      ]);
+
+      // Step 3: Get all days that are not booked
+      // const availableDays = await dayModel.aggregate([
+      //     {
+      //         $match: {
+      //             _id: { $nin: bookedDayIds },
+      //             isActive: true,
+      //         },
+      //     },
+      //     {
+      //         $project: {
+      //             _id: 1,
+      //             day: 1,
+      //         },
+      //     },
+      // ]);
+      const availableDays = await dayModel.find({isActive: true});
+
+      return { availableTimes, availableDays };
+    } catch (error) {
+      console.error("Error fetching remaining slots and timings:", error);
+      throw error;
+    }
+  };
 
   async getpackageList(){
     try{
@@ -1006,27 +997,27 @@ class appointmentDA{
     }
   };
 
-    async updatePaymentByPaymentIdBA(obj){
-        try{
-            let result = await paymentModel.findOneAndUpdate(
-                {_id: obj.paymentId },
-                { $set:{
-                    paymentMethod: obj.paymentMethod,
-                    paymentStatus: obj.paymentStatus,
-                    paymentId: obj.paymentId,
-                    paymentRelationId: obj.paymentRelationId,
-                    paidOn: obj.paidOn,
-                    appointmentId: obj.appointmentId,
-                    paymentLinkId: obj.paymentLinkId,
-                    invoiceNumber: obj.invoiceNumber
-                }},
-                { new: true}
-            );
-            return result;
-        } catch(e){
-            throw e;
-        }
-    };
+  async updatePaymentByPaymentIdBA(obj){
+    try{
+      let result = await paymentModel.findOneAndUpdate(
+        {_id: obj.paymentId },
+        { $set:{
+          paymentMethod: obj.paymentMethod,
+          paymentStatus: obj.paymentStatus,
+          paymentId: obj.paymentId,
+          paymentRelationId: obj.paymentRelationId,
+          paidOn: obj.paidOn,
+          appointmentId: obj.appointmentId,
+          paymentLinkId: obj.paymentLinkId,
+          invoiceNumber: obj.invoiceNumber
+        }},
+        { new: true}
+      );
+      return result;
+    } catch(e){
+      throw e;
+    }
+  };
 
   async insertPackageSchedules(packageSchedules){
     try{
@@ -1045,300 +1036,279 @@ class appointmentDA{
     }
   };
 
-    async getPatientDetailsPackagePayments(hcuraId, roleId, branchId){
-        try{
-            const hcuraid = hcuraId.replace(/\s+/g, '').toUpperCase();
-            const filter = {
-              hcuraId: hcuraid,
-              isDeleted: false,
-            };
-            let roleDetails = await authentationDA.getroleCodeDA(roleId);
-            if(roleDetails.roleName != "SUPER_ADMIN"){
-              filter.branchId = new mongoose.Types.ObjectId(branchId);
+  async getPatientDetailsPackagePayments(hcuraId, roleId, branchId){
+    try{
+      const hcuraid = hcuraId.replace(/\s+/g, '').toUpperCase();
+      const filter = {
+        hcuraId: hcuraid,
+        isDeleted: false,
+      };
+      let roleDetails = await authentationDA.getroleCodeDA(roleId);
+      if(roleDetails.roleName != "SUPER_ADMIN"){
+        filter.branchId = new mongoose.Types.ObjectId(branchId);
+      }
+      return await patientModel.aggregate([
+        {
+          $match: filter
+        },
+        {
+          $lookup: {
+            from: "appointment",
+            localField: "_id",
+            foreignField: "patientId",
+            as: "appointmentDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$appointmentDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "admin",
+            localField: "appointmentDetails.doctorId",
+            foreignField: "_id",
+            as: "doctorDetails"
+          }
+        },
+        {
+          $unwind: {
+          path: "$doctorDetails",
+          preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $project: {
+            fullName: {
+              $concat: ["$firstName", " ", "$lastName"]
+            },
+            gender: 1,
+            emailId: 1,
+            bloodGroup: 1,
+            birthDate: 1,
+            hcuraId: 1,
+            phoneNumber: 1,
+            doctorId: "$doctorDetails._id",
+            docFullName: {
+              $concat: ["$doctorDetails.firstName", " ",  "$doctorDetails.lastName" ]
+            },
+            appointmentId: "$appointmentDetails._id",
+            appointmentNumber: "$appointmentDetails.appointmentNumber",
+            appointmentDate: "$appointmentDetails.appointmentDate"
+          }
+        }
+      ]);
+    } catch(e){
+      throw e;
+    }
+  };
+
+  async getPaymentDetailsByAppointmentId(appointmentId){
+    try{
+      return await paymentModel.aggregate([
+        {
+          $match: {
+            appointmentId: new mongoose.Types.ObjectId(appointmentId),
+            isDeleted: false
+          }
+        },
+        {
+          $lookup: {
+            from: "patient",
+            localField: "patientId",
+            foreignField: "_id",
+            as: "patientDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$patientDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "appointment",
+            localField: "appointmentId",
+            foreignField: "_id",
+            as: "appointmentDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$appointmentDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "package",
+            localField: "packageId",
+            foreignField: "_id",
+            as: "packageDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$packageDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "admin",
+            localField: "paymentDoneBy",
+            foreignField: "_id",
+            as: "paymentDoneDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$paymentDoneDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $project: {
+            consultationMode: "$appointmentDetails.consultationMode",
+            consultationType: "$appointmentDetails.consultationType",
+            paymentFor: 1,
+            payableAmount: 1,
+            paymentType: "$paymentMethod",
+            packageName: "$packageDetails.name",
+            discount: 1,
+            paidOn: 1,
+            createdOn: 1,
+            packageId: 1,
+            paymentStatus: 1,
+            paymentDoneBy: {
+              $concat: [
+                "$paymentDoneDetails.firstName",
+                " ",
+                "$paymentDoneDetails.lastName"
+              ]
+            },
+            userAddress: {
+              $concat: [
+                "$patientDetails.firstName",
+                " ",
+                "$patientDetails.lastName"
+              ]
+            },
+            stateName: "$patientDetails.stateName",
+            phoneNumber: "$patientDetails.phoneNumber",
+            countryCode: "$patientDetails.countryCode",
+            houseNo: {
+              $arrayElemAt: [
+                "$patientDetails.address.houseNo", 0 ]
+            },
+            street: {
+              $arrayElemAt: [
+                "$patientDetails.address.street", 0 ]
+            },
+            city: {
+              $arrayElemAt: [
+                "$patientDetails.address.city", 0 ]
+            },
+            state: {
+              $arrayElemAt: [
+                "$patientDetails.address.state",  0 ]
+            },
+            pinCode: {
+              $arrayElemAt: [
+                "$patientDetails.address.pinCode", 0 ]
             }
-            return await patientModel.aggregate(
-                [
-                    {
-                     $match: filter
-                    },
-                    {
-                      $lookup: {
-                        from: "appointment",
-                        localField: "_id",
-                        foreignField: "patientId",
-                        as: "appointmentDetails"
-                      }
-                    },
-                    {
-                      $unwind: {
-                        path: "$appointmentDetails",
-                        preserveNullAndEmptyArrays: true
-                      }
-                    },
-                    {
-                      $lookup: {
-                        from: "admin",
-                        localField: "appointmentDetails.doctorId",
-                        foreignField: "_id",
-                        as: "doctorDetails"
-                      }
-                    },
-                    {
-                      $unwind: {
-                        path: "$doctorDetails",
-                        preserveNullAndEmptyArrays: true
-                      }
-                    },
-                    {
-                      $project: {
-                        fullName: {
-                          $concat: ["$firstName", " ", "$lastName"]
-                        },
-                        gender: 1,
-                        emailId: 1,
-                        bloodGroup: 1,
-                        birthDate: 1,
-                        hcuraId: 1,
-                        phoneNumber: 1,
-                        doctorId: "$doctorDetails._id",
-                        docFullName: {
-                          $concat: [
-                            "$doctorDetails.firstName",
-                            " ",
-                            "$doctorDetails.lastName"
-                          ]
-                        },
-                        appointmentId: "$appointmentDetails._id",
-                        appointmentNumber:
-                          "$appointmentDetails.appointmentNumber",
-                        appointmentDate:
-                          "$appointmentDetails.appointmentDate"
-                      }
-                    }
-                  ]
-            )
-
-        } catch(e){
-            throw e;
+          }
         }
-    };
+      ]);
+    } catch(e){
+      throw e
+    }
+  };
 
-    async getPaymentDetailsByAppointmentId(appointmentId){
-        try{
-          return await paymentModel.aggregate(
-            [
-              {
-                $match: {
-                  appointmentId: new mongoose.Types.ObjectId(appointmentId),
-                  isDeleted: false
-                }
-              },
-              {
-                $lookup: {
-                  from: "patient",
-                  localField: "patientId",
-                  foreignField: "_id",
-                  as: "patientDetails"
-                }
-              },
-              {
-                $unwind: {
-                  path: "$patientDetails",
-                  preserveNullAndEmptyArrays: true
-                }
-              },
-              {
-                $lookup: {
-                  from: "appointment",
-                  localField: "appointmentId",
-                  foreignField: "_id",
-                  as: "appointmentDetails"
-                }
-              },
-              {
-                $unwind: {
-                  path: "$appointmentDetails",
-                  preserveNullAndEmptyArrays: true
-                }
-              },
-              {
-                $lookup: {
-                  from: "package",
-                  localField: "packageId",
-                  foreignField: "_id",
-                  as: "packageDetails"
-                }
-              },
-              {
-                $unwind: {
-                  path: "$packageDetails",
-                  preserveNullAndEmptyArrays: true
-                }
-              },
-              {
-                $lookup: {
-                  from: "admin",
-                  localField: "paymentDoneBy",
-                  foreignField: "_id",
-                  as: "paymentDoneDetails"
-                }
-              },
-              {
-                $unwind: {
-                  path: "$paymentDoneDetails",
-                  preserveNullAndEmptyArrays: true
-                }
-              },
-              {
-                $project: {
-                  consultationMode: "$appointmentDetails.consultationMode",
-                  consultationType: "$appointmentDetails.consultationType",
-                  paymentFor: 1,
-                  payableAmount: 1,
-                  paymentType: "$paymentMethod",
-                  packageName: "$packageDetails.name",
-                  discount: 1,
-                  paidOn: 1,
-                  createdOn: 1,
-                  packageId: 1,
-                  paymentStatus: 1,
-                  paymentDoneBy: {
-                    $concat: [
-                      "$paymentDoneDetails.firstName",
-                      " ",
-                      "$paymentDoneDetails.lastName"
-                    ]
-                  },
-                  userAddress: {
-                    $concat: [
-                      "$patientDetails.firstName",
-                      " ",
-                      "$patientDetails.lastName"
-                    ]
-                  },
-                  stateName: "$patientDetails.stateName",
-                  phoneNumber: "$patientDetails.phoneNumber",
-                  countryCode: "$patientDetails.countryCode",
-                  houseNo: {
-                    $arrayElemAt: [
-                      "$patientDetails.address.houseNo", 0 ]
-                  },
-                  street: {
-                    $arrayElemAt: [
-                      "$patientDetails.address.street", 0 ]
-                  },
-                  city: {
-                    $arrayElemAt: [
-                      "$patientDetails.address.city", 0 ]
-                  },
-                  state: {
-                    $arrayElemAt: [
-                      "$patientDetails.address.state",  0 ]
-                  },
-                  pinCode: {
-                    $arrayElemAt: [
-                      "$patientDetails.address.pinCode", 0 ]
-                  }
-                }
-              }
-            ]
-          );
-        } catch(e){
-            throw e
-        }
-    };
-
-    async getPatientAndPaymentDetailsForExternal(hcuraId, roleId, branchId){
-        try{
-            const hcuraid = hcuraId.replace(/\s+/g, '').toUpperCase();
-            const filter = {
-              hcuraId: hcuraid,
-              isDeleted: false,
-            };
-            let roleDetails = await authentationDA.getroleCodeDA(roleId);
-            if(roleDetails.roleName != "SUPER_ADMIN"){
-              filter.branchId = new mongoose.Types.ObjectId(branchId);
+  async getPatientAndPaymentDetailsForExternal(hcuraId, roleId, branchId){
+    try{
+      const hcuraid = hcuraId.replace(/\s+/g, '').toUpperCase();
+      const filter = {
+        hcuraId: hcuraid,
+        isDeleted: false,
+      };
+      let roleDetails = await authentationDA.getroleCodeDA(roleId);
+      if(roleDetails.roleName != "SUPER_ADMIN"){
+        filter.branchId = new mongoose.Types.ObjectId(branchId);
+      }
+      return await patientModel.aggregate([
+        {
+          $match: filter
+        },
+        {
+          $lookup: {
+            from: "payment",
+            localField: "_id",
+            foreignField: "patientId",
+            as: "paymentDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$paymentDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "appointment",
+            localField: "paymentDetails._id",
+            foreignField: "paymentId",
+            as: "appointmentDetails"
+          }
+        },
+        {
+          $lookup: {
+            from: "package",
+              localField: "paymentDetails.packageId",
+              foreignField: "_id",
+              as: "packageDetails"
+          }
+        },
+        {
+          $addFields: {
+            "paymentDetails.consultationMode": {
+              $arrayElemAt: ["$appointmentDetails.consultationMode",0]
+            },
+            "paymentDetails.packageName": {
+              $arrayElemAt: ["$packageDetails.name",0]
+            },
+            "paymentDetails.packageAmount": {
+              $arrayElemAt: [
+              "$packageDetails.amount",0]
             }
-            return await patientModel.aggregate(
-                [
-                  {
-                    $match: filter
-                  },
-                  {
-                    $lookup: {
-                      from: "payment",
-                      localField: "_id",
-                      foreignField: "patientId",
-                      as: "paymentDetails"
-                    }
-                  },
-                  {
-                    $unwind: {
-                      path: "$paymentDetails",
-                      preserveNullAndEmptyArrays: true
-                    }
-                  },
-                  {
-                    $lookup: {
-                      from: "appointment",
-                      localField: "paymentDetails._id",
-                      foreignField: "paymentId",
-                      as: "appointmentDetails"
-                    }
-                  },
-                  {
-                    $lookup: {
-                      from: "package",
-                      localField: "paymentDetails.packageId",
-                      foreignField: "_id",
-                      as: "packageDetails"
-                    }
-                  },
-                  {
-                    $addFields: {
-                      "paymentDetails.consultationMode": {
-                        $arrayElemAt: [
-                          "$appointmentDetails.consultationMode",
-                          0
-                        ]
-                      },
-                      "paymentDetails.packageName": {
-                        $arrayElemAt: [
-                          "$packageDetails.name",
-                          0
-                        ]
-                      },
-                      "paymentDetails.packageAmount": {
-                        $arrayElemAt: [
-                          "$packageDetails.amount",
-                          0
-                        ]
-                      }
-                    }
-                  },
-                  {
-                    $group: {
-                      _id: "$_id",
-                      patientDetails: {
-                        $first: "$$ROOT"
-                      },
-                      paymentDetails: {
-                        $push: "$paymentDetails"
-                      }
-                    }
-                  },
-                  {
-                    $project: {
-                      patientDetails: 1,
-                      paymentDetails: 1
-                    }
-                  }
-                ]
-              );
-        } catch(e){
-            throw e;
+          }
+        },
+        {
+          $group: {
+            _id: "$_id",
+            patientDetails: {
+            $first: "$$ROOT"
+            },
+            paymentDetails: {
+              $push: "$paymentDetails"
+            }
+          }
+        },
+        {
+          $project: {
+            patientDetails: 1,
+            paymentDetails: 1
+          }
         }
-    };
+      ]);
+    } catch(e){
+      throw e;
+    }
+  };
 
   async addExternalSourcePaymentInfo(obj, paymentObj){
     try{
@@ -1364,107 +1334,107 @@ class appointmentDA{
     }
   };
 
-    async updatePaymentByPaymentId(obj) {
-      try {
-        let result = await paymentModel.findOneAndUpdate(
-          { _id: obj.paymentId },
-          {
-            $set: {
-              paymentMethod: obj.paymentMethod,
-              paymentStatus: obj.paymentStatus,
-              paymentId: obj.paymentId,
-              paidOn: obj.paidOn,
-              invoiceNumber: obj.invoiceNumber,
-              paymentRelationId: obj.paymentRelationId,
-              paymentLinkId: obj.paymentLinkId,
-            },
+  async updatePaymentByPaymentId(obj) {
+    try {
+      let result = await paymentModel.findOneAndUpdate(
+        { _id: obj.paymentId },
+        {
+          $set: {
+            paymentMethod: obj.paymentMethod,
+            paymentStatus: obj.paymentStatus,
+            paymentId: obj.paymentId,
+            paidOn: obj.paidOn,
+            invoiceNumber: obj.invoiceNumber,
+            paymentRelationId: obj.paymentRelationId,
+            paymentLinkId: obj.paymentLinkId,
           },
-          { new: true }
-        );
-        return result;
-      } catch (e) {
+        },
+        { new: true }
+      );
+      return result;
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  async updatePaymentReportDA(obj){
+    try{
+      let result = await paymentModel.findOneAndUpdate(
+        { appointmentId: obj.appointmentId },
+        {
+          $set: {
+            paymentMethod: obj.paymentMethod,
+            paymentStatus: obj.paymentStatus,
+            paymentId: obj.paymentId,
+            orderId: obj.orderId,
+            paidOn: obj.paidOn,
+            invoiceNumber: obj.invoiceNumber,
+            paymentRelationId: obj.paymentRelationId
+          },
+        },
+        { new: true}
+      );
+      return result;
+    } catch(e){
         throw e;
-      }
-    };
+    }
+  };
 
-    async updatePaymentReportDA(obj){
-      try{
-          let result = await paymentModel.findOneAndUpdate(
-              { appointmentId: obj.appointmentId },
-              {
-                  $set: {
-                    paymentMethod: obj.paymentMethod,
-                    paymentStatus: obj.paymentStatus,
-                    paymentId: obj.paymentId,
-                    orderId: obj.orderId,
-                    paidOn: obj.paidOn,
-                    invoiceNumber: obj.invoiceNumber,
-                    paymentRelationId: obj.paymentRelationId
-                  },
-              },
-              { new: true}
-          );
-          return result;
-      } catch(e){
-          throw e;
-      }
-    };
+  async getPromoListPackage() {
+    try {
+      return await promoCodesModel.aggregate([
+        {
+          $match: {
+            isDeleted: false,
+            promoCodeFor: "HOMEOPATHY",
+            $expr: {
+              $and: [
+                { $gte: ["$expiredOn", new Date()] },
+                { $lte: ["$startsOn", new Date()] }
+              ]
+            }
+          },
+        },
+        {
+          $project: {
+            promoCodeName: 1,
+            discount: 1,
+            promoCodeFor: 1,
+          },
+        },
+      ]);
+    } catch (e) {
+        throw e;
+    }
+  };
 
-    async getPromoListPackage() {
-      try {
-          return await promoCodesModel.aggregate([
-              {
-                  $match: {
-                      isDeleted: false,
-                      promoCodeFor: "HOMEOPATHY",
-                      $expr: {
-                          $and: [
-                              { $gte: ["$expiredOn", new Date()] },
-                              { $lte: ["$startsOn", new Date()] }
-                          ]
-                      }
-                  },
-              },
-              {
-                  $project: {
-                    promoCodeName: 1,
-                    discount: 1,
-                    promoCodeFor: 1,
-                  },
-              },
-          ]);
-      } catch (e) {
-          throw e;
-      }
-    };
-
-    async getPromoListAsthetic() {
-      try {
-          return await promoCodesModel.aggregate([
-              {
-                  $match: {
-                      isDeleted: false,
-                      promoCodeFor: "ASTHETIC",
-                      $expr: {
-                          $and: [
-                              { $gte: ["$expiredOn", new Date()] },
-                              { $lte: ["$startsOn", new Date()] }
-                          ]
-                      }
-                  },
-              },
-              {
-                  $project: {
-                    promoCodeName: 1,
-                    discount: 1,
-                    promoCodeFor: 1,
-                  },
-              },
-          ]);
-      } catch (e) {
-          throw e;
-      }
-    };
+  async getPromoListAsthetic() {
+    try {
+      return await promoCodesModel.aggregate([
+        {
+          $match: {
+          isDeleted: false,
+          promoCodeFor: "ASTHETIC",
+            $expr: {
+              $and: [
+                { $gte: ["$expiredOn", new Date()] },
+                { $lte: ["$startsOn", new Date()] }
+              ]
+            }
+          },
+        },
+        {
+          $project: {
+            promoCodeName: 1,
+            discount: 1,
+            promoCodeFor: 1,
+          },
+        },
+      ]);
+    } catch (e) {
+      throw e;
+    }
+  };
 
   async dashboardPtDetailsDA(body){
     try{
@@ -1598,212 +1568,205 @@ class appointmentDA{
     }
   };
 
-    async getAllApptList(obj, page, limit, searchKey, fromDate, toDate, branchId, roleId){
-      try{
-        let match = { $regex: searchKey, $options: "i" };
-        let offset = page * limit;
-        if (fromDate && toDate) {
-          const stDate = new Date(fromDate);
-          const edDate = new Date(toDate);
-          if (stDate != "Invalid Date" && edDate != "Invalid Date") {
-            obj["appointmentDate"] = {
-              $gte: stDate,
-              $lte: edDate,
-            };
-          }
+  async getAllApptList(obj, page, limit, searchKey, fromDate, toDate, branchId, roleId){
+    try{
+      let match = { $regex: searchKey, $options: "i" };
+      let offset = page * limit;
+      if (fromDate && toDate) {
+        const stDate = new Date(fromDate);
+        const edDate = new Date(toDate);
+        if (stDate != "Invalid Date" && edDate != "Invalid Date") {
+          obj["appointmentDate"] = {
+            $gte: stDate,
+            $lte: edDate,
+          };
         }
-        if(roleId){
-          let roleDetails = await authentationDA.getroleCodeDA(roleId);
-          if(roleDetails.roleName != "SUPER_ADMIN"){
-              obj["branchId"] = new mongoose.Types.ObjectId(branchId);
-          }
+      }
+      if(roleId){
+        let roleDetails = await authentationDA.getroleCodeDA(roleId);
+        if(roleDetails.roleName != "SUPER_ADMIN"){
+          obj["branchId"] = new mongoose.Types.ObjectId(branchId);
         }
-        const apptList = await appointmentModel.aggregate(
-          [
-            {
-              $sort: {
-                appointmentDate: -1
-              }
-            },
-            {
-              $match: obj
-            },
-            {
-              $lookup: {
-                from: "admin",
-                localField: "doctorId",
-                foreignField: "_id",
-                as: "doctor"
-              }
-            },
-            {
-              $unwind: {
-                path: "$doctor",
-                preserveNullAndEmptyArrays: true
-              }
-            },
-            {
-              $lookup: {
-                from: "patient",
-                localField: "patientId",
-                foreignField: "_id",
-                as: "patient"
-              }
-            },
-            {
-              $unwind: {
-                path: "$patient",
-                preserveNullAndEmptyArrays: true
-              }
-            },
-            {
-              $lookup: {
-                from: "payment",
-                localField: "paymentId",
-                foreignField: "_id",
-                as: "payment"
-              }
-            },
-            {
-              $unwind: {
-                path: "$payment",
-                preserveNullAndEmptyArrays: true
-              }
-            },
-            {
-              $skip: parseInt(offset),
-            },
-            {
-              $limit: parseInt(limit),
-            },
-            {
-              $project: {
-                appointmentDate: 1,
-                startTime: 1,
-                createdOn: 1,
-                appointmentStatus: 1,
-                appointmentNumber: 1,
-                appointmentId: 1,
-                doctorFirstName: "$doctor.firstName",
-                doctorLastName: "$doctor.lastName",
-                doctorEmailId: "$doctor.emailId",
-                doctorProfilePic: "$doctor.profilePic",
-                doctorId: "$doctor._id",
-                doctorHcuraDoctorId:
-                  "$doctor.hcuraDoctorId",
-                patientFirstName: "$patient.firstName",
-                patientLastName: "$patient.lastName",
-                patientHcuraId: "$patient.hcuraId",
-                patientId: "$patient._id",
-                paymentMethod: "$payment.paymentMethod",
-                paymentCreatedDate: "$payment.paidOn",
-                paymentPayableAmount:
-                  "$payment.payableAmount",
-                paymentPaymentStatus:
-                  "$payment.paymentStatus",
-                _id: "$_id"
-              }
-            },
-            {
-              $match: {
-                $or: [
-                  { appointmentNumber: match },
-                  { doctorFirstName: match },
-                  { doctorLastName: match },
-                  { patientFirstName: match },
-                  { patientLastName: match },
-                  { patientHcuraId: match }
-                ],
-              },
-            },
-          ]
-        );
+      }
+      const apptList = await appointmentModel.aggregate([
+        {
+          $sort: {
+            appointmentDate: -1
+          }
+        },
+        {
+          $match: obj
+        },
+        {
+          $lookup: {
+            from: "admin",
+            localField: "doctorId",
+            foreignField: "_id",
+            as: "doctor"
+          }
+        },
+        {
+          $unwind: {
+            path: "$doctor",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "patient",
+            localField: "patientId",
+            foreignField: "_id",
+            as: "patient"
+          }
+        },
+        {
+          $unwind: {
+            path: "$patient",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "payment",
+            localField: "paymentId",
+            foreignField: "_id",
+            as: "payment"
+          }
+        },
+        {
+          $unwind: {
+            path: "$payment",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $skip: parseInt(offset),
+        },
+        {
+          $limit: parseInt(limit),
+        },
+        {
+          $project: {
+            appointmentDate: 1,
+            startTime: 1,
+            createdOn: 1,
+            appointmentStatus: 1,
+            appointmentNumber: 1,
+            appointmentId: 1,
+            doctorFirstName: "$doctor.firstName",
+            doctorLastName: "$doctor.lastName",
+            doctorEmailId: "$doctor.emailId",
+            doctorProfilePic: "$doctor.profilePic",
+            doctorId: "$doctor._id",
+            doctorHcuraDoctorId: "$doctor.hcuraDoctorId",
+            patientFirstName: "$patient.firstName",
+            patientLastName: "$patient.lastName",
+            patientHcuraId: "$patient.hcuraId",
+            patientId: "$patient._id",
+            paymentMethod: "$payment.paymentMethod",
+            paymentCreatedDate: "$payment.paidOn",
+            paymentPayableAmount: "$payment.payableAmount",
+            paymentPaymentStatus: "$payment.paymentStatus",
+            _id: "$_id"
+          }
+        },
+        {
+          $match: {
+            $or: [
+              { appointmentNumber: match },
+              { doctorFirstName: match },
+              { doctorLastName: match },
+              { patientFirstName: match },
+              { patientLastName: match },
+              { patientHcuraId: match }
+            ],
+          },
+        },
+      ]);
       const appCount = await appointmentModel.find(obj).countDocuments();
       const pageCount = Math.ceil(parseInt(appCount) / parseInt(limit));
       return { apptList, appCount, pageCount };
-      } catch(e){
-        throw e
-      }
-    };
+    } catch(e){
+      throw e
+    }
+  };
 
-    async updateAppointmentStatus(body){
-      try{
-        if(body.appointmentStatus == "CONFIRMED"){
-          let result = await appointmentModel.findOneAndUpdate(
-            {_id: body.appointmentId},
-            {
-                $set:{
-                    appointmentStatus: "CONFIRMED",
-                    confirmedUpdatedBy: body.updatedBy
-                },
-            },{ new: true}
-          );
-        return result;
-        } else if(body.appointmentStatus == "CANCELLED"){
-          let result = await appointmentModel.findOneAndUpdate(
-            {_id: body.appointmentId},
-            {
-                $set:{
-                    appointmentStatus: "CANCELLED",
-                    canceledUpdatedBy: body.updatedBy
-                },
-            },{ new: true}
-          );
-          return result;
-        } else if(body.appointmentStatus == "VISITED"){
-          let result = await appointmentModel.findOneAndUpdate(
-            {_id: body.appointmentId},
-            {
-                $set:{
-                    appointmentStatus: "VISITED",
-                    visitedUpdatedBy: body.updatedBy
-                },
-            },{ new: true}
-          );
-          return result;
-        }
-      } catch(e){
-        throw e;
-      }
-    };
-
-    async getStateDetails(branchId){
-      try{
-        let result = await branchesModel.aggregate(
-          [
-            {
-              $match: {
-                _id: new mongoose.Types.ObjectId(branchId),
-                isDeleted: false
-              }
+  async updateAppointmentStatus(body){
+    try{
+      if(body.appointmentStatus == "CONFIRMED"){
+        let result = await appointmentModel.findOneAndUpdate(
+          {_id: body.appointmentId},
+          {
+            $set:{
+              appointmentStatus: "CONFIRMED",
+              confirmedUpdatedBy: body.updatedBy
             },
-            {
-              $lookup: {
-                from: "states",
-                localField: "stateId",
-                foreignField: "_id",
-                as: "stateDetails"
-              }
+          },{ new: true}
+        );
+      return result;
+      } else if(body.appointmentStatus == "CANCELLED"){
+        let result = await appointmentModel.findOneAndUpdate(
+          {_id: body.appointmentId},
+          {
+            $set:{
+              appointmentStatus: "CANCELLED",
+              canceledUpdatedBy: body.updatedBy
             },
-            {
-              $unwind: {
-                path: "$stateDetails",
-                preserveNullAndEmptyArrays: true
-              }
-            },
-            {
-              $project: {
-                _id: 0,
-                stateDetails: 1
-              }
-            }
-          ]
+          },{ new: true}
         );
         return result;
-      } catch(e){
-        throw e;
+      } else if(body.appointmentStatus == "VISITED"){
+        let result = await appointmentModel.findOneAndUpdate(
+          {_id: body.appointmentId},
+          {
+            $set:{
+              appointmentStatus: "VISITED",
+              visitedUpdatedBy: body.updatedBy
+            },
+          },{ new: true}
+        );
+        return result;
       }
-    };
+    } catch(e){
+      throw e;
+    }
+  };
+
+  async getStateDetails(branchId){
+    try{
+      let result = await branchesModel.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(branchId),
+            isDeleted: false
+          }
+        },
+        {
+          $lookup: {
+            from: "states",
+            localField: "stateId",
+            foreignField: "_id",
+            as: "stateDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$stateDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            stateDetails: 1
+          }
+        }
+      ]);
+      return result;
+    } catch(e){
+      throw e;
+    }
+  };
 
   async getDashboardAptCount(data) {
     try {
@@ -1862,256 +1825,251 @@ class appointmentDA{
     }
   };
     
-    async getDashboardRevenueCount(data) {
-      try {
-        let obj = {
-          paidOn: {
-            $gte: new Date(data.startDate),
-            $lte: new Date(data.endDate),
-          },
-          isDeleted : false
-        };
-        if (data.all !== "YES") {
-          // let roleDetails = await authentationDA.getroleCodeDA(data.roleId);
-          // if (roleDetails.roleName !== "SUPER_ADMIN" && data.branchId) {
-            obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
-          // }
-        }
-    
-        let pipeline = [
-          { $match: obj },
-          {
-            $facet: {
-              debug: [
-                {
-                  $project: {
-                    refunded: { $toDouble: "$refundAmount" },
-                    total: { $toDouble: "$payableAmount" },
-                    completed: {
-                      $cond: [
-                        { $eq: ["$paymentStatus", "captured"] },
-                        { $toDouble: "$payableAmount" },
-                        0
-                      ],
-                    },
-                    paymentFor: 1,
-                    paymentMethod: 1,
-                  },
-                },
-                {
-                  $addFields: {
-                    debugPaymentFor: "$paymentFor",
-                    debugPaymentMethod: "$paymentMethod",
-                    debugPayableAmount: "$payableAmount"
-                  }
-                }
-              ],
-              results: [
-                {
-                  $project: {
-                    refunded: { $toDouble: "$refundAmount" },
-                    total: { $toDouble: "$payableAmount" },
-                    completed: {
-                      $cond: [
-                        { $eq: ["$paymentStatus", "captured"] },
-                        { $toDouble: "$payableAmount" },
-                        0
-                      ],
-                    },
-                    paymentFor: 1,
-                    paymentMethod: 1,
-                  },
-                },
-                {
-                  $group: {
-                    _id: null,
-                    refunded: { $sum: "$refunded" },
-                    total: { $sum: "$total" },
-                    completed: { $sum: "$completed" },
-    
-                    astheticTotal: {
-                      $sum: {
-                        $cond: [{ $eq: ["$paymentFor", "ASTHETIC"] }, "$total", 0]
-                      }
-                    },
-                    consultationTotal: {
-                      $sum: {
-                        $cond: [{ $eq: ["$paymentFor", "CONSULTATION"] }, "$total", 0]
-                      }
-                    },
-                    homepathyTotal: {
-                      $sum: {
-                        $cond: [{ $eq: ["$paymentFor", "HOMEOPATHY"] }, "$total", 0]
-                      }
-                    },
-                    externalSourceTotal: {
-                      $sum: {
-                        $cond: [{ $eq: ["$paymentFor", "EXTERNAL_SOURCE"] }, "$total", 0]
-                      }
-                    },
-                    cashTotal: {
-                      $sum: {
-                        $cond: [{ $eq: ["$paymentMethod", "cash"] }, "$total", 0]
-                      }
-                    },
-                    qrCodeTotal: {
-                      $sum: {
-                        $cond: [{ $eq: ["$paymentMethod", "qr_code"] }, "$total", 0]
-                      }
-                    },
-                    swippingMachineTotal: {
-                      $sum: {
-                        $cond: [{ $eq: ["$paymentMethod", "swipping_machine"] }, "$total", 0]
-                      }
-                    },
-                    otherMethodsTotal: {
-                      $sum: {
-                        $cond: [
-                          { $not: [{ $in: ["$paymentMethod", ["cash", "qr_code", "swipping_machine"]] }] },
-                          "$total",
-                          0
-                        ]
-                      }
-                    },
-                  },
-                }
-              ]
-            }
-          }
-        ];
-        let result = await paymentModel.aggregate(pipeline);
-        return result[0].results;
-      } catch (e) {
-        throw e;
+  async getDashboardRevenueCount(data) {
+    try {
+      let obj = {
+        paidOn: {
+          $gte: new Date(data.startDate),
+          $lte: new Date(data.endDate),
+        },
+        isDeleted : false
+      };
+      if (data.all !== "YES") {
+        // let roleDetails = await authentationDA.getroleCodeDA(data.roleId);
+        // if (roleDetails.roleName !== "SUPER_ADMIN" && data.branchId) {
+        obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
+        // }
       }
-    };
-
-    async getPatientListTemp(type, page, limit, search, roleId, branchId) {
-      let offset = (page - 1) * limit;
-      try {
-        let pipeline = [];
-        if (type != "ALL") {
-          pipeline.push({
-            $match: {
-              isActive: true,
-            },
-          });
-        }
-        let roleDetails = await authentationDA.getroleCodeDA(roleId);
-        if(roleDetails.roleName != "SUPER_ADMIN"){
-          pipeline.push({
-            $match: {
-              branchId: new mongoose.Types.ObjectId(branchId),
-            },
-          });
-        }
-        if (search != "") {
-          let or = [
-            {
-              hcuraTId: { $regex: search, $options: "i" },
-            },
-            {
-              firstName: { $regex: search, $options: "i" },
-            },
-            {
-              lastName: { $regex: search, $options: "i" },
-            },
-            {
-              phoneNumber: { $regex: search, $options: "i" },
-            },
-          ];
-          pipeline.push({
-              $addFields: {
-                phoneNumberStr: { $toString: "$phoneNumber" }, 
-              },
-            });
-          pipeline.push({
-            $match: {
-              $or: [
-                {
-                  hcuraTId: { $regex: search, $options: "i" },
-                },
-                {
-                  firstName: { $regex: search, $options: "i" },
-                },
-                {
-                  lastName: { $regex: search, $options: "i" },
-                },
-                {
-                  phoneNumberStr: { $regex: search, $options: "i" }, 
-                },
-              ],
-            },
-          });
-        }
-
-        pipeline.push({
-          $lookup: {
-            from: "admin", 
-            localField: "doctorId", 
-            foreignField: "_id", 
-            as: "doctorDetails",
-          },
-        });
-
-        pipeline.push({
-          $unwind: {
-            path: "$doctorDetails",
-            preserveNullAndEmptyArrays: true,
-          },
-        });
-
-        pipeline.push({
-          $project: {
-            hcuraTId: 1,
-            firstName: 1,
-            lastName: 1,
-            phoneNumber: 1,
-            doctorfirstName: "$doctorDetails.firstName",
-            doctorlastName: "$doctorDetails.lastName",
-            createdOn: 1,
-            gender: 1,
-            complaint: 1,
-            appointmentDate: 1,
-            isConverted: 1
-          },
-        });
-
-        pipeline.push({
+    
+      let pipeline = [
+        { $match: obj },
+        {
           $facet: {
-            metadata: [{ $count: "total" }, { $addFields: { page: page } }],
-            data: [
-              { $sort: { createdOn: -1 } },
-              { $skip: offset },
-              { $limit: limit },
+            debug: [
+              {
+                $project: {
+                  refunded: { $toDouble: "$refundAmount" },
+                  total: { $toDouble: "$payableAmount" },
+                  completed: {
+                    $cond: [
+                      { $eq: ["$paymentStatus", "captured"] },
+                      { $toDouble: "$payableAmount" },
+                      0
+                    ],
+                  },
+                  paymentFor: 1,
+                  paymentMethod: 1,
+                },
+              },
+              {
+                $addFields: {
+                  debugPaymentFor: "$paymentFor",
+                  debugPaymentMethod: "$paymentMethod",
+                  debugPayableAmount: "$payableAmount"
+                }
+              }
+            ],
+            results: [
+              {
+                $project: {
+                  refunded: { $toDouble: "$refundAmount" },
+                  total: { $toDouble: "$payableAmount" },
+                  completed: {
+                    $cond: [
+                      { $eq: ["$paymentStatus", "captured"] },
+                      { $toDouble: "$payableAmount" },
+                      0
+                    ],
+                  },
+                  paymentFor: 1,
+                  paymentMethod: 1,
+                },
+              },
+              {
+                $group: {
+                  _id: null,
+                  refunded: { $sum: "$refunded" },
+                  total: { $sum: "$total" },
+                  completed: { $sum: "$completed" },  
+                  astheticTotal: {
+                    $sum: {
+                      $cond: [{ $eq: ["$paymentFor", "ASTHETIC"] }, "$total", 0]
+                    }
+                  },
+                  consultationTotal: {
+                    $sum: {
+                      $cond: [{ $eq: ["$paymentFor", "CONSULTATION"] }, "$total", 0]
+                    }
+                  },
+                  homepathyTotal: {
+                    $sum: {
+                      $cond: [{ $eq: ["$paymentFor", "HOMEOPATHY"] }, "$total", 0]
+                    }
+                  },
+                  externalSourceTotal: {
+                    $sum: {
+                      $cond: [{ $eq: ["$paymentFor", "EXTERNAL_SOURCE"] }, "$total", 0]
+                    }
+                  },
+                  cashTotal: {
+                    $sum: {
+                      $cond: [{ $eq: ["$paymentMethod", "cash"] }, "$total", 0]
+                    }
+                  },
+                  qrCodeTotal: {
+                    $sum: {
+                      $cond: [{ $eq: ["$paymentMethod", "qr_code"] }, "$total", 0]
+                    }
+                  },
+                  swippingMachineTotal: {
+                    $sum: {
+                      $cond: [{ $eq: ["$paymentMethod", "swipping_machine"] }, "$total", 0]
+                    }
+                  },
+                  otherMethodsTotal: {
+                    $sum: {
+                      $cond: [
+                        { $not: [{ $in: ["$paymentMethod", ["cash", "qr_code", "swipping_machine"]] }] },
+                        "$total",
+                        0
+                      ]
+                    }
+                  },
+                },
+              }
+            ]
+          }
+        }
+      ];
+      let result = await paymentModel.aggregate(pipeline);
+      return result[0].results;
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  async getPatientListTemp(type, page, limit, search, roleId, branchId) {
+    let offset = (page - 1) * limit;
+    try {
+      let pipeline = [];
+      if (type != "ALL") {
+        pipeline.push({
+          $match: {
+            isActive: true,
+          },
+        });
+      }
+      let roleDetails = await authentationDA.getroleCodeDA(roleId);
+      if(roleDetails.roleName != "SUPER_ADMIN"){
+        pipeline.push({
+          $match: {
+            branchId: new mongoose.Types.ObjectId(branchId),
+          },
+        });
+      }
+      if (search != "") {
+        let or = [
+          {
+            hcuraTId: { $regex: search, $options: "i" },
+          },
+          {
+            firstName: { $regex: search, $options: "i" },
+          },
+          {
+            lastName: { $regex: search, $options: "i" },
+          },
+          {
+            phoneNumber: { $regex: search, $options: "i" },
+          },
+        ];
+        pipeline.push({
+          $addFields: {
+            phoneNumberStr: { $toString: "$phoneNumber" }, 
+          },
+        });
+        pipeline.push({
+          $match: {
+            $or: [
+              {
+                hcuraTId: { $regex: search, $options: "i" },
+              },
+              {
+                firstName: { $regex: search, $options: "i" },
+              },
+              {
+                lastName: { $regex: search, $options: "i" },
+              },
+              {
+                phoneNumberStr: { $regex: search, $options: "i" }, 
+              },
             ],
           },
         });
-        let listData = await tempAppointmentModel.aggregate(pipeline);
-        return listData;
-      } catch (e) {
-        throw e;
       }
-    };
+      pipeline.push({
+        $lookup: {
+          from: "admin", 
+          localField: "doctorId", 
+          foreignField: "_id", 
+          as: "doctorDetails",
+        },
+      });
+      pipeline.push({
+        $unwind: {
+          path: "$doctorDetails",
+          preserveNullAndEmptyArrays: true,
+        },
+      });
+      pipeline.push({
+        $project: {
+          hcuraTId: 1,
+          firstName: 1,
+          lastName: 1,
+          phoneNumber: 1,
+          doctorfirstName: "$doctorDetails.firstName",
+          doctorlastName: "$doctorDetails.lastName",
+          createdOn: 1,
+          gender: 1,
+          complaint: 1,
+          appointmentDate: 1,
+          isConverted: 1
+        },
+      });
+      pipeline.push({
+        $facet: {
+          metadata: [{ $count: "total" }, { $addFields: { page: page } }],
+          data: [
+            { $sort: { createdOn: -1 } },
+            { $skip: offset },
+            { $limit: limit },
+          ],
+        },
+      });
+      let listData = await tempAppointmentModel.aggregate(pipeline);
+      return listData;
+    } catch (e) {
+      throw e;
+    }
+  };
 
-    async changeisActiveStatusTemp(obj){
-      try{
-        let result = await tempAppointmentModel.findOneAndUpdate(
-          {_id: obj.patientId},
-          {
-              $set:{
-                isConverted: obj.isConverted,
-                updatedBy: obj.updatedBy
-              },
-          },{ new: true}
-        );
-        return result;
-      } catch(e){
-        throw e;
-      }
-    };
+  async changeisActiveStatusTemp(obj){
+    try{
+      let result = await tempAppointmentModel.findOneAndUpdate(
+        {_id: obj.patientId},
+        {
+          $set:{
+            isConverted: obj.isConverted,
+            updatedBy: obj.updatedBy
+          },
+        },{ new: true}
+      );
+      return result;
+    } catch(e){
+      throw e;
+    }
+  };
 
-    // insert data to case study (PART-1)
+  // insert data to case study (PART-1)
   async insertCaseStudyDA(obj){
     try {
       const caseStudyDetails = await caseStudyModel.findOne({ patientId :new mongoose.Types.ObjectId(obj.patientId) });
@@ -2178,115 +2136,115 @@ class appointmentDA{
     }
   };
 
-    // async getPatientDetailsCaseStudyDA(data){
-    //   try{
-    //     const hcuraid = data.hcuraId.replace(/\s+/g, '').toUpperCase();
-    //     let obj = {
-    //       hcuraId: hcuraid,
-    //       isDeleted: false
-    //     }
-    //     if (data.roleId) {
-    //       let roleDetails = await authentationDA.getroleCodeDA(data.roleId);
-    //       if (roleDetails.roleName !== "SUPER_ADMIN" && data.branchId) {
-    //         obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
-    //       }
-    //     }
-    //     return await patientModel.aggregate(
-    //       [
-    //         {
-    //           $match: obj
-    //         },
-    //         {
-    //           $lookup: {
-    //             from: "appointment",
-    //             localField: "_id",
-    //             foreignField: "patientId",
-    //             as: "appointmentDetails",
-    //           },
-    //         },
-    //         {
-    //           $unwind: {
-    //             path: "$appointmentDetails",
-    //             preserveNullAndEmptyArrays: true,
-    //           },
-    //         },
-    //         {
-    //           $lookup: {
-    //             from: "admin",
-    //             localField: "appointmentDetails.doctorId",
-    //             foreignField: "_id",
-    //             as: "doctorDetails",
-    //           },
-    //         },
-    //         {
-    //           $unwind: {
-    //             path: "$doctorDetails",
-    //             preserveNullAndEmptyArrays: true,
-    //           },
-    //         },
-    //         {
-    //           $lookup: {
-    //             from: "caseStudy",
-    //             localField: "_id",
-    //             foreignField: "patientId",
-    //             as: "caseStudydetails",
-    //           },
-    //         },
-    //         {
-    //           $unwind: {
-    //             path: "$caseStudydetails",
-    //             preserveNullAndEmptyArrays: true,
-    //           },
-    //         },
-    //         {
-    //           $lookup: {
-    //             from: "suggestionPrescription",
-    //             localField: "appointmentDetails._id",
-    //             foreignField: "appointmentId",
-    //             as: "suggestionPrescription",
-    //           },
-    //         },
-    //         {
-    //           $unwind: {
-    //             path: "$suggestionPrescription",
-    //             preserveNullAndEmptyArrays: true,
-    //           },
-    //         },
-    //         {
-    //           $project: {
-    //             firstName: 1,
-    //             lastName: 1,
-    //             gender: 1,
-    //             emailId: 1,
-    //             bloodGroup: 1,
-    //             hcuraId: 1,
-    //             birthDate: 1,
-    //             suggestionPrescription:
-    //               { $ifNull: ["$suggestionPrescription.createdOn", null] },
-    //             prescriptionCreatedOn:
-    //               "$appointmentDetails.prescriptionCreatedOn",
-    //             appointmentNumber:
-    //               "$appointmentDetails.appointmentNumber",
-    //             appointmentId: "$appointmentDetails._id",
-    //             appointmentDate:
-    //               "$appointmentDetails.appointmentDate",
-    //             appointmentState:
-    //               "$appointmentDetails.appointmentState",
-    //             startTime: "$appointmentDetails.startTime",
-    //             doctorFirstName: "$doctorDetails.firstName",
-    //             doctorLastName: "$doctorDetails.lastName",
-    //             doctorId: "$doctorDetails._id",
-    //             caseStudydetails: "$caseStudydetails",
-    //             suggestionPrescriptionDetails:
-    //               "$suggestionPrescription",
-    //           },
-    //         },
-    //       ]
-    //     );
-    //   }catch(e) {
-    //     throw e;
-    //   }
-    // };
+  // async getPatientDetailsCaseStudyDA(data){
+  //   try{
+  //     const hcuraid = data.hcuraId.replace(/\s+/g, '').toUpperCase();
+  //     let obj = {
+  //       hcuraId: hcuraid,
+  //       isDeleted: false
+  //     }
+  //     if (data.roleId) {
+  //       let roleDetails = await authentationDA.getroleCodeDA(data.roleId);
+  //       if (roleDetails.roleName !== "SUPER_ADMIN" && data.branchId) {
+  //         obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
+  //       }
+  //     }
+  //     return await patientModel.aggregate(
+  //       [
+  //         {
+  //           $match: obj
+  //         },
+  //         {
+  //           $lookup: {
+  //             from: "appointment",
+  //             localField: "_id",
+  //             foreignField: "patientId",
+  //             as: "appointmentDetails",
+  //           },
+  //         },
+  //         {
+  //           $unwind: {
+  //             path: "$appointmentDetails",
+  //             preserveNullAndEmptyArrays: true,
+  //           },
+  //         },
+  //         {
+  //           $lookup: {
+  //             from: "admin",
+  //             localField: "appointmentDetails.doctorId",
+  //             foreignField: "_id",
+  //             as: "doctorDetails",
+  //           },
+  //         },
+  //         {
+  //           $unwind: {
+  //             path: "$doctorDetails",
+  //             preserveNullAndEmptyArrays: true,
+  //           },
+  //         },
+  //         {
+  //           $lookup: {
+  //             from: "caseStudy",
+  //             localField: "_id",
+  //             foreignField: "patientId",
+  //             as: "caseStudydetails",
+  //           },
+  //         },
+  //         {
+  //           $unwind: {
+  //             path: "$caseStudydetails",
+  //             preserveNullAndEmptyArrays: true,
+  //           },
+  //         },
+  //         {
+  //           $lookup: {
+  //             from: "suggestionPrescription",
+  //             localField: "appointmentDetails._id",
+  //             foreignField: "appointmentId",
+  //             as: "suggestionPrescription",
+  //           },
+  //         },
+  //         {
+  //           $unwind: {
+  //             path: "$suggestionPrescription",
+  //             preserveNullAndEmptyArrays: true,
+  //           },
+  //         },
+  //         {
+  //           $project: {
+  //             firstName: 1,
+  //             lastName: 1,
+  //             gender: 1,
+  //             emailId: 1,
+  //             bloodGroup: 1,
+  //             hcuraId: 1,
+  //             birthDate: 1,
+  //             suggestionPrescription:
+  //               { $ifNull: ["$suggestionPrescription.createdOn", null] },
+  //             prescriptionCreatedOn:
+  //               "$appointmentDetails.prescriptionCreatedOn",
+  //             appointmentNumber:
+  //               "$appointmentDetails.appointmentNumber",
+  //             appointmentId: "$appointmentDetails._id",
+  //             appointmentDate:
+  //               "$appointmentDetails.appointmentDate",
+  //             appointmentState:
+  //               "$appointmentDetails.appointmentState",
+  //             startTime: "$appointmentDetails.startTime",
+  //             doctorFirstName: "$doctorDetails.firstName",
+  //             doctorLastName: "$doctorDetails.lastName",
+  //             doctorId: "$doctorDetails._id",
+  //             caseStudydetails: "$caseStudydetails",
+  //             suggestionPrescriptionDetails:
+  //               "$suggestionPrescription",
+  //           },
+  //         },
+  //       ]
+  //     );
+  //   }catch(e) {
+  //     throw e;
+  //   }
+  // };
 
   async insertCaseStudySuggestionPrescription(data){
     try{
@@ -2330,156 +2288,154 @@ class appointmentDA{
     }
   };
 
-    async getPatientDetailsCaseStudy(hcuraId, roleId, branchId){
-      try{
-        const hcuraid = hcuraId.replace(/\s+/g, '').toUpperCase();
-        const filter = {
-          hcuraId: hcuraid,
-          isDeleted: false,
-        };
-        let roleDetails = await authentationDA.getroleCodeDA(roleId);
-        if(roleDetails.roleName != "SUPER_ADMIN"){
-          filter.branchId = new mongoose.Types.ObjectId(branchId);
-        }
-        return await patientModel.aggregate(
-          [
-            {
-              $match: filter
-            },
-            {
-              $lookup: {
-                from: "appointment",
-                localField: "_id",
-                foreignField: "patientId",
-                as: "appointmentDetails"
-              }
-            },
-            {
-              $unwind: {
-                path: "$appointmentDetails",
-                preserveNullAndEmptyArrays: true
-              }
-            },
-            {
-              $lookup: {
-                from: "admin",
-                localField: "appointmentDetails.doctorId",
-                foreignField: "_id",
-                as: "doctorDetails"
-              }
-            },
-            {
-              $unwind: {
-                path: "$doctorDetails",
-                preserveNullAndEmptyArrays: true
-              }
-            },
-            {
-              $lookup: {
-                from: "caseStudy",
-                localField: "_id",
-                foreignField: "patientId",
-                as: "casestudyDetails"
-              }
-            },
-            {
-              $unwind: {
-                path: "$casestudyDetails",
-                preserveNullAndEmptyArrays: true
-              }
-            },
-            {
-              $lookup: {
-                from: "suggestionPrescription",
-                localField: "appointmentDetails._id",
-                foreignField: "appointmentId",
-                as: "suggestionPrescription"
-              }
-            },
-            {
-              $unwind: {
-                path: "$suggestionPrescription",
-                preserveNullAndEmptyArrays: true
-              }
-            },
-            {
-              $lookup: {
-                from: "prescription",
-                localField: "appointmentDetails._id",
-                foreignField: "appointmentId",
-                as: "prescriptionDetails"
-              }
-            },
-            {
-              $unwind: {
-                path: "$prescriptionDetails",
-                preserveNullAndEmptyArrays: true
-              }
-            },
-            {
-              $project: {
-                firstName: 1,
-                lastName: 1,
-                gender: 1,
-                emailId: 1,
-                bloodGroup: 1,
-                hcuraId: 1,
-                birthDate: 1,
-                suggestionPrescription: {
-                  $ifNull: ["$suggestionPrescription.createdOn", null]
-                },
-                prescriptionCreatedOn: {
-                  $ifNull: ["$prescriptionDetails.createdOn", null]
-                },
-                appointmentNumber:
-                  "$appointmentDetails.appointmentNumber",
-                appointmentId: "$appointmentDetails._id",
-                appointmentDate:
-                  "$appointmentDetails.appointmentDate",
-                appointmentStatus:
-                  "$appointmentDetails.appointmentStatus",
-                appointmentStartTime:
-                  "$appointmentDetails.startTime",
-                docFirstName: "$doctorDetails.firstName",
-                docLastName: "$doctorDetails.lastName",
-                doctorId: "$doctorDetails._id",
-                casestudyDetails: "$casestudyDetails",
-                suggestionPrescription:
-                  "$suggestionPrescription",
-                prescriptionDetails: "$prescriptionDetails"
-              }
-            }
-          ]
-        );
-      } catch(e){
-        throw (e);
+  async getPatientDetailsCaseStudy(hcuraId, roleId, branchId){
+    try{
+      const hcuraid = hcuraId.replace(/\s+/g, '').toUpperCase();
+      const filter = {
+        hcuraId: hcuraid,
+        isDeleted: false,
+      };
+      let roleDetails = await authentationDA.getroleCodeDA(roleId);
+      if(roleDetails.roleName != "SUPER_ADMIN"){
+        filter.branchId = new mongoose.Types.ObjectId(branchId);
       }
-    };
+      return await patientModel.aggregate([
+        {
+          $match: filter
+        },
+        {
+          $lookup: {
+            from: "appointment",
+            localField: "_id",
+            foreignField: "patientId",
+            as: "appointmentDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$appointmentDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "admin",
+            localField: "appointmentDetails.doctorId",
+            foreignField: "_id",
+            as: "doctorDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$doctorDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "caseStudy",
+            localField: "_id",
+            foreignField: "patientId",
+            as: "casestudyDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$casestudyDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "suggestionPrescription",
+            localField: "appointmentDetails._id",
+            foreignField: "appointmentId",
+            as: "suggestionPrescription"
+          }
+        },
+        {
+          $unwind: {
+            path: "$suggestionPrescription",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "prescription",
+            localField: "appointmentDetails._id",
+            foreignField: "appointmentId",
+            as: "prescriptionDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$prescriptionDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $project: {
+            firstName: 1,
+            lastName: 1,
+            gender: 1,
+            emailId: 1,
+            bloodGroup: 1,
+            hcuraId: 1,
+            birthDate: 1,
+            suggestionPrescription: {
+              $ifNull: ["$suggestionPrescription.createdOn", null]
+            },
+            prescriptionCreatedOn: {
+            $ifNull: ["$prescriptionDetails.createdOn", null]
+            },
+            appointmentNumber:
+              "$appointmentDetails.appointmentNumber",
+            appointmentId: "$appointmentDetails._id",
+            appointmentDate:
+              "$appointmentDetails.appointmentDate",
+            appointmentStatus:
+              "$appointmentDetails.appointmentStatus",
+            appointmentStartTime:
+              "$appointmentDetails.startTime",
+            docFirstName: "$doctorDetails.firstName",
+            docLastName: "$doctorDetails.lastName",
+            doctorId: "$doctorDetails._id",
+            casestudyDetails: "$casestudyDetails",
+            suggestionPrescription:
+              "$suggestionPrescription",
+            prescriptionDetails: "$prescriptionDetails"
+          }
+        }
+      ]);
+    } catch(e){
+      throw (e);
+    }
+  };
 
-    async updateSuggestionPrescription(obj){
-      try{
-        let result = await suggestionPrescriptionModel.findOneAndUpdate(
-          { _id: new mongoose.Types.ObjectId(obj.suggestionPrescriptionId) },
-          {
-            $set: {
-              updatedOn: new Date(),
-              updatedBy: obj.updatedBy,
-              followupSheets: obj.followupSheets,
-              remarks: obj.remarks,
-              curedCaseSummary: obj.curedCaseSummary,
-            },
+  async updateSuggestionPrescription(obj){
+    try{
+      let result = await suggestionPrescriptionModel.findOneAndUpdate(
+        { _id: new mongoose.Types.ObjectId(obj.suggestionPrescriptionId) },
+        {
+          $set: {
+            updatedOn: new Date(),
+            updatedBy: obj.updatedBy,
+            followupSheets: obj.followupSheets,
+            remarks: obj.remarks,
+            curedCaseSummary: obj.curedCaseSummary,
           },
-          { new: true }
-        );
-        if (result == null) {
-          return { status: false, message: 'No document modified.' };
-        } else {
-          return { status: true, data: result };
-        }
-      } catch (e) {
-        throw e;
+        },
+        { new: true }
+      );
+      if (result == null) {
+        return { status: false, message: 'No document modified.' };
+      } else {
+        return { status: true, data: result };
       }
-    };
+    } catch (e) {
+      throw e;
+    }
+  };
 
   async getCaseStudyDetails(caseStudyId){
     try {
@@ -2489,34 +2445,34 @@ class appointmentDA{
     }
   };
 
-    async updatePrescription(obj){
-      try{
-        let result = await prescriptionModel.findOneAndUpdate(
-          { _id: new mongoose.Types.ObjectId(obj.prescriptionId) },
-          {
-            $set: {
-              updatedOn: new Date(),
-              updatedBy: obj.updatedBy,
-              expiryDate: obj.expiryDate,
-              consultationSummary: obj.consultationSummary,
-              instructions: obj.instructions,
-              diagnostics: obj.diagnostics,
-              diagnosis: obj.diagnosis,
-              followUpDate: obj.followUpDate,
-              medicines: obj.medicines
-            },
+  async updatePrescription(obj){
+    try{
+      let result = await prescriptionModel.findOneAndUpdate(
+        { _id: new mongoose.Types.ObjectId(obj.prescriptionId) },
+        {
+          $set: {
+            updatedOn: new Date(),
+            updatedBy: obj.updatedBy,
+            expiryDate: obj.expiryDate,
+            consultationSummary: obj.consultationSummary,
+            instructions: obj.instructions,
+            diagnostics: obj.diagnostics,
+            diagnosis: obj.diagnosis,
+            followUpDate: obj.followUpDate,
+            medicines: obj.medicines
           },
-          { new: true }
-        );
-        if (result == null) {
-          return { status: false, message: 'No document modified.' };
-        } else {
-          return { status: true, data: result };
-        }
-      } catch(e){
-        throw e;
+        },
+        { new: true }
+      );
+      if (result == null) {
+        return { status: false, message: 'No document modified.' };
+      } else {
+        return { status: true, data: result };
       }
-    };
+    } catch(e){
+      throw e;
+    }
+  };
 
   async getPrescriptionDetails(prescriptionId){
     try {
@@ -2576,49 +2532,47 @@ class appointmentDA{
     }
   };
 
-    async getPackageScheduleDetails(patientId){
-      try{
-        return packageSubscriptionModel.aggregate(
-          [
-            {
-              $match: {
-                patientId: new mongoose.Types.ObjectId(patientId),
-                isActive: true,
-              },
-            },
-            {
-              $lookup: {
-                from: "package",
-                localField: "packageId",
-                foreignField: "_id",
-                as: "packageDetails",
-              },
-            },
-            {
-              $unwind: {
-                path: "$packageDetails",
-                preserveNullAndEmptyArrays: true,
-              },
-            },
-            {
-              $project: {
-                patientId: 1,
-                packageId: 1,
-                paymentId: 1,
-                startDate: 1,
-                endDate: 1,
-                createdOn: 1,
-                paidOn: 1,
-                isActive: 1,
-                packageName: "$packageDetails.name",
-              },
-            },
-          ]
-        )
-      } catch(e){
-        throw e;
-      }
-    };
+  async getPackageScheduleDetails(patientId){
+    try{
+      return packageSubscriptionModel.aggregate([
+        {
+          $match: {
+            patientId: new mongoose.Types.ObjectId(patientId),
+            isActive: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "package",
+            localField: "packageId",
+            foreignField: "_id",
+            as: "packageDetails",
+          },
+        },
+        {
+          $unwind: {
+            path: "$packageDetails",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $project: {
+            patientId: 1,
+            packageId: 1,
+            paymentId: 1,
+            startDate: 1,
+            endDate: 1,
+            createdOn: 1,
+            paidOn: 1,
+            isActive: 1,
+            packageName: "$packageDetails.name",
+          },
+        },
+      ]);
+    } catch(e){
+      throw e;
+    }
+  };
 
   async getSuggestionPrescriptionDetails(appointmentId){
     try {

@@ -139,7 +139,8 @@ class authentationDA {
 
     async branchListDA(){
         try{
-            let result = await branchesModel.find({ isDeleted: false, isLocked: "ENABLED" })
+            let result = await branchesModel.find({ isDeleted: false, isLocked: "ENABLED" },
+                {branchPhoneNumber :0, createdOn :0, location :0, isDeleted :0, isLocked :0, insertedBy :0 });
             return result;
         } catch (e){
             throw e;

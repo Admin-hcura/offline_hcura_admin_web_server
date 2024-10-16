@@ -12,8 +12,7 @@ const authentationDA = require("./authentationDA");
 const { branchesModel, slotModel, occupationModel, promoCodesModel,
     sourceModel, symptomsAllegryModel, tempAppointmentModel, statesModel,
     packageModel, estimationModel, packageSubscriptionModel, caseStudyModel,
-    suggestionPrescriptionModel,
-    prescriptionModel} = require("../../models/schema");
+    suggestionPrescriptionModel, prescriptionModel} = require("../../models/schema");
 const { startTime } = require("express-pino-logger");
 let createdOn = moment().format();
 

@@ -1330,6 +1330,7 @@ class appointment{
         try{
             const { branchId, amount } = req.query;
             let result = await appointmentDA.getStateDetails(branchId);
+            console.log("...........",branchId, amount, result)
             let stateDetails = result[0].stateDetails
             let gstAmount = 0
             let CGST = 0

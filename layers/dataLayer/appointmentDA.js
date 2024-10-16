@@ -2586,130 +2586,145 @@ class appointmentDA{
   async getPaymentDetails(paymentId){
     try{
       console.log("paymentId", paymentId)
-      return await paymentModel.aggregate(
-        [
-          {
-            $match: {
-              _id: new mongoose.Types.ObjectId(paymentId),
-              isDeleted: false
-            }
-          },
-          {
-            $lookup: {
-              from: "patient",
-              localField: "patientId",
-              foreignField: "_id",
-              as: "ptDetails"
-            }
-          },
-          {
-            $unwind: {
-              path: "$ptDetails",
-              preserveNullAndEmptyArrays: true
-            }
-          },
-          {
-            $lookup: {
-              from: "admin",
-              localField: "doctorId",
-              foreignField: "_id",
-              as: "docDetails"
-            }
-          },
-          {
-            $unwind: {
-              path: "$docDetails",
-              preserveNullAndEmptyArrays: true
-            }
-          },
-          {
-            $lookup: {
-              from: "appointment",
-              localField: "appointmentId",
-              foreignField: "_id",
-              as: "aptDetails"
-            }
-          },
-          {
-            $unwind: {
-              path: "$aptDetails",
-              preserveNullAndEmptyArrays: true
-            }
-          },
-          {
-            $lookup: {
-              from: "consulatationAmount",
-              let: {
-                constValue: [
-                  "FIRST-CONSULTATION",
-                  "FOLLOW-UP"
-                ]
-              },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: {
-                      $eq: ["$type", "$$constValue"]
-                    }
-                  }
-                }
-              ],
-              as: "consFee"
-            }
-          },
-          {
-            $unwind: {
-              path: "$consFee",
-              preserveNullAndEmptyArrays: true
-            }
-          },
-          {
-            $lookup: {
-              from: "package",
-              localField: "packageId",
-              foreignField: "_id",
-              as: "packageDetails"
-            }
-          },
-          {
-            $unwind: {
-              path: "$packageDetails",
-              preserveNullAndEmptyArrays: true
-            }
-          },
-          {
-            $project: {
-              _id: 0,
-              invoiceNumber: 1,
-              createdOn: 1,
-              ptFirstName: "$ptDetails.firstName",
-              ptLastName: "$ptDetails.lastName",
-              hcuraId: "$ptDetails.hcuraId",
-              ptAge: "$ptDetails.birthDate",
-              docFirstName: "$docDetails.firstName",
-              docLastName: "$docDetails.lastName",
-              docQualifaction: "$docDetails.qualifaction",
-              docRegistartion:
-                "$docDetails.registerationNumber",
-              aptStartDate: "$aptDetails.startTime",
-              aptEndDate: "$aptDetails.endTime",
-              consultationFee: "$consFee.amount",
-              discount: 1,
-              serviceCharges: 1,
-              payableAmount: 1,
-              paymentMethod: 1,
-              packageName: "$packageDetails.name",
-              packageAmount: "$packageDetails.amount",
-              SGST: 1,
-              CGST: 1,
-              IGST: 1,
-              UGST: 1,
-              prescribedBy: 1,
-              remarks: 1
-            }
+      return await paymentModel.aggregate([
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(paymentId),
+            isDeleted: false
           }
-        ]
-      );
+        },
+        {
+          $lookup: {
+            from: "patient",
+            localField: "patientId",
+            foreignField: "_id",
+            as: "ptDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$ptDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "admin",
+            localField: "doctorId",
+            foreignField: "_id",
+            as: "docDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$docDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "appointment",
+            localField: "appointmentId",
+            foreignField: "_id",
+            as: "aptDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$aptDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "appointment",
+            localField: "aptDetails._id",
+            foreignField: "_id",
+            as: "consDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$consDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "consulatationAmount",
+            localField: "consDetails.consultationType",
+            foreignField: "type",
+            as: "consAmount"
+          }
+        },
+        {
+          $unwind: {
+            path: "$consAmount",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "package",
+            localField: "packageId",
+            foreignField: "_id",
+            as: "packageDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$packageDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "branches",
+            localField: "branchId",
+            foreignField: "_id",
+            as: "branchDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$branchDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            invoiceNumber: 1,
+            createdOn: 1,
+            ptFirstName: "$ptDetails.firstName",
+            ptLastName: "$ptDetails.lastName",
+            hcuraId: "$ptDetails.hcuraId",
+            ptAge: "$ptDetails.birthDate",
+            docFirstName: "$docDetails.firstName",
+            docLastName: "$docDetails.lastName",
+            docQualifaction: "$docDetails.qualifaction",
+            docRegistartion:
+              "$docDetails.registerationNumber",
+            aptStartDate: "$aptDetails.startTime",
+            aptEndDate: "$aptDetails.endTime",
+            consultationFee: "$consAmount.amount",
+            discount: 1,
+            serviceCharges: 1,
+            payableAmount: 1,
+            paymentMethod: 1,
+            packageName: "$packageDetails.name",
+            packageAmount: "$packageDetails.amount",
+            branchPhoneNumber:
+              "$branchDetails.branchPhoneNumber",
+            SGST: 1,
+            CGST: 1,
+            IGST: 1,
+            UGST: 1,
+            prescribedBy: 1,
+            remarks: 1
+          }
+        }
+      ]);
     } catch(e){
       throw e;
     }

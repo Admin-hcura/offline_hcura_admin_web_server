@@ -2729,5 +2729,98 @@ class appointmentDA{
     }
   };
 
+  async getAppointmentDataForPrescriptionDA(appointmentId, patientId) {
+    return await appointmentModel.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(appointmentId),
+          patientId: new mongoose.Types.ObjectId(patientId),
+          isActive: true
+        }
+      },
+      {
+        $lookup: {
+          from: "prescription",
+          localField: "prescriptionId",
+          foreignField: "_id",
+          as: "prescriptionDetails"
+        }
+      },
+      {
+        $unwind: {
+          path: "$prescriptionDetails",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: "admin",
+          localField: "doctorId",
+          foreignField: "_id",
+          as: "docDetails"
+        }
+      },
+      {
+        $unwind: {
+          path: "$docDetails",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: "patient",
+          localField: "patientId",
+          foreignField: "_id",
+          as: "ptDetails"
+        }
+      },
+      {
+        $unwind: {
+          path: "$ptDetails",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          appointmentDate: 1,
+          appointmentNumber: 1,
+          startTime: 1,
+          endTime: 1,
+          docFirstName: "$docDetails.firstName",
+          docSecondName: "$docDetails.lastName",
+          docQualification:
+            "$docDetails.qualifaction",
+          docRegistration:
+            "$docDetails.registerationNumber",
+          ptFisrtName: "$ptDetails.firstName",
+          ptLastName: "$ptDetails.lastName",
+          ptAge: "$ptDetails.birthDate",
+          ptGender: "$ptDetails.gender",
+          diagnostics:
+            "$prescriptionDetails.diagnostics",
+          diagnosis: "$prescriptionDetails.diagnosis",
+          instructions:
+            "$prescriptionDetails.instructions",
+          expiryDate:
+            "$prescriptionDetails.expiryDate",
+          medicine: {
+            $map: {
+              input: "$prescriptionDetails.medicines",
+              as: "med",
+              in: {
+                originalName: "$$med.originalName",
+                medicinesName: "$$med.medicinesName",
+                dosage: "$$med.dosage",
+                days: "$$med.days",
+                time: "$$med.time"
+              }
+            }
+          }
+        }
+      }
+    ])
+  };
+
 }
 module.exports = new appointmentDA();

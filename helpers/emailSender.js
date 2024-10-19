@@ -534,6 +534,28 @@ class Mail{
       console.error("Internal error ", e);
     }
   };
+
+  async prescription(emailId, file) {
+    try {      
+      let info = await this.setUpSmtp();      
+      await info.sendMail({
+        from: constants.MAIL_CONFIG.auth.user,
+        to: emailId,
+        subject: "H-Cura prescription received successfully!",
+        text: "Hi Dear H-Cura consumer, Please find the attached file for your reference. \n \nThank you.",
+        attachments: [
+          {
+            filename: "prescription.pdf",
+            content: file,
+            contentType: "application/pdf",
+          },
+        ],
+      });
+    } catch (error) {
+      console.error("Internal error ", error);
+    }
+  };  
+
 }
 
 module.exports = new Mail();

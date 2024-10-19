@@ -49,5 +49,11 @@ router.post(
   // sessionValidator.validateAdminSession,
   appointmentController.getSuggestionPrescriptionDetails
 );
+// send email for Duplicate prescription
+router.post(
+  "/send/d/email/prescription",
+  // sessionValidator.validateDoctorSession,
+  appointmentController.sendDuplicatePrescription
+);
 
 module.exports = router;

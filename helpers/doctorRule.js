@@ -145,3 +145,9 @@ exports.getPackageScheduleDetailsRule = Joi.object({
 exports.appointmentIdRule = Joi.object({
     appointmentId: Joi.string().required().error(new Error("appointmentId is Required"))
 });
+// send email prescription
+exports.sendemailPrescription = Joi.object({
+    appointmentId: Joi.string().required().error(new Error("AppointmentId is Required")),
+    patientId: Joi.string().required().error(new Error("AppointmentId is Required")),
+    emailId: Joi.string().required().error(new Error("EmailId is Required")),
+});

@@ -2484,6 +2484,238 @@ class HtmlToPdfHelper {
       throw e;
     }
   };
+
+  async generatePrescription(appointmentDetail) {
+    try {
+      let appointmentDetails = appointmentDetail[0]
+      let appointmentDate = moment(appointmentDetails.appointmentDate)
+        .tz(constants.defaultTimezone)
+        .format("DD/MM/YYYY");
+      let patientAge = appointmentDetails.ptAge
+        ? moment().diff(appointmentDetails.ptAge, "years")
+        : "NA";
+      let diagnostics = appointmentDetails.diagnostics;
+      let diagnosis = appointmentDetails.diagnosis;
+      let expiryDate = moment(appointmentDetails.expiryDate)
+        .tz(constants.defaultTimezone)
+        .format("DD/MM/YYYY");
+      let appointmentNumber = appointmentDetails.appointmentNumber
+        ? appointmentDetails.appointmentNumber
+        : "NA";
+      let instructions = appointmentDetails.instructions || "NA";
+      diagnostics = diagnostics ? diagnostics : [];
+      diagnosis = diagnosis ? diagnosis : [];
+      let medicines = appointmentDetails.medicine
+        ? appointmentDetails.medicine
+        : [];
+      let html =
+        '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">' +
+        "<HTML>" +
+        "<HEAD>" +
+        '<META http-equiv="Content-Type" content="text/html; charset=UTF-8">' +
+        "<TITLE>pdf-html</TITLE>" +
+        '<META name="generator" content="BCL easyConverter SDK 5.0.252">' +
+        '<STYLE type="text/css">' +
+        "" +
+        "body {margin-top: 0px;margin-left: 0px;}" +
+        "" +
+        "#page_1 {position:relative; overflow: hidden;margin: 38px 0px 53px 0px;padding: 0px;border: none;width: 793px;}" +
+        "#page_1 #id1_1 {border:none;margin: 0px 0px 0px 0px;padding: 0px;border:none;width: min-content;;overflow: hidden;}" +
+        "#page_1 #id1_2 {border:none;margin: 161px 0px 0px 38px;padding: 0px;border:none;width: 711px;overflow: hidden;}" +
+        "" +
+        "#page_1 #p1dimg1 {position:absolute;top:11px;left:46px;z-index:-1;border-bottom: #707070 1px solid;width: 704px;height: 100px;}" +
+        "" +
+        '.ft0{font: bold 24px "Arial";color: #231f20;line-height: 29px;}' +
+        '.ft1{font: bold 10px "Arial";color: #454545;line-height: 20px;}' +
+        '.ft2{font: bold 11px "Arial";color: #454545;line-height: 14px;}' +
+        '.ft3{font: bold 20px "Arial";color: #231f20;line-height: 24px;}' +
+        '.ft4{font: bold 12px "Arial";color: #454545;line-height: 15px;}' +
+        '.ft5{font: bold 11px "Arial";color: #2e2e2e;line-height: 14px;}' +
+        '.ft6{font: bold 19px "Arial";color: #202020;line-height: 22px;}' +
+        '.ft7{font: bold 16px "Arial";line-height: 19px;}' +
+        '.ft8{font: 15px "Aria";line-height: 20px;}' +
+        '.ft9{font: bold 14px "Arial";line-height: 16px;}' +
+        '.ft10{font: 13px "Arial";color: #2f2e2e;line-height: 16px;}' +
+        '.ft11{font: 1px "Arial";line-height: 1px;}' +
+        '.ft12{font: 12px "Arial";color: #2f2e2e;line-height: 15px;}' +
+        '.ft13{font: bold 13px "Arial";color: #1c1b1b;line-height: 16px;}' +
+        '.ft14{font: bold 8px "Arial";color: #424242;line-height: 12px;}' +
+        '.ft15{font: bold 52px "Arial";color: #999999;line-height: 75px;}' + //fotter
+        "" +
+        ".p0{float: right;;padding-left: 50%;margin-top: 0px;margin-bottom: 0px;}" +
+        ".p1{padding-left: 50%;float: right;}" +
+        ".p2{text-align: right;padding-right: 29px;margin-top: 0px;margin-bottom: 0px;}" +
+        ".p3{text-align: left;margin-top: 0px;margin-bottom: 0px;white-space: nowrap;}" +
+        ".p4{    margin-top: 0px;" +
+        "    margin-bottom: 0px;" +
+        "    white-space: nowrap;" +
+        "    margin-right: 8px;" +
+        "}" +
+        ".p5{text-align: left;padding-left: 46px;margin-top: 57px;margin-bottom: 0px;}" +
+        ".p6{padding-left: 64px;margin-top: 21px;margin-bottom: 0px;}" +
+        ".p7{text-align: right;padding-right: 4px;margin-top: 0px;margin-bottom: 0px;white-space: nowrap;}" +
+        ".p8{text-align: left;padding-left: 3px;margin-top: 0px;margin-bottom: 0px;white-space: nowrap;}" +
+        ".p9{text-align: right;padding-right: 9px;margin-top: 0px;margin-bottom: 0px;white-space: nowrap;}" +
+        ".p10{text-align: left;padding-left: 4px;margin-top: 0px;margin-bottom: 0px;white-space: nowrap;}" +
+        ".p11{text-align: left;padding-left: 1px;margin-top: 0px;margin-bottom: 0px;white-space: nowrap;}" +
+        ".p12{    float: right;" +
+        "    padding-left: 50%;" +
+        "    margin-top: 157px;" +
+        "    margin-bottom: 0px;}" +
+        ".p13{text-align: left;padding-left: 659px;margin-top: 10px;margin-bottom: 0px;}" +
+        ".p14{text-align: left;margin-top: 0px;margin-bottom: 0px;}" +
+        ".p15{text-align: justify;padding-left: 200px;margin-top: 0px}" + //fotter
+        ".p16{text-align: justify;padding-left: 2200px;margin-top: 20px;margin-bottom: 0px;}" + //fotter
+        "" +
+        ".td0{padding: 0px;margin: 0px;width: 528px;vertical-align: bottom;}" +
+        ".td1{padding: 0px;margin: 0px;width: 163px;vertical-align: bottom;}" +
+        ".td2{padding: 0px;margin: 0px;width: 543px;vertical-align: bottom;}" +
+        ".td3{padding: 0px;margin: 0px;width: 161px;vertical-align: bottom;}" +
+        ".td4{border-bottom: #707070 1px solid;padding: 0px;margin: 0px;width: 543px;vertical-align: bottom;}" +
+        ".td5{border-bottom: #707070 1px solid;padding: 0px;margin: 0px;width: 161px;vertical-align: bottom;}" +
+        "" +
+        ".tr0{height: 35px;}" +
+        ".tr1{height: 25px;}" +
+        ".tr2{height: 33px;}" +
+        ".tr3{height: 42px;}" +
+        ".tr4{height: 18px;}" +
+        ".tr5{height: 16px;}" +
+        ".tr6{height: 31px;}" +
+        ".tr7{height: 32px;}" +
+        ".tr8{height: 17px;}" +
+        "" +
+        '.t0{width: 93%;margin-left: 46px;margin-top: 54px;font: bold 11px "Arial";color: #2e2e2e;}' +
+        '.t1{width: 704px;margin-left: 46px;margin-top: 61px;font: 12px "Arial";color: #2f2e2e;}' +
+        ".watermark {" +
+        "opacity: 0.1;" +
+        "color: BLACK;" +
+        "position: absolute;" +
+        //'transform: rotate(-45deg);'+
+        //'transform-origin: 70% 50%;'+
+        //'margin-left: 45%;'+
+        "left: 31%;" +
+        "top: 40%;" +
+        "font-size: 31px;" +
+        "}" +
+        "" +
+        "</STYLE>" +
+        "</HEAD>" +
+        "" +
+        "<BODY>" +
+        '<DIV id="page_1">' +
+        '<DIV id="p1dimg1">' +
+        '<IMG src="https://h-cura.s3.ap-south-1.amazonaws.com/logo/h-cura-logo.png" id="p1img1"></DIV>' +
+        "" +
+        "" +
+        '<DIV id="id1_1">' +
+        '<P class="p0 ft0">Dr. ' +
+        appointmentDetails.docFirstName +
+        " " +
+        appointmentDetails.docSecondName +
+        "</P>" +
+        "<p>&nbsp;</p>" +
+        '<span class="p1 ft1">' +
+        appointmentDetails.docQualification /*.join(", ")*/ +
+        // " - " +
+        // doctorDetails.specialization.join(", ") +
+        "</span>" +
+        '<span class="p1 ft1">Registration No. : ' +
+        appointmentDetails.docRegistration +
+        "</span>" +
+        // '<span class="p1 ft1">'+doctorDetails.emailId+'</span>'+
+        "<p>&nbsp;</p>" +
+        "<p>&nbsp;</p>" +
+        '<TABLE cellpadding=0 cellspacing=0 class="t0">' +
+        "<TR>" +
+        '	<TD class="tr0 td0"><P class="p3 ft3">' +
+        appointmentDetails.ptFisrtName +
+        " " +
+        appointmentDetails.ptLastName +
+        "</P></TD>" +
+        '	<TD class="tr0 td1"><P class="p3 ft4">Appointment Number : ' +
+        appointmentNumber +
+        "</P></TD>" +
+        "</TR>" +
+        "<TR>" +
+        '	<TD class="tr1 td0"><P class="p3 ft5">' +
+        patientAge +
+        " yrs, " +
+        appointmentDetails.ptGender +
+        "</P></TD>" +
+        '	<TD class="tr1 td1"><P class="p4 ft2">Date : ' +
+        appointmentDate +
+        "</P></TD>" +
+        "</TR>" +
+        "</TABLE>" +
+        '<P class="p5 ft6">Diagnostics</P>' +
+        '<ul class="p6 ft8">';
+      diagnostics.map((element) => {
+        html += "<li>" + element + "</li>";
+      });
+      html +=
+        diagnostics.length <= 0 ? '<li style="list-style: none;">NA</li>' : "";
+        html +=
+        "</ul>" +
+        '<div class="watermark">Expiry date : ' +
+        expiryDate +
+        "</div>" +
+        '<div class="watermark" style="margin-top: 30px;margin-left: -100px;font-size: 15pt">This is computer generated document signature is not required.</div>' +
+        '<div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.2;">' +
+        '<img src="https://h-cura.s3.ap-south-1.amazonaws.com/logo/H-CuraYellow.png" style="height: 300px; width: 300px;" />' +
+        '</div>' ;
+      html += '<P class="p5 ft6">Diagnosis</P>' +
+        '<ul class="p6 ft8">';
+        diagnosis.map((element) => {
+        html += "<li>" + element + "</li>";
+      });
+      html +=
+        diagnosis.length <= 0 ? '<li style="list-style: none;">NA</li>' : "";
+        html +=
+        "</ul>" ;
+      html += '<P class="p5 ft6">Instructions</P>' +
+        '<P class="p6 ft8">' + instructions + '</P>';
+      html +=
+        '<TABLE cellpadding=0 cellspacing=0 class="t1">' +
+        "<TR>" +
+        '	<TD class="tr2 td2"><P class="p3 ft6">Medicines</P></TD>' +
+        '	<TD class="tr2 td3"><P class="p7 ft6">Dosage</P></TD>' +
+        "</TR>";     
+      medicines.map((medicine) => {
+        html +=
+          "<TR>" +
+          '	<TD class="tr3 td2"><P class="p8 ft9">' +
+          medicine.medicinesName +
+          "</P></TD>" +
+          '	<TD class="tr3 td3"><P class="p9 ft10"><NOBR>(' +
+          medicine.dosage[0].morning +
+          "-" +
+          medicine.dosage[0].afternoon +
+          "-" +
+          medicine.dosage[0].night +
+          "),</NOBR> " +
+          medicine.days +
+          " days, " +
+          medicine.time +
+          "</P></TD>" +
+          "</TR>" +
+          "<TR>" +
+          '	<TD class="tr4 td4"><P class="p3 ft11">&nbsp;</P></TD>' +
+          '	<TD class="tr4 td5"><P class="p3 ft11">&nbsp;</P></TD>' +
+          "</TR>";
+      });
+      html +="</TABLE>" ;
+      "</BODY>" +
+      "</HTML>";
+
+      let file = { content: html };
+      let pdfBuffer = await html_to_pdf.generatePdf(file, options);
+      return pdfBuffer;
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  };
+
 }
 
 module.exports = new HtmlToPdfHelper();

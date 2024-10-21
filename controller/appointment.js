@@ -1621,6 +1621,23 @@ class appointment{
         }
     };
 
+    async sendOriginalPrescription(req, res, next){
+        try{
+            let body = req.body
+            const { error } = doctorRule.sendemailPrescription.validate(body);
+            if (error){
+                throw Boom.badData(error.message);
+            }
+            let appointmentDetails = 
+            await appointmentDA.getAppointmentDataForPrescriptionDA(body.appointmentId, body.patientId);
+            let file = await htmlToPDF.generateOriginalPrescription(appointmentDetails);
+            emailSender.prescription(body.emailId, file);
+            res.status(200).send({ status: true, meassage: "EMAIL SENT SUCCESSFULLY"});
+        } catch(e) {
+          next(e);
+        }
+    };
+
 };
 
 module.exports = new appointment();

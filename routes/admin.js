@@ -180,5 +180,10 @@ router.get("/get/payment/details",
   // sessionValidator.validateAdminSession,
   appointmentController.getpaymentDetailsForPdf
 );
+router.post(
+  "/send/o/email/prescription",
+  // sessionValidator.validateDoctorSession,
+  appointmentController.sendOriginalPrescription
+);
 
 module.exports = router;

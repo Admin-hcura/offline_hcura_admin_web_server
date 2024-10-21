@@ -2802,6 +2802,7 @@ class appointmentDA{
           diagnosis: "$prescriptionDetails.diagnosis",
           instructions:
             "$prescriptionDetails.instructions",
+          consultationSummary: "$prescriptionDetails.consultationSummary",
           expiryDate:
             "$prescriptionDetails.expiryDate",
           medicine: {

@@ -1638,6 +1638,28 @@ class appointment{
         }
     };
 
+    async getTransactionReport(req, res, next) {
+        try {
+          let body = req.body;
+          const { error } = rule.transactionReport.validate(body);
+          if (error) {
+            throw Boom.badData(error.message);
+          }
+          let result = await appointmentDA.getTransactionReport(body);
+          let sendObj = {
+            metaData: {
+              page: result[0].metadata.length > 0 ? result[0].metadata[0].page : 1,
+              total:
+                result[0].metadata.length > 0 ? result[0].metadata[0].total : 0,
+            },
+            transactionList: result[0].data,
+          };
+          res.status(200).send({ status: true, data: sendObj });
+        } catch (e) {
+          next(e);
+        }
+      };
+
 };
 
 module.exports = new appointment();

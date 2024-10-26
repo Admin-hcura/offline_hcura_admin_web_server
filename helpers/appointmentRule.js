@@ -138,3 +138,13 @@ exports.changeStatusisCompletedTemp = Joi.object({
     updatedBy: Joi.string().required().error(new Error("updatedBy is required")),
     isConverted: Joi.boolean().required().error(new Error("isConverted (true/false) is required"))
 });
+
+exports.transactionReport = Joi.object({
+    startDate: Joi.string().allow("").error(new Error("Start date is required")),
+    endDate: Joi.string().allow("").error(new Error("End date is required")),
+    sorting: Joi.object().required().error(new Error("Sorting is required")),
+    search: Joi.string().allow("").error(new Error("Search field is required")),
+    type: Joi.string().allow(null).error(new Error("Type field is required")),
+    status: Joi.string().allow(null).error(new Error("Status field is required")),
+    page: Joi.number().required().error(new Error("Page filed is required")),
+  });

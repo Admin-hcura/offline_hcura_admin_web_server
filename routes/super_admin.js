@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const sessionValidator = require("../helpers/sessionValidator");
-// const appointmentController = require("../controller/appointment");
+const appointmentController = require("../controller/appointment");
 const authenticationController = require("../controller/authentication");
 
 router.get("/", async (req, res) => {
@@ -78,6 +78,11 @@ router.post("/get/role/details",
     sessionValidator.validateAdminSession,
     authenticationController.getRoleDetails
 );
+router.post(
+    "/report/transaction",
+    sessionValidator.validateAdminSession,
+    appointmentController.getTransactionReport
+  );
 
 
 module.exports = router;

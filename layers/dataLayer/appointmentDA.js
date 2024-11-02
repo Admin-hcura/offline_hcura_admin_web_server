@@ -2944,6 +2944,7 @@ class appointmentDA{
                   paymentDoneBy: 1,
                   amount: 1,
                   paymentMethod: 1,
+                  prescribedBy:1,
                   payableAmount: 1,
                   invoiceNumber: 1,
                   remarks: 1,

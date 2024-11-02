@@ -2584,7 +2584,6 @@ class appointmentDA{
 
   async getPaymentDetails(paymentId){
     try{
-      console.log("paymentId", paymentId)
       return await paymentModel.aggregate([
         {
           $match: {
@@ -2824,6 +2823,148 @@ class appointmentDA{
   };
 
   async getTransactionReport(data) {
+    let offset = (data.page - 1) * 20;
+    try {
+      let pipeline = [
+        {
+          $match: {
+            createdOn: {
+              $gte: new Date(data.startDate),
+              $lte: new Date(data.endDate),
+            },
+            isDeleted: false,
+          },
+        },
+        {
+          $lookup: {
+            from: "patient",
+            as: "ptData",
+            let: { pId: "$patientId" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ["$_id", "$$pId"],
+                  },
+                },
+              },
+              // {
+              //   $project: {
+              //     firstName: 1,
+              //     lastName: 1,
+              //     hcuraId: 1,
+              //   },
+              // },
+            ],
+          },
+        },
+        {
+          $unwind: {
+            path: "$ptData",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "admin",
+            localField: "paymentDoneBy",
+            foreignField: "_id",
+            as: "paymentDoneDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$paymentDoneDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "admin",
+            localField: "doctorId",
+            foreignField: "_id",
+            as: "docDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$docDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $addFields: {
+            ptFirstName: { $toLower: "$ptData.firstName" },
+            ptLastName: { $toLower: "$ptData.lastName" },
+            amount: { $toDouble: "$payableAmount" },
+            hcuraId: "$ptData.hcuraId",
+            paymentDoneDetails: "$paymentDoneDetails",
+            docDetails: "$docDetails"
+          },
+        },
+        {
+          $match: {
+            ...(data.status !== null && { paymentStatus: data.status }),
+            ...(data.type !== null && { paymentFor: data.type }),
+            ...(data.search && data.search.trim() !== ""
+              ? {
+                  $or: [
+                    { ptFirstName: { $regex: data.search, $options: "i" } },
+                    { ptLastName: { $regex: data.search, $options: "i" } },
+                    { 
+                      $expr: {
+                        $eq: [{ $toUpper: "$hcuraId" }, data.search.toUpperCase()]
+                      }
+                    },
+                    { "ptData.phoneNumber": { $regex: data.search, $options: "i" } }
+                  ],
+                }
+              : {}),
+          },
+        },
+        {
+          $sort: data.sorting,
+        },
+        {
+          $facet: {
+            metadata: [{ $count: "total" }, { $addFields: { page: data.page } }],
+            data: [
+              { $skip: offset },
+              { $limit: 20 },
+              {
+                $project: {
+                  _id: 1,
+                  patientId: 1,
+                  hcuraId: 1,
+                  ptFirstName: 1,
+                  ptLastName: 1,
+                  paidOn: 1,
+                  paymentStatus: 1,
+                  paymentFor:1,
+                  paymentDoneBy: 1,
+                  amount: 1,
+                  paymentMethod: 1,
+                  payableAmount: 1,
+                  invoiceNumber: 1,
+                  remarks: 1,
+                  createdOn: 1,
+                  paymentDoneFirstName: "$paymentDoneDetails.firstName",
+                  paymentDoneLastName: "$paymentDoneDetails.lastName",
+                  docFirstName: "$docDetails.firstName",
+                  docSecondName: "$docDetails.lastName"
+                },
+              },
+            ],
+          },
+        },
+      ];
+      return await paymentModel.aggregate(pipeline);
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  async masterReport(data) {
     let offset = (data.page - 1) * 20;
     try {
       let pipeline = [

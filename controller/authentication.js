@@ -239,38 +239,29 @@ class authentication {
   async patientRegistartion(req, res, next) {
     try {
       let body = req.body;
-      console.log("......body......", body);
       const { error } = rule.patientRegRule.validate(body);
         if (error) {
           throw Boom.badData(error.message);
         }
-      console.log("......error......", error);
       // Check branch code
       let branchDetails = await authentationDAObj.getBrachDetailsDA(body.branchId);
-      console.log("......branchDetails......", branchDetails);
       if (!branchDetails) {
         throw Boom.conflict(apiResponse.ServerErrors.error.branchCode_not_exist);
       }
-      console.log("......11111111......");
       const branchCode = branchDetails.branchCode;
-      console.log("......branchCode......",branchCode);
       // Generate HCURA ID
       const now = new Date();
       const month = String(now.getMonth() + 1).padStart(2, '0');
       const year = String(now.getFullYear()).slice(-2);
-      console.log("......11111111......");
       // Get existing HCURA IDs
       let existingIDss = await authentationDAObj.getHcuraIdDA();
-      console.log("......existingIDss......",existingIDss);
       const hcuraIds = existingIDss.map(item => item.hcuraId);
-      console.log("......hcuraIds......",hcuraIds);
       const existingIDsArray = hcuraIds.map(id => ({
         branchPrefix: id.substring(0, 6),  // Extract "HKA01J" part (or similar branch prefix)
         month: id.substring(6, 8),         // Extract "07" part
         year: id.substring(8, 10),         // Extract "24" part
         count: id.substring(10)            // Extract the count part, e.g., "01", "02", etc.
       }));
-      console.log("......existingIDsArray......",existingIDsArray);
       // Find the maximum count for the current branch code, month, and year
       let maxCount = 0;
       existingIDsArray.forEach(id => {
@@ -284,7 +275,6 @@ class authentication {
       // Increment the maximum count by one
       const countThisMonth = maxCount + 1;
       const hcuraId = `${branchCode}${month}${year}${String(countThisMonth).padStart(2, '0')}`;
-      console.log("......hcuraId......",hcuraId);
       // Register patient
       let patientReg = await authentationDAObj.patientRegDA(
         hcuraId, body.branchId, body.firstName.trim(), body.lastName.trim(), body.birthDate,
@@ -308,7 +298,6 @@ class authentication {
   async bookTempAppointment(req, res, next) {
     try {
       let body = req.body;
-      console.log("..........", body);
       const { error } = rule.tempAppointmentRule.validate(body);
       if (error) {
         throw Boom.badData(error.message);
@@ -318,7 +307,6 @@ class authentication {
       const now = new Date();
       const month = String(now.getMonth() + 1).padStart(2, '0');
       const year = String(now.getFullYear()).slice(-2);
-      console.log("..........", now, month, year);
       let branchCode = await authentationDAObj.getBrachDetailsDA(body.branchId);
       if(!branchCode){
         throw Boom.conflict(apiResponse.ServerErrors.error.branchCode_not_exist);
@@ -348,8 +336,6 @@ class authentication {
       const hcuraTId = `${branchCode.branchCode}T${month}${year}${String(countThisMonth).padStart(2, '0')}`;
       let booked = await appointmentDA.bookedDetails(body, hcuraTId);
       let docDetails = await appointmentDA.getDoctorDetails(body.doctorId);
-      console.log(".....booked...", booked);
-      console.log(".....docDetails...", docDetails);
       let SMSToPatient = await sendSMS.sendSMSAppointmentBookedToPT(booked, docDetails);
       let SMSToDoctor = await sendSMS.sendSMSTempAppointmentBookedToDoc(booked, docDetails);
       // sms to doctor

@@ -25,7 +25,7 @@ Constants.OTP = {
     defaultOtp: 132204,
     countryCode: 91,
     demoDoctorPhoneNumber: 9676097350,
-    demoPatientPhoneNumber: 9676097350, //9080588448
+    demoPatientPhoneNumber: 9676097350,
     demoDoctorEmail: "techsupport@h-cura.com",
     demoPatientEmail: "techsupport@h-cura.com",
   };

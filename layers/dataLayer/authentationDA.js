@@ -49,7 +49,6 @@ class authentationDA {
 
     async addAdminDA(obj){
         try{
-            console.log("-----obj-----")
             let pass = obj.password
             let password = await bcrypt.hash(pass, saltRounds);
             let result = new adminModel({
@@ -254,7 +253,6 @@ class authentationDA {
     async getroleCodeDA(roleId){
         try{
             let result = await roleModel.findOne({ _id : roleId});
-            console.log("----resultrole-----",result)
             return result;
         } catch(e){
             throw e;
@@ -311,7 +309,6 @@ class authentationDA {
 
     async insertPackage(body){
         try{
-            console.log("=============",body);
             let result = new packageModel({
                 name: body.name,
                 packageFor: body.packageFor,

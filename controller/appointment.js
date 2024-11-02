@@ -856,13 +856,10 @@ class appointment{
 
             let discountPercent = 0
             if(body.promoCodes.length > 0){
-            console.log("+++++body.promoCodes.length+++++++",body.promoCodes.length);
             let promoCodeResult = await appointmentDA.getPromoCodeList(body.promoCodes);
             console.log("+++++promoCodeResult+++++++",promoCodeResult);
             discountPercent = promoCodeResult.discount
             }
-            console.log("=====discountPercent======",discountPercent);
-
             let discount = ((packageDetails.amount * discountPercent)).toFixed(2);
             let Discount = discount/100
             console.log("*****discount*****",Discount);
@@ -1366,9 +1363,7 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            
             let aptCount = await appointmentDA.getDashboardAptCount(body);
-            
             res.status(200).send({ status: true, data: aptCount });
         } catch (e) {
           next(e);
@@ -1396,7 +1391,6 @@ class appointment{
           let limit = constants.pageConstants.pageLength;
           let roleId = payload.roleId
           let branchId = payload.branchId
-          console.log("------payload-------",payload)
           const patientList = await appointmentDA.getPatientListTemp(
             payload.type,
             page,
@@ -1418,7 +1412,6 @@ class appointment{
             },
             patientList: patientList[0].data,
           };
-          console.log("------patientList-------",patientList);
           res.status(200).send({ status: true, data: sendObj });
         } catch (e) {
           next(e);
@@ -1447,7 +1440,6 @@ class appointment{
         if (error){
             throw Boom.badData(error.message);
         }
-        console.log("body--------",body)
         let caseStudyDetails = await appointmentDA.insertCaseStudyDA(body);
         res.status(200).send({ status: true, data: caseStudyDetails });
         } catch(e) {
@@ -1491,7 +1483,6 @@ class appointment{
             if (error){
                 throw Boom.badData(error.message);
             }
-            console.log("-----body-----",body)
             let details = await appointmentDA.getPatientDetailsCaseStudy(body.hcuraId, body.roleId, body.branchId)
             res.status(200).send({ status: true, data: details });
         } catch(e){
@@ -1640,25 +1631,47 @@ class appointment{
 
     async getTransactionReport(req, res, next) {
         try {
-          let body = req.body;
-          const { error } = rule.transactionReport.validate(body);
-          if (error) {
-            throw Boom.badData(error.message);
-          }
-          let result = await appointmentDA.getTransactionReport(body);
-          let sendObj = {
-            metaData: {
-              page: result[0].metadata.length > 0 ? result[0].metadata[0].page : 1,
-              total:
-                result[0].metadata.length > 0 ? result[0].metadata[0].total : 0,
-            },
-            transactionList: result[0].data,
-          };
-          res.status(200).send({ status: true, data: sendObj });
+            let body = req.body;
+            const { error } = rule.transactionReport.validate(body);
+            if (error) {
+                throw Boom.badData(error.message);
+            }
+            let result = await appointmentDA.getTransactionReport(body);
+            let sendObj = {
+                metaData: {
+                page: result[0].metadata.length > 0 ? result[0].metadata[0].page : 1,
+                total:
+                    result[0].metadata.length > 0 ? result[0].metadata[0].total : 0,
+                },
+                transactionList: result[0].data,
+            };
+            res.status(200).send({ status: true, data: sendObj });
         } catch (e) {
-          next(e);
+            next(e);
         }
-      };
+    };
+
+    async getMasterReport(req, res, next) {
+        try {
+            let body = req.body;
+            const { error } = rule.transactionReport.validate(body);
+            if (error) {
+                throw Boom.badData(error.message);
+            }
+            let result = await appointmentDA.masterReport(body);
+            let sendObj = {
+                metaData: {
+                page: result[0].metadata.length > 0 ? result[0].metadata[0].page : 1,
+                total:
+                    result[0].metadata.length > 0 ? result[0].metadata[0].total : 0,
+                },
+                transactionList: result[0].data,
+            };
+            res.status(200).send({ status: true, data: sendObj });
+        } catch (e) {
+            next(e);
+        }
+    };
 
 };
 

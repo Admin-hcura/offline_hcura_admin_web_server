@@ -82,7 +82,12 @@ router.post(
     "/report/transaction",
     sessionValidator.validateAdminSession,
     appointmentController.getTransactionReport
-  );
+);
+  router.post(
+    "/report/master",
+    // sessionValidator.validateAdminSession,
+    appointmentController.getMasterReport
+);
 
 
 module.exports = router;

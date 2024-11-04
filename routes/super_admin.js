@@ -85,7 +85,7 @@ router.post(
 );
 router.post(
     "/report/transaction/download",
-    // sessionValidator.validateAdminSession,
+    sessionValidator.validateAdminSession,
     appointmentController.transactionReportDownload
 );
   router.post(

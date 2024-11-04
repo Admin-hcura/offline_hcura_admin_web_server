@@ -83,6 +83,11 @@ router.post(
     sessionValidator.validateAdminSession,
     appointmentController.getTransactionReport
 );
+router.post(
+    "/report/transaction/download",
+    // sessionValidator.validateAdminSession,
+    appointmentController.transactionReportDownload
+);
   router.post(
     "/report/master",
     // sessionValidator.validateAdminSession,

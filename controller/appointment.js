@@ -1651,6 +1651,26 @@ class appointment{
         }
     };
 
+    async transactionReportDownload(req, res, next) {
+        try {
+            let body = req.body;
+            const { error } = rule.transactionReportDown.validate(body);
+            if (error) {
+                throw Boom.badData(error.message);
+            }
+            let result = await appointmentDA.transactionReportDownload(body);
+            let sendObj = {
+                metaData: {
+                    total: result[0].metadata.length > 0 ? result[0].metadata[0].total : 0,
+                },
+                transactionList: result[0].data, 
+            };            
+            res.status(200).send({ status: true, data: sendObj });
+        } catch (e) {
+            next(e);
+        }
+    };
+
     async getMasterReport(req, res, next) {
         try {
             let body = req.body;

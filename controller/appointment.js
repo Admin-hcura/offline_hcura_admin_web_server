@@ -1693,6 +1693,20 @@ class appointment{
         }
     };
 
+    async statusCaseStudy(req, res, next){
+        try{
+            let body = req.body;
+            const { error } = rule.statusCaseStudy.validate(body);
+            if( error ){
+                throw Boom.badData(error.message);
+            }
+            let result = await appointmentDA.statusCaseStudy(body);
+            res.status(200).send({ status: true, data: result });
+        } catch(e){
+            next(e);
+        }
+    };
+
 };
 
 module.exports = new appointment();

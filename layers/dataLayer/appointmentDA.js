@@ -3217,6 +3217,122 @@ class appointmentDA{
       throw e;
     }
   };
+
+  async statusCaseStudy(data){
+    try{
+      const filter = {
+        isDeleted: false,
+        paidOn: {
+          $gte: new Date(data.startDate),
+          $lte: new Date(data.endDate),
+        },
+      };
+      if(data.doctorId != null ){
+        filter.doctorId = new mongoose.Types.ObjectId(data.doctorId);
+      }
+      if(data.branchId != null ){
+        filter.branchId = new mongoose.Types.ObjectId(data.branchId);
+      }
+      let result = await paymentModel.aggregate(
+        [
+          {
+            $match: filter
+          },
+          {
+            $addFields: {
+              caseStudyStatus: {
+                $cond: {
+                  if: {
+                    $and: [
+                      {
+                        $ifNull: ["$caseStudyId", false]
+                      },
+                      {
+                        $ne: ["$caseStudyId", null]
+                      }
+                    ]
+                  },
+                  then: "Available",
+                  else: "Not Available"
+                }
+              },
+              prescriptionStatus: {
+                $cond: {
+                  if: {
+                    $and: [
+                      {
+                        $ifNull: [
+                          "$prescriptionId",
+                          false
+                        ]
+                      },
+                      {
+                        $ne: ["$prescriptionId", null]
+                      }
+                    ]
+                  },
+                  then: "Available",
+                  else: "Not Available"
+                }
+              }
+            }
+          },
+          {
+            $lookup: {
+              from: "admin",
+              localField: "doctorId",
+              foreignField: "_id",
+              as: "docDetails"
+            }
+          },
+          {
+            $unwind: {
+              path: "$docDetails",
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $lookup: {
+              from: "patient",
+              localField: "patientId",
+              foreignField: "_id",
+              as: "ptDetails"
+            }
+          },
+          {
+            $unwind: {
+              path: "$ptDetails",
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $project: {
+              caseStudyStatus: 1,
+              caseStudyId: 1,
+              prescriptionId: 1,
+              startTime: 1,
+              appointmentNumber: 1,
+              prescriptionStatus: 1,
+              hcuraId: "$ptDetails.hcuraId",
+              ptFirstName: "$ptDetails.firstName",
+              ptLastName: "$ptDetails.lastName",
+              docFirstName: "$docDetails.firstName",
+              docLastName: "$docDetails.lastName",
+              paidOn: 1
+            }
+          },
+          {
+            $sort: {
+              paidOn: -1
+            }
+          }
+        ]
+      );
+      return result;
+    } catch(e){
+
+    }
+  };
   
 }
 module.exports = new appointmentDA();

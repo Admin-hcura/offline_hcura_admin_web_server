@@ -80,18 +80,24 @@ router.post("/get/role/details",
 );
 router.post(
     "/report/transaction",
-    // sessionValidator.validateAdminSession,
+    sessionValidator.validateAdminSession,
     appointmentController.getTransactionReport
 );
 router.post(
     "/report/transaction/download",
-    // sessionValidator.validateAdminSession,
+    sessionValidator.validateAdminSession,
     appointmentController.transactionReportDownload
 );
-  router.post(
+router.post(
     "/report/master",
     // sessionValidator.validateAdminSession,
     appointmentController.getMasterReport
+);
+
+router.post(
+    "/staus/casestudy",
+    sessionValidator.validateAdminSession,
+    appointmentController.statusCaseStudy
 );
 
 module.exports = router;

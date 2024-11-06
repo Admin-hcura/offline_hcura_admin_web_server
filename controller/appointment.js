@@ -152,7 +152,7 @@ class appointment{
                 parseFloat(gstAmount) ).toFixed(2);
 
             console.log("----payable------",payable)
-
+            let createdOn = moment().format();
             if((body.paymentMode === "cash" || body.paymentMode === "qr_code" || body.paymentMode === "swiping_machine") && payable == body.payableAmount && payable > 0){
                 let paymentObj = {
                     patientId: body.patientId,
@@ -173,6 +173,7 @@ class appointment{
                     afterRemovingGST: afterRemovingDiscount,
                     GSTAmount: gstAmount,
                     discount: Discount,
+                    createdOn: createdOn
                     // GSTID: obj.GSTID,
                 };
                 if(body.consultationType === "FOLLOW-UP"){
@@ -282,6 +283,7 @@ class appointment{
                     afterRemovingGst: afterRemovingDiscount,
                     GSTAmount: gstAmount,
                     discount: Discount,
+                    createdOn: createdOn
                     // GSTID: obj.GSTID,
                 };
                 let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
@@ -312,6 +314,7 @@ class appointment{
                     afterRemovingGST: afterRemovingDiscount,
                     GSTAmount: gstAmount,
                     discount: Discount,
+                    createdOn: createdOn
                     // GSTID: obj.GSTID,
                 };
                 if(body.consultationType === "FOLLOW-UP"){
@@ -634,7 +637,7 @@ class appointment{
             console.log(".....body.......",body);
             const { error } = rule.paymenPackageRule.validate(body);
             if (error){
-              throw Boom.badData(error.message);
+                throw Boom.badData(error.message);
             }
             let ptDetails = await appointmentDA.patientDetaiils(body.patientId);
             console.log(".....ptDetails.......",ptDetails);
@@ -648,7 +651,7 @@ class appointment{
 
             let packageDetails = await appointmentDA.getPackageDetails(body.packageId);
             console.log(".....packageDetails.......",packageDetails);
-
+            let createdOn = moment().format();
             let discountPercent = 0
             if(body.promoCodes.length > 0){
             console.log("+++++body.promoCodes.length+++++++",body.promoCodes.length);
@@ -664,8 +667,8 @@ class appointment{
 
             let afterRemovingDiscount = (
                 packageDetails.amount - parseFloat(Discount)
-              ).toFixed(2);
-              console.log(",,,,,,,afterRemovingDiscount,,,,,,,",afterRemovingDiscount)
+            ).toFixed(2);
+            console.log(",,,,,,,afterRemovingDiscount,,,,,,,",afterRemovingDiscount)
             
             let gstAmount = parseFloat(((afterRemovingDiscount * parseFloat(info.consultationGST)) /100).toFixed(2));
             console.log("......gstAmount.......",gstAmount)
@@ -704,6 +707,7 @@ class appointment{
                             afterRemovingGst: afterRemovingDiscount,
                             GSTAmount: gstAmount,
                             discount: Discount,
+                            createdOn: createdOn
                             // GSTID: obj.GSTID,
                         };
                         let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
@@ -713,11 +717,8 @@ class appointment{
                             console.log("------------updatePackageDetailsInAppt------",updatePackageDetailsInAppt)
                         res.send({ success: true, data: addPaymentInfo});
                     } else{
-                        throw Boom.badData(
-                            apiResponse.ServerErrors.error.payment_not_created
-                        );
+                        throw Boom.badData(apiResponse.ServerErrors.error.payment_not_created);
                     }
-
                 } else {
                     console.log("-------entered------")
                     let paymentObj = {
@@ -738,7 +739,8 @@ class appointment{
                         doctorId: appointmentData[0].doctorId,
                         branchId:  ptDetails.branchId,
                         appointmentId: body.appointmentId,
-                        packageId: body.packageId
+                        packageId: body.packageId,
+                        createdOn: createdOn
                         // GSTID: obj.GSTID,
                     };
                     let addPaymentInfo = await appointmentDA.addPackagePaymentInfo(paymentObj);
@@ -767,7 +769,7 @@ class appointment{
                     console.log("=========  updatePaymentReport  =========",updatePaymentReport)
                     let endDate =  moment(updatePaymentReport.paidOn).add(parseInt(packageDetails.months), 'months');
                     if (!endDate.isValid()) {
-                      endDate = moment(startDate).endOf('month');
+                        endDate = moment(startDate).endOf('month');
                     }
                     let packageSchedules = {
                         patientId: updatePaymentReport.patientId,
@@ -821,7 +823,6 @@ class appointment{
                     console.log("111111111111     ",userInfo[0].patient)
                     emailSender.sendPackageInvoiceEmail(userInfo[0].patient.emailId, file);
                     console.log("2222222222222")
-                    
                     res.send({ success: true, data: userInfo});
                 }
             } else {
@@ -853,7 +854,7 @@ class appointment{
 
             let packageDetails = await appointmentDA.getPackageDetails(body.packageId);
             console.log(".....packageDetails.......",packageDetails);
-
+            let createdOn = moment().format();
             let discountPercent = 0
             if(body.promoCodes.length > 0){
             let promoCodeResult = await appointmentDA.getPromoCodeList(body.promoCodes);
@@ -866,8 +867,8 @@ class appointment{
 
             let afterRemovingDiscount = (
                 packageDetails.amount - parseFloat(Discount)
-              ).toFixed(2);
-              console.log(",,,,,,,afterRemovingDiscount,,,,,,,",afterRemovingDiscount)
+            ).toFixed(2);
+            console.log(",,,,,,,afterRemovingDiscount,,,,,,,",afterRemovingDiscount)
 
             let gstAmount = 0
             let CGST = 0
@@ -923,7 +924,8 @@ class appointment{
                             discount: Discount,
                             SGST: SGST,
                             CGST: CGST,
-                            IGST: IGST
+                            IGST: IGST,
+                            createdOn: createdOn
                             // GSTID: obj.GSTID,
                         };
                         let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
@@ -957,7 +959,8 @@ class appointment{
                         appointmentId: body.appointmentId,
                         SGST: SGST,
                         CGST: CGST,
-                        IGST: IGST
+                        IGST: IGST,
+                        createdOn: createdOn
                         // GSTID: obj.GSTID,
                     };
                     let addPaymentInfo = await appointmentDA.addPackagePaymentInfo(paymentObj);
@@ -1131,6 +1134,7 @@ class appointment{
             };
             // GST NOT CALCULATING FOR EXTERNAL PAYMENTS
             let amount = parseFloat(body.payableAmount)
+            let createdOn = moment().format();
             if(body.paymentMode == 'online'){
                 let paymentLink = await paymentGateway.externalSourcePayment(obj, amount);
                 if (paymentLink && paymentLink.data.status == constants.value.CREATED) {
@@ -1143,19 +1147,17 @@ class appointment{
                         paymentStatus: paymentLink.data.status,
                         shortUrl: paymentLink.data.short_url,
                         paymentLinkId: paymentLink.data.id,
-                        paymentRelationId: paymentLink.data.id.substring(6), 
+                        paymentRelationId: paymentLink.data.id.substring(6),
+                        createdOn: createdOn 
                     };
-                    let addPaymentInfo = await appointmentDA.addExternalSourcePaymentInfo(
-                      obj,
-                      paymentObj
-                    );
+                    let addPaymentInfo = await appointmentDA.addExternalSourcePaymentInfo(obj, paymentObj);
                     console.log("++++++++addPaymentInfo++++++",addPaymentInfo)
                     res.send({ success: true, data: addPaymentInfo });
-                  } else {
+                } else {
                     throw Boom.badData(
-                      apiResponse.ServerErrors.error.payment_not_created
+                        apiResponse.ServerErrors.error.payment_not_created
                     );
-                  }
+                }
             } else {
                 let paymentObj = {
                     afterRemovingGst: amount,
@@ -1167,7 +1169,8 @@ class appointment{
                     shortUrl: null,
                     paymentRelationId: null,
                     paymentLinkId: null,
-                  };
+                    createdOn: createdOn
+                };
                 let addPaymentInfo = await appointmentDA.addExternalSourcePaymentInfo(obj, paymentObj);
                 let PAYMENT_ID = addPaymentInfo._id;
                 let paidOn = moment().format();
@@ -1183,7 +1186,7 @@ class appointment{
                     orderedOn: paidOn,
                     paymentLinkId: PAYMENT_ID,
                     invoiceNumber: invoiceNumber
-                  };
+                };
                 let relationId = updatePaymentDetails.paymentRelationId;
                 let updatePaymentReport = await appointmentDA.updatePaymentByPaymentId(updatePaymentDetails);
                 if (updatePaymentReport && updatePaymentReport != null) {

@@ -88,7 +88,7 @@ class appointmentDA{
         afterRemovingGST: obj.afterRemovingGST,
         paymentMethod: obj.paymentMethod,
         paymentStatus: obj.paymentStatus,
-        createdOn: createdOn
+        createdOn: obj.createdOn
       });
       return await addPaymentInfo.save();
     } catch(e){
@@ -988,7 +988,7 @@ class appointmentDA{
         SGST: paymentDetails.SGST,
         CGST: paymentDetails.CGST,
         IGST: paymentDetails.IGST,
-        createdOn: createdOn
+        createdOn: paymentDetails.createdOn
       });
       return await addPaymentInfo.save();
     } catch(e){
@@ -1325,7 +1325,7 @@ class appointmentDA{
         shortUrl: paymentObj.shortUrl,
         paymentLinkId: paymentObj.paymentLinkId,
         paymentRelationId: paymentObj.paymentRelationId,
-        createdOn: createdOn
+        createdOn: paymentObj.createdOn
       });
       return await addPayment.save();
     } catch(e){

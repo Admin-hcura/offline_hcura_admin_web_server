@@ -2828,7 +2828,7 @@ class appointmentDA{
       let pipeline = [
         {
           $match: {
-            createdOn: {
+            paidOn: {
               $gte: new Date(data.startDate),
               $lte: new Date(data.endDate),
             },
@@ -2970,7 +2970,7 @@ class appointmentDA{
       let pipeline = [
         {
           $match: {
-            createdOn: {
+            paidOn: {
               $gte: new Date(data.startDate),
               $lte: new Date(data.endDate),
             },

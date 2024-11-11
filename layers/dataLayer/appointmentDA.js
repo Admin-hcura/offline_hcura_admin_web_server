@@ -2949,6 +2949,8 @@ class appointmentDA{
                   invoiceNumber: 1,
                   remarks: 1,
                   createdOn: 1,
+                  GSTAmount: 1,
+                  afterRemovingGST: 1,
                   paymentDoneFirstName: "$paymentDoneDetails.firstName",
                   paymentDoneLastName: "$paymentDoneDetails.lastName",
                   docFirstName: "$docDetails.firstName",

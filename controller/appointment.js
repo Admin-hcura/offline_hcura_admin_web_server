@@ -1276,14 +1276,7 @@ class appointment{
             const { page, limit, searchKey, fromDate, toDate, branchId, roleId} = req.query;
             const obj = { isActive : true };
             const getAllAppointment = await appointmentDA.getAllApptList(
-                obj,
-                page,
-                limit,
-                searchKey,
-                fromDate,
-                toDate,
-                branchId,
-                roleId
+                obj, page, limit, searchKey, fromDate, toDate, branchId, roleId
             );
             res.status(200).send({ status: true, data: getAllAppointment });
         } catch(e){
@@ -1311,14 +1304,7 @@ class appointment{
             const { appointmentStatus, page, limit, searchKey, fromDate, toDate, branchId, roleId } = req.query;
             const obj = { appointmentStatus, isActive : true };
             const getAllAppointment = await appointmentDA.getAllApptList(
-                obj,
-                page,
-                limit,
-                searchKey,
-                fromDate,
-                toDate,
-                branchId,
-                roleId
+                obj, page, limit, searchKey, fromDate, toDate, branchId, roleId 
             );
             res.status(200).send({ status: true, data: getAllAppointment });
         } catch(e){
@@ -1705,6 +1691,18 @@ class appointment{
             }
             let result = await appointmentDA.statusCaseStudy(body);
             res.status(200).send({ status: true, data: result });
+        } catch(e){
+            next(e);
+        }
+    };
+
+    async getApptDocs(req, res, next){
+        try{
+            const { page, limit, searchKey, fromDate, toDate, docId, roleId} = req.query;
+            const getApptsDocs = await appointmentDA.getApptListDocs(
+                page, limit, searchKey, fromDate, toDate, docId, roleId
+            );
+            res.status(200).send({ status: true, data: getApptsDocs });
         } catch(e){
             next(e);
         }

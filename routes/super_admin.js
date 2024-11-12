@@ -93,7 +93,6 @@ router.post(
     // sessionValidator.validateAdminSession,
     appointmentController.getMasterReport
 );
-
 router.post(
     "/staus/casestudy",
     sessionValidator.validateAdminSession,

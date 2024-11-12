@@ -55,5 +55,10 @@ router.post(
   // sessionValidator.validateDoctorSession,
   appointmentController.sendDuplicatePrescription
 );
+router.get(
+  "/get/appt/details/doc",
+  // sessionValidator.validateAdminSession,
+  appointmentController.getApptDocs
+);
 
 module.exports = router;

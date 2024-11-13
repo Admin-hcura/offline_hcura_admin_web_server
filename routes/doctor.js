@@ -9,55 +9,55 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/insert/casestudy/data",
-  // sessionValidator.validateAdminSession,
+  sessionValidator.validateAdminSession,
   appointmentController.insertCaseStudy
 );
 router.post("/insert/casestudy/suggestion/prescription",
-  // sessionValidator.validateAdminSession,
+  sessionValidator.validateAdminSession,
   appointmentController.insertCaseStudySuggestionPrescription
 );
 router.post("/insert/prescription",
-  // sessionValidator.validateAdminSession,
+  sessionValidator.validateAdminSession,
   appointmentController.insertPrescription
 );
 router.post("/get/patient/details/casestudy",
-  // sessionValidator.validateAdminSession,
+  sessionValidator.validateAdminSession,
   appointmentController.getPtDetailsCasestudy
 );
 router.post("/update/suggestion/prescription",
-  // sessionValidator.validateAdminSession,
+  sessionValidator.validateAdminSession,
   appointmentController.updateSuggestionPrescription
 );
 router.post("/get/casestudy/details",
-  // sessionValidator.validateAdminSession,
+  sessionValidator.validateAdminSession,
   appointmentController.getCaseStudyDetails
 );
 router.post("/update/prescription",
-  // sessionValidator.validateAdminSession,
+  sessionValidator.validateAdminSession,
   appointmentController.updatePrescription
 );
 router.post("/get/prescription/details",
-  // sessionValidator.validateAdminSession,
+  sessionValidator.validateAdminSession,
   appointmentController.getPrescriptionDetails
 );
 router.post("/get/package/schedule/details/pateint",
-  // sessionValidator.validateAdminSession,
+  sessionValidator.validateAdminSession,
   appointmentController.getPackageScheduleDetails
 );
 router.post(
   "/get/suggestion/prescription/data",
-  // sessionValidator.validateAdminSession,
+  sessionValidator.validateAdminSession,
   appointmentController.getSuggestionPrescriptionDetails
 );
 // send email for Duplicate prescription
 router.post(
   "/send/d/email/prescription",
-  // sessionValidator.validateDoctorSession,
+  sessionValidator.validateAdminSession,
   appointmentController.sendDuplicatePrescription
 );
 router.get(
   "/get/appt/details/doc",
-  // sessionValidator.validateAdminSession,
+  sessionValidator.validateAdminSession,
   appointmentController.getApptDocs
 );
 

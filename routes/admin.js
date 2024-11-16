@@ -125,7 +125,7 @@ router.post("/get/patient/payment/details/for/external",
   appointmentController.getPatientAndPaymentDetailsForExternal
 );
 router.post("/payment/external/source",
-  sessionValidator.validateAdminSession,
+  // sessionValidator.validateAdminSession,
   appointmentController.paymentExternalSource
 );
 router.get("/get/package/promo/list",

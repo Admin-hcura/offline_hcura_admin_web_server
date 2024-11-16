@@ -590,11 +590,11 @@ class authentication {
                       GST: "0%", // needs to work on gst
                       payableAmount: updatePaymentReport.payableAmount,
                       paymentMethod: updatePaymentDetails.paymentMethod,
-                      docQualification: userInfo[0].doctor.qualification,
+                      docQualification: userInfo[0].doctor.qualifaction,
                       hcuraId: userInfo[0].patient.hcuraId,
                       packageName: packageDetails[0].packageName,
                       packageAmount: packageDetails[0].packageAmount,
-                      docRegstration : userInfo[0].doctor.registrationNumber,
+                      docRegstration : userInfo[0].doctor.registerationNumber,
                       branchPhoneNumber: branchCode.branchPhoneNumber
                     }
                     emailSender.sendPackagePaymentSuccess(
@@ -606,9 +606,10 @@ class authentication {
                       packageDetails[0].packageName,
                     );
                     let file = await htmlToPDF.generateInvoiceForPackage(pdfDetails);
-                    emailSender.sendPackageInvoiceEmail(userInfo[0].patient.emailId, file);                    
+                    emailSender.sendPackageInvoiceEmail(userInfo[0].patient.emailId, file);  
+
                     //   schedule package is not working
-                    //   await schedulers.changeisActiveStatusPackage(details)
+                    await schedulers.changeisActiveStatusPackage(details)
 
                     //  need to send medicine email to patient 
                   } else if (userInfo[0].paymentFor == constants.value.EXTERNAL_SOURCE){
@@ -681,11 +682,11 @@ class authentication {
                       discount: updatePaymentReport.discount,
                       payableAmount: updatePaymentReport.payableAmount,
                       paymentMethod: updatePaymentDetails.paymentMethod,
-                      docQualification: userInfo[0].doctor.qualification,
+                      docQualification: userInfo[0].doctor.qualifaction,
                       hcuraId: userInfo[0].patient.hcuraId,
                       packageName: packageDetails[0].packageName,
                       packageAmount: packageDetails[0].packageAmount,
-                      docRegstration : userInfo[0].doctor.registrationNumber,
+                      docRegstration : userInfo[0].doctor.registerationNumber,
                       branchPhoneNumber: branchCode.branchPhoneNumber,
                       SGST: updatePaymentReport.SGST,
                       CGST: updatePaymentReport.CGST,

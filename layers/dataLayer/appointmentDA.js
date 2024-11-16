@@ -3121,13 +3121,6 @@ class appointmentDA{
                   },
                 },
               },
-              // {
-              //   $project: {
-              //     firstName: 1,
-              //     lastName: 1,
-              //     hcuraId: 1,
-              //   },
-              // },
             ],
           },
         },
@@ -3152,12 +3145,58 @@ class appointmentDA{
           }
         },
         {
+          $lookup: {
+            from: "appointment",
+            localField: "appointmentId",
+            foreignField: "_id",
+            as: "apptDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$apptDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "admin",
+            localField: "doctorId",
+            foreignField: "_id",
+            as: "docDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$docDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "package",
+            localField: "packageId",
+            foreignField: "_id",
+            as: "packageDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$packageDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
           $addFields: {
             ptFirstName: { $toLower: "$ptData.firstName" },
             ptLastName: { $toLower: "$ptData.lastName" },
             amount: { $toDouble: "$payableAmount" },
             hcuraId: "$ptData.hcuraId",
-            paymentDoneDetails: "$paymentDoneDetails"
+            ptData: "$ptData",
+            paymentDoneDetails: "$paymentDoneDetails",
+            apptDetails: "$apptDetails",
+            docDetails: "$docDetails",
+            packageDetails: "$packageDetails"
           },
         },
         {
@@ -3200,14 +3239,24 @@ class appointmentDA{
                   paymentStatus: 1,
                   paymentFor:1,
                   paymentDoneBy: 1,
-                  amount: 1,
+                  paidAmount: 1,
+                  GSTAmount: 1,
+                  afterRemovingGST: 1,
                   paymentMethod: 1,
                   payableAmount: 1,
                   invoiceNumber: 1,
                   remarks: 1,
                   createdOn: 1,
+                  ptEmail: "$ptData.emailId",
+                  ptAddress: "$ptData.address",
                   paymentDoneFirstName: "$paymentDoneDetails.firstName",
                   paymentDoneLastName: "$paymentDoneDetails.lastName",
+                  consultationType: "$apptDetails.consultationType",
+                  apptDate: "apptDetails.startTime",
+                  docFirstName: "$docDetails.firstName",
+                  docLastName: "$docDetails.lastName",
+                  packageAmount: "$packageDetails.amount",
+                  packageName: "$packageDetails.name"
                 },
               },
             ],

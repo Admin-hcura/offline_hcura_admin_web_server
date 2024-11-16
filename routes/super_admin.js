@@ -89,7 +89,7 @@ router.post(
 );
 router.post(
     "/report/master",
-    // sessionValidator.validateAdminSession,
+    sessionValidator.validateAdminSession,
     appointmentController.getMasterReport
 );
 router.post(

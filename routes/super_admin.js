@@ -71,7 +71,6 @@ router.post("/payment/clinic/web_hook",
 );
 // offline patment status checking
 router.post("/payment/status", 
-    sessionValidator.validateAdminSession,
     authenticationController.paymentStatus
 );
 router.post("/get/role/details",

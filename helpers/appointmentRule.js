@@ -164,3 +164,16 @@ exports.statusCaseStudy = Joi.object({
     doctorId: Joi.string().allow(null).error(new Error("doctorId is required")),
     branchId: Joi.string().allow(null).error(new Error("branchId is required")),
 });
+
+exports.patientReport = Joi.object({
+    startDate: Joi.string().allow("").error(new Error("Start date is required")),
+    endDate: Joi.string().allow("").error(new Error("End date is required")),
+    sorting: Joi.object().required().error(new Error("Sorting is required")),
+    search: Joi.string().allow("").error(new Error("Search field is required")),
+    source: Joi.string().allow(null).error(new Error("Source field is required")),
+    occupation: Joi.string().allow(null).error(new Error("Occupation field is required")),
+    page: Joi.number().required().error(new Error("Page filed is required")),
+    branchId: Joi.string().allow(null).error(new Error("branchId is required")),
+    stateId: Joi.string().allow(null).error(new Error("stateId is required")),
+    gender: Joi.string().allow(null).error(new Error("Gender is required")),
+});

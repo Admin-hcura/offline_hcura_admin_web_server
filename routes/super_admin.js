@@ -97,5 +97,10 @@ router.post(
     sessionValidator.validateAdminSession,
     appointmentController.statusCaseStudy
 );
+router.post(
+    "/report/patient",
+    // sessionValidator.validateAdminSession,
+    appointmentController.getPatientReport
+);
 
 module.exports = router;

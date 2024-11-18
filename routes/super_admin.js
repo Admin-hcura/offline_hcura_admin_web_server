@@ -99,7 +99,7 @@ router.post(
 );
 router.post(
     "/report/patient",
-    // sessionValidator.validateAdminSession,
+    sessionValidator.validateAdminSession,
     appointmentController.getPatientReport
 );
 

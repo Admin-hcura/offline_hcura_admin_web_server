@@ -110,7 +110,7 @@ class appointment{
                 throw Boom.badData(error.message);
             }
             let ptDetails = await appointmentDA.patientDetaiils(body.patientId);
-            console.log(".....body.appointmentId.......",body.appointmentId);
+            console.log(".....body.appointmentId.......",body);
             let appointmentData = await appointmentDA.getApptDetails(body.appointmentId)
             console.log(".....appointmentData.......",appointmentData);
             let branchDetails = await appointmentDA.branchCode(ptDetails.branchId)

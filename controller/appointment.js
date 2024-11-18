@@ -1,5 +1,4 @@
 const Boom = require("@hapi/boom");
-// const multiparty = require("multiparty");
 const moment = require("moment-timezone");
 const rule = require("../helpers/appointmentRule");
 const doctorRule = require("../helpers/doctorRule");

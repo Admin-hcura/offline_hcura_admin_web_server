@@ -179,63 +179,6 @@ class authentication {
     }
   };
 
-  // async patientRegistartion(req, res, next){
-  //     try{
-  //         let body = req.body
-  //         const { error } = rule.patientRegRule.validate(body);
-  //         if (error) {
-  //             throw Boom.badData(error.message);
-  //         }
-  //         // let patientExist = await authentationDAObj.patientExistDA(body.phoneNumber);
-  //         let branchCode = await authentationDAObj.getBrachDetailsDA(body.branchId);
-  //         if(!branchCode){
-  //             throw Boom.conflict(apiResponse.ServerErrors.error.branchCode_not_exist);
-  //         }
-  //         // if(patientExist){
-  //         // throw Boom.conflict(apiResponse.ServerErrors.error.phoneNumber_Exist);
-  //         // } else {
-  //             const now = new Date();
-  //             const month = String(now.getMonth() + 1).padStart(2, '0');
-  //             const year = String(now.getFullYear()).slice(-2);
-  //             let existingIDss = await authentationDAObj.getHcuraIdDA();
-  //             const hcuraIds = existingIDss.map(item => item.hcuraId);
-  //             const existingIDsArray = hcuraIds.map(id => ({
-  //                 prefix: id.substring(0, 4),  // Extract "H01J" part
-  //                 month: id.substring(4, 6),   // Extract "06" part
-  //                 year: id.substring(6, 8),    // Extract "24" part
-  //                 count: id.substring(8)       // Extract the count part, e.g., "01", "02", etc.
-  //             }));
-  //                 // Find the maximum count for the current month and year
-  //             let maxCount = 0;
-  //             existingIDsArray.forEach(id => {
-  //                 if (id.month === month && id.year === year) {
-  //                     const count = parseInt(id.count, 10);
-  //                     if (count > maxCount) {
-  //                         maxCount = count;
-  //                     }
-  //                 }
-  //             });
-  //                 // Increment the maximum count by one
-  //             const countThisMonth = maxCount + 1;
-  //             const hcuraId = `${branchCode.branchCode}${month}${year}${String(countThisMonth).padStart(2, '0')}`;
-  //             let patientReg = await authentationDAObj.patientRegDA(
-  //                 hcuraId, body.branchId, body.firstName.trim(), body.lastName.trim(), body.birthDate,
-  //                 body.gender, body.emailId.trim(), body.phoneNumber, body.alternativeNumber,
-  //                 body.bloodGroup, body.address, body.registeredBy, body.source, body.occupation);
-  //             await emailSender.patientWelcomeEmail(
-  //                 patientReg.firstName, 
-  //                 patientReg.lastName, 
-  //                 hcuraId, 
-  //                 patientReg.emailId, 
-  //                 patientReg.phoneNumber
-  //             );
-  //             res.send({success: true, data: patientReg});
-  //         // }
-  //     } catch(e){
-  //     next(e);
-  //     }
-  // };
-
   async patientRegistartion(req, res, next) {
     try {
       let body = req.body;

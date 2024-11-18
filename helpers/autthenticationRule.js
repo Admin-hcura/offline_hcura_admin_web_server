@@ -1,9 +1,6 @@
 const Joi = require("joi");
 const moment = require("moment-timezone");
-
 let now = moment().format("YYYY-MM-DD");
-// let next = moment().add(15, "days").format("YYYY-MM-DD");
-
 
 exports.authRule = Joi.object({
     branchCode: Joi.string().required().error(new Error("branchCode is required")),

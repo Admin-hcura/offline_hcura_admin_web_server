@@ -90,6 +90,10 @@ class appointment{
                 endTime : createAppointment.endTime,
                 startTime : createAppointment.startTime
             }
+            if(body.consultationType === "FOLLOW-UP"){
+                let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, createAppointment._id);
+                console.log("-----FOLLOW-UP----",updateFollowupId)
+            }
             // email to patient appointment details
                 emailSender.sendAppointmentConformedEmailToPT(details);
             // email to docors 
@@ -175,9 +179,9 @@ class appointment{
                     createdOn: createdOn
                     // GSTID: obj.GSTID,
                 };
-                if(body.consultationType === "FOLLOW-UP"){
-                    let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, paymentObj.appointmentId);
-                }
+                // if(body.consultationType === "FOLLOW-UP"){
+                //     let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, paymentObj.appointmentId);
+                // }
                 let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
                 console.log("----addPaymentInfo----",addPaymentInfo);
                 let PAYMENT_ID = addPaymentInfo._id;
@@ -254,9 +258,9 @@ class appointment{
                     res.send({ success: true, data: userInfo});
                   }
             } else if (payable == body.payableAmount && payable > 0) {
-                if(body.consultationType === "FOLLOW-UP"){
-                    let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, appointmentData[0]._id);
-                } 
+                // if(body.consultationType === "FOLLOW-UP"){
+                //     let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, appointmentData[0]._id);
+                // } 
                 let payment = await paymentGateway.generatePaymentLinkConsultation(
                     ptDetails.firstName, 
                     body.phoneNumber,
@@ -316,9 +320,9 @@ class appointment{
                     createdOn: createdOn
                     // GSTID: obj.GSTID,
                 };
-                if(body.consultationType === "FOLLOW-UP"){
-                    let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, paymentObj.appointmentId);
-                }
+                // if(body.consultationType === "FOLLOW-UP"){
+                //     let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, paymentObj.appointmentId);
+                // }
                 let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
                 console.log("----addPaymentInfo----",addPaymentInfo);
                 let PAYMENT_ID = addPaymentInfo._id;

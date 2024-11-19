@@ -9,10 +9,10 @@ const paymentModel = require("../../models/schema").paymentModel;
 const mongoose = require("mongoose");
 const moment = require("moment-timezone");
 const authentationDA = require("./authentationDA");
-const { branchesModel, slotModel, occupationModel, promoCodesModel,
-    sourceModel, symptomsAllegryModel, tempAppointmentModel, statesModel,
-    packageModel, estimationModel, packageSubscriptionModel, caseStudyModel,
-    suggestionPrescriptionModel, prescriptionModel} = require("../../models/schema");
+const { branchesModel, slotModel, occupationModel, promoCodesModel, sourceModel,
+  symptomsAllegryModel, tempAppointmentModel, statesModel, packageModel, 
+  estimationModel, packageSubscriptionModel, caseStudyModel, suggestionPrescriptionModel, 
+  prescriptionModel } = require("../../models/schema");
 const { startTime } = require("express-pino-logger");
 let createdOn = moment().format();
 

@@ -91,7 +91,9 @@ class appointment{
                 startTime : createAppointment.startTime
             }
             if(body.consultationType === "FOLLOW-UP"){
-                let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, createAppointment._id);
+                let lastAppt = await appointmentDA.getLatestAppt(body.patientId);
+                console.log("-------result------",lastAppt._id)
+                let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, lastAppt._id);
                 console.log("-----FOLLOW-UP----",updateFollowupId)
             }
             // email to patient appointment details

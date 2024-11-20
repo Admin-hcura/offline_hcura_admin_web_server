@@ -289,6 +289,20 @@ class appointmentDA{
     }
   };
 
+  async getLatestAppt(patientId){
+    try {
+      const result = await appointmentModel.findOne(
+        {
+          patientId: new mongoose.Types.ObjectId(patientId),
+          isActive: true,
+        }
+      ).sort({ createdOn: -1 });
+      return result;
+    } catch (e) {
+      throw e;
+    }
+  };
+
   async updateFollowupId(patientId, appointmentId){
     try{
       const result = await appointmentModel.findOneAndUpdate(

@@ -3662,6 +3662,7 @@ class appointmentDA{
                   branchCode: "$branchDetails.branchCode",
                   branchName: "$branchDetails.branchName",
                   branchPhoneNumber: "$branchDetails.branchPhoneNumber",
+                  branchId: "$branchDetails._id",
                   branchState: "$stateDetails.name",
                   lastAppointmentDate: 1, 
                   noofAppts: 1,

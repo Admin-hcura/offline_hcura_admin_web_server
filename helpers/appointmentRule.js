@@ -177,3 +177,16 @@ exports.patientReport = Joi.object({
     stateId: Joi.string().allow(null).error(new Error("stateId is required")),
     gender: Joi.string().allow(null).error(new Error("Gender is required")),
 });
+
+exports.apptReport = Joi.object({
+    startDate: Joi.string().allow("").error(new Error("Start date is required")),
+    endDate: Joi.string().allow("").error(new Error("End date is required")),
+    sorting: Joi.object().required().error(new Error("Sorting is required")),
+    search: Joi.string().allow("").error(new Error("Search field is required")),
+    consultationType: Joi.string().allow(null).error(new Error("consultationType field is required")),
+    appointmentStatus: Joi.string().allow(null).error(new Error("appointmentStatus field is required")),
+    branchId: Joi.string().allow(null).error(new Error("branchId is required")),
+    doctorId: Joi.string().allow(null).error(new Error("doctorId is required")),
+    type: Joi.string().allow(null).error(new Error("type is required")),
+    page: Joi.number().required().error(new Error("Page filed is required")),
+});

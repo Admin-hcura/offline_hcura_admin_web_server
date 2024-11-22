@@ -3677,6 +3677,140 @@ class appointmentDA{
       throw e;
     }
   };
+
+  async appointmentReport(data) {
+    let offset = (data.page - 1) * 20;
+    try {
+      let pipeline = [
+        {
+          $match: {
+            createdOn: {
+              $gte: new Date(data.startDate),
+              $lte: new Date(data.endDate),
+            },
+            isActive: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "admin",
+            localField: "doctorId",
+            foreignField: "_id",
+            as: "docDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$docDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "package",
+            localField: "packageId",
+            foreignField: "_id",
+            as: "packageDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$packageDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "patient",
+            localField: "patientId",
+            foreignField: "_id",
+            as: "ptData"
+          }
+        },
+        {
+          $unwind: {
+            path: "$ptData",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $addFields: {
+            ptFirstName: { $toLower: "$ptData.firstName" },
+            ptLastName: { $toLower: "$ptData.lastName" },
+            hcuraId: "$ptData.hcuraId",
+            ptData: "$ptData",
+            paymentDoneDetails: "$paymentDoneDetails",
+            docDetails: "$docDetails",
+            packageDetails: "$packageDetails",
+            packageFor: "$packageDetails.packageFor"
+          },
+        },
+        {
+          $match: {
+            ...(data.consultationType !== null && { consultationType: data.consultationType }),
+            ...(data.appointmentStatus !== null && { appointmentStatus : data.appointmentStatus }),
+            ...(data.branchId !== null && { branchId : new mongoose.Types.ObjectId(data.branchId) }),
+            ...(data.doctorId !== null && { doctorId: new mongoose.Types.ObjectId(data.doctorId) }),
+            ...(data.type !== null && { packageFor: data.type }),
+            ...(data.search && data.search.trim() !== ""
+            ? {
+              $or: [
+                  { ptFirstName: { $regex: data.search, $options: "i" } },
+                  { ptLastName: { $regex: data.search, $options: "i" } },
+                  { $expr: {
+                      $eq: [{ $toUpper: "$hcuraId" }, data.search.toUpperCase()]
+                    } },
+                  { phoneNumber: { $regex: data.search, $options: "i" } },
+                  { 
+                    $expr: {
+                      $regexMatch: {
+                        input: { $toString: "$phoneNumber" },
+                        regex: data.search,
+                        options: "i"
+                      }
+                    }
+                  }
+                ],
+              }
+            : {}),
+          },
+        },
+        {
+          $sort: data.sorting,
+        },
+        {
+          $facet: {
+            metadata: [{ $count: "total" }, { $addFields: { page: data.page } }],
+            data: [
+              { $skip: offset },
+              { $limit: 20 },
+              {
+                $project: {
+                  _id: 1,
+                  hcuraId: 1,
+                  ptFirstName: 1,
+                  ptLastName: 1,
+                  appointmentNumber: 1,
+                  startTime: 1,
+                  docFirstName: "$docDetails.firstName",
+                  docLastName: "$docDetails.lastName",
+                  appointmentStatus: 1,
+                  consultationType: 1,
+                  consultationMode: 1,
+                  packageTaken: "$packageDetails.name",
+                  symptoms: 1,
+                  allegires: 1
+                },
+              },
+            ],
+          },
+        },
+      ];
+      return await appointmentModel.aggregate(pipeline);
+    } catch (e) {
+      throw e;
+    }
+  };
   
 }
 module.exports = new appointmentDA();

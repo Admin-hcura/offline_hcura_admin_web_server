@@ -1735,6 +1735,28 @@ class appointment{
         }
     };
 
+    async getApptReport(req, res, next) {
+        try {
+            let body = req.body;
+            const { error } = rule.apptReport.validate(body);
+            if (error) {
+                throw Boom.badData(error.message);
+            }
+            let result = await appointmentDA.appointmentReport(body);
+            let sendObj = {
+                metaData: {
+                page: result[0].metadata.length > 0 ? result[0].metadata[0].page : 1,
+                total:
+                    result[0].metadata.length > 0 ? result[0].metadata[0].total : 0,
+                },
+                patientList: result[0].data,
+            };
+            res.status(200).send({ status: true, data: sendObj });
+        } catch (e) {
+            next(e);
+        }
+    };
+
 };
 
 module.exports = new appointment();

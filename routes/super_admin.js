@@ -102,5 +102,10 @@ router.post(
     sessionValidator.validateAdminSession,
     appointmentController.getPatientReport
 );
+router.post(
+    "/report/appointment",
+    // sessionValidator.validateAdminSession,
+    appointmentController.getApptReport
+);
 
 module.exports = router;

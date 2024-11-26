@@ -104,7 +104,7 @@ router.post(
 );
 router.post(
     "/report/appointment",
-    // sessionValidator.validateAdminSession,
+    sessionValidator.validateAdminSession,
     appointmentController.getApptReport
 );
 

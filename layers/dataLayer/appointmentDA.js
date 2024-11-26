@@ -2920,6 +2920,7 @@ class appointmentDA{
           $match: {
             ...(data.status !== null && { paymentStatus: data.status }),
             ...(data.type !== null && { paymentFor: data.type }),
+            ...(data.branchId !== null && { branchId: data.branchId }),
             ...(data.search && data.search.trim() !== ""
               ? {
                   $or: [
@@ -3052,6 +3053,7 @@ class appointmentDA{
           $match: {
             ...(data.status !== null && { paymentStatus: data.status }),
             ...(data.type !== null && { paymentFor: data.type }),
+            ...(data.branchId !== null && { branchId: data.branchId }),
             ...(data.search && data.search.trim() !== ""
               ? {
                   $or: [

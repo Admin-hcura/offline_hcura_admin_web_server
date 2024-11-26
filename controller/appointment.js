@@ -1668,7 +1668,7 @@ class appointment{
     async getMasterReport(req, res, next) {
         try {
             let body = req.body;
-            const { error } = rule.transactionReport.validate(body);
+            const { error } = rule.masterReport.validate(body);
             if (error) {
                 throw Boom.badData(error.message);
             }

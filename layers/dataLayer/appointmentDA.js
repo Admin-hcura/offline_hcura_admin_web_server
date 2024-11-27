@@ -3801,7 +3801,8 @@ class appointmentDA{
                   consultationMode: 1,
                   packageTaken: "$packageDetails.name",
                   symptoms: 1,
-                  allegires: 1
+                  allegires: 1,
+                  packageFor: 1
                 },
               },
             ],

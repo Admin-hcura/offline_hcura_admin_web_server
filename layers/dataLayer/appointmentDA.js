@@ -3736,6 +3736,20 @@ class appointmentDA{
           }
         },
         {
+          $lookup: {
+            from: "branches",
+            localField: "branchId",
+            foreignField: "_id",
+            as: "branchData"
+          }
+        },
+        {
+          $unwind: {
+            path: "$branchData",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
           $addFields: {
             ptFirstName: { $toLower: "$ptData.firstName" },
             ptLastName: { $toLower: "$ptData.lastName" },
@@ -3802,7 +3816,8 @@ class appointmentDA{
                   packageTaken: "$packageDetails.name",
                   symptoms: 1,
                   allegires: 1,
-                  packageFor: 1
+                  packageFor: 1,
+                  branchName: "$branchData.branchName"
                 },
               },
             ],

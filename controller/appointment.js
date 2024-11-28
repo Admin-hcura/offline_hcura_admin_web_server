@@ -1759,7 +1759,6 @@ class appointment{
     async getPatientReportDownload(req, res, next) {
         try {
             let body = req.body;
-            console.log("--------",body)
             const { error } = rule.patientReportDown.validate(body);
             if (error) {
                 throw Boom.badData(error.message);
@@ -1792,7 +1791,28 @@ class appointment{
                 total:
                     result[0].metadata.length > 0 ? result[0].metadata[0].total : 0,
                 },
-                patientList: result[0].data,
+                appointmentList: result[0].data,
+            };
+            res.status(200).send({ status: true, data: sendObj });
+        } catch (e) {
+            next(e);
+        }
+    };
+
+    async getApptReportDownload(req, res, next) {
+        try {
+            let body = req.body;
+            const { error } = rule.apptReportDown.validate(body);
+            if (error) {
+                throw Boom.badData(error.message);
+            }
+            let result = await appointmentDA.appointmentReportDowanload(body);
+            let sendObj = {
+                metaData: {
+                total:
+                    result[0].metadata.length > 0 ? result[0].metadata[0].total : 0,
+                },
+                appointmentList: result[0].data,
             };
             res.status(200).send({ status: true, data: sendObj });
         } catch (e) {

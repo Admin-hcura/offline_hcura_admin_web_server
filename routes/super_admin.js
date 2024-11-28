@@ -117,5 +117,10 @@ router.post(
     sessionValidator.validateAdminSession,
     appointmentController.getApptReport
 );
+router.post(
+    "/report/appointment/download",
+    sessionValidator.validateAdminSession,
+    appointmentController.getApptReportDownload
+);
 
 module.exports = router;

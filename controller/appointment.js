@@ -1679,7 +1679,28 @@ class appointment{
                 total:
                     result[0].metadata.length > 0 ? result[0].metadata[0].total : 0,
                 },
-                transactionList: result[0].data,
+                masterList: result[0].data,
+            };
+            res.status(200).send({ status: true, data: sendObj });
+        } catch (e) {
+            next(e);
+        }
+    };
+
+    async getMasterReportDownload(req, res, next) {
+        try {
+            let body = req.body;
+            const { error } = rule.masterReportDown.validate(body);
+            if (error) {
+                throw Boom.badData(error.message);
+            }
+            let result = await appointmentDA.masterReportDownload(body);
+            let sendObj = {
+                metaData: {
+                total:
+                    result[0].metadata.length > 0 ? result[0].metadata[0].total : 0,
+                },
+                masterList: result[0].data,
             };
             res.status(200).send({ status: true, data: sendObj });
         } catch (e) {
@@ -1738,6 +1759,7 @@ class appointment{
     async getPatientReportDownload(req, res, next) {
         try {
             let body = req.body;
+            console.log("--------",body)
             const { error } = rule.patientReportDown.validate(body);
             if (error) {
                 throw Boom.badData(error.message);

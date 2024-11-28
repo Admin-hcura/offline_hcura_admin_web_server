@@ -93,6 +93,11 @@ router.post(
     appointmentController.getMasterReport
 );
 router.post(
+    "/report/master/download",
+    sessionValidator.validateAdminSession,
+    appointmentController.getMasterReportDownload
+);
+router.post(
     "/staus/casestudy",
     sessionValidator.validateAdminSession,
     appointmentController.statusCaseStudy

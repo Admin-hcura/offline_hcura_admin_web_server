@@ -3285,6 +3285,177 @@ class appointmentDA{
     }
   };
 
+  async masterReportDownload(data) {
+    try {
+      let pipeline = [
+        {
+          $match: {
+            createdOn: {
+              $gte: new Date(data.startDate),
+              $lte: new Date(data.endDate),
+            },
+            isDeleted: false,
+          },
+        },
+        {
+          $lookup: {
+            from: "patient",
+            as: "ptData",
+            let: { pId: "$patientId" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ["$_id", "$$pId"],
+                  },
+                },
+              },
+            ],
+          },
+        },
+        {
+          $unwind: {
+            path: "$ptData",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "admin",
+            localField: "paymentDoneBy",
+            foreignField: "_id",
+            as: "paymentDoneDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$paymentDoneDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "appointment",
+            localField: "appointmentId",
+            foreignField: "_id",
+            as: "apptDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$apptDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "admin",
+            localField: "doctorId",
+            foreignField: "_id",
+            as: "docDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$docDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "package",
+            localField: "packageId",
+            foreignField: "_id",
+            as: "packageDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$packageDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $addFields: {
+            ptFirstName: { $toLower: "$ptData.firstName" },
+            ptLastName: { $toLower: "$ptData.lastName" },
+            amount: { $toDouble: "$payableAmount" },
+            hcuraId: "$ptData.hcuraId",
+            ptData: "$ptData",
+            paymentDoneDetails: "$paymentDoneDetails",
+            apptDetails: "$apptDetails",
+            docDetails: "$docDetails",
+            packageDetails: "$packageDetails"
+          },
+        },
+        {
+          $match: {
+            ...(data.status !== null && { paymentStatus: data.status }),
+            ...(data.type !== null && { paymentFor: data.type }),
+            ...(data.search && data.search.trim() !== ""
+              ? {
+                  $or: [
+                    { ptFirstName: { $regex: data.search, $options: "i" } },
+                    { ptLastName: { $regex: data.search, $options: "i" } },
+                    { 
+                      $expr: {
+                        $eq: [{ $toUpper: "$hcuraId" }, data.search.toUpperCase()]
+                      }
+                    },
+                    { "ptData.phoneNumber": { $regex: data.search, $options: "i" } }
+                  ],
+                }
+              : {}),
+          },
+        },
+        {
+          $sort: data.sorting,
+        },
+        {
+          $facet: {
+            metadata: [{ $count: "total" }],
+            data: [
+              {
+                $project: {
+                  _id: 1,
+                  patientId: 1,
+                  hcuraId: 1,
+                  ptFirstName: 1,
+                  ptLastName: 1,
+                  paidOn: 1,
+                  paymentStatus: 1,
+                  paymentFor:1,
+                  paymentDoneBy: 1,
+                  paidAmount: 1,
+                  GSTAmount: 1,
+                  afterRemovingGST: 1,
+                  paymentMethod: 1,
+                  payableAmount: 1,
+                  invoiceNumber: 1,
+                  remarks: 1,
+                  createdOn: 1,
+                  ptEmail: "$ptData.emailId",
+                  ptAddress: "$ptData.address",
+                  paymentDoneFirstName: "$paymentDoneDetails.firstName",
+                  paymentDoneLastName: "$paymentDoneDetails.lastName",
+                  consultationType: "$apptDetails.consultationType",
+                  apptDate: "apptDetails.startTime",
+                  docFirstName: "$docDetails.firstName",
+                  docLastName: "$docDetails.lastName",
+                  packageAmount: "$packageDetails.amount",
+                  packageName: "$packageDetails.name"
+                },
+              },
+            ],
+          },
+        },
+      ];
+      return await paymentModel.aggregate(pipeline);
+    } catch (e) {
+      throw e;
+    }
+  };
+
   async statusCaseStudy(data){
     try{
       const filter = {
@@ -3681,6 +3852,7 @@ class appointmentDA{
   };
 
   async patientReportDownload(data) {
+    console.log("--------",data)
     try {
       let pipeline = [
         {

@@ -190,6 +190,18 @@ exports.patientReport = Joi.object({
     gender: Joi.string().allow(null).error(new Error("Gender is required")),
 });
 
+exports.patientReportDown = Joi.object({
+    startDate: Joi.string().allow("").error(new Error("Start date is required")),
+    endDate: Joi.string().allow("").error(new Error("End date is required")),
+    sorting: Joi.object().required().error(new Error("Sorting is required")),
+    search: Joi.string().allow("").error(new Error("Search field is required")),
+    source: Joi.string().allow(null).error(new Error("Source field is required")),
+    occupation: Joi.string().allow(null).error(new Error("Occupation field is required")),
+    branchId: Joi.string().allow(null).error(new Error("branchId is required")),
+    stateId: Joi.string().allow(null).error(new Error("stateId is required")),
+    gender: Joi.string().allow(null).error(new Error("Gender is required")),
+});
+
 exports.apptReport = Joi.object({
     startDate: Joi.string().allow("").error(new Error("Start date is required")),
     endDate: Joi.string().allow("").error(new Error("End date is required")),

@@ -103,6 +103,11 @@ router.post(
     appointmentController.getPatientReport
 );
 router.post(
+    "/report/patient/download",
+    sessionValidator.validateAdminSession,
+    appointmentController.getPatientReportDownload
+);
+router.post(
     "/report/appointment",
     sessionValidator.validateAdminSession,
     appointmentController.getApptReport

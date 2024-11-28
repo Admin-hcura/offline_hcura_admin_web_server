@@ -3680,6 +3680,158 @@ class appointmentDA{
     }
   };
 
+  async patientReportDownload(data) {
+    try {
+      let pipeline = [
+        {
+          $match: {
+            registeredOn: {
+              $gte: new Date(data.startDate),
+              $lte: new Date(data.endDate),
+            },
+            isDeleted: false,
+          },
+        },
+        {
+          $lookup: {
+            from: "admin",
+            localField: "registeredBy",
+            foreignField: "_id",
+            as: "registeredDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$registeredDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "appointment",
+            localField: "_id",
+            foreignField: "patientId",
+            as: "apptDetails",
+          },
+        },
+        {
+          $addFields: {
+            noofAppts: { $size: "$apptDetails" }, 
+            lastAppointmentDate: {
+              $max: "$apptDetails.startTime",
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: "branches",
+            localField: "branchId",
+            foreignField: "_id",
+            as: "branchDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$branchDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "states",
+            localField: "stateId",
+            foreignField: "_id",
+            as: "stateDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$stateDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $addFields: {
+            hcuraId: "$hcuraId",
+            branchDetails: "$branchDetails",
+            apptDetails: "$apptDetails",
+            registeredDetails: "$registeredDetails",
+            stateDetails: "$stateDetails"
+          },
+        },
+        {
+          $match: {
+            ...(data.source !== null && { source: data.source }),
+            ...(data.occupation !== null && { occupation: data.occupation }),
+            ...(data.branchId !== null && { branchId: new mongoose.Types.ObjectId(data.branchId) }),
+            ...(data.gender !== null && { gender: data.gender }),
+            ...(data.stateId !== null && { stateId: new mongoose.Types.ObjectId(data.stateId) }),
+            ...(data.search && data.search.trim() !== ""
+              ? {
+                  $or: [
+                    { firstName: { $regex: data.search, $options: "i" } },
+                    { lastName: { $regex: data.search, $options: "i" } },
+                    { $expr: {
+                        $eq: [{ $toUpper: "$hcuraId" }, data.search.toUpperCase()]
+                      } },
+                    { phoneNumber: { $regex: data.search, $options: "i" } },
+                    { 
+                      $expr: {
+                        $regexMatch: {
+                          input: { $toString: "$phoneNumber" },
+                          regex: data.search,
+                          options: "i"
+                        }
+                      }
+                    }
+                  ],
+                }
+              : {}),
+          },
+        },
+        {
+          $sort: data.sorting,
+        },
+        {
+          $facet: {
+            metadata: [{ $count: "total" }],
+            data: [
+              {
+                $project: {
+                  _id: 1,
+                  hcuraId: 1,
+                  firstName: 1,
+                  lastName: 1,
+                  birthDate: 1,
+                  gender: 1,
+                  emailId: 1,
+                  phoneNumber: 1,
+                  whatsappNumber: 1,
+                  registeredOn: 1,
+                  source: 1,
+                  occupation: 1,
+                  address: 1,
+                  registeredByFirstName: "$registeredDetails.firstName" ,
+                  registeredBySecondName: "$registeredDetails.lastName",
+                  branchCode: "$branchDetails.branchCode",
+                  branchName: "$branchDetails.branchName",
+                  branchPhoneNumber: "$branchDetails.branchPhoneNumber",
+                  branchId: "$branchDetails._id",
+                  branchState: "$stateDetails.name",
+                  lastAppointmentDate: 1, 
+                  noofAppts: 1,
+                },
+              },
+            ],
+          },
+        },
+      ];
+      return await patientModel.aggregate(pipeline);
+    } catch (e) {
+      throw e;
+    }
+  };
+
   async appointmentReport(data) {
     let offset = (data.page - 1) * 20;
     try {

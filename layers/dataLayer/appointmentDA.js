@@ -2907,13 +2907,28 @@ class appointmentDA{
           }
         },
         {
+          $lookup: {
+            from: "branches",
+            localField: "branchId",
+            foreignField: "_id",
+            as: "branchDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$branchDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
           $addFields: {
             ptFirstName: { $toLower: "$ptData.firstName" },
             ptLastName: { $toLower: "$ptData.lastName" },
             amount: { $toDouble: "$payableAmount" },
             hcuraId: "$ptData.hcuraId",
             paymentDoneDetails: "$paymentDoneDetails",
-            docDetails: "$docDetails"
+            docDetails: "$docDetails",
+            branchDetails: "$branchDetails"
           },
         },
         {
@@ -2969,7 +2984,8 @@ class appointmentDA{
                   paymentDoneFirstName: "$paymentDoneDetails.firstName",
                   paymentDoneLastName: "$paymentDoneDetails.lastName",
                   docFirstName: "$docDetails.firstName",
-                  docSecondName: "$docDetails.lastName"
+                  docSecondName: "$docDetails.lastName",
+                  branchName: "$branchDetails.branchName"
                 },
               },
             ],
@@ -3040,13 +3056,28 @@ class appointmentDA{
           }
         },
         {
+          $lookup: {
+            from: "branches",
+            localField: "branchId",
+            foreignField: "_id",
+            as: "branchDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$branchDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
           $addFields: {
             ptFirstName: { $toLower: "$ptData.firstName" },
             ptLastName: { $toLower: "$ptData.lastName" },
             amount: { $toDouble: "$payableAmount" },
             hcuraId: "$ptData.hcuraId",
             paymentDoneDetails: "$paymentDoneDetails",
-            docDetails: "$docDetails"
+            docDetails: "$docDetails",
+            branchDetails: "$branchDetails"
           },
         },
         {
@@ -3098,7 +3129,8 @@ class appointmentDA{
                   paymentDoneFirstName: "$paymentDoneDetails.firstName",
                   paymentDoneLastName: "$paymentDoneDetails.lastName",
                   docFirstName: "$docDetails.firstName",
-                  docLastName: "$docDetails.lastName"
+                  docLastName: "$docDetails.lastName",
+                  branchName: "$branchDetails.branchName"
                 },
               },
             ],
@@ -3203,6 +3235,20 @@ class appointmentDA{
           }
         },
         {
+          $lookup: {
+            from: "branches",
+            localField: "branchId",
+            foreignField: "_id",
+            as: "branchDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$branchDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
           $addFields: {
             ptFirstName: { $toLower: "$ptData.firstName" },
             ptLastName: { $toLower: "$ptData.lastName" },
@@ -3212,7 +3258,8 @@ class appointmentDA{
             paymentDoneDetails: "$paymentDoneDetails",
             apptDetails: "$apptDetails",
             docDetails: "$docDetails",
-            packageDetails: "$packageDetails"
+            packageDetails: "$packageDetails",
+            branchDetails: "$branchDetails"
           },
         },
         {
@@ -3272,7 +3319,8 @@ class appointmentDA{
                   docFirstName: "$docDetails.firstName",
                   docLastName: "$docDetails.lastName",
                   packageAmount: "$packageDetails.amount",
-                  packageName: "$packageDetails.name"
+                  packageName: "$packageDetails.name",
+                  branchName: "$branchDetails.branchName"
                 },
               },
             ],
@@ -3376,6 +3424,20 @@ class appointmentDA{
           }
         },
         {
+          $lookup: {
+            from: "branches",
+            localField: "branchId",
+            foreignField: "_id",
+            as: "branchDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$branchDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
           $addFields: {
             ptFirstName: { $toLower: "$ptData.firstName" },
             ptLastName: { $toLower: "$ptData.lastName" },
@@ -3385,7 +3447,8 @@ class appointmentDA{
             paymentDoneDetails: "$paymentDoneDetails",
             apptDetails: "$apptDetails",
             docDetails: "$docDetails",
-            packageDetails: "$packageDetails"
+            packageDetails: "$packageDetails",
+            branchDetails: "$branchDetails"
           },
         },
         {
@@ -3443,7 +3506,8 @@ class appointmentDA{
                   docFirstName: "$docDetails.firstName",
                   docLastName: "$docDetails.lastName",
                   packageAmount: "$packageDetails.amount",
-                  packageName: "$packageDetails.name"
+                  packageName: "$packageDetails.name",
+                  branchName: "$branchDetails.branchName"
                 },
               },
             ],

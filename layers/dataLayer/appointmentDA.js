@@ -3622,6 +3622,20 @@ class appointmentDA{
             }
           },
           {
+            $lookup: {
+              from: "branches",
+              localField: "branchId",
+              foreignField: "_id",
+              as: "branchDetails"
+            }
+          },
+          {
+            $unwind: {
+              path: "$branchDetails",
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
             $project: {
               caseStudyStatus: 1,
               caseStudyId: 1,
@@ -3637,7 +3651,8 @@ class appointmentDA{
               docLastName: "$docDetails.lastName",
               paidOn: 1,
               payableAmount: 1,
-              paymentFor: 1
+              paymentFor: 1,
+              branchName: "$branchDetails.branchName"
             }
           },
           {

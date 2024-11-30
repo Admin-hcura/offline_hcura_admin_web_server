@@ -3608,19 +3608,36 @@ class appointmentDA{
             }
           },
           {
+            $lookup: {
+              from: "appointment",
+              localField: "appointmentId",
+              foreignField: "_id",
+              as: "apptDetails"
+            }
+          },
+          {
+            $unwind: {
+              path: "$apptDetails",
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
             $project: {
               caseStudyStatus: 1,
               caseStudyId: 1,
               prescriptionId: 1,
               startTime: 1,
-              appointmentNumber: 1,
+              appointmentNumber:
+                "$apptDetails.appointmentNumber",
               prescriptionStatus: 1,
               hcuraId: "$ptDetails.hcuraId",
               ptFirstName: "$ptDetails.firstName",
               ptLastName: "$ptDetails.lastName",
               docFirstName: "$docDetails.firstName",
               docLastName: "$docDetails.lastName",
-              paidOn: 1
+              paidOn: 1,
+              payableAmount: 1,
+              paymentFor: 1
             }
           },
           {

@@ -16,6 +16,10 @@ router.post("/book/appointment",
   sessionValidator.validateAdminSession,
   appointmentController.bookAppointment
 );
+// router.post("/reschedule/appointment",
+//   // sessionValidator.validateAdminSession,
+//   appointmentController.rescheduleAppointment
+// );
 router.post("/patient/search/list",
   sessionValidator.validateAdminSession,
   appointmentController.getPatientList

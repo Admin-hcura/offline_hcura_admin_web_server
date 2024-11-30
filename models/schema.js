@@ -157,6 +157,7 @@ const increment = require('mongoose-increment')(mongoose);
     followupId: {type: mongoose.Schema.Types.ObjectId, ref: "Appointments", default: null},
     symptoms: [],
     allegires: [],
+    rescheduledApptId: {type: mongoose.Schema.Types.ObjectId, ref: "Appointments", default: null},
     consultationMode: {
         type: String,
         enum: ["ONLINE", "OFFLINE"],
@@ -185,8 +186,12 @@ const increment = require('mongoose-increment')(mongoose);
     canceledUpdatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null },
     completedUpdatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null },
     createdOn: {type: Date, default: new Date()},
+    isScheduled: {type: Boolean, default: true},
+    isConfirmed: {type: Boolean, default: false},
     visitedClinic: {type: Boolean, default: false},
     isCompleted: {type: Boolean, default: false},
+    isRescheduled: {type: Boolean, default: false},
+    isCancelled: {type: Boolean, default: false},
     isActive: {type: Boolean, default: true},
     appointmentNumber: { type: String, default: null },
   });

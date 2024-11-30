@@ -27,6 +27,28 @@ exports.appointmentRule = Joi.object({
     bookedBy: Joi.string().required().error(new Error("bookedBy ID is required")),
 });
 
+exports.rescheduleApptRule = Joi.object({
+    oldApptId: Joi.string().required().error(new Error("oldApptId Id is required")),
+    patientId: Joi.string().required().error(new Error("Patient Id is required")),
+    doctorId: Joi.string().required().error(new Error("doctorId is required")),
+    day: Joi.string().required().error(new Error("day is required")),
+    timeId: Joi.string().required().error(new Error("timeId is required")),
+    dayId: Joi.string().required().error(new Error("dayId is required")),
+    appointmentDate: Joi.string().required().error(new Error("appointmentDate is required")),
+    startTime: Joi.string().required().error(new Error("startTime is required")),
+    endTime: Joi.string().required().error(new Error("endTime is required")),
+    symptoms: Joi.array()
+        .min(0)
+        .required()
+        .error(new Error("Symptoms is required")),
+    allergies: Joi.array()
+        .min(0)
+        .required()
+        .error(new Error("Allergies is required")),
+    consultationMode: Joi.string().required().error(new Error("consultationMode is required")),
+    rescheduledBy: Joi.string().required().error(new Error("rescheduledBy ID is required")),
+});
+
 exports.paymentConsultationRule = Joi.object({
     paymentDoneBy: Joi.string().required().error(new Error("paymentDoneBy is required")),
     phoneNumber: Joi.number().required().error(new Error("phoneNumber is required")),

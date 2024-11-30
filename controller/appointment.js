@@ -24,6 +24,7 @@ class appointment{
             if(error){
                 throw Boom.badData(error.message);
             }
+            let createdOn = moment().format();
             let appointmentDate = moment(body.appointmentDate)
             .tz("UTC")
             .format(process.env.format);
@@ -35,6 +36,7 @@ class appointment{
                 startTime: body.startTime,
                 endTime: body.endTime,
                 doctorId: body.doctorId,
+                createdOn: createdOn
             }
             console.log(",,,,,,,,,,slotdate,,,,,,,",slotdata);
             let blockSlot = await appointmentDA.blockSlot(slotdata);
@@ -74,7 +76,8 @@ class appointment{
                 consultationType: body.consultationType,
                 appointmentStatus: "SCHEDULED",
                 appointmentNumber: newAppointmentNumber,
-                bookedBy: body.bookedBy
+                bookedBy: body.bookedBy,
+                createdOn: createdOn
             }
             let createAppointment = await appointmentDA.createAppointment(obj);
             let docDetails = await appointmentDA.getDoctorDetails(body.doctorId);
@@ -107,96 +110,98 @@ class appointment{
         }
     };
 
-    // async rescheduleAppointment(req, res, next){
-    //     try{
-    //         console.log(".......entered.........",req.body)
-    //         let body = req.body
-    //         const {error} = rule.appointmentRule.validate(body);
-    //         if(error){
-    //             throw Boom.badData(error.message);
-    //         }
-    //         let appointmentDate = moment(body.appointmentDate)
-    //         .tz("UTC")
-    //         .format(process.env.format);
-    //         let slotdata = {
-    //             date: appointmentDate,
-    //             dayId: body.dayId,
-    //             timeId: body.timeId,
-    //             day: body.day,
-    //             startTime: body.startTime,
-    //             endTime: body.endTime,
-    //             doctorId: body.doctorId,
-    //         }
-    //         console.log(",,,,,,,,,,slotdate,,,,,,,",slotdata);
-    //         let blockSlot = await appointmentDA.blockSlot(slotdata);
-    //         console.log("=======blockSlot=======",blockSlot);
-    //         let existingApptNumber = await appointmentDA.getAppointmentNumber();
-    //         console.log(".......existingApptNumber.........",existingApptNumber)
-    //         let newAppointmentNumber = "HCA01" ;
-    //         if (existingApptNumber.length > 0) {
-    //             const appointmentNumber = existingApptNumber.map(item => item.appointmentNumber);
-    //             const existingApptNumbers = appointmentNumber.map(id => ({
-    //                 prefix: id.substring(0, 3),  // Extract the prefix part
-    //                 count: parseInt(id.substring(3), 10)  // Extract and convert the count part to an integer
-    //             }));
-    //             // Find the maximum count
-    //             const maxCount = Math.max(...existingApptNumbers.map(item => item.count));
-    //             // Increment the count
-    //             const newCount = maxCount + 1;
-    //             // Format the new count to match the original format (assuming 2 digits)
-    //             const newCountFormatted = newCount.toString().padStart(2, '0');
-    //             // Use the prefix from the first item (assuming all prefixes are the same)
-    //             newAppointmentNumber = `${existingApptNumbers[0].prefix}${newCountFormatted}`;
-    //             console.log('New Appointment Number:', newAppointmentNumber);
-    //         }
-    //         let userInfo = await appointmentDA.patientDetaiils(body.patientId);
-    //         let obj = {
-    //             patientId: body.patientId,
-    //             doctorId: body.doctorId,
-    //             slotId: blockSlot._id,
-    //             dayId: body.dayId,
-    //             branchId: userInfo.branchId,
-    //             appointmentDate: appointmentDate,
-    //             startTime: body.startTime,
-    //             endTime: body.endTime,
-    //             symptoms: body.symptoms,
-    //             allegires: body.allegires,
-    //             consultationMode: body.consultationMode,
-    //             consultationType: body.consultationType,
-    //             appointmentStatus: "SCHEDULED",
-    //             appointmentNumber: newAppointmentNumber,
-    //             bookedBy: body.bookedBy
-    //         }
-    //         let createAppointment = await appointmentDA.createAppointment(obj);
-    //         let docDetails = await appointmentDA.getDoctorDetails(body.doctorId);
-    //         console.log("......userInfo.......",userInfo);
-    //         console.log("......docDetails.......",docDetails);
-    //         let details = {
-    //             appointmentDate : createAppointment.appointmentDate,
-    //             firstName : userInfo.firstName,
-    //             lastName : userInfo.lastName,
-    //             emailId : userInfo.emailId,
-    //             docFirstName : docDetails.firstName,
-    //             docEmail : docDetails.emailId,
-    //             endTime : createAppointment.endTime,
-    //             startTime : createAppointment.startTime
-    //         }
-    //         if(body.consultationType === "FOLLOW-UP"){
-    //             let lastAppt = await appointmentDA.getLatestAppt(body.patientId);
-    //             console.log("-------result------",lastAppt._id)
-    //             let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, lastAppt._id);
-    //             console.log("-----FOLLOW-UP----",updateFollowupId)
-    //         }
-    //         // email to patient appointment details
-    //             emailSender.sendAppointmentConformedEmailToPT(details);
-    //         // email to docors 
-    //             emailSender.sendAppointmentBookedEmailToDoctor(details);
+    async rescheduleAppointment(req, res, next){
+        try{
+            console.log(".......entered.........",req.body)
+            let body = req.body
+            const {error} = rule.rescheduleApptRule.validate(body);
+            if(error){
+                throw Boom.badData(error.message);
+            }
+            let createdOn = moment().format();
+            let appointmentDate = moment(body.appointmentDate)
+            .tz("UTC")
+            .format(process.env.format);
+            let slotdata = {
+                date: appointmentDate,
+                dayId: body.dayId,
+                timeId: body.timeId,
+                day: body.day,
+                startTime: body.startTime,
+                endTime: body.endTime,
+                doctorId: body.doctorId,
+                createdOn: createdOn
+            }
+            console.log(",,,,,,,,,,slotdate,,,,,,,",slotdata);
+            let blockSlot = await appointmentDA.blockSlot(slotdata);
+            console.log("=======blockSlot=======",blockSlot);
+            let existingApptNumber = await appointmentDA.getAppointmentNumber();
+            console.log(".......existingApptNumber.........",existingApptNumber)
+            let newAppointmentNumber = "HCA01" ;
+            if (existingApptNumber.length > 0) {
+                const appointmentNumber = existingApptNumber.map(item => item.appointmentNumber);
+                const existingApptNumbers = appointmentNumber.map(id => ({
+                    prefix: id.substring(0, 3),  // Extract the prefix part
+                    count: parseInt(id.substring(3), 10)  // Extract and convert the count part to an integer
+                }));
+                // Find the maximum count
+                const maxCount = Math.max(...existingApptNumbers.map(item => item.count));
+                // Increment the count
+                const newCount = maxCount + 1;
+                // Format the new count to match the original format (assuming 2 digits)
+                const newCountFormatted = newCount.toString().padStart(2, '0');
+                // Use the prefix from the first item (assuming all prefixes are the same)
+                newAppointmentNumber = `${existingApptNumbers[0].prefix}${newCountFormatted}`;
+                console.log('New Appointment Number:', newAppointmentNumber);
+            }
 
-    //         res.status(200).send({ status: true, data: createAppointment});
-    //     } catch(e){
-    //         next(e);
-    //     }
-    // };
+            let updateOldAppt = await appointmentDA.updateOldAppt(body.oldApptId,body.bookedBy)
+            console.log("----updateOldAppt----",updateOldAppt);
+            
+            let userInfo = await appointmentDA.patientDetaiils(body.patientId);
+            let obj = {
+                patientId: body.patientId,
+                doctorId: body.doctorId,
+                slotId: blockSlot._id,
+                dayId: body.dayId,
+                branchId: userInfo.branchId,
+                appointmentDate: appointmentDate,
+                startTime: body.startTime,
+                endTime: body.endTime,
+                symptoms: body.symptoms,
+                allegires: body.allegires,
+                consultationMode: body.consultationMode,
+                consultationType: updateOldAppt.consultationType,
+                appointmentStatus: "SCHEDULED",
+                appointmentNumber: newAppointmentNumber,
+                bookedBy: body.rescheduledBy,
+                rescheduledApptId: updateOldAppt._id,
+                followupId: updateOldAppt.followupId,
+                createdOn: createdOn
+            }
+            let rescheduleAppointment = await appointmentDA.rescheduleAppointment(obj);
+            let docDetails = await appointmentDA.getDoctorDetails(body.doctorId);
+            console.log("......userInfo.......",userInfo);
+            let details = {
+                appointmentDate : rescheduleAppointment.appointmentDate,
+                firstName : userInfo.firstName,
+                lastName : userInfo.lastName,
+                emailId : userInfo.emailId,
+                docFirstName : docDetails.firstName,
+                docEmail : docDetails.emailId,
+                endTime : rescheduleAppointment.endTime,
+                startTime : rescheduleAppointment.startTime
+            }
+
+            // email to patient appointment details
+                emailSender.sendAppointmentConformedEmailToPT(details);
+            // email to docors 
+                emailSender.sendAppointmentBookedEmailToDoctor(details);
+            res.status(200).send({ status: true, data: rescheduleAppointment});
+        } catch(e){
+            next(e);
+        }
+    };
 
     async paymentConsultation(req, res, next){
         try{

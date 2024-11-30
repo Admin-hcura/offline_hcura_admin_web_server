@@ -28,7 +28,7 @@ class appointmentDA{
         startTime: slotData.startTime,
         endTime: slotData.endTime,
         doctorId: slotData.doctorId,
-        createdOn: createdOn
+        createdOn: slotData.createdOn
       });
       return await blockSlot.save();
     } catch(e){
@@ -54,7 +54,35 @@ class appointmentDA{
         appointmentStatus: obj.appointmentStatus,
         bookedBy: obj.bookedBy,
         appointmentNumber: obj.appointmentNumber,
-        createdOn: createdOn
+        createdOn: obj.createdOn
+      });
+      return await result.save();
+    } catch(e){
+      throw e;
+    }
+  };
+
+  async rescheduleAppointment(obj){
+    try{
+      let result = new appointmentModel({
+        patientId: obj.patientId,
+        doctorId: obj.doctorId,
+        slotId: obj.slotId,
+        dayId: obj.dayId,
+        branchId: obj.branchId,
+        appointmentDate: obj.appointmentDate,
+        startTime: obj.startTime,
+        endTime: obj.endTime,
+        symptoms: obj.symptoms,
+        allegires: obj.allegires,
+        consultationMode: obj.consultationMode,
+        appointmentStatus: obj.appointmentStatus,
+        consultationType: obj.consultationType,
+        bookedBy: obj.rescheduledBy,
+        appointmentNumber: obj.appointmentNumber,
+        createdOn: obj.createdOn,
+        rescheduledApptId: obj.rescheduledApptId,
+        followupId: obj.followupId
       });
       return await result.save();
     } catch(e){
@@ -316,6 +344,30 @@ class appointmentDA{
         {
           sort: { createdOn: -1 },
           returnDocument: 'after' // This will return the document after the update
+        }
+      );
+      return result;
+    } catch(e){
+      throw e;
+    }
+  };
+
+  async updateOldAppt(oldApptId, bookedBy){
+    try{
+      const result = await appointmentModel.findOneAndUpdate(
+        {
+          _id: new mongoose.Types.ObjectId(oldApptId),
+          isActive: true,
+        },
+        {
+          $set: { 
+            appointmentStatus : "RESCHEDULE",
+            rescheduleUpdatedBy : bookedBy,
+            isRescheduled : true
+          }
+        },
+        {
+          returnDocument: 'after'
         }
       );
       return result;

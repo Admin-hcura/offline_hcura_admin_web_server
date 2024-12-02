@@ -1048,6 +1048,7 @@ class HtmlToPdfHelper {
       let packageAmount = pdfDetails.packageAmount
       let roundeddown = Math.floor(pdfDetails.payableAmount);
       let roundedDown = (pdfDetails.payableAmount - roundeddown)
+      let Remarks = pdfDetails.remarks
 
       let paidOn = moment(pdfDetails.paidOn)
         .tz(constants.defaultTimezone)
@@ -1712,6 +1713,16 @@ class HtmlToPdfHelper {
         '                    <TD class="tr8 td13">' +
         '                        <P class="p9 ft7">' +
         paymentMethod +
+        "</P>" +
+        "                    </TD>" +
+        "                </TR>" +
+        "                <TR>" +
+        '                    <TD class="tr8 td12">' +
+        '                        <P class="p8 ft7">Remarks</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr8 td13">' +
+        '                        <P class="p9 ft7">' +
+        Remarks +
         "</P>" +
         "                    </TD>" +
         "                </TR>" +

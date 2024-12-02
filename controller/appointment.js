@@ -1131,7 +1131,8 @@ class appointment{
                         packageName: packageDetails.name,
                         packageAmount: packageDetails.amount,
                         docRegstration : userInfo[0].doctor.registerationNumber,
-                        branchPhoneNumber: branchCode.branchPhoneNumber
+                        branchPhoneNumber: branchCode.branchPhoneNumber,
+                        remarks: updatePaymentReport.remarks
                     }
                     console.log("--------pdfDetails-------", pdfDetails)
                     emailSender.sendAstheticPaymentSuccess(

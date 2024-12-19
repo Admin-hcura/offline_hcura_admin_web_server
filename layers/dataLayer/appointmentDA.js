@@ -12,7 +12,8 @@ const authentationDA = require("./authentationDA");
 const { branchesModel, slotModel, occupationModel, promoCodesModel, sourceModel,
   symptomsAllegryModel, tempAppointmentModel, statesModel, packageModel, 
   estimationModel, packageSubscriptionModel, caseStudyModel, suggestionPrescriptionModel, 
-  prescriptionModel, bookApptFormModel, contactUsModel, corporateModel } = require("../../models/schema");
+  prescriptionModel, bookApptFormModel, contactUsModel, corporateModel, 
+  offerFormModel} = require("../../models/schema");
 const { startTime } = require("express-pino-logger");
 let createdOn = moment().format();
 
@@ -4546,6 +4547,38 @@ class appointmentDA{
           '$project': {
           '_id': 0, 
           'corporateId': 1
+          }
+        }
+      ]);
+      return result;
+    } catch(e){
+      throw e;
+    }
+  };
+
+  async webOfferFormDA(body, newId, createdOn){
+    try{
+      let result = new offerFormModel({
+        name: body.name,
+        emailId: body.emailId,
+        phoneNo: body.phoneNo,
+        state: body.state,
+        couponCode: body.couponCode,
+        offerId: newId,
+        createdOn: createdOn
+      });
+    return await result.save();
+    } catch(e) {
+      throw e;
+    }
+  };
+  async getOfferId(){
+    try{
+      let result = await offerFormModel.aggregate([
+        {
+          '$project': {
+          '_id': 0, 
+          'offerId': 1
           }
         }
       ]);

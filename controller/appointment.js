@@ -2203,6 +2203,56 @@ class appointment{
         }
     };
 
+    async webOfferForm(req, res, next){
+        try{
+            let body = req.body
+
+            let existingId = await appointmentDA.getOfferId();
+            let newId = "HOF01" ;
+
+            if (existingId.length > 0) {
+                const exid = existingId.map(item => item.offerId);
+                const existingIds = exid.map(id => ({
+                    prefix: id.substring(0, 3),  // Extract the prefix part
+                    count: parseInt(id.substring(3), 10)  // Extract and convert the count part to an integer
+                }));
+                // Find the maximum count
+                const maxCount = Math.max(...existingIds.map(item => item.count));
+                // Increment the count
+                const newCount = maxCount + 1;
+                // Format the new count to match the original format (assuming 2 digits)
+                const newCountFormatted = newCount.toString().padStart(2, '0');
+                // Use the prefix from the first item (assuming all prefixes are the same)
+                newId = `${existingIds[0].prefix}${newCountFormatted}`;
+                console.log('New Appointment Number:', newId);
+            }
+            let createdOn = moment().format();
+            let insertDetails = await appointmentDA.webOfferFormDA(body, newId, createdOn)
+            emailSender.sendOfferFormPtDetailsToAdmin( insertDetails.name, insertDetails.emailId,
+                insertDetails.phoneNo, insertDetails.state, insertDetails.couponCode,
+                insertDetails.offerId)
+
+            // if email is present need to send email to pt 
+            if (insertDetails.emailId !== null) {
+                emailSender.sendMailToFormPatient(
+                    insertDetails.name, insertDetails.emailId, insertDetails.offerId)
+            }
+            // sms need to check templete error
+            // let messageAdmin = await sendSMS.onlinePtFormToAdmin(
+            //   insertDetails.name, insertDetails.age, insertDetails.phoneNo, 
+            //   insertDetails.whatsAppNo, insertDetails.emailId, insertDetails.gender,
+            //   insertDetails.state, insertDetails.consultationType, insertDetails.message, insertedDetails.branch );
+
+            // console.log("---------",messageAdmin)
+            
+            // whatsApp messages need to be intergrate
+
+        res.status(200).send({ status: true, data: insertDetails, message: "Successfully Submited"});
+        } catch(e){
+            next(e);
+        }
+    };
+
 };
 
 module.exports = new appointment();

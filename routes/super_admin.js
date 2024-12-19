@@ -138,5 +138,9 @@ router.post(
     "/corporate/form/website",
     appointmentController.webCorporateForm
 );
+router.post(
+    "/appt/offer/form",
+    appointmentController.webOfferForm
+);
 
 module.exports = router;

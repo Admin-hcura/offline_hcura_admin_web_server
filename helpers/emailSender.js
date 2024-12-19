@@ -676,6 +676,31 @@ class Mail{
     }
   };
 
+  async sendOfferFormPtDetailsToAdmin(
+    name, emailId, phoneNo, state, couponCode, offerId ) {
+      try {
+        let info = await this.setUpSmtp();
+        info
+          .sendMail({
+            from: constants.MAIL_CONFIG.auth.user,
+            // to: "admin@h-cura.com",
+            to : "mani1998kavala@gmail.com",
+            subject: "New Patient Details Recieved 🔔",
+            html: (
+              await emailTemplates.sendOfferFormPtDetailsRequest(
+                name, emailId, phoneNo, state, couponCode, offerId)).toString(),
+          })
+          .then(() => {
+            console.log("Email sent");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } catch (e) {
+        console.error("Internal error ", e);
+      }
+  };
+
 }
 
 module.exports = new Mail();

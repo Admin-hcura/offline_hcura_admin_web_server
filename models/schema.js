@@ -544,6 +544,16 @@ const increment = require('mongoose-increment')(mongoose);
     createdOn: { type: Date, default: null }
   });
 
+  let offerForm = new schema({
+    name: { type: String, default: null },
+    emailId: { type: String, default: null },
+    phoneNo: { type: String, default: null },
+    state: { type: String, default: null },
+    couponCode: { type: String, default: null },
+    offerId: { type: String, default: null }, //HOF01
+    createdOn: { type: Date, default: null }
+  });
+
   exports.branchesModel = mongoose.model("Branches", branches, "branches");
   exports.roleModel = mongoose.model("Role", role, "role");
   exports.adminModel = mongoose.model("Admin", admin, "admin");
@@ -569,5 +579,6 @@ const increment = require('mongoose-increment')(mongoose);
   exports.bookApptFormModel = mongoose.model("BookApptForm", bookApptForm, "bookApptForm");
   exports.contactUsModel = mongoose.model("ContactUs", contactUs, "contactUs");
   exports.corporateModel = mongoose.model("Corporate", corporate, "corporate");
+  exports.offerFormModel = mongoose.model("OfferForm", offerForm, "offerForm");
 
 }.call(this))

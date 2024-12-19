@@ -538,7 +538,8 @@ class Mail{
         info
           .sendMail({
             from: constants.MAIL_CONFIG.auth.user,
-            to: "admin@h-cura.com",
+            // to: "admin@h-cura.com",
+            to : "mani1998kavala@gmail.com",
             subject: "New Patient Details Recieved 🔔",
             html: (
               await emailTemplates.sendApptFormPtDetailsRequest(
@@ -586,7 +587,8 @@ class Mail{
         info
           .sendMail({
             from: constants.MAIL_CONFIG.auth.user,
-            to: "admin@h-cura.com",
+            // to: "admin@h-cura.com",
+            to : "mani1998kavala@gmail.com",
             subject: "Contact Us Form Submited ⚠️",
             html: (
               await emailTemplates.sendContactUsInfoRequest(
@@ -632,7 +634,8 @@ class Mail{
         info
           .sendMail({
             from: constants.MAIL_CONFIG.auth.user,
-            to: "admin@h-cura.com",
+            // to: "admin@h-cura.com",
+            to: "mani1998kavala@gmail.com",
             subject: "Corporate Form Submited 🏢",
             html: (
               await emailTemplates.sendCorporateInfoRequest(

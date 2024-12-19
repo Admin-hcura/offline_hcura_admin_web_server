@@ -128,7 +128,15 @@ router.post(
 );
 router.post(
     "/patient/form/website",
-    appointmentController.onlineFormPtDetails
+    appointmentController.apptFormPtDetails
+);
+router.post(
+    "/contact/us/form/website",
+    appointmentController.webContactUsForm
+);
+router.post(
+    "/corporate/form/website",
+    appointmentController.webCorporateForm
 );
 
 module.exports = router;

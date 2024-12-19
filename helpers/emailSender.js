@@ -529,21 +529,115 @@ class Mail{
     }
   };
 
-  async sendOnlineFormPtDetailsToAdmin(
+  async sendApptFormPtDetailsToAdmin(
     name, age, phoneNo, whatsAppNo,
     emailId, gender, state,
-    consultationType, message, branch ) {
+    consultationType, message, branch, formId ) {
       try {
         let info = await this.setUpSmtp();
         info
           .sendMail({
             from: constants.MAIL_CONFIG.auth.user,
             to: "admin@h-cura.com",
-            subject: "New Online Patient Details Recieved 🔔",
+            subject: "New Patient Details Recieved 🔔",
             html: (
-              await emailTemplates.sendOnlineFormPtDetailsRequest(
+              await emailTemplates.sendApptFormPtDetailsRequest(
                 name, age, phoneNo, whatsAppNo, emailId, 
-                gender, state, consultationType, message, branch
+                gender, state, consultationType, message,
+                branch, formId )).toString(),
+          })
+          .then(() => {
+            console.log("Email sent");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } catch (e) {
+        console.error("Internal error ", e);
+      }
+  };
+
+  async sendMailToFormPatient( name, emailId, formId ) {
+    try {
+      let info = await this.setUpSmtp();
+      info
+        .sendMail({
+          from: constants.MAIL_CONFIG.auth.user,
+          to: emailId,
+          subject: "Thanks For submitting Details 🤝",
+          html: (
+            await emailTemplates.sendMailToPtFormFilled(name, formId)).toString(),
+        })
+        .then(() => {
+          console.log("Email sent");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } catch (e) {
+      console.error("Internal error ", e);
+    }
+  };
+
+  async sendContactUsInfoToAdmin(
+    name, emailId, phoneNo, city, comment, contactId) {
+      try {
+        let info = await this.setUpSmtp();
+        info
+          .sendMail({
+            from: constants.MAIL_CONFIG.auth.user,
+            to: "admin@h-cura.com",
+            subject: "Contact Us Form Submited ⚠️",
+            html: (
+              await emailTemplates.sendContactUsInfoRequest(
+                name, emailId, phoneNo, city, comment, contactId)).toString(),})
+          .then(() => {
+            console.log("Email sent");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } catch (e) {
+        console.error("Internal error ", e);
+      }
+  };
+
+  async sendMailToContactUs( name, emailId, contactId ) {
+    try {
+      let info = await this.setUpSmtp();
+      info
+        .sendMail({
+          from: constants.MAIL_CONFIG.auth.user,
+          to: emailId,
+          subject: "Thanks For submitting Form 🤝",
+          html: (
+            await emailTemplates.sendMailToContactUsFormFilled(name, contactId)).toString(),
+        })
+        .then(() => {
+          console.log("Email sent");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } catch (e) {
+      console.error("Internal error ", e);
+    }
+  };
+
+  async sendCorporateInfoToAdmin( 
+    name, workEmail, phoneNo, companyName, companySize, 
+    prefferedDate, street, city, state, zipcode, corporateId ) {
+      try {
+        let info = await this.setUpSmtp();
+        info
+          .sendMail({
+            from: constants.MAIL_CONFIG.auth.user,
+            to: "admin@h-cura.com",
+            subject: "Corporate Form Submited 🏢",
+            html: (
+              await emailTemplates.sendCorporateInfoRequest(
+                name, workEmail, phoneNo, companyName, companySize, 
+                prefferedDate, street, city, state, zipcode, corporateId
               )).toString(),
           })
           .then(() => {
@@ -557,16 +651,16 @@ class Mail{
       }
   };
 
-  async sendMailToOnlinePatient( name, emailId ) {
+  async sendMailToCorporate( name, workEmail, companyName, corporateId ) {
     try {
       let info = await this.setUpSmtp();
       info
         .sendMail({
           from: constants.MAIL_CONFIG.auth.user,
-          to: emailId,
+          to: workEmail,
           subject: "Thanks For submitting Details 🤝",
           html: (
-            await emailTemplates.sendMailToPtFormFilled(name)).toString(),
+            await emailTemplates.sendMailToCorporateFormFilled(name, companyName, corporateId)).toString(),
         })
         .then(() => {
           console.log("Email sent");

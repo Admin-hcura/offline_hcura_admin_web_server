@@ -2052,18 +2052,140 @@ class appointment{
   
     // new Website APPT Form
     
-    async onlineFormPtDetails(req, res, next){
+    async apptFormPtDetails(req, res, next){
         try{
             let body = req.body
-            let insertDetails = await appointmentDA.onlineFormPtDetailsDA(body)
-            emailSender.sendOnlineFormPtDetailsToAdmin( insertDetails.name,
+            let existingApptId = await appointmentDA.getApptId();
+            let newApptId = "HAF01" ;
+
+            if (existingApptId.length > 0) {
+                const apptId = existingApptId.map(item => item.formId);
+                const existingApptIds = apptId.map(id => ({
+                    prefix: id.substring(0, 3),  // Extract the prefix part
+                    count: parseInt(id.substring(3), 10)  // Extract and convert the count part to an integer
+                }));
+                // Find the maximum count
+                const maxCount = Math.max(...existingApptIds.map(item => item.count));
+                // Increment the count
+                const newCount = maxCount + 1;
+                // Format the new count to match the original format (assuming 2 digits)
+                const newCountFormatted = newCount.toString().padStart(2, '0');
+                // Use the prefix from the first item (assuming all prefixes are the same)
+                newApptId = `${existingApptIds[0].prefix}${newCountFormatted}`;
+                console.log('New Appointment Number:', newApptId);
+            }
+            let createdOn = moment().format();
+            let insertDetails = await appointmentDA.apptFormPtDetailsDA(body, newApptId, createdOn)
+            emailSender.sendApptFormPtDetailsToAdmin( insertDetails.name,
                 insertDetails.age, insertDetails.phoneNo, insertDetails.whatsAppNo,
                 insertDetails.emailId, insertDetails.gender, insertDetails.state, 
-                insertDetails.consultationType, insertDetails.message, insertDetails.branch )
+                insertDetails.consultationType, insertDetails.message, 
+                insertDetails.branch, insertDetails.formId )
 
             // if email is present need to send email to pt 
             if (insertDetails.emailId !== null) {
-                emailSender.sendMailToOnlinePatient(insertDetails.name, insertDetails.emailId)
+                emailSender.sendMailToFormPatient(insertDetails.name, 
+                    insertDetails.emailId, insertDetails.formId)
+            }
+            // sms need to check templete error
+            // let messageAdmin = await sendSMS.onlinePtFormToAdmin(
+            //   insertDetails.name, insertDetails.age, insertDetails.phoneNo, 
+            //   insertDetails.whatsAppNo, insertDetails.emailId, insertDetails.gender,
+            //   insertDetails.state, insertDetails.consultationType, insertDetails.message, insertedDetails.branch );
+
+            // console.log("---------",messageAdmin)
+            
+            // whatsApp messages need to be intergrate
+
+        res.status(200).send({ status: true, data: insertDetails, message: "Successfully Submited"});
+        } catch(e){
+            next(e);
+        }
+    };
+
+    async webContactUsForm(req, res, next){
+        try{
+            let body = req.body
+
+            let existingId = await appointmentDA.getContactUsId();
+            let newId = "HCU01" ;
+
+            if (existingId.length > 0) {
+                const exid = existingId.map(item => item.contactId);
+                const existingIds = exid.map(id => ({
+                    prefix: id.substring(0, 3),  // Extract the prefix part
+                    count: parseInt(id.substring(3), 10)  // Extract and convert the count part to an integer
+                }));
+                // Find the maximum count
+                const maxCount = Math.max(...existingIds.map(item => item.count));
+                // Increment the count
+                const newCount = maxCount + 1;
+                // Format the new count to match the original format (assuming 2 digits)
+                const newCountFormatted = newCount.toString().padStart(2, '0');
+                // Use the prefix from the first item (assuming all prefixes are the same)
+                newId = `${existingIds[0].prefix}${newCountFormatted}`;
+                console.log('New Appointment Number:', newId);
+            }
+            let createdOn = moment().format();
+            let insertDetails = await appointmentDA.webContactUsFormDA(body, newId, createdOn)
+            emailSender.sendContactUsInfoToAdmin( insertDetails.name, insertDetails.emailId,
+                insertDetails.phoneNo, insertDetails.city, insertDetails.comment,
+                insertDetails.contactId )
+
+            // if email is present need to send email to pt 
+            if (insertDetails.emailId !== null) {
+                emailSender.sendMailToContactUs(insertDetails.name, insertDetails.emailId, insertDetails.contactId)
+            }
+            // sms need to check templete error
+            // let messageAdmin = await sendSMS.onlinePtFormToAdmin(
+            //   insertDetails.name, insertDetails.age, insertDetails.phoneNo, 
+            //   insertDetails.whatsAppNo, insertDetails.emailId, insertDetails.gender,
+            //   insertDetails.state, insertDetails.consultationType, insertDetails.message, insertedDetails.branch );
+
+            // console.log("---------",messageAdmin)
+            
+            // whatsApp messages need to be intergrate
+
+        res.status(200).send({ status: true, data: insertDetails, message: "Successfully Submited"});
+        } catch(e){
+            next(e);
+        }
+    };
+
+    async webCorporateForm(req, res, next){
+        try{
+            let body = req.body
+
+            let existingId = await appointmentDA.getCorporateId();
+            let newId = "HCO01" ;
+
+            if (existingId.length > 0) {
+                const exid = existingId.map(item => item.corporateId);
+                const existingIds = exid.map(id => ({
+                    prefix: id.substring(0, 3),  // Extract the prefix part
+                    count: parseInt(id.substring(3), 10)  // Extract and convert the count part to an integer
+                }));
+                // Find the maximum count
+                const maxCount = Math.max(...existingIds.map(item => item.count));
+                // Increment the count
+                const newCount = maxCount + 1;
+                // Format the new count to match the original format (assuming 2 digits)
+                const newCountFormatted = newCount.toString().padStart(2, '0');
+                // Use the prefix from the first item (assuming all prefixes are the same)
+                newId = `${existingIds[0].prefix}${newCountFormatted}`;
+                console.log('New Appointment Number:', newId);
+            }
+            let createdOn = moment().format();
+            let insertDetails = await appointmentDA.webCorporateFormDA(body, newId, createdOn)
+            emailSender.sendCorporateInfoToAdmin( insertDetails.name, insertDetails.workEmail,
+                insertDetails.phoneNo, insertDetails.companyName, insertDetails.companySize,
+                insertDetails.prefferedDate, insertDetails.street, insertDetails.city,
+                insertDetails.state, insertDetails.zipcode, insertDetails.corporateId )
+
+            // if email is present need to send email to pt 
+            if (insertDetails.emailId !== null) {
+                emailSender.sendMailToCorporate(
+                    insertDetails.name, insertDetails.workEmail, insertDetails.companyName, insertDetails.corporateId)
             }
             // sms need to check templete error
             // let messageAdmin = await sendSMS.onlinePtFormToAdmin(

@@ -514,7 +514,34 @@ const increment = require('mongoose-increment')(mongoose);
     state: { type: String, default: null },
     consultationType: { type: String, default: null },
     branch: { type: String, default: null },
-    message: { type: String, default: null }
+    message: { type: String, default: null },
+    formId: { type: String, default: null }, // HAF01
+    createdOn: { type: Date, default: null }
+  });
+
+  let contactUs = new schema({
+    name: { type: String, default: null },
+    emailId: { type: String, default: null },
+    phoneNo: { type: String, default: null },
+    city: { type: String, default: null },
+    comment: { type: String, default: null },
+    contactId: { type: String, default: null }, // HCU01
+    createdOn: { type: Date, default: null }
+  });
+
+  let corporate = new schema({
+    name: { type: String, default: null },
+    workEmail: { type: String, default: null },
+    phoneNo: { type: String, default: null },
+    companyName: { type: String, default: null },
+    companySize: { type: String, default: null },
+    prefferedDate: { type: Date, default: null },
+    street: { type: String, default: null },
+    city: { type: String, default: null },
+    state: { type: String, default: null },
+    zipcode: { type: Number, default: null },
+    corporateId: { type: String, default: null }, //HCO01
+    createdOn: { type: Date, default: null }
   });
 
   exports.branchesModel = mongoose.model("Branches", branches, "branches");
@@ -540,5 +567,7 @@ const increment = require('mongoose-increment')(mongoose);
   exports.caseStudyModel = mongoose.model("CaseStudy", caseStudy, "caseStudy");
   exports.suggestionPrescriptionModel = mongoose.model("SuggestionPrescription", suggestionPrescription, "suggestionPrescription");
   exports.bookApptFormModel = mongoose.model("BookApptForm", bookApptForm, "bookApptForm");
+  exports.contactUsModel = mongoose.model("ContactUs", contactUs, "contactUs");
+  exports.corporateModel = mongoose.model("Corporate", corporate, "corporate");
 
 }.call(this))

@@ -12,7 +12,7 @@ const authentationDA = require("./authentationDA");
 const { branchesModel, slotModel, occupationModel, promoCodesModel, sourceModel,
   symptomsAllegryModel, tempAppointmentModel, statesModel, packageModel, 
   estimationModel, packageSubscriptionModel, caseStudyModel, suggestionPrescriptionModel, 
-  prescriptionModel, bookApptFormModel } = require("../../models/schema");
+  prescriptionModel, bookApptFormModel, contactUsModel, corporateModel } = require("../../models/schema");
 const { startTime } = require("express-pino-logger");
 let createdOn = moment().format();
 
@@ -4448,7 +4448,7 @@ class appointmentDA{
     }
   };
 
-  async onlineFormPtDetailsDA(body){
+  async apptFormPtDetailsDA(body, newApptId, createdOn){
     try{
       let result = new bookApptFormModel({
         name: body.name,
@@ -4460,10 +4460,97 @@ class appointmentDA{
         state: body.state,
         consultationType: body.consultationType,
         message: body.message,
-        branch: body.branch
+        branch: body.branch,
+        formId: newApptId,
+        createdOn: createdOn
       });
     return await result.save();
     } catch(e) {
+      throw e;
+    }
+  };
+
+  async getApptId(){
+    try{
+      let result = await bookApptFormModel.aggregate([
+        {
+          '$project': {
+          '_id': 0, 
+          'formId': 1
+          }
+        }
+      ]);
+      return result;
+    } catch(e){
+      throw e;
+    }
+  };
+
+  async webContactUsFormDA(body, newId, createdOn){
+    try{
+      let result = new contactUsModel({
+        name: body.name,
+        phoneNo: body.phoneNo,
+        emailId: body.emailId,
+        city: body.city,
+        comment: body.comment,
+        contactId: newId,
+        createdOn: createdOn
+      });
+    return await result.save();
+    } catch(e) {
+      throw e;
+    }
+  };
+  async getContactUsId(){
+    try{
+      let result = await contactUsModel.aggregate([
+        {
+          '$project': {
+          '_id': 0, 
+          'contactId': 1
+          }
+        }
+      ]);
+      return result;
+    } catch(e){
+      throw e;
+    }
+  };
+
+  async webCorporateFormDA(body, newId, createdOn){
+    try{
+      let result = new corporateModel({
+        name: body.name,
+        workEmail: body.workEmail,
+        phoneNo: body.phoneNo,
+        companyName: body.companyName,
+        companySize: body.companySize,
+        prefferedDate: body.prefferedDate,
+        street: body.street,
+        city: body.city,
+        state: body.state,
+        zipcode: body.zipcode,
+        corporateId: newId,
+        createdOn: createdOn
+      });
+    return await result.save();
+    } catch(e) {
+      throw e;
+    }
+  };
+  async getCorporateId(){
+    try{
+      let result = await corporateModel.aggregate([
+        {
+          '$project': {
+          '_id': 0, 
+          'corporateId': 1
+          }
+        }
+      ]);
+      return result;
+    } catch(e){
       throw e;
     }
   };

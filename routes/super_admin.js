@@ -122,5 +122,13 @@ router.post(
     sessionValidator.validateAdminSession,
     appointmentController.getApptReportDownload
 );
+router.post(
+    "/whatsapp",
+    appointmentController.whatsappapi
+);
+router.post(
+    "/patient/form/website",
+    appointmentController.onlineFormPtDetails
+);
 
 module.exports = router;

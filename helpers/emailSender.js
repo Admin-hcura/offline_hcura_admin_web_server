@@ -527,7 +527,57 @@ class Mail{
     } catch (error) {
       console.error("Internal error ", error);
     }
-  };  
+  };
+
+  async sendOnlineFormPtDetailsToAdmin(
+    name, age, phoneNo, whatsAppNo,
+    emailId, gender, state,
+    consultationType, message, branch ) {
+      try {
+        let info = await this.setUpSmtp();
+        info
+          .sendMail({
+            from: constants.MAIL_CONFIG.auth.user,
+            to: "admin@h-cura.com",
+            subject: "New Online Patient Details Recieved 🔔",
+            html: (
+              await emailTemplates.sendOnlineFormPtDetailsRequest(
+                name, age, phoneNo, whatsAppNo, emailId, 
+                gender, state, consultationType, message, branch
+              )).toString(),
+          })
+          .then(() => {
+            console.log("Email sent");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } catch (e) {
+        console.error("Internal error ", e);
+      }
+  };
+
+  async sendMailToOnlinePatient( name, emailId ) {
+    try {
+      let info = await this.setUpSmtp();
+      info
+        .sendMail({
+          from: constants.MAIL_CONFIG.auth.user,
+          to: emailId,
+          subject: "Thanks For submitting Details 🤝",
+          html: (
+            await emailTemplates.sendMailToPtFormFilled(name)).toString(),
+        })
+        .then(() => {
+          console.log("Email sent");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } catch (e) {
+      console.error("Internal error ", e);
+    }
+  };
 
 }
 

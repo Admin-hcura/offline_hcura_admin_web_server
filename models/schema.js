@@ -503,6 +503,20 @@ const increment = require('mongoose-increment')(mongoose);
     isActive: { type: Boolean, default: true},
   });
 
+  // website pt form filling
+  let bookApptForm = new schema({
+    name: { type: String, default: null },
+    age: { type: Number, default: null },
+    phoneNo: { type: String, default: null },
+    whatsAppNo: { type: String, default: null },
+    emailId: { type: String, default: null },
+    gender: { type: String, default: null },
+    state: { type: String, default: null },
+    consultationType: { type: String, default: null },
+    branch: { type: String, default: null },
+    message: { type: String, default: null }
+  });
+
   exports.branchesModel = mongoose.model("Branches", branches, "branches");
   exports.roleModel = mongoose.model("Role", role, "role");
   exports.adminModel = mongoose.model("Admin", admin, "admin");
@@ -525,5 +539,6 @@ const increment = require('mongoose-increment')(mongoose);
   exports.packageSubscriptionModel = mongoose.model("packageSubscription", packageSubscription, "PackageSubscription");
   exports.caseStudyModel = mongoose.model("CaseStudy", caseStudy, "caseStudy");
   exports.suggestionPrescriptionModel = mongoose.model("SuggestionPrescription", suggestionPrescription, "suggestionPrescription");
+  exports.bookApptFormModel = mongoose.model("BookApptForm", bookApptForm, "bookApptForm");
 
 }.call(this))

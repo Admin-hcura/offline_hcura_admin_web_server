@@ -12,7 +12,7 @@ const authentationDA = require("./authentationDA");
 const { branchesModel, slotModel, occupationModel, promoCodesModel, sourceModel,
   symptomsAllegryModel, tempAppointmentModel, statesModel, packageModel, 
   estimationModel, packageSubscriptionModel, caseStudyModel, suggestionPrescriptionModel, 
-  prescriptionModel } = require("../../models/schema");
+  prescriptionModel, bookApptFormModel } = require("../../models/schema");
 const { startTime } = require("express-pino-logger");
 let createdOn = moment().format();
 
@@ -4444,6 +4444,26 @@ class appointmentDA{
       ];
       return await appointmentModel.aggregate(pipeline);
     } catch (e) {
+      throw e;
+    }
+  };
+
+  async onlineFormPtDetailsDA(body){
+    try{
+      let result = new bookApptFormModel({
+        name: body.name,
+        age: body.age,
+        gender: body.gender,
+        phoneNo: body.phoneNo,
+        whatsAppNo: body.whatsAppNo,
+        emailId: body.emailId,
+        state: body.state,
+        consultationType: body.consultationType,
+        message: body.message,
+        branch: body.branch
+      });
+    return await result.save();
+    } catch(e) {
       throw e;
     }
   };

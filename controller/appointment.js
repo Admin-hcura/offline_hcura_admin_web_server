@@ -15,6 +15,9 @@ const schedulers = new scheduler();
 const apiResponse = require("../helpers/apiResponse");
 const authentationDA = require("../layers/dataLayer/authentationDA");
 const { ObjectId } = require('mongodb');
+const whatsapptoken = "EAARheJ4rHpUBO2k6cZAexZA1zqQ76ZBtHKSgyKVsjq865CR6XM2dyJbZBdSyAIgIOyJN11ZCyllChZBZB8QKgcgbnGhQoUAH7qgJGNrZBElsJiRNaq2ZBsMBTRsMuZCC5mMF7B4k48WjXZC7iNZBaJ1PjVk4jl32xw7TszvVPnHdJcOrZCZC9q18vgbKe6WjKDDKJTkWxDFZAACkYpeoprdsx1J0ZBYg6WutF0wZD"
+const axios = require('axios');
+
 class appointment{
     async bookAppointment(req, res, next){
         try{
@@ -1913,6 +1916,167 @@ class appointment{
             };
             res.status(200).send({ status: true, data: sendObj });
         } catch (e) {
+            next(e);
+        }
+    };
+
+    async whatsappapi(req, res, next){
+        try{
+            let body = req.body;
+            let name = "manoj"
+            let emailId = "dandumanojkumarreddy@gmail.com"
+            let phonenumber = 9676097350
+            const response = await axios({
+                url: 'https://graph.facebook.com/v21.0/428296813705977/messages',
+                method: 'post',
+                headers: {
+                    'Authorization': `Bearer ${whatsapptoken}`,
+                    'Content-Type': 'application/json'
+                },
+
+                // to send custom templete
+                data: JSON.stringify({
+                    messaging_product: 'whatsapp',
+                    to: '917411845658',
+                    type: 'template',
+                    template: {
+                        name: 'pt_appointment_booked',
+                        language: {
+                            code: 'en_US'
+                        },
+                    components: [
+                        {
+                            type: 'body',
+                            parameters: [
+                                {
+                                    type: 'text',
+                                    text: name  
+                                },
+                                {
+                                    type: 'text',
+                                    text: phonenumber  
+                                },
+                                {
+                                    type: 'text',
+                                    text: emailId
+                                },
+                                {
+                                    type: 'text',
+                                    text: emailId
+                                },
+                            ]
+                        }
+                    ]
+                }
+            })
+        })
+        console.log("------------",response.data)
+        res.status(200).send({ status: true, data: response.data });
+        } catch(e){
+            next(e);
+        }
+    };
+
+    // async sendImageMessage(req, res, next) {
+    // const imageUrl = 'https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg'; // Example image URL
+
+    // const messageData = {
+    //     messaging_product: 'whatsapp',
+    //     to: '917411845658', // Replace with the recipient's phone number
+    //     type: 'image',
+    //     image: {
+    //     link: imageUrl
+    //     }
+    // };
+
+    // try {
+    //     const response = await axios.post(
+    //     `https://graph.facebook.com/v21.0/428296813705977/messages`,
+    //     messageData,
+    //     {
+    //         headers: {
+    //         Authorization: `Bearer ${whatsapptoken}`,
+    //         'Content-Type': 'application/json'
+    //         }
+    //     }
+    //     );
+    //     console.log('Message sent successfully:', response.data);
+    //     res.status(200).send({ status: true, data: response.data });
+    // } catch (error) {
+    //     if (error.response) {
+    //     console.error('Error response:', error.response.data);
+    //     } else {
+    //     console.error('Error:', error.message);
+    //     }
+    // }
+    // };
+
+    // async sendPdfMessage(req, res, next) {
+    //     const pdfUrl = 'https://www.w3.org/WAI/WCAG21/quickref/WCAG21-QuickRef.pdf'; // Sample PDF URL
+    
+    //     const messageData = {
+    //     messaging_product: 'whatsapp',
+    //     to: '917411845658', // Replace with the recipient's phone number
+    //     type: 'document',
+    //     document: {
+    //         link: pdfUrl,        // The URL where the PDF file is hosted
+    //         filename: 'WCAG21-QuickRef.pdf'  // The name of the file as it will appear on the recipient's phone
+    //     }
+    //     };
+    
+    //     try {
+    //     const response = await axios.post(
+    //         `https://graph.facebook.com/v21.0/428296813705977/messages`,
+    //         messageData,
+    //         {
+    //         headers: {
+    //             Authorization: `Bearer ${whatsapptoken}`, // Use your WhatsApp API token here
+    //             'Content-Type': 'application/json'
+    //         }
+    //         }
+    //     );
+    //     console.log('PDF sent successfully:', response.data);
+    //     res.status(200).send({ status: true, data: response.data });
+    //     } catch (error) {
+    //     if (error.response) {
+    //         console.error('Error response:', error.response.data);
+    //         res.status(400).send({ status: false, error: error.response.data });
+    //     } else {
+    //         console.error('Error:', error.message);
+    //         res.status(400).send({ status: false, error: error.message });
+    //     }
+    //     }
+    // };
+  
+    // new website form filling data
+  
+    // new Website APPT Form
+    
+    async onlineFormPtDetails(req, res, next){
+        try{
+            let body = req.body
+            let insertDetails = await appointmentDA.onlineFormPtDetailsDA(body)
+            emailSender.sendOnlineFormPtDetailsToAdmin( insertDetails.name,
+                insertDetails.age, insertDetails.phoneNo, insertDetails.whatsAppNo,
+                insertDetails.emailId, insertDetails.gender, insertDetails.state, 
+                insertDetails.consultationType, insertDetails.message, insertDetails.branch )
+
+            // if email is present need to send email to pt 
+            if (insertDetails.emailId !== null) {
+                emailSender.sendMailToOnlinePatient(insertDetails.name, insertDetails.emailId)
+            }
+            // sms need to check templete error
+            // let messageAdmin = await sendSMS.onlinePtFormToAdmin(
+            //   insertDetails.name, insertDetails.age, insertDetails.phoneNo, 
+            //   insertDetails.whatsAppNo, insertDetails.emailId, insertDetails.gender,
+            //   insertDetails.state, insertDetails.consultationType, insertDetails.message, insertedDetails.branch );
+
+            // console.log("---------",messageAdmin)
+            
+            // whatsApp messages need to be intergrate
+
+        res.status(200).send({ status: true, data: insertDetails, message: "Successfully Submited"});
+        } catch(e){
             next(e);
         }
     };

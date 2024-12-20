@@ -15,7 +15,8 @@ const schedulers = new scheduler();
 const apiResponse = require("../helpers/apiResponse");
 const authentationDA = require("../layers/dataLayer/authentationDA");
 const { ObjectId } = require('mongodb');
-const whatsapptoken = "EAARheJ4rHpUBO2k6cZAexZA1zqQ76ZBtHKSgyKVsjq865CR6XM2dyJbZBdSyAIgIOyJN11ZCyllChZBZB8QKgcgbnGhQoUAH7qgJGNrZBElsJiRNaq2ZBsMBTRsMuZCC5mMF7B4k48WjXZC7iNZBaJ1PjVk4jl32xw7TszvVPnHdJcOrZCZC9q18vgbKe6WjKDDKJTkWxDFZAACkYpeoprdsx1J0ZBYg6WutF0wZD"
+const whatsApp = require("../helpers/sendWhatsAppMsg");
+const whatsapptoken = "EAARheJ4rHpUBOwKkzCdxPMZAwxgHpZCtmnfWZAt3lntXatTaBRCdxwPhGn23FJLhLmWLFmj15Ecvj1gKqahB2OemZBTPFXflTSHwegasszbNap5MYZCZCOqjqiKKjJzP1yEVHCciwDNI64RdUwbCmFlSAMsVjp5fmx3kMNL22OkLZA6Tnw5J72foDsKmtYraKXvJ3w0AGyR1Ijqb9Js6Sxc95fO67MT"
 const axios = require('axios');
 
 class appointment{
@@ -2076,17 +2077,24 @@ class appointment{
             }
             let createdOn = moment().format();
             let insertDetails = await appointmentDA.apptFormPtDetailsDA(body, newApptId, createdOn)
+            console.log("----------",insertDetails)
             emailSender.sendApptFormPtDetailsToAdmin( insertDetails.name,
                 insertDetails.age, insertDetails.phoneNo, insertDetails.whatsAppNo,
                 insertDetails.emailId, insertDetails.gender, insertDetails.state, 
                 insertDetails.consultationType, insertDetails.message, 
-                insertDetails.branch, insertDetails.formId )
-
+                insertDetails.branch, insertDetails.formId );
+            
             // if email is present need to send email to pt 
             if (insertDetails.emailId !== null) {
                 emailSender.sendMailToFormPatient(insertDetails.name, 
                     insertDetails.emailId, insertDetails.formId)
             }
+            // let send = await whatsApp.sendWhatsAppMsgToAdmin( insertDetails.name,
+            //     insertDetails.age, insertDetails.phoneNo, insertDetails.whatsAppNo,
+            //     insertDetails.emailId, insertDetails.gender, insertDetails.state, 
+            //     insertDetails.consultationType, insertDetails.message, 
+            //     insertDetails.branch, insertDetails.formId );
+
             // sms need to check templete error
             // let messageAdmin = await sendSMS.onlinePtFormToAdmin(
             //   insertDetails.name, insertDetails.age, insertDetails.phoneNo, 

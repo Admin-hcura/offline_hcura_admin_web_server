@@ -11720,7 +11720,7 @@ class MailTemplates {
         "													<tbody>" +
         "														<tr>" +
         '															<td valign="top">Dear Admin<a href="https://www.imastudent.com/order/history">,</a><br>' +
-        "Please Look into this Comment as soon as possible.<br>" +
+        "Please Look into this Corporate / Apartment Details as soon as possible.<br>" +
         "															<br>" +
         "															<strong>Name:</strong>&nbsp;" +
         name +

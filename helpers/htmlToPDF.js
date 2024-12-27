@@ -2469,20 +2469,23 @@ class HtmlToPdfHelper {
         '</div>' +
         // "<!-- Footer section -->" 
         '<FOOTER style="position: fixed; bottom: 60px; width: 86%;">' +
-            '<DIV class="p14 ft13">' +
-                "Registered & Corporate Office : Sai Towers Building No:779&780, 2nd Floor, Corporation Colony, South End Main Road, 9th Block Jayanagar, LandMark - Opposite to Metro Pillar No:92, Bangalore, Karnataka - 560069."+
-            "</DIV>"+
-            '<DIV class="p1 ft1">'+"    "+
-            "</DIV>"+
-            '<DIV class="p14 ft13">' +
-                "For Booking Appointments Contact us on : "+
-                pdfDetails.branchPhoneNumber +
-            "</DIV>"+
-            '<DIV class="p15 ft1">' +
-                "For more Info visit : "+
-                visit_us_on +
-            "</DIV>"+
-        "</FOOTER>"+
+          '<DIV class="p14 ft13" style="margin-bottom: 10px;">' +
+              "Terms and Conditions Apply: <br>" +
+              "1. Cheques are subject to realisation.<br>" +
+              "2. Payment received is non-refundable and non-transferable.<br>" +
+              "3. In case of any differences or discrepancies, the final authority lies with the management.<br>" +
+          '</DIV>' +
+          '<DIV class="p14 ft13">' +
+              "Registered & Corporate Office : Sai Towers Building No:779&780, 2nd Floor, Corporation Colony, South End Main Road, 9th Block Jayanagar, LandMark - Opposite to Metro Pillar No:92, Bangalore, Karnataka - 560069." +
+          "</DIV>" +
+          '<DIV class="p1 ft1">'+"    "+ "</DIV>" +
+          '<DIV class="p14 ft13">' +
+              "For Booking Appointments Contact us on : " + pdfDetails.branchPhoneNumber +
+          "</DIV>"+
+          '<DIV class="p15 ft1">' +
+              "For more Info visit : " + visit_us_on +
+          "</DIV>" +
+        "</FOOTER>" +
         "</BODY>" +
         "" +
         "</HTML>";

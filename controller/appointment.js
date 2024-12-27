@@ -2105,7 +2105,7 @@ class appointment{
             
             // whatsApp messages need to be intergrate
 
-        res.status(200).send({ status: true, data: insertDetails, message: "Successfully Submited"});
+        res.status(200).send({ status: true, message: "Successfully Submited"});
         } catch(e){
             next(e);
         }
@@ -2154,7 +2154,7 @@ class appointment{
             
             // whatsApp messages need to be intergrate
 
-        res.status(200).send({ status: true, data: insertDetails, message: "Successfully Submited"});
+        res.status(200).send({ status: true, message: "Successfully Submited"});
         } catch(e){
             next(e);
         }
@@ -2205,7 +2205,7 @@ class appointment{
             
             // whatsApp messages need to be intergrate
 
-        res.status(200).send({ status: true, data: insertDetails, message: "Successfully Submited"});
+        res.status(200).send({ status: true, message: "Successfully Submited"});
         } catch(e){
             next(e);
         }
@@ -2255,7 +2255,7 @@ class appointment{
             
             // whatsApp messages need to be intergrate
 
-        res.status(200).send({ status: true, data: insertDetails, message: "Successfully Submited"});
+        res.status(200).send({ status: true, message: "Successfully Submited"});
         } catch(e){
             next(e);
         }

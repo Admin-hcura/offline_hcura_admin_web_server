@@ -105,6 +105,7 @@ class HtmlToPdfHelper {
         ".p13{text-align: left;padding-left: 2776px;margin-top: 34px;margin-bottom: 0px;}" +
         ".p14{text-align: justify;padding-left: 200px;margin-top: 0px}" + //fotter
         ".p15{text-align: justify;padding-left: 1900px;margin-top: 0px;margin-bottom: 20px;}" + //fotter
+        ".p16 {text-align: justify; padding-left: 1960px; margin-top: 24px; margin-bottom: 0px; padding-bottom: 15px; }" + //fotter
         "" +
         ".td0{padding: 0px;margin: 0px;width: 787px;vertical-align: bottom;}" +
         ".td1{padding: 0px;margin: 0px;width: 1578px;vertical-align: bottom;}" +
@@ -224,37 +225,6 @@ class HtmlToPdfHelper {
         parseFloat(pdfDetails.discount).toFixed(2) +
         "</P></TD>" +
         "</TR>" +
-        // "<TR>" +
-        // '	<TD class="tr5 td6"><P class="p7 ft7">CGST</P></TD>' + //GST@Nill (GST is exempt for healthcare services)
-        // '	<TD class="tr5 td7"><P class="p11 ft7">' +
-        // "+" +
-        // parseFloat(pdfDetails.GST).toFixed(2) +
-        // "</P></TD>" +
-        // "</TR>" +
-        // "</TR>" +
-        // "<TR>" +
-        // '	<TD class="tr5 td6"><P class="p7 ft7">SGST</P></TD>' + 
-        // '	<TD class="tr5 td7"><P class="p11 ft7">' +
-        // "+" +
-        // parseFloat(pdfDetails.GST).toFixed(2) +
-        // "</P></TD>" +
-        // "</TR>" +
-        // "</TR>" +
-        // "<TR>" +
-        // '	<TD class="tr5 td6"><P class="p7 ft7">IGST</P></TD>' + 
-        // '	<TD class="tr5 td7"><P class="p11 ft7">' +
-        // "+" +
-        // parseFloat(pdfDetails.GST).toFixed(2) +
-        // "</P></TD>" +
-        // "</TR>" +
-        // "</TR>" +
-        // "<TR>" +
-        // '	<TD class="tr5 td6"><P class="p7 ft7">UGST</P></TD>' + 
-        // '	<TD class="tr5 td7"><P class="p11 ft7">' +
-        // "+" +
-        // parseFloat(pdfDetails.GST).toFixed(2) +
-        // "</P></TD>" +
-        // "</TR>" +
         "<TR>" +
         '	<TD class="tr5 td6"><P class="p7 ft7">Total Amount</P></TD>' +
         '	<TD class="tr5 td7"><P class="p11 ft7">' +
@@ -271,20 +241,24 @@ class HtmlToPdfHelper {
         "</DIV>" +
         // "<!-- Footer section -->" 
         '<FOOTER style="position: fixed; bottom: 60px; width: 86%;">' +
-            '<DIV class="p14 ft12">' +
-                "Registered & Corporate Office : Sai Towers Building No:779&780, 2nd Floor, Corporation Colony, South End Main Road, 9th Block Jayanagar, LandMark - Opposite to Metro Pillar No:92, Bangalore, Karnataka - 560069."+
-            "</DIV>"+
-            '<DIV class="p1 ft1">'+"    "+
-            "</DIV>"+
-            '<DIV class="p14 ft12">' +
-                "For Booking Appointments Contact us on : "+
-                pdfDetails.branchPhoneNumber+
-            "</DIV>"+
-            '<DIV class="p15 ft1">' +
-                "For more Info visit : "+
-                visit_us_on+
-            "</DIV>"+
-        "</FOOTER>"+
+          '<DIV class="p14 ft13" style="margin-bottom: 10px;">' +
+              "Terms and Conditions Apply: <br>" +
+              "1. Cheques are subject to realisation.<br>" +
+              "2. Payment received is non-refundable and non-transferable.<br>" +
+              "3. In case of any differences or discrepancies, the final authority lies with the management.<br>" +
+          '</DIV>' +
+          '<DIV class="p16 ft1">'+"    "+ "</DIV>" +
+          '<DIV class="p14 ft13">' +
+              "Registered & Corporate Office : Sai Towers Building No:779&780, 2nd Floor, Corporation Colony, South End Main Road, 9th Block Jayanagar, LandMark - Opposite to Metro Pillar No:92, Bangalore, Karnataka - 560069." +
+          "</DIV>" +
+          '<DIV class="p16 ft1">'+"    "+ "</DIV>" +
+          '<DIV class="p14 ft13">' +
+              "For Booking Appointments Contact us on : " + pdfDetails.branchPhoneNumber +
+          "</DIV>"+
+          '<DIV class="p15 ft1">' +
+              "For more Info visit : " + visit_us_on +
+          "</DIV>" +
+        "</FOOTER>" +
         '<div class="watermark" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.2;">' +
         '<img src="https://h-cura.s3.ap-south-1.amazonaws.com/logo/H-CuraYellow.png" style="height: 1300px; width: 1300px;" />' +
         '</div>' +
@@ -607,6 +581,7 @@ class HtmlToPdfHelper {
         "        }" +
         ".p14{text-align: justify;padding-left: 200px;margin-top: 0px}" + //fotter
         ".p15{text-align: justify;padding-left: 1800px;margin-top: 20px;margin-bottom: 0px;}" + //fotter
+        ".p16 {text-align: justify; padding-left: 1960px; margin-top: 24px; margin-bottom: 0px; padding-bottom: 15px; }" + //fotter
         "" +
         "        .td0 {" +
         "            padding: 0px;" +
@@ -875,16 +850,6 @@ class HtmlToPdfHelper {
 
       html +=
         '            <TABLE cellpadding=0 cellspacing=0 class="t5">' +
-        // "                <TR>" +
-        // '                    <TD class="tr5 td12">' +
-        // '                        <P class="p8 ft7">Package Fee</P>' +
-        // "                    </TD>" +
-        // '                    <TD class="tr5 td13">' +
-        // '                        <P class="p9 ft7">' +
-        // parseFloat(packageAmount).toFixed(2) +
-        // "</P>" +
-        // "                    </TD>" +
-        // "                </TR>" +
         "                <TR>" +
         '                    <TD class="tr6 td12">' +
         '                        <P class="p8 ft7">Service Charge</P>' +
@@ -907,50 +872,6 @@ class HtmlToPdfHelper {
         "</P>" +
         "                    </TD>" +
         "                </TR>" +
-        // "                <TR>" +
-        // '                    <TD class="tr6 td12">' +
-        // '                        <P class="p8 ft7">SGST</P>' + //GST@Nill (GST is exempt for healthcare services)
-        // "                    </TD>" +
-        // '                    <TD class="tr6 td13">' +
-        // '                        <P class="p11 ft7">' +
-        // "+" +
-        // parseFloat(pdfDetails.GST).toFixed(2) +
-        // "</P>" +
-        // "                    </TD>" +
-        // "                </TR>" +
-        // "                <TR>" +
-        // '                    <TD class="tr8 td12">' +
-        // '                        <P class="p8 ft7">CGST</P>' +
-        // "                    </TD>" +
-        // '                    <TD class="tr8 td13">' +
-        // '                        <P class="p9 ft7">' +
-        // "+" +
-        // parseFloat(pdfDetails.GST).toFixed(2) +
-        // "</P>" +
-        // "                    </TD>" +
-        // "                </TR>" +
-        // "                <TR>" +
-        // '                    <TD class="tr8 td12">' +
-        // '                        <P class="p8 ft7">IGST</P>' +
-        // "                    </TD>" +
-        // '                    <TD class="tr8 td13">' +
-        // '                        <P class="p9 ft7">' +
-        // "+" +
-        // parseFloat(pdfDetails.GST).toFixed(2) +
-        // "</P>" +
-        // "                    </TD>" +
-        // "                </TR>" +
-        // "                <TR>" +
-        // '                    <TD class="tr8 td12">' +
-        // '                        <P class="p8 ft7">UGST</P>' +
-        // "                    </TD>" +
-        // '                    <TD class="tr8 td13">' +
-        // '                        <P class="p9 ft7">' +
-        // "+" +
-        // parseFloat(pdfDetails.GST).toFixed(2) +
-        // "</P>" +
-        // "                    </TD>" +
-        // "                </TR>" +
         "                <TR>" +
         '                    <TD class="tr8 td12">' +
         '                        <P class="p8 ft7">Round off</P>' +
@@ -999,20 +920,24 @@ class HtmlToPdfHelper {
         '</div>' +
         // "<!-- Footer section -->" 
         '<FOOTER style="position: fixed; bottom: 60px; width: 86%;">' +
-            '<DIV class="p14 ft13">' +
-                "Registered & Corporate Office : Sai Towers Building No:779&780, 2nd Floor, Corporation Colony, South End Main Road, 9th Block Jayanagar, LandMark - Opposite to Metro Pillar No:92, Bangalore, Karnataka - 560069."+
-            "</DIV>"+
-            '<DIV class="p1 ft1">'+"    "+
-            "</DIV>"+
-            '<DIV class="p14 ft13">' +
-                "For Booking Appointments Contact us on : "+
-                pdfDetails.branchPhoneNumber +
-            "</DIV>"+
-            '<DIV class="p15 ft1">' +
-                "For more Info visit : "+
-                visit_us_on+
-            "</DIV>"+
-        "</FOOTER>"+
+          '<DIV class="p14 ft13" style="margin-bottom: 10px;">' +
+              "Terms and Conditions Apply: <br>" +
+              "1. Cheques are subject to realisation.<br>" +
+              "2. Payment received is non-refundable and non-transferable.<br>" +
+              "3. In case of any differences or discrepancies, the final authority lies with the management.<br>" +
+          '</DIV>' +
+          '<DIV class="p16 ft1">'+"    "+ "</DIV>" +
+          '<DIV class="p14 ft13">' +
+              "Registered & Corporate Office : Sai Towers Building No:779&780, 2nd Floor, Corporation Colony, South End Main Road, 9th Block Jayanagar, LandMark - Opposite to Metro Pillar No:92, Bangalore, Karnataka - 560069." +
+          "</DIV>" +
+          '<DIV class="p16 ft1">'+"    "+ "</DIV>" +
+          '<DIV class="p14 ft13">' +
+              "For Booking Appointments Contact us on : " + pdfDetails.branchPhoneNumber +
+          "</DIV>"+
+          '<DIV class="p15 ft1">' +
+              "For more Info visit : " + visit_us_on +
+          "</DIV>" +
+        "</FOOTER>" +
         "</BODY>" +
         "" +
         "</HTML>";
@@ -1332,6 +1257,7 @@ class HtmlToPdfHelper {
         "        }" +
         ".p14{text-align: justify;padding-left: 200px;margin-top: 0px}" + //fotter
         ".p15{text-align: justify;padding-left: 1800px;margin-top: 20px;margin-bottom: 0px;}" + //fotter
+        ".p16 {text-align: justify; padding-left: 1960px; margin-top: 24px; margin-bottom: 0px; padding-bottom: 15px; }" + //fotter
         "" +
         "        .td0 {" +
         "            padding: 0px;" +
@@ -1600,16 +1526,6 @@ class HtmlToPdfHelper {
 
       html +=
         '            <TABLE cellpadding=0 cellspacing=0 class="t5">' +
-        // "                <TR>" +
-        // '                    <TD class="tr5 td12">' +
-        // '                        <P class="p8 ft7">Package Fee</P>' +
-        // "                    </TD>" +
-        // '                    <TD class="tr5 td13">' +
-        // '                        <P class="p9 ft7">' +
-        // parseFloat(packageAmount).toFixed(2) +
-        // "</P>" +
-        // "                    </TD>" +
-        // "                </TR>" +
         "                <TR>" +
         '                    <TD class="tr6 td12">' +
         '                        <P class="p8 ft7">Service Charge</P>' +
@@ -1734,20 +1650,24 @@ class HtmlToPdfHelper {
         '</div>' +
         // "<!-- Footer section -->" 
         '<FOOTER style="position: fixed; bottom: 60px; width: 86%;">' +
-            '<DIV class="p14 ft13">' +
-                "Registered & Corporate Office : Sai Towers Building No:779&780, 2nd Floor, Corporation Colony, South End Main Road, 9th Block Jayanagar, LandMark - Opposite to Metro Pillar No:92, Bangalore, Karnataka - 560069."+
-            "</DIV>"+
-            '<DIV class="p1 ft1">'+"    "+
-            "</DIV>"+
-            '<DIV class="p14 ft13">' +
-                "For Booking Appointments Contact us on : "+
-                pdfDetails.branchPhoneNumber +
-            "</DIV>"+
-            '<DIV class="p15 ft1">' +
-                "For more Info visit : "+
-                visit_us_on+
-            "</DIV>"+
-        "</FOOTER>"+
+          '<DIV class="p14 ft13" style="margin-bottom: 10px;">' +
+              "Terms and Conditions Apply: <br>" +
+              "1. Cheques are subject to realisation.<br>" +
+              "2. Payment received is non-refundable and non-transferable.<br>" +
+              "3. In case of any differences or discrepancies, the final authority lies with the management.<br>" +
+          '</DIV>' +
+          '<DIV class="p16 ft1">'+"    "+ "</DIV>" +
+          '<DIV class="p14 ft13">' +
+              "Registered & Corporate Office : Sai Towers Building No:779&780, 2nd Floor, Corporation Colony, South End Main Road, 9th Block Jayanagar, LandMark - Opposite to Metro Pillar No:92, Bangalore, Karnataka - 560069." +
+          "</DIV>" +
+          '<DIV class="p16 ft1">'+"    "+ "</DIV>" +
+          '<DIV class="p14 ft13">' +
+              "For Booking Appointments Contact us on : " + pdfDetails.branchPhoneNumber +
+          "</DIV>"+
+          '<DIV class="p15 ft1">' +
+              "For more Info visit : " + visit_us_on +
+          "</DIV>" +
+        "</FOOTER>" +
         "</BODY>" +
         "" +
         "</HTML>";
@@ -2334,16 +2254,6 @@ class HtmlToPdfHelper {
 
       html +=
         '            <TABLE cellpadding=0 cellspacing=0 class="t5">' +
-        // "                <TR>" +
-        // '                    <TD class="tr5 td12">' +
-        // '                        <P class="p8 ft7">Package Fee</P>' +
-        // "                    </TD>" +
-        // '                    <TD class="tr5 td13">' +
-        // '                        <P class="p9 ft7">' +
-        // parseFloat(appointmentDetails.medicineFee).toFixed(2) +
-        // "</P>" +
-        // "                    </TD>" +
-        // "                </TR>" +
         "                <TR>" +
         '                    <TD class="tr6 td12">' +
         '                        <P class="p8 ft7">Service Charge</P>' +

@@ -2062,6 +2062,7 @@ class HtmlToPdfHelper {
         "        }" +
         ".p14{text-align: justify;padding-left: 200px;margin-top: 0px}" + //fotter
         ".p15{text-align: justify;padding-left: 1900px;margin-top: 20px;margin-bottom: 0px;}" + //fotter
+        ".p16 {text-align: justify; padding-left: 1960px; margin-top: 24px; margin-bottom: 0px; padding-bottom: 15px; }" + //fotter
         "" +
         "        .td0 {" +
         "            padding: 0px;" +
@@ -2365,50 +2366,6 @@ class HtmlToPdfHelper {
         "</P>" +
         "                    </TD>" +
         "                </TR>" +
-        // "                <TR>" +
-        // '                    <TD class="tr6 td12">' +
-        // '                        <P class="p8 ft7">SGST</P>' +  //GST@Nill (GST is exempt for healthcare services)
-        // "                    </TD>" +
-        // '                    <TD class="tr6 td13">' +
-        // '                        <P class="p11 ft7">' +
-        // "+" +
-        // parseFloat(pdfDetails.GST).toFixed(2) +
-        // "</P>" +
-        // "                    </TD>" +
-        // "                </TR>" +
-        // "                <TR>" +
-        // '                    <TD class="tr6 td12">' +
-        // '                        <P class="p8 ft7">CGST</P>' +  //GST@Nill (GST is exempt for healthcare services)
-        // "                    </TD>" +
-        // '                    <TD class="tr6 td13">' +
-        // '                        <P class="p11 ft7">' +
-        // "+" +
-        // parseFloat(pdfDetails.GST).toFixed(2) +
-        // "</P>" +
-        // "                    </TD>" +
-        // "                </TR>" +
-        // "                <TR>" +
-        // '                    <TD class="tr6 td12">' +
-        // '                        <P class="p8 ft7">IGST</P>' +  //GST@Nill (GST is exempt for healthcare services)
-        // "                    </TD>" +
-        // '                    <TD class="tr6 td13">' +
-        // '                        <P class="p11 ft7">' +
-        // "+" +
-        // parseFloat(pdfDetails.GST).toFixed(2) +
-        // "</P>" +
-        // "                    </TD>" +
-        // "                </TR>" +
-        // "                <TR>" +
-        // '                    <TD class="tr6 td12">' +
-        // '                        <P class="p8 ft7">UGST</P>' +  //GST@Nill (GST is exempt for healthcare services)
-        // "                    </TD>" +
-        // '                    <TD class="tr6 td13">' +
-        // '                        <P class="p11 ft7">' +
-        // "+" +
-        // parseFloat(pdfDetails.GST).toFixed(2) +
-        // "</P>" +
-        // "                    </TD>" +
-        // "                </TR>" +
         "                <TR>" +
         '                    <TD class="tr8 td12">' +
         '                        <P class="p8 ft7">Courier Charge</P>' +
@@ -2475,10 +2432,11 @@ class HtmlToPdfHelper {
               "2. Payment received is non-refundable and non-transferable.<br>" +
               "3. In case of any differences or discrepancies, the final authority lies with the management.<br>" +
           '</DIV>' +
+          '<DIV class="p16 ft1">'+"    "+ "</DIV>" +
           '<DIV class="p14 ft13">' +
               "Registered & Corporate Office : Sai Towers Building No:779&780, 2nd Floor, Corporation Colony, South End Main Road, 9th Block Jayanagar, LandMark - Opposite to Metro Pillar No:92, Bangalore, Karnataka - 560069." +
           "</DIV>" +
-          '<DIV class="p1 ft1">'+"    "+ "</DIV>" +
+          '<DIV class="p16 ft1">'+"    "+ "</DIV>" +
           '<DIV class="p14 ft13">' +
               "For Booking Appointments Contact us on : " + pdfDetails.branchPhoneNumber +
           "</DIV>"+

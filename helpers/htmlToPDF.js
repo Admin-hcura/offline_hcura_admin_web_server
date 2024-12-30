@@ -88,6 +88,7 @@ class HtmlToPdfHelper {
         '.ft10{font: bold 57px "Times New Roman";color: #202020;line-height: 66px;}' +
         '.ft11{font: 72px "Times New Roman";color: #707070;line-height: 77px;}' +
         '.ft12{font: bold 52px "Times New Roman";color: #999999;line-height: 75px;}' + //fotter
+        '.ft13{font: bold 52px "Times New Roman";color: #999999;line-height: 75px;}' + //fotter
         "" +
         ".p0{text-align: right;padding-right: 5px;margin-top: 0px;margin-bottom: 0px;}" +
         ".p1{text-align: justify;padding-left: 1700px;margin-top: 64px;margin-bottom: -2px;}" +

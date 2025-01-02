@@ -3669,7 +3669,7 @@ class appointmentDA{
         {
           $lookup: {
             from: "prescription",  
-            localField: "$appt._id", 
+            localField: "$apptDetails._id", 
             foreignField: "appointmentId",  
             as: "prescriptionDetails"
           }
@@ -3706,6 +3706,8 @@ class appointmentDA{
           $project: {
             caseStudyStatus: 1,
             prescriptionStatus: 1,
+            caseStudyDetails: 1,
+            prescriptionDetails: 1,
             caseStudyId: "$apptDetails.caseStudyId",
             prescriptionId: "$apptDetails.prescriptionId",
             startTime: 1,

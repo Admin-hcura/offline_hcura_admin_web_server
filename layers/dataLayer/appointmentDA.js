@@ -3656,6 +3656,12 @@ class appointmentDA{
             as: "caseStudyDetails"
           }
         },
+        {
+          $unwind: {
+            path: "$caseStudyDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
         // {
         //   $project: {
         //     caseStudyDetails: 1,  
@@ -3674,6 +3680,12 @@ class appointmentDA{
             as: "prescriptionDetails"
           }
         },
+        {
+          $unwind: {
+            path: "$prescriptionDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
         // {
         //   $project: {
         //     caseStudyDetails: 1,  
@@ -3688,28 +3700,16 @@ class appointmentDA{
           $addFields: {
             caseStudyStatus: {
               $cond: {
-                if: {
-                  $or: [
-                    { $eq: ["$apptDetails.caseStudyId", null] },  
-                    { $eq: ["$apptDetails.caseStudyId", undefined] },  
-                    { $gt: [{ $size: "$caseStudyDetails" }, 0] }  
-                  ]
-                },
-                then: "Not Available",
-                else: "Available"
+                if: { $gt: [{ $size: "$caseStudyDetails" }, 0] },
+                then: "Available",
+                else: "Not Available"
               }
             },
             prescriptionStatus: {
               $cond: {
-                if: {
-                  $or: [
-                    { $eq: ["$apptDetails.prescriptionId", null] },  
-                    { $eq: ["$apptDetails.prescriptionId", undefined] },  
-                    { $gt: [{ $size: "$prescriptionDetails" }, 0] }  
-                  ]
-                },
-                then: "Not Available",
-                else: "Available"
+                if: { $gt: [{ $size: "$prescriptionDetails" }, 0] },
+                then: "Available",
+                else: "Not Available"
               }
             }
           }

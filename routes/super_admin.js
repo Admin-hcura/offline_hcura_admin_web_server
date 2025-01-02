@@ -99,7 +99,7 @@ router.post(
 );
 router.post(
     "/staus/casestudy",
-    sessionValidator.validateAdminSession,
+    // sessionValidator.validateAdminSession,
     appointmentController.statusCaseStudy
 );
 router.post(

@@ -3594,42 +3594,6 @@ class appointmentDA{
             $match: filter
           },
           {
-            $addFields: {
-              caseStudyStatus: {
-                $cond: {
-                  if: {
-                    $and: [
-                      {
-                        $ifNull: ["$apptDetails.caseStudyId", false]
-                      },
-                      {
-                        $ne: ["$apptDetails.caseStudyId", null]
-                      }
-                    ]
-                  },
-                  then: "Available",
-                  else: "Not Available"
-                }
-              },
-              prescriptionStatus: {
-                $cond: {
-                  if: {
-                    $and: [
-                      {
-                        $ifNull: ["$apptDetails.prescriptionId", false]
-                      },
-                      {
-                        $ne: ["$apptDetails.prescriptionId", null]
-                      }
-                    ]
-                  },
-                  then: "Available",
-                  else: "Not Available"
-                }
-              }
-            }
-          },
-          {
             $lookup: {
               from: "admin",
               localField: "doctorId",
@@ -3683,6 +3647,42 @@ class appointmentDA{
             $unwind: {
               path: "$branchDetails",
               preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $addFields: {
+              caseStudyStatus: {
+                $cond: {
+                  if: {
+                    $and: [
+                      {
+                        $ifNull: ["$apptDetails.caseStudyId", false]
+                      },
+                      {
+                        $ne: ["$apptDetails.caseStudyId", null]
+                      }
+                    ]
+                  },
+                  then: "Available",
+                  else: "Not Available"
+                }
+              },
+              prescriptionStatus: {
+                $cond: {
+                  if: {
+                    $and: [
+                      {
+                        $ifNull: ["$apptDetails.prescriptionId", false]
+                      },
+                      {
+                        $ne: ["$apptDetails.prescriptionId", null]
+                      }
+                    ]
+                  },
+                  then: "Available",
+                  else: "Not Available"
+                }
+              }
             }
           },
           {

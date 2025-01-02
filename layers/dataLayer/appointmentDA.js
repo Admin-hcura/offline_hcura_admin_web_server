@@ -3650,35 +3650,45 @@ class appointmentDA{
             }
           },
           {
+            $lookup: {
+              from: "caseStudy",  
+              localField: "apptDetails._id",  
+              foreignField: "appointmentId",  
+              as: "caseStudyDetails"
+            }
+          },
+          {
+            $unwind: {
+              path: "$caseStudyDetails",
+              preserveNullAndEmptyArrays: true  
+            }
+          },
+          {
+            $lookup: {
+              from: "prescription",  
+              localField: "apptDetails._id", 
+              foreignField: "appointmentId",  
+              as: "prescriptionDetails"
+            }
+          },
+          {
+            $unwind: {
+              path: "$prescriptionDetails",
+              preserveNullAndEmptyArrays: true  
+            }
+          },
+          {
             $addFields: {
               caseStudyStatus: {
                 $cond: {
-                  if: {
-                    $and: [
-                      {
-                        $ifNull: ["$apptDetails.caseStudyId", false]
-                      },
-                      {
-                        $ne: ["$apptDetails.caseStudyId", null]
-                      }
-                    ]
-                  },
+                  if: { $gt: [{ $size: "$caseStudyDetails" }, 0] },  
                   then: "Available",
                   else: "Not Available"
                 }
               },
               prescriptionStatus: {
                 $cond: {
-                  if: {
-                    $and: [
-                      {
-                        $ifNull: ["$apptDetails.prescriptionId", false]
-                      },
-                      {
-                        $ne: ["$apptDetails.prescriptionId", null]
-                      }
-                    ]
-                  },
+                  if: { $gt: [{ $size: "$prescriptionDetails" }, 0] },  
                   then: "Available",
                   else: "Not Available"
                 }

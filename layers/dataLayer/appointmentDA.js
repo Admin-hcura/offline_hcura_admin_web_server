@@ -3688,16 +3688,28 @@ class appointmentDA{
           $addFields: {
             caseStudyStatus: {
               $cond: {
-                if: { $gt: [{ $size: "$caseStudyDetails" }, 0] },
-                then: "Available",
-                else: "Not Available"
+                if: {
+                  $or: [
+                    { $eq: ["$apptDetails.caseStudyId", null] },  
+                    { $eq: ["$apptDetails.caseStudyId", undefined] },  
+                    { $eq: [{ $size: "$caseStudyDetails" }, 0] }  
+                  ]
+                },
+                then: "Not Available",
+                else: "Available"
               }
             },
             prescriptionStatus: {
               $cond: {
-                if: { $gt: [{ $size: "$prescriptionDetails" }, 0] },
-                then: "Available",
-                else: "Not Available"
+                if: {
+                  $or: [
+                    { $eq: ["$apptDetails.prescriptionId", null] },  
+                    { $eq: ["$apptDetails.prescriptionId", undefined] },  
+                    { $eq: [{ $size: "$prescriptionDetails" }, 0] }  
+                  ]
+                },
+                then: "Not Available",
+                else: "Available"
               }
             }
           }

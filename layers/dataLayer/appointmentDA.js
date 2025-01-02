@@ -3692,7 +3692,7 @@ class appointmentDA{
                   $or: [
                     { $eq: ["$apptDetails.caseStudyId", null] },  
                     { $eq: ["$apptDetails.caseStudyId", undefined] },  
-                    { $g6: [{ $size: "$caseStudyDetails" }, 0] }  
+                    { $gt: [{ $size: "$caseStudyDetails" }, 0] }  
                   ]
                 },
                 then: "Not Available",

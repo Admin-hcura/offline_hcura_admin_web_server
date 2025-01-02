@@ -3600,10 +3600,10 @@ class appointmentDA{
                   if: {
                     $and: [
                       {
-                        $ifNull: ["$caseStudyId", false]
+                        $ifNull: ["$apptDetails.caseStudyId", false]
                       },
                       {
-                        $ne: ["$caseStudyId", null]
+                        $ne: ["$apptDetails.caseStudyId", null]
                       }
                     ]
                   },
@@ -3616,13 +3616,10 @@ class appointmentDA{
                   if: {
                     $and: [
                       {
-                        $ifNull: [
-                          "$prescriptionId",
-                          false
-                        ]
+                        $ifNull: ["$apptDetails.prescriptionId", false]
                       },
                       {
-                        $ne: ["$prescriptionId", null]
+                        $ne: ["$apptDetails.prescriptionId", null]
                       }
                     ]
                   },
@@ -3691,8 +3688,8 @@ class appointmentDA{
           {
             $project: {
               caseStudyStatus: 1,
-              caseStudyId: 1,
-              prescriptionId: 1,
+              caseStudyId: "$apptDetails.caseStudyId",
+              prescriptionId: "$apptDetails.prescriptionId",
               startTime: 1,
               appointmentNumber:
                 "$apptDetails.appointmentNumber",

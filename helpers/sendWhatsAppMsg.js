@@ -105,7 +105,7 @@ class whatsApp {
             let adminNo = '917411845658'
             // let branchs = "JAJ"
             const response = await axios({
-                url: 'https://graph.facebook.com/v21.0/507626279102687/messages',
+                url: 'https://graph.facebook.com/v21.0/520938667772155/messages',
                 method: 'post',
                 headers: {
                     'Authorization': `Bearer ${whatsapptoken}`,
@@ -177,7 +177,7 @@ class whatsApp {
             })
             return response.data;
         } catch(e){
-            console.error('API Request Error:', error.response?.data || error.message);
+            console.error('API Request Error:', e.response?.data || e.message);
         }
     };
 

@@ -3651,8 +3651,8 @@ class appointmentDA{
         {
           $lookup: {
             from: "caseStudy",  
-            localField: "apptDetails._id",  
-            foreignField: "appointmentId",  
+            localField: "patientId",  
+            foreignField: "patientId",  
             as: "caseStudyDetails"
           }
         },

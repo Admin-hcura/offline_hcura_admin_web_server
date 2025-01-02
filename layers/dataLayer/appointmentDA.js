@@ -3668,8 +3668,8 @@ class appointmentDA{
         {
           $lookup: {
             from: "prescription",  
-            localField: "apptDetails._id", 
-            foreignField: "appointmentId",  
+            localField: "patientId", 
+            foreignField: "patientId",  
             as: "prescriptionDetails"
           }
         },

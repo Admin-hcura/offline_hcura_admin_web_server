@@ -3588,140 +3588,144 @@ class appointmentDA{
       if(data.branchId != null ){
         filter.branchId = new mongoose.Types.ObjectId(data.branchId);
       }
-      let result = await paymentModel.aggregate(
-        [
-          {
-            $match: filter
-          },
-          {
-            $lookup: {
-              from: "admin",
-              localField: "doctorId",
-              foreignField: "_id",
-              as: "docDetails"
-            }
-          },
-          {
-            $unwind: {
-              path: "$docDetails",
-              preserveNullAndEmptyArrays: true
-            }
-          },
-          {
-            $lookup: {
-              from: "patient",
-              localField: "patientId",
-              foreignField: "_id",
-              as: "ptDetails"
-            }
-          },
-          {
-            $unwind: {
-              path: "$ptDetails",
-              preserveNullAndEmptyArrays: true
-            }
-          },
-          {
-            $lookup: {
-              from: "appointment",
-              localField: "appointmentId",
-              foreignField: "_id",
-              as: "apptDetails"
-            }
-          },
-          {
-            $unwind: {
-              path: "$apptDetails",
-              preserveNullAndEmptyArrays: true
-            }
-          },
-          {
-            $lookup: {
-              from: "branches",
-              localField: "branchId",
-              foreignField: "_id",
-              as: "branchDetails"
-            }
-          },
-          {
-            $unwind: {
-              path: "$branchDetails",
-              preserveNullAndEmptyArrays: true
-            }
-          },
-          {
-            $lookup: {
-              from: "caseStudy",  
-              localField: "apptDetails._id",  
-              foreignField: "appointmentId",  
-              as: "caseStudyDetails"
-            }
-          },
-          {
-            $unwind: {
-              path: "$caseStudyDetails",
-              preserveNullAndEmptyArrays: true  
-            }
-          },
-          {
-            $lookup: {
-              from: "prescription",  
-              localField: "apptDetails._id", 
-              foreignField: "appointmentId",  
-              as: "prescriptionDetails"
-            }
-          },
-          {
-            $unwind: {
-              path: "$prescriptionDetails",
-              preserveNullAndEmptyArrays: true  
-            }
-          },
-          {
-            $addFields: {
-              caseStudyStatus: {
-                $cond: {
-                  if: { $gt: [{ $size: "$caseStudyDetails" }, 0] },  
-                  then: "Available",
-                  else: "Not Available"
-                }
-              },
-              prescriptionStatus: {
-                $cond: {
-                  if: { $gt: [{ $size: "$prescriptionDetails" }, 0] },  
-                  then: "Available",
-                  else: "Not Available"
-                }
+      let result = await paymentModel.aggregate([
+        {
+          $match: filter
+        },
+        {
+          $lookup: {
+            from: "admin",
+            localField: "doctorId",
+            foreignField: "_id",
+            as: "docDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$docDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "patient",
+            localField: "patientId",
+            foreignField: "_id",
+            as: "ptDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$ptDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "appointment",
+            localField: "appointmentId",
+            foreignField: "_id",
+            as: "apptDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$apptDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "branches",
+            localField: "branchId",
+            foreignField: "_id",
+            as: "branchDetails"
+          }
+        },
+        {
+          $unwind: {
+            path: "$branchDetails",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $lookup: {
+            from: "caseStudy",  
+            localField: "apptDetails._id",  
+            foreignField: "appointmentId",  
+            as: "caseStudyDetails"
+          }
+        },
+        {
+          $project: {
+            caseStudyDetails: 1,  
+            apptDetails: 1,
+            branchDetails: 1,
+            docDetails: 1,
+            ptDetails: 1
+          }
+        },
+        {
+          $lookup: {
+            from: "prescription",  
+            localField: "apptDetails._id", 
+            foreignField: "appointmentId",  
+            as: "prescriptionDetails"
+          }
+        },
+        {
+          $project: {
+            caseStudyDetails: 1,  
+            prescriptionDetails: 1,  
+            apptDetails: 1,
+            branchDetails: 1,
+            docDetails: 1,
+            ptDetails: 1
+          }
+        },
+        {
+          $addFields: {
+            caseStudyStatus: {
+              $cond: {
+                if: { $gt: [{ $size: "$caseStudyDetails" }, 0] },
+                then: "Available",
+                else: "Not Available"
+              }
+            },
+            prescriptionStatus: {
+              $cond: {
+                if: { $gt: [{ $size: "$prescriptionDetails" }, 0] },
+                then: "Available",
+                else: "Not Available"
               }
             }
-          },
-          {
-            $project: {
-              caseStudyStatus: 1,
-              caseStudyId: "$apptDetails.caseStudyId",
-              prescriptionId: "$apptDetails.prescriptionId",
-              startTime: 1,
-              appointmentNumber:
-                "$apptDetails.appointmentNumber",
-              prescriptionStatus: 1,
-              hcuraId: "$ptDetails.hcuraId",
-              ptFirstName: "$ptDetails.firstName",
-              ptLastName: "$ptDetails.lastName",
-              docFirstName: "$docDetails.firstName",
-              docLastName: "$docDetails.lastName",
-              paidOn: 1,
-              payableAmount: 1,
-              paymentFor: 1,
-              branchName: "$branchDetails.branchName"
-            }
-          },
-          {
-            $sort: {
-              paidOn: -1
-            }
           }
-        ]
-      );
+        },
+        {
+          $project: {
+            caseStudyStatus: 1,
+            prescriptionStatus: 1,
+            caseStudyId: "$apptDetails.caseStudyId",
+            prescriptionId: "$apptDetails.prescriptionId",
+            startTime: 1,
+            appointmentNumber: "$apptDetails.appointmentNumber",
+            hcuraId: "$ptDetails.hcuraId",
+            ptFirstName: "$ptDetails.firstName",
+            ptLastName: "$ptDetails.lastName",
+            docFirstName: "$docDetails.firstName",
+            docLastName: "$docDetails.lastName",
+            paidOn: 1,
+            payableAmount: 1,
+            paymentFor: 1,
+            branchName: "$branchDetails.branchName"
+          }
+        },
+        {
+          $sort: {
+            paidOn: -1
+          }
+        }
+      ]);
       return result;
     } catch(e){
 

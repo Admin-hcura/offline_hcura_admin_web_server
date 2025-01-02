@@ -3656,12 +3656,6 @@ class appointmentDA{
             as: "caseStudyDetails"
           }
         },
-        {
-          $unwind: {
-            path: "$caseStudyDetails",
-            preserveNullAndEmptyArrays: true
-          }
-        },
         // {
         //   $project: {
         //     caseStudyDetails: 1,  
@@ -3675,15 +3669,9 @@ class appointmentDA{
         {
           $lookup: {
             from: "prescription",  
-            localField: "patientId", 
-            foreignField: "patientId",  
+            localField: "$appt._id", 
+            foreignField: "appointmentId",  
             as: "prescriptionDetails"
-          }
-        },
-        {
-          $unwind: {
-            path: "$prescriptionDetails",
-            preserveNullAndEmptyArrays: true
           }
         },
         // {
@@ -3701,15 +3689,15 @@ class appointmentDA{
             caseStudyStatus: {
               $cond: {
                 if: { $gt: [{ $size: "$caseStudyDetails" }, 0] },
-                then: "Available",
-                else: "Not Available"
+                then: "Not Available",
+                else: "Available"
               }
             },
             prescriptionStatus: {
               $cond: {
                 if: { $gt: [{ $size: "$prescriptionDetails" }, 0] },
-                then: "Available",
-                else: "Not Available"
+                then: "Not Available",
+                else: "Available"
               }
             }
           }

@@ -3656,16 +3656,16 @@ class appointmentDA{
             as: "caseStudyDetails"
           }
         },
-        // {
-        //   $project: {
-        //     caseStudyDetails: 1,  
-        //     apptDetails: 1,
-        //     branchDetails: 1,
-        //     docDetails: 1,
-        //     ptDetails: 1,
-        //     patientId: 1
-        //   }
-        // },
+        {
+          $project: {
+            caseStudyDetails: 1,  
+            apptDetails: 1,
+            branchDetails: 1,
+            docDetails: 1,
+            ptDetails: 1,
+            patientId: 1
+          }
+        },
         {
           $lookup: {
             from: "prescription",  

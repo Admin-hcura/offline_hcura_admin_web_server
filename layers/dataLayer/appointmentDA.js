@@ -3674,60 +3674,60 @@ class appointmentDA{
             as: "prescriptionDetails"
           }
         },
-        // {
-        //   $project: {
-        //     caseStudyDetails: 1,  
-        //     prescriptionDetails: 1,  
-        //     apptDetails: 1,
-        //     branchDetails: 1,
-        //     docDetails: 1,
-        //     ptDetails: 1
-        //   }
-        // },
-        {
-          $addFields: {
-            caseStudyStatus: {
-              $cond: {
-                if: { $gt: [{ $size: "$caseStudyDetails" }, 0] },
-                then: "Not Available",
-                else: "Available"
-              }
-            },
-            prescriptionStatus: {
-              $cond: {
-                if: { $gt: [{ $size: "$prescriptionDetails" }, 0] },
-                then: "Not Available",
-                else: "Available"
-              }
-            }
-          }
-        },
         {
           $project: {
-            caseStudyStatus: 1,
-            prescriptionStatus: 1,
-            caseStudyDetails: 1,
-            prescriptionDetails: 1,
-            caseStudyId: "$apptDetails.caseStudyId",
-            prescriptionId: "$apptDetails.prescriptionId",
-            startTime: 1,
-            appointmentNumber: "$apptDetails.appointmentNumber",
-            hcuraId: "$ptDetails.hcuraId",
-            ptFirstName: "$ptDetails.firstName",
-            ptLastName: "$ptDetails.lastName",
-            docFirstName: "$docDetails.firstName",
-            docLastName: "$docDetails.lastName",
-            paidOn: 1,
-            payableAmount: 1,
-            paymentFor: 1,
-            branchName: "$branchDetails.branchName"
+            caseStudyDetails: 1,  
+            prescriptionDetails: 1,  
+            apptDetails: 1,
+            branchDetails: 1,
+            docDetails: 1,
+            ptDetails: 1
           }
         },
-        {
-          $sort: {
-            paidOn: -1
-          }
-        }
+        // {
+        //   $addFields: {
+        //     caseStudyStatus: {
+        //       $cond: {
+        //         if: { $gt: [{ $size: "$caseStudyDetails" }, 0] },
+        //         then: "Not Available",
+        //         else: "Available"
+        //       }
+        //     },
+        //     prescriptionStatus: {
+        //       $cond: {
+        //         if: { $gt: [{ $size: "$prescriptionDetails" }, 0] },
+        //         then: "Not Available",
+        //         else: "Available"
+        //       }
+        //     }
+        //   }
+        // },
+        // {
+        //   $project: {
+        //     caseStudyStatus: 1,
+        //     prescriptionStatus: 1,
+        //     caseStudyDetails: 1,
+        //     prescriptionDetails: 1,
+        //     caseStudyId: "$apptDetails.caseStudyId",
+        //     prescriptionId: "$apptDetails.prescriptionId",
+        //     startTime: 1,
+        //     appointmentNumber: "$apptDetails.appointmentNumber",
+        //     hcuraId: "$ptDetails.hcuraId",
+        //     ptFirstName: "$ptDetails.firstName",
+        //     ptLastName: "$ptDetails.lastName",
+        //     docFirstName: "$docDetails.firstName",
+        //     docLastName: "$docDetails.lastName",
+        //     paidOn: 1,
+        //     payableAmount: 1,
+        //     paymentFor: 1,
+        //     branchName: "$branchDetails.branchName"
+        //   }
+        // },
+        // {
+        //   $sort: {
+        //     paidOn: -1
+        //   }
+        // }
       ]);
       return result;
     } catch(e){

@@ -142,5 +142,13 @@ router.post(
     "/appt/offer/form",
     appointmentController.webOfferForm
 );
+router.post(
+    "/insert/data/home/count",
+    appointmentController.addHomeCountData
+);
+router.get(
+    "/get/home/count",
+    appointmentController.getHomeCountData
+);
 
 module.exports = router;

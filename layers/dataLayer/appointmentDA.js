@@ -13,7 +13,7 @@ const { branchesModel, slotModel, occupationModel, promoCodesModel, sourceModel,
   symptomsAllegryModel, tempAppointmentModel, statesModel, packageModel, 
   estimationModel, packageSubscriptionModel, caseStudyModel, suggestionPrescriptionModel, 
   prescriptionModel, bookApptFormModel, contactUsModel, corporateModel, 
-  offerFormModel} = require("../../models/schema");
+  offerFormModel, homeCountModel } = require("../../models/schema");
 const { startTime } = require("express-pino-logger");
 let createdOn = moment().format();
 
@@ -4574,6 +4574,41 @@ class appointmentDA{
       throw e;
     }
   };
+
+  async homeCountDataDA(body){
+    try{
+      let createdOn = moment().format();
+      let result = new homeCountModel({
+        onlineConsultation: body.onlineConsultation,
+        offlineConsultation: body.offlineConsultation,
+        treatmentCompleted: body.treatmentCompleted,
+        ongoingPatients: body.ongoingPatients,
+        skinCured: body.skinCured,
+        hairTreated: body.hairTreated,
+        pcodTreated: body.pcodTreated,
+        infertilityCured: body.infertilityCured,
+        psoriasis: body.psoriasis,
+        prp: body.prp,
+        gfc: body.gfc,
+        hydrafacial: body.hydrafacial,
+        createdOn: createdOn
+      });
+    return await result.save();
+    } catch(e) {
+      throw e;
+    }
+  };
+
+  async getHomeCountData() {
+    try {
+      return await homeCountModel
+        .findOne({ isActive: true }) 
+        .sort({ createdOn: -1 });
+    } catch (e) {
+      console.error("Error fetching home count data:", e);
+      throw e; 
+    }
+  };    
   
 }
 module.exports = new appointmentDA();

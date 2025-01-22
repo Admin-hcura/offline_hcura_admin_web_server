@@ -2261,6 +2261,29 @@ class appointment{
         }
     };
 
+    async addHomeCountData(req, res, next){
+        try{
+            let body = req.body
+            const {error} = rule.homeCountRule.validate(body);
+            if(error){
+                throw Boom.badData(error.message);
+            }
+            let data = await appointmentDA.homeCountDataDA(body);
+            res.status(200).send({ status: true, message: "Successfully Recieved Data"});
+        } catch(e){
+            next(e);
+        }
+    };
+
+    async getHomeCountData(req, res, next){
+        try{
+            let data = await appointmentDA.getHomeCountData();
+            res.status(200).send({ status: true, data: data });
+        } catch(e){
+            next(e);
+        }
+    };
+
 };
 
 module.exports = new appointment();

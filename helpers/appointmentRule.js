@@ -257,3 +257,18 @@ exports.apptReportDown = Joi.object({
     doctorId: Joi.string().allow(null).error(new Error("doctorId is required")),
     type: Joi.string().allow(null).error(new Error("type is required")),
 });
+
+exports.homeCountRule = Joi.object({
+    onlineConsultation: Joi.number().required().error(new Error("onlineConsultation Id is required")),
+    offlineConsultation: Joi.number().required().error(new Error("offlineConsultation is required")),
+    treatmentCompleted: Joi.number().required().error(new Error("treatmentCompleted is required")),
+    ongoingPatients: Joi.number().required().error(new Error("ongoingPatients is required")),
+    skinCured: Joi.number().required().error(new Error("skinCured is required")),
+    hairTreated: Joi.number().required().error(new Error("hairTreated is required")),
+    pcodTreated: Joi.number().required().error(new Error("pcodTreated is required")),
+    infertilityCured: Joi.number().required().error(new Error("infertilityCured is required")),
+    psoriasis: Joi.number().required().error(new Error("psoriasis is required")),
+    prp: Joi.number().required().error(new Error("prp is required")),
+    gfc: Joi.number().required().error(new Error("gfc is required")),
+    hydrafacial: Joi.number().required().error(new Error("hydrafacial is required"))
+});

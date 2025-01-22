@@ -554,6 +554,23 @@ const increment = require('mongoose-increment')(mongoose);
     createdOn: { type: Date, default: null }
   });
 
+  let homeCount = new schema({
+    onlineConsultation: { type: Number, default: null },
+    offlineConsultation: { type: Number, default: null },
+    treatmentCompleted: { type: Number, default: null },
+    ongoingPatients: { type: Number, default: null },
+    skinCured: { type: Number, default: null },
+    hairTreated: { type: Number, default: null },
+    pcodTreated: { type: Number, default: null },
+    infertilityCured: { type: Number, default: null },
+    psoriasis: { type: Number, default: null },
+    prp: { type: Number, default: null },
+    gfc: { type: Number, default: null },
+    hydrafacial: { type: Number, default: null },
+    createdOn: { type: Date, default: null },
+    isActive: { type: Boolean, default: true }
+  });
+
   exports.branchesModel = mongoose.model("Branches", branches, "branches");
   exports.roleModel = mongoose.model("Role", role, "role");
   exports.adminModel = mongoose.model("Admin", admin, "admin");
@@ -580,5 +597,6 @@ const increment = require('mongoose-increment')(mongoose);
   exports.contactUsModel = mongoose.model("ContactUs", contactUs, "contactUs");
   exports.corporateModel = mongoose.model("Corporate", corporate, "corporate");
   exports.offerFormModel = mongoose.model("OfferForm", offerForm, "offerForm");
+  exports.homeCountModel = mongoose.model("HomeCount", homeCount, "homeCount");
 
 }.call(this))

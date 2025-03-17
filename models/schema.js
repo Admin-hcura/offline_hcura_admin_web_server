@@ -7,7 +7,8 @@ const { number, required } = require("joi");
 //   var mongooseIncrement = require("mongoose-increment");
 //   var increment = mongooseIncrement(mongoose);
 //   const mongoose = require('mongoose');
-const increment = require('mongoose-increment')(mongoose);  
+const increment = require('mongoose-increment')(mongoose); 
+let createdOn = moment().format(); 
 
   let branches = new schema ({
     branchCode: {type: String, required: true,unique: true },
@@ -505,19 +506,19 @@ const increment = require('mongoose-increment')(mongoose);
 
   // website pt form filling
   let bookApptForm = new schema({
-    name: { type: String, default: null },
-    age: { type: Number, default: null },
-    phoneNo: { type: String, default: null },
-    whatsAppNo: { type: String, default: null },
-    concern:  { type: String, default: null },
-    emailId: { type: String, default: null },
-    gender: { type: String, default: null },
-    state: { type: String, default: null },
-    consultationType: { type: String, default: null },
-    branch: { type: String, default: null },
-    message: { type: String, default: null },
-    formId: { type: String, default: null }, // HAF01
-    createdOn: { type: Date, default: null }
+    name: { type: String, default: "NA" },
+    age: { type: Number, default: 0 },
+    phoneNo: { type: String, default: "NA" },
+    whatsAppNo: { type: String, default: "NA" },
+    concern:  { type: String, default: "NA" },
+    emailId: { type: String, default: "NA" },
+    gender: { type: String, default: "NA" },
+    state: { type: String, default: "NA" },
+    consultationType: { type: String, default: "NA" },
+    branch: { type: String, default: "NA" },
+    message: { type: String, default: "NA" },
+    formId: { type: String, default: "NA" }, // HAF01
+    createdOn: { type: Date, default: createdOn }
   });
 
   let contactUs = new schema({

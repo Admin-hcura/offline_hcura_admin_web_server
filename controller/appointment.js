@@ -2056,6 +2056,7 @@ class appointment{
     async apptFormPtDetails(req, res, next){
         try{
             let body = req.body
+            console.log("------body----",body)
             let existingApptId = await appointmentDA.getApptId();
             let newApptId = "HAF01" ;
 

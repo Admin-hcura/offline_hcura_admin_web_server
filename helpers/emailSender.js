@@ -532,7 +532,7 @@ class Mail{
   async sendApptFormPtDetailsToAdmin(
     name, age, phoneNo, whatsAppNo,
     emailId, gender, state,
-    consultationType, message, branch, formId ) {
+    consultationType, message, branch, formId, concern ) {
       try {
         let info = await this.setUpSmtp();
         info

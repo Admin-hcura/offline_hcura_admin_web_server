@@ -4457,7 +4457,8 @@ class appointmentDA{
         message: body.message,
         branch: body.branch,
         formId: newApptId,
-        createdOn: createdOn
+        createdOn: createdOn,
+        concern: body.concern
       });
     return await result.save();
     } catch(e) {

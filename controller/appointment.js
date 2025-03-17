@@ -2082,7 +2082,7 @@ class appointment{
                 insertDetails.age, insertDetails.phoneNo, insertDetails.whatsAppNo,
                 insertDetails.emailId, insertDetails.gender, insertDetails.state, 
                 insertDetails.consultationType, insertDetails.message, 
-                insertDetails.branch, insertDetails.formId );
+                insertDetails.branch, insertDetails.formId, insertDetails.concern );
             
             // if email is present need to send email to pt 
             if (insertDetails.emailId !== null) {

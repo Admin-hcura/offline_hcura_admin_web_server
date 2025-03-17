@@ -545,7 +545,7 @@ class Mail{
               await emailTemplates.sendApptFormPtDetailsRequest(
                 name, age, phoneNo, whatsAppNo, emailId, 
                 gender, state, consultationType, message,
-                branch, formId )).toString(),
+                branch, formId, concern )).toString(),
           })
           .then(() => {
             console.log("Email sent");

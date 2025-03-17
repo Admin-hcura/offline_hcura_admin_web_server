@@ -509,6 +509,7 @@ const increment = require('mongoose-increment')(mongoose);
     age: { type: Number, default: null },
     phoneNo: { type: String, default: null },
     whatsAppNo: { type: String, default: null },
+    concern:  { type: String, default: null },
     emailId: { type: String, default: null },
     gender: { type: String, default: null },
     state: { type: String, default: null },

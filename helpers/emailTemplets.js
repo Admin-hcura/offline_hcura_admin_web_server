@@ -8696,7 +8696,7 @@ class MailTemplates {
     async sendApptFormPtDetailsRequest(
       name, age, phoneNo, whatsAppNo,
       emailId, gender, state,
-      consultationType, message, branch, formId ) {
+      consultationType, message, branch, formId, concern ) {
       return (
         "<!doctype html>" +
         '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">' +
@@ -9308,6 +9308,9 @@ class MailTemplates {
         "<br>" +
         "															<strong>Consultation Type:</strong>&nbsp;" +
         consultationType +
+        "<br>" +
+        "															<strong>Concern:</strong>&nbsp;" +
+        concern +
         "<br>" +
         "															<strong>Branch:</strong>&nbsp;" +
         branch +

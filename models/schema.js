@@ -8,7 +8,7 @@ const { number, required } = require("joi");
 //   var increment = mongooseIncrement(mongoose);
 //   const mongoose = require('mongoose');
 const increment = require('mongoose-increment')(mongoose); 
-let createdOn = moment().format(); 
+let createdOn = moment().format();
 
   let branches = new schema ({
     branchCode: {type: String, required: true,unique: true },
@@ -19,10 +19,10 @@ let createdOn = moment().format();
     location: {type: String, required: true},
     isDeleted: {type: Boolean, default: false },
     isLocked: {
-        type: String,
-        enum: ["ENABLED", "DISABLED"],
-        default: "ENABLED",
-      },
+      type: String,
+      enum: ["ENABLED", "DISABLED"],
+      default: "ENABLED",
+    },
     insertedBy: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", required: true},
   });
 
@@ -50,9 +50,9 @@ let createdOn = moment().format();
     createdOn: {type: Date, default: new Date()},
     isDeleted: {type: Boolean, default: false},
     isLocked: {
-        type: String,
-        enum: ["ENABLED", "DISABLED"],
-        default: "ENABLED",
+      type: String,
+      enum: ["ENABLED", "DISABLED"],
+      default: "ENABLED",
     },
     roleId: {type: mongoose.Schema.Types.ObjectId, ref: "Role", required: true},
     branchId: {type: mongoose.Schema.Types.ObjectId, ref: "Branches", required: true},
@@ -103,12 +103,12 @@ let createdOn = moment().format();
 
   let time = new schema ({
     slots: [
-        {
-          start: { type: String, default: null },
-          end: { type: String, default: null },
-          isLocked: { type: Boolean, default: false },
-        },
-      ],
+      {
+        start: { type: String, default: null },
+        end: { type: String, default: null },
+        isLocked: { type: Boolean, default: false },
+      },
+    ],
     isActive: {type: Boolean, default: true},
     createdOn: {type: Date, default: new Date()},
   });
@@ -160,26 +160,26 @@ let createdOn = moment().format();
     allegires: [],
     rescheduledApptId: {type: mongoose.Schema.Types.ObjectId, ref: "Appointments", default: null},
     consultationMode: {
-        type: String,
-        enum: ["ONLINE", "OFFLINE"],
-        default: "OFFLINE"
+      type: String,
+      enum: ["ONLINE", "OFFLINE"],
+      default: "OFFLINE"
     },
     consultationType: {
-        type: String,
-        enum: ["FOLLOW-UP", "FIRST-CONSULTATION"],
-        default: "FIRST-CONSULTATION"
+      type: String,
+      enum: ["FOLLOW-UP", "FIRST-CONSULTATION"],
+      default: "FIRST-CONSULTATION"
     },
     appointmentStatus: {
-        type: String,
-        enum: [
-          "CONFIRMED",
-          "CANCELLED",
-          "COMPLETED",
-          "RESCHEDULE",
-          "SCHEDULED",
-          "VISITED"
-        ],
-        default: "SCHEDULED",
+      type: String,
+      enum: [
+        "CONFIRMED",
+        "CANCELLED",
+        "COMPLETED",
+        "RESCHEDULE",
+        "SCHEDULED",
+        "VISITED"
+      ],
+      default: "SCHEDULED",
     },
     confirmedUpdatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null },
     visitedUpdatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null },
@@ -208,15 +208,15 @@ let createdOn = moment().format();
     slotId: {type: mongoose.Schema.Types.ObjectId, ref: "Slot", default: null},
     astheticPaymentId: {type: mongoose.Schema.Types.ObjectId, ref: "Payment", default: null},
     paymentFor: {
-        type: String,
-        enum: [
-          "CONSULTATION",
-          "HOMEOPATHY",
-          "EXTERNAL_SOURCE",
-          "ASTHETIC"
-        ],
-        default: "CONSULTATION",
-      },
+      type: String,
+      enum: [
+        "CONSULTATION",
+        "HOMEOPATHY",
+        "EXTERNAL_SOURCE",
+        "ASTHETIC"
+      ],
+      default: "CONSULTATION",
+    },
     orderId: {type: String, default: null},
     prescribedBy: {type: String, default: null},
     installments: {type: Number, default: null},

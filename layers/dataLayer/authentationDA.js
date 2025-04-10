@@ -11,13 +11,11 @@ const saltRounds = 10;
 
 let mongDB = require("mongodb");
 const { consulatationAmountModel, packageModel, paymentModel, tempAppointmentModel,
-     promoCodesModel, 
-     appointmentModel} = require("../../models/schema");
-
+    promoCodesModel, appointmentModel} = require("../../models/schema");
 
 class authentationDA {
-    async insertBranchDA(obj){
-        try{
+    async insertBranchDA(obj) {
+        try {
             let result = new branchesModel({
                 branchCode: obj.branchCode,
                 branchName: obj.branchName,
@@ -33,8 +31,8 @@ class authentationDA {
         }
     };
 
-    async insertRoleDA(obj){
-        try{
+    async insertRoleDA(obj) {
+        try {
             let result = new roleModel({
                 roleName: obj.roleName,
                 roleCode: obj.roleCode,
@@ -47,8 +45,8 @@ class authentationDA {
         }
     };
 
-    async addAdminDA(obj){
-        try{
+    async addAdminDA(obj) {
+        try {
             let pass = obj.password
             let password = await bcrypt.hash(pass, saltRounds);
             let result = new adminModel({
@@ -76,8 +74,8 @@ class authentationDA {
         }
     };
 
-    async adminExistDA(email ,username, phoneNumber, EmpNumber){
-        try{
+    async adminExistDA(email ,username, phoneNumber, EmpNumber) {
+        try {
             let result = await adminModel.findOne({
                 $and: [
                     { $or: [{ email: email }, { username: username }, { phoneNumber: phoneNumber }, {EmpNumber: EmpNumber}] },
@@ -85,13 +83,13 @@ class authentationDA {
                 ]
             });
             return result;
-        } catch(e){
+        } catch(e) {
             throw e;
         }
     };
 
-    async adminIsExistDA(username){
-        try{
+    async adminIsExistDA(username) {
+        try {
             let result = await adminModel.findOne({
                 $and: [
                     { $or: [{ username: username }] },
@@ -99,12 +97,12 @@ class authentationDA {
                 ]
             });
             return result;
-        } catch(e){
+        } catch(e) {
             throw e;
         }
     };
 
-    async adminPasswordDA(password, dbPassword){
+    async adminPasswordDA(password, dbPassword) {
         try {
             let passwordCheck = await bcrypt.compare(password, dbPassword);
             return passwordCheck;
@@ -113,18 +111,18 @@ class authentationDA {
         }
     };
 
-    async updateAdminFcmTokenDA(id, token){
+    async updateAdminFcmTokenDA(id, token) {
         try {
             return await adminModel.updateOne(
-              { _id: id },
-              { $set: { fcmToken: token } }
+                { _id: id },
+                { $set: { fcmToken: token } }
             );
         } catch (e) {
             throw e;
         }
     };
 
-    async updatePasswordDA(data){
+    async updatePasswordDA(data) {
         try {
             let password = await bcrypt.hash(data.password, saltRounds);
             return await adminModel.updateOne(
@@ -136,27 +134,27 @@ class authentationDA {
         }
     };
 
-    async branchListDA(){
-        try{
+    async branchListDA() {
+        try {
             let result = await branchesModel.find({ isDeleted: false, isLocked: "ENABLED" },
                 {branchPhoneNumber :0, createdOn :0, location :0, isDeleted :0, isLocked :0, insertedBy :0 });
             return result;
-        } catch (e){
+        } catch (e) {
             throw e;
         }
     };
 
-    async roleListDA(){
-        try{
+    async roleListDA() {
+        try {
             let result = await roleModel.find({ isDeleted: false, isLocked: "ENABLED"})
             return result;
-        } catch (e){
+        } catch (e) {
             throw e;
         }
     };
 
-    async patientExistDA(phoneNumber){
-        try{
+    async patientExistDA(phoneNumber) {
+        try {
             let result = await patientModel.findOne({ phoneNumber: phoneNumber});
             return result;
         } catch(e) {
@@ -164,8 +162,8 @@ class authentationDA {
         }
     };
 
-    async getHcuraIdDA(){
-        try{
+    async getHcuraIdDA() {
+        try {
             let result = await patientModel.aggregate([
                 {
                   '$project': {
@@ -180,8 +178,8 @@ class authentationDA {
         }
     };
 
-    async getHcuraTIdDA(){
-        try{
+    async getHcuraTIdDA() {
+        try {
             let result = await tempAppointmentModel.aggregate([
                 {
                   '$project': {
@@ -196,11 +194,11 @@ class authentationDA {
         }
     };
 
-    async getBrachDetailsDA(branchId){
-        try{
+    async getBrachDetailsDA(branchId) {
+        try {
             let result = await branchesModel.findOne({ _id : branchId});
             return result;
-        } catch (e){
+        } catch (e) {
             throw e;
         }
     };
@@ -222,8 +220,8 @@ class authentationDA {
         source,
         occupation,
         stateId
-    ){
-        try{
+    ) {
+        try {
             let result = new patientModel({
                 hcuraId: hcuraId,
                 branchId: branchId,
@@ -245,70 +243,70 @@ class authentationDA {
                 registeredOn: new Date()
             });
             return await result.save();
-        } catch(e){
+        } catch(e) {
             throw e;
         }
     };
 
-    async getroleCodeDA(roleId){
-        try{
+    async getroleCodeDA(roleId) {
+        try {
             let result = await roleModel.findOne({ _id : roleId});
             return result;
-        } catch(e){
+        } catch(e) {
             throw e;
         }
     };
 
-    async adminLogoutDA(patientId){
-        try{
+    async adminLogoutDA(patientId) {
+        try {
             return await adminModel.updateOne(
                 { _id: patientId },
                 { $set: { fcmToken: "" } }
             );
-        } catch(e){
+        } catch(e) {
             throw e;
         }
     };
 
-    async insertTime(body){
-        try{
+    async insertTimeDA(body) {
+        try {
             let result = new timeModel({
                 slots: body.slots,
                 createdOn: new Date(),
             });
             return await result.save();
-        } catch(e){
+        } catch(e) {
             throw e;
         }
     };
 
-    async insertDay(body){
-        try{
+    async insertDayDA(body) {
+        try {
             let result = new dayModel({
                 day: body.day,
                 createdOn: new Date()
             });
             return await result.save();
-        } catch(e){
+        } catch(e) {
             throw(e);
         }
     };
 
-    async insertAmountDA(body){
-        try{
+    async insertAmountDA(body) {
+        try {
             let result = new consulatationAmountModel({
                 type: body.type,
                 amount: body.amount,
                 createdOn: new Date(),
             });
             return await result.save();
-        } catch(e){
+        } catch(e) {
             throw(e);
         }
     };
 
-    async insertPackage(body){
-        try{
+    async insertPackageDA(body) {
+        try {
             let result = new packageModel({
                 name: body.name,
                 packageFor: body.packageFor,
@@ -319,7 +317,7 @@ class authentationDA {
                 createdOn: new Date()
             });
             return await result.save();
-        } catch(e){
+        } catch(e) {
             throw e;
         }
     };
@@ -332,17 +330,17 @@ class authentationDA {
         }
     };
 
-    async getPaymentStatus(paymentId) {
+    async getPaymentStatusDA(paymentId) {
         try {
-          return await paymentModel.findOne({_id : paymentId , isDeleted: false} ,
-          {paymentStatus : 1 ,paymentMethod : 1});
+          return await paymentModel.findOne({_id : paymentId , isDeleted: false},
+          { paymentStatus : 1 ,paymentMethod : 1});
         } catch (e) {
           throw e;
         }
     };
 
-    async addpromoCodes(promoCodes){
-        try{
+    async addPromoCodesDA(promoCodes) {
+        try {
             let result = new promoCodesModel({
                 promoCodeName: promoCodes.promoCodeName,
                 promoCodeFor: promoCodes.promoCodeFor,
@@ -353,54 +351,54 @@ class authentationDA {
                 createdOn: new Date()
             });
             return await result.save();
-        } catch(e){
+        } catch(e) {
             throw e;
         }
     };
 
-    async getRoleDetils(roleId){
-        try{
+    async getRoleDetils(roleId) {
+        try {
             return await roleModel.findOne({_id: roleId, isLocked: "ENABLED"});
-        } catch(e){
+        } catch(e) {
             throw e;
         }
     };
 
-    async getPackageDetailsApptId(appointmentId){
-        try{
+    async getPackageDetailsApptId(appointmentId) {
+        try {
             return await appointmentModel.aggregate(
                 [
                     {
-                      $match: {
-                        _id: appointmentId,
-                        isActive: true
-                      }
+                        $match: {
+                            _id: appointmentId,
+                            isActive: true
+                        }
                     },
                     {
-                      $lookup: {
-                        from: "package",
-                        localField: "packageId",
-                        foreignField: "_id",
-                        as: "packageDetails"
-                      }
+                        $lookup: {
+                            from: "package",
+                            localField: "packageId",
+                            foreignField: "_id",
+                            as: "packageDetails"
+                        }
                     },
                     {
-                      $unwind: {
-                        path: "$packageDetails",
-                        preserveNullAndEmptyArrays: true
-                      }
+                        $unwind: {
+                            path: "$packageDetails",
+                            preserveNullAndEmptyArrays: true
+                        }
                     },
                     {
-                      $project: {
-                        packageName: "$packageDetails.name",
-                        packageAmount: "$packageDetails.amount",
-                        packageId: "$packageDetails._id",
-                        months: "$packageDetails.months"
-                      }
+                        $project: {
+                            packageName: "$packageDetails.name",
+                            packageAmount: "$packageDetails.amount",
+                            packageId: "$packageDetails._id",
+                            months: "$packageDetails.months"
+                        }
                     }
                 ]
             );
-        } catch(e){
+        } catch(e)  {
             throw e;
         }
     };

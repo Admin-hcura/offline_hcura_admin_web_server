@@ -88,15 +88,10 @@ class authentication {
 
   async adminLogin(req, res, next) {
     try {
-      console.log("------1-----",req.body)
       let userAgent = ua_parser(req.headers["user-agent"]);
-      console.log("------2-----",req.body)
       let { username, password, fcmToken } = req.body;
-      console.log("------req.body-----",req.body)
       let response = await authentationBAObj.adminIsExistBA(username);
-      console.log("------response-----",response)
       let roleCode = await authentationBAObj.getroleCodeBA(response.roleId);
-      console.log("------roleCode-----",roleCode)
       response.roleCode = roleCode.roleCode
       response.roleName = roleCode.roleName
       if (!roleCode){

@@ -29,14 +29,6 @@ class authenticationBA {
         return await authentationDAObj.adminPasswordDA(password, resPassword);
     };
 
-    async getroleCodeBA(roleId) {
-        return await authentationDAObj.getroleCodeDA(roleId);
-    };
-
-    async adminIsExistBA(username) {
-        return await authentationDAObj.getroleCodeDA(username);
-    };
-
     async updatePasswordBA(data) {
         return await authentationDAObj.updatePasswordDA(data);
     };

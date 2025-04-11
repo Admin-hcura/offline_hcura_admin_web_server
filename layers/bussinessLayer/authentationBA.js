@@ -7,7 +7,7 @@ class authenticationBA {
 
     async insertRoleBA(body) {
         return await authentationDAObj.insertBranchDA(body);
-    };
+    }; 
 
     async adminExistBA(email ,username, phoneNumber, EmpNumber) {
         return await authentationDAObj.insertBranchDA(email ,username, phoneNumber, EmpNumber);

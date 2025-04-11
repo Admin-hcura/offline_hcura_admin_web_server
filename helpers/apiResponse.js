@@ -6,25 +6,10 @@ ServerErrors.error = {
   branchCode_not_exist: "Branch Code not avaliable",
   illegial: "Payment Missmatch please contact Admin",
   otp_expired: "OTP-Expired",
-//   invalid_phoneNumber_Otp: "Phone-number OTP is Invalid",
   invalid_Otp: "OTP is Invalid",
   session_expired: "Session Expired",
-//   user_not_exist: "User not exist. Please register yourself",
   user_not_exist_admin: "Username not exist",
-//   user_already_exist: "User already exist with username or email id",
   password: "Password is incorrect",
-//   user_blocked: "User blocked by admin please contact Administrator",
-//   relative_limit: "Only five relative's allowed",
-//   not_uploaded: "File not uploaded to S3",
-//   files_to_upload: "Please select files to upload",
-//   file_size: "File size must be less than 4 MB",
-//   dependent_delete:
-//     "You cant delete this dependent. Because this dependent having an appointment.",
-//   medical_record_delete:
-//     "you can't delete this medical record its already used in the appointment.",
-//   aws_error: "AWS error,File is not deleted in AWS",
-//   payout_error: "you have already accepted please contact admin",
-//   email_id_error: "Email id already exists.",
   branches_not_found: "Branches not found", 
   role_not_found: "Role not found"
 };

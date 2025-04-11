@@ -70,59 +70,56 @@ app.use(cookieParser());
 app.options("*", cors());
 
 app.use(function (req, res, next) {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader(
-      "Access-Control-Allow-Methods",
-      "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-    );
-    res.header("Access-Control-Allow-Headers", "*");
-    res.setHeader("Access-Control-Allow-Credentials", true);
-    next();
-  });
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
+  res.header("Access-Control-Allow-Headers", "*");
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  next();
+});
 
-//Route Prefixes
 app.use("/api/v1", routingV1);
 
-//service description
 app.get("/", async (req, res) => {
   res.send({ service: "H-cura_admin_offline_server", status: "Running" });
 });
 
 app.use((error, req, res, _) => {
-    console.log(error);
-    const { message = "Oops! Something went wrong", isBoom, output } = error;
-    if (isBoom) {
-      return res.status(output.statusCode).json({ success: false, message });
-    }
-    return res
-      .status(500)
-      .json({ success: false, message: "Oops! Something went wrong" });
-  });
+  console.log(error);
+  const { message = "Oops! Something went wrong", isBoom, output } = error;
+  if (isBoom) {
+    return res.status(output.statusCode).json({ success: false, message });
+  }
+  return res
+    .status(500)
+    .json({ success: false, message: "Oops! Something went wrong" });
+});
 
 let server = require("http").Server(app);
 server.listen(port, () =>
   console.log(`H-Cura admin_offline API server listening on port ${port}!`)
 );
 
-// Graceful shutdown
 process.on('SIGINT', async () => {
-    if (redisClient) {
-      await redisClient.quit();
-    }
-    server.close(() => {
-      console.log('Server closed');
-      process.exit(0);
-    });
+  if (redisClient) {
+    await redisClient.quit();
+  }
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
   });
+});
   
-  process.on('SIGTERM', async () => {
-    if (redisClient) {
-      await redisClient.quit();
-    }
-    server.close(() => {
-      console.log('Server closed');
-      process.exit(0);
-    });
+process.on('SIGTERM', async () => {
+  if (redisClient) {
+    await redisClient.quit();
+  }
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
   });
+});
 
 module.exports = app;

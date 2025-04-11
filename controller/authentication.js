@@ -4,6 +4,7 @@ const Boom = require("@hapi/boom");
 // const multiparty = require("multiparty");
 const rule = require("../helpers/autthenticationRule");
 const authentationDAObj = require("../layers/dataLayer/authentationDA");
+const authentationBAObj = require("../layers/bussinessLayer/authentationBA");
 const apiResponse = require("../helpers/apiResponse");
 const emailSender = require("../helpers/emailSender");
 const ua_parser = require("ua-parser-js");
@@ -30,46 +31,46 @@ async function redisGet(key) {
 };
 
 class authentication {
-  async insertBranch(req, res, next){
-    try{
+  async insertBranch(req, res, next) {
+    try {
       let body = req.body
       const { error } = rule.authRule.validate(body);
       if (error) {
         throw Boom.badData(error.message);
       }
-      let insertedBranch = await authentationDAObj.insertBranchDA(body);
+      let insertedBranch = await authentationBAObj.insertBranchBA(body);
       res.send({ success: true, data: insertedBranch});
     } catch (e) {
       next(e);
     }
   };
 
-   async insertRole(req, res, next){
-    try{
+  async insertRole(req, res, next) {
+    try {
       let body = req.body
       const { error } = rule.roleRule.validate(body);
         if (error) {
           throw Boom.badData(error.message);
         }
-      let insertedRole = await authentationDAObj.insertRoleDA(body);
+      let insertedRole = await authentationBAObj.insertRoleBA(body);
       res.send({ success: true, data: insertedRole});
     } catch (e) {
       next(e);
     }
   };
 
-  async addAdmin(req, res, next){
-    try{
+  async addAdmin(req, res, next) {
+    try {
       let body = req.body
       const { error } = rule.addAdminRule.validate(body);
       if (error) {
         throw Boom.badData(error.message);
       }
-      let adminExist = await authentationDAObj.adminExistDA(body.emailId, body.username, body.phoneNumber, body.EmpNumber);
+      let adminExist = await authentationBAObj.adminExistBA(body.emailId, body.username, body.phoneNumber, body.EmpNumber);
       if (adminExist){
-          throw Boom.conflict(apiResponse.ServerErrors.error.admin_already_exist);
+        throw Boom.conflict(apiResponse.ServerErrors.error.admin_already_exist);
       } else {
-        let response = await authentationDAObj.addAdminDA(body);
+        let response = await authentationBAObj.addAdminBA(body);
         await emailSender.welcomeMail(
           response.emailId,
           response.username,
@@ -84,12 +85,12 @@ class authentication {
     }
   };
 
-  async adminLogin(req, res, next){
+  async adminLogin(req, res, next) {
     try {
       let userAgent = ua_parser(req.headers["user-agent"]);
       let { username, password, fcmToken } = req.body;
-      let response = await authentationDAObj.adminIsExistDA(username);
-      let roleCode = await authentationDAObj.getroleCodeDA(response.roleId);
+      let response = await authentationBAObj.adminIsExistBA(username);
+      let roleCode = await authentationBAObj.getroleCodeBA(response.roleId);
       response.roleCode = roleCode.roleCode
       response.roleName = roleCode.roleName
       if (!roleCode){
@@ -98,9 +99,9 @@ class authentication {
       if (!response) {
         throw Boom.conflict(apiResponse.ServerErrors.error.user_not_exist_admin);
       } else {
-        let checkPassword = await authentationDAObj.adminPasswordDA(  password, response.password);
+        let checkPassword = await authentationBAObj.adminPasswordBA(password, response.password);
         if (checkPassword) {
-          await authentationDAObj.updateAdminFcmTokenDA(response._id, fcmToken);
+          await authentationBAObj.updateAdminFcmTokenBA(response._id, fcmToken);
           let details = await createAdminSession(response, res, userAgent);
           details.roleCode = roleCode.roleCode
           details.roleName = roleCode.roleName
@@ -114,28 +115,28 @@ class authentication {
     }
   };
 
-  async adminLogout(req, res, next){
-    try{
+  async adminLogout(req, res, next) {
+    try {
       let patientId = req.patientId;
       if (!patientId) {
         throw Boom.badData("Please enter patientId");
       }
       await redisClient.del(patientId + "_offline_admin_web");
-      await authentationDAObj.adminLogoutDA(patientId);
+      await authentationBAObj.adminLogoutBA(patientId);
       res.send({ success: true, message: 'Logged out successfully'});
-    } catch(e){
+    } catch(e) {
       next(e);
     }
   };
 
-  async forgetPassword(req, res, next){
-    try{
+  async forgetPassword(req, res, next) {
+    try {
       let body = req.body
       const { error } = rule.forgetPasswordRule.validate(body);
-      if(error){
+      if(error) {
         throw Boom.badData(error.message);
       }
-      let result = await authentationDAObj.adminIsExistDA(body.username);
+      let result = await authentationBAObj.adminIsExistBA(body.username);
       if(!result) {
         throw Boom.conflict(apiResponse.ServerErrors.error.user_not_exist_admin);
       }
@@ -154,8 +155,8 @@ class authentication {
     }
   };
 
-  async updatePassword(req, res, next){
-    try{
+  async updatePassword(req, res, next) {
+    try {
       let body = req.body
       const { error } = rule.updatePasswordRule.validate(body);  
       if (error) {
@@ -165,8 +166,8 @@ class authentication {
       let forgetPasswordOtpDetails = await redisGet(mailKey);
       if (forgetPasswordOtpDetails) {
         forgetPasswordOtpDetails = JSON.parse(forgetPasswordOtpDetails);
-        if(forgetPasswordOtpDetails.forgetPasswordOtp == body.otp){
-          let response = await authentationDAObj.updatePasswordDA(body);
+        if(forgetPasswordOtpDetails.forgetPasswordOtp == body.otp) {
+          let response = await authentationBAObj.updatePasswordBA(body);
           res.send({ success: response.acknowledged == 1 ? true : false });
         } else {
           throw Boom.badRequest(apiResponse.ServerErrors.error.invalid_Otp);
@@ -186,26 +187,26 @@ class authentication {
         if (error) {
           throw Boom.badData(error.message);
         }
-      // Check branch code
-      let branchDetails = await authentationDAObj.getBrachDetailsDA(body.branchId);
+
+      let branchDetails = await authentationBAObj.getBrachDetailsBA(body.branchId);
       if (!branchDetails) {
         throw Boom.conflict(apiResponse.ServerErrors.error.branchCode_not_exist);
       }
       const branchCode = branchDetails.branchCode;
-      // Generate HCURA ID
+
       const now = new Date();
       const month = String(now.getMonth() + 1).padStart(2, '0');
       const year = String(now.getFullYear()).slice(-2);
-      // Get existing HCURA IDs
-      let existingIDss = await authentationDAObj.getHcuraIdDA();
+
+      let existingIDss = await authentationBAObj.getHcuraIdBA();
       const hcuraIds = existingIDss.map(item => item.hcuraId);
       const existingIDsArray = hcuraIds.map(id => ({
-        branchPrefix: id.substring(0, 6),  // Extract "HKA01J" part (or similar branch prefix)
-        month: id.substring(6, 8),         // Extract "07" part
-        year: id.substring(8, 10),         // Extract "24" part
-        count: id.substring(10)            // Extract the count part, e.g., "01", "02", etc.
+        branchPrefix: id.substring(0, 6),
+        month: id.substring(6, 8),
+        year: id.substring(8, 10),
+        count: id.substring(10)
       }));
-      // Find the maximum count for the current branch code, month, and year
+
       let maxCount = 0;
       existingIDsArray.forEach(id => {
         if (id.branchPrefix === branchCode && id.month === month && id.year === year) {
@@ -215,16 +216,16 @@ class authentication {
             }
           }
       });
-      // Increment the maximum count by one
+
       const countThisMonth = maxCount + 1;
       const hcuraId = `${branchCode}${month}${year}${String(countThisMonth).padStart(2, '0')}`;
-      // Register patient
-      let patientReg = await authentationDAObj.patientRegDA(
+
+      let patientReg = await authentationBAObj.patientRegBA(
         hcuraId, body.branchId, body.firstName.trim(), body.lastName.trim(), body.birthDate,
         body.gender, body.emailId.trim(), body.phoneNumber, body.whatsappNumber, body.stateName,
         body.bloodGroup, body.address, body.registeredBy, body.source, body.occupation, body.stateId
       );
-      // Send welcome email
+
       await emailSender.patientWelcomeEmail(
         patientReg.firstName,
         patientReg.lastName,
@@ -250,21 +251,21 @@ class authentication {
       const now = new Date();
       const month = String(now.getMonth() + 1).padStart(2, '0');
       const year = String(now.getFullYear()).slice(-2);
-      let branchCode = await authentationDAObj.getBrachDetailsDA(body.branchId);
-      if(!branchCode){
+      let branchCode = await authentationBAObj.getBrachDetailsBA(body.branchId);
+      if(!branchCode) {
         throw Boom.conflict(apiResponse.ServerErrors.error.branchCode_not_exist);
       }
-      let existingIDss = await authentationDAObj.getHcuraTIdDA();
+      let existingIDss = await authentationBAObj.getHcuraTIdBA();
       const hcuraTIds = existingIDss.map(item => item.hcuraTId).filter(id => id);    
       const existingIDsArray = hcuraTIds.map(id => ({
-        prefix: id.substring(0, 5),  // Extract "H01J" part
-        month: id.substring(5, 7),   // Extract "06" part
-        year: id.substring(7, 9),    // Extract "24" part
-        count: id.substring(9)       // Extract the count part, e.g., "01", "02", etc.
+        prefix: id.substring(0, 5),
+        month: id.substring(5, 7),
+        year: id.substring(7, 9),
+        count: id.substring(9)
       }));    
-      // Find the maximum count for the current month and year
+
       let maxCount = 0;
-        if (hcuraTIds.length > 0) {
+      if (hcuraTIds.length > 0) {
         existingIDsArray.forEach(id => {
           if (id.month === month && id.year === year) {
             const count = parseInt(id.count, 10);
@@ -274,14 +275,14 @@ class authentication {
           }
         });
       }
-      // Increment the maximum count by one
+
       const countThisMonth = maxCount + 1;
       const hcuraTId = `${branchCode.branchCode}T${month}${year}${String(countThisMonth).padStart(2, '0')}`;
       let booked = await appointmentDA.bookedDetails(body, hcuraTId);
       let docDetails = await appointmentDA.getDoctorDetails(body.doctorId);
       let SMSToPatient = await sendSMS.sendSMSAppointmentBookedToPT(booked, docDetails);
       let SMSToDoctor = await sendSMS.sendSMSTempAppointmentBookedToDoc(booked, docDetails);
-      // sms to doctor
+
       emailSender.sendTempAppointmentBookedEmailToAdmin(booked, docDetails);
       res.send({success: true, data: booked});
     } catch (e) {
@@ -289,93 +290,91 @@ class authentication {
     }
   };
     
-  async getBranchList(req, res, next){
-    try{
-      let branchList = await authentationDAObj.branchListDA();
+  async getBranchList(req, res, next) {
+    try {
+      let branchList = await authentationBAObj.branchListBA();
       if (!branchList) {
-        throw Boom.conflict(
-          apiResponse.ServerErrors.error.branches_not_found
-        );
+        throw Boom.conflict(apiResponse.ServerErrors.error.branches_not_found);
       } else {
         res.send({ success: true, data: branchList});
       }
-    } catch (e){
+    } catch (e) {
       next(e);
     }
   };
 
-  async getRoleList(req, res, next){
-    try{
-      let roleList = await authentationDAObj.roleListDA();
+  async getRoleList(req, res, next) {
+    try {
+      let roleList = await authentationBAObj.roleListBA();
       if (!roleList) {
           throw Boom.conflict(apiResponse.ServerErrors.error.role_not_found);
       } else {
         res.send({ success: true, data: roleList});
       }
-    } catch (e){
+    } catch (e) {
       next(e);
     }
   };
 
-  async insertTime(req, res, next){
-    try{
+  async insertTime(req, res, next) {
+    try {
       let body = req.body
-      let insertedTime = await authentationDAObj.insertTime(body);
+      let insertedTime = await authentationBAObj.insertTimeBA(body);
       res.send({ success: true, data: insertedTime});
-    } catch(e){
+    } catch(e) {
       next(e);
     }
   };
 
-  async insertDay(req, res, next){
-    try{
+  async insertDay(req, res, next) {
+    try {
       let body = req.body
-      let insertedDay = await authentationDAObj.insertDay(body);
+      let insertedDay = await authentationBAObj.insertDayBA(body);
       res.send({ success: true, data: insertedDay})
-    } catch(e){
+    } catch(e) {
       next(e);
     }
   };
 
-  async insertConsultationAmount(req, res, next){
-    try{
+  async insertConsultationAmount(req, res, next) {
+    try {
       let body = req.body
-      let insertedAmount = await authentationDAObj.insertAmountDA(body);
+      let insertedAmount = await authentationBAObj.insertAmountBA(body);
       res.send({success: true, data:insertedAmount});
-    } catch(e){
+    } catch(e) {
       next(e);
     }
   };
 
-  async insertPackage(req, res, next){
-    try{
+  async insertPackage(req, res, next) {
+    try {
       let body = req.body
       const { error } = rule.insertPackageRule.validate(body);
       if (error) {
         throw Boom.badData(error.message);
       }
-      let insertedPackageDetails = await authentationDAObj.insertPackage(body);
+      let insertedPackageDetails = await authentationBAObj.insertPackageBA(body);
       res.send({success: true, data: insertedPackageDetails});
-    } catch(e){
+    } catch(e) {
       next(e);
     }
   };
 
-  async insertPromoCodes(req, res, next){
-    try{
+  async insertPromoCodes(req, res, next) {
+    try {
       let body = req.body
       const { error } = rule.insertPromoCodeRule.validate(body);
       if (error) {
         throw Boom.badData(error.message);
       }
-      let insertedPromoCodes = await authentationDAObj.addpromoCodes(body);
+      let insertedPromoCodes = await authentationBAObj.addPromoCodesBA(body);
       res.send({success: true, data:insertedPromoCodes});
-    } catch(e){
+    } catch(e) {
       next(e);
     }
   };
 
-  async getPaymentReportByWebHook(req, res, next){
+  async getPaymentReportByWebHook(req, res, next) {
     try {
       if (req.body) {
         let body = req.body;
@@ -383,29 +382,29 @@ class authentication {
         console.log("webhook body......................",body)
         console.log("webhook body.payload......................",body.payload)
         let report = {}
-        if (body.payload["payment.downtime"]){
+        if (body.payload["payment.downtime"]) {
           report = body.payload["payment.downtime"].entity;
-        }else{
+        } else {
           report = body.payload.payment.entity;
         }
         console.log("report.....................",report)
-        if (report.description === null){   // If we are using extrnal Link we are sending response as 200
+        if (report.description === null) {   // If we are using extrnal Link we are sending response as 200
           console.log("---------------Payment Done With Link---------------")
           return res.status(200).send(true);
-        }else if(report.description === 'QRv2 Payment') { // If we are using extrnal QR Code we are sending response as 200
+        } else if (report.description === 'QRv2 Payment') { // If we are using extrnal QR Code we are sending response as 200
           console.log("---------------Payment Done With QR Code---------------")
           return res.status(200).send(true);
         } else {
           let relationId = report.description.substring(1);
           console.log("--------relationId-----",relationId)
-          let getStatus = await authentationDAObj.offlineGetStatusDA(relationId);
+          let getStatus = await authentationBAObj.offlineGetStatusBA(relationId);
           console.log("........getStatus.......",getStatus);
-          let branchDetails = await authentationDAObj.getBrachDetailsDA(getStatus.branchId);
+          let branchDetails = await authentationBAObj.getBrachDetailsBA(getStatus.branchId);
           console.log("........branchDetails.......",branchDetails);
           let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
           console.log("--------userInfo-----",userInfo);
           let invoiceNumber
-          if(userInfo[0].paymentFor == constants.value.ASTHETIC){
+          if (userInfo[0].paymentFor == constants.value.ASTHETIC) {
             invoiceNumber = await invoiceGenerator.generateInvoiceNumberAsthetic(branchDetails.branchCode);
           } else {
             invoiceNumber = await invoiceGenerator.generateInvoiceNumber(branchDetails.branchCode);
@@ -421,10 +420,7 @@ class authentication {
             appointmentId: getStatus.appointmentId
           };
           console.log("--------updatePaymentDetails-----",updatePaymentDetails)
-          if (
-            getStatus.paymentStatus.toUpperCase() !=
-            constants.PAYMENT_STATUS.CAPTURE
-          ) {
+          if (getStatus.paymentStatus.toUpperCase() != constants.PAYMENT_STATUS.CAPTURE) {
             let updatePaymentReport = await appointmentDA.updatePaymentReport(updatePaymentDetails);
             console.log("--------updatePaymentReport-----",updatePaymentReport)
             if (updatePaymentReport && updatePaymentReport != null) {
@@ -471,10 +467,10 @@ class authentication {
                       branchPhoneNumber: branchCode.branchPhoneNumber
                     }
                     console.log("+++++++++pdfDetails+++++++",pdfDetails);
-                    //INVOICE EMAIL
+                    
                     let file = await htmlToPDF.generateInvoiceForConsultation(pdfDetails);
                     emailSender.sendConsultationInvoiceEmail( userInfo[0].patient.emailId, file);
-                    // email to patient payment success
+                    
                     emailSender.sendPaymentSuccess(
                       userInfo[0].patient.firstName,
                       userInfo[0].patient.emailId,
@@ -482,7 +478,7 @@ class authentication {
                       "#" + relationId,
                       updatePaymentDetails.paymentMethod.toUpperCase()
                     );
-                    // email to patient appointment details
+                    
                     emailSender.appointmentBookedMail(
                       userInfo[0].patient.firstName,
                       userInfo[0].patient.lastName,
@@ -491,7 +487,7 @@ class authentication {
                       userInfo[0].patient.emailId,
                       pdfDetails
                     );
-                    // email to docors 
+                     
                     emailSender.sendAppointmentBookedEmailToDoctor(
                       userInfo[0].doctor.emailId,
                       pdfDetails
@@ -499,7 +495,7 @@ class authentication {
                         
                     // res.send({ success: true, data: userInfo});
                   } else if (userInfo[0].paymentFor == constants.value.HOMEOPATHY) {
-                    let packageDetails = await authentationDAObj.getPackageDetailsApptId(getStatus.appointmentId);
+                    let packageDetails = await authentationBAObj.getPackageDetailsApptIdBA(getStatus.appointmentId);
                     let endDate =  moment(updatePaymentReport.paidOn).add(parseInt(packageDetails[0].months), 'months');
                     console.log("---------------endDate---------",endDate)
                     if (!endDate.isValid()) {
@@ -590,7 +586,7 @@ class authentication {
                     emailSender.sendExternalSourceInvoiceEmail(userInfo[0].patient.emailId, file);
                     console.log("---------last-------100",);
                   } else if (userInfo[0].paymentFor == constants.value.ASTHETIC) {
-                    let packageDetails = await authentationDAObj.getPackageDetailsApptId(getStatus.appointmentId);
+                    let packageDetails = await authentationBAObj.getPackageDetailsApptIdBA(getStatus.appointmentId);
                     let endDate =  moment(updatePaymentReport.paidOn).add(parseInt(packageDetails[0].months), 'months');
                     console.log("---------------endDate---------",endDate)
                     if (!endDate.isValid()) {
@@ -721,8 +717,7 @@ class authentication {
       next(e);
     }
   };
-
-    // payment status checking 
+ 
   async paymentStatus(req, res, next) {
     try {
       let body = req.body;
@@ -730,23 +725,23 @@ class authentication {
       if (error) {
         throw Boom.badData(error.message);
       }
-      let obj = await authentationDAObj.getPaymentStatus(body.paymentId);
+      let obj = await authentationBAObj.getPaymentStatusBA(body.paymentId);
       res.status(200).send(obj);
     } catch (e) {
     next(e);
     }
   };
 
-  async getRoleDetails(req, res, next){
-    try{
+  async getRoleDetails(req, res, next) {
+    try {
       let body = req.body
       const { error } = rule.roleIdRule.validate(body);
       if (error) {
         throw Boom.badData(error.message);
       }
-      let result = await authentationDAObj.getRoleDetils(body.roleId);
+      let result = await authentationBAObj.getRoleDetilsBA(body.roleId);
       res.send({success: true, data:result});
-    } catch(e){
+    } catch(e) {
       next(e);
     }
   };
@@ -783,22 +778,22 @@ async function createAdminSession(response, res, userAgent) {
   if (!redisClient.isReady) {
     await redisClient.connect();
   }
-  // Invalidate any existing session for this user
+ 
   let existingSession = await redisClient.get(response._id + "_offline_admin_web");
   if (existingSession) {
     let existingSessionData = JSON.parse(existingSession);
-    existingSessionData.sessionId = null; // Mark the old session as invalid
+    existingSessionData.sessionId = null;
     await redisClient.set(
       response._id + "_offline_admin_web",
       JSON.stringify(existingSessionData)
     );
   }
-  // Store the new session without TTL
+
   await redisClient.set(
     response._id + "_offline_admin_web",
     JSON.stringify(response)
   );
-  await authentationDAObj.updateAdminFcmTokenDA(response._id, sessionId);
+  await authentationBAObj.updateAdminFcmTokenBA(response._id, sessionId);
   response.sessionId = sessionId;
   return response;
     // res.send({ success: true, data: response });

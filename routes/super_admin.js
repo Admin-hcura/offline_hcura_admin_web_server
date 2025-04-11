@@ -40,36 +40,29 @@ router.get("/role/list",
     sessionValidator.validateAdminSession,
     authenticationController.getRoleList
 );
-// To insert timings
 router.post("/insert/time",
     sessionValidator.validateAdminSession,
     authenticationController.insertTime
 );
-// To insert Day
 router.post("/insert/day",
     sessionValidator.validateAdminSession,
     authenticationController.insertDay
 );
-// to insert promocodes
 router.post("/insert/promocodes",
     // sessionValidator.validateAdminSession,
     authenticationController.insertPromoCodes
 );
-// to insert consultation Amount
 router.post("/insert/consultation/amount",
     sessionValidator.validateAdminSession,
     authenticationController.insertConsultationAmount
 );
-// to insert package 
 router.post("/insert/package",
     // sessionValidator.validateAdminSession,
     authenticationController.insertPackage
 );
-// WEBHOOK
 router.post("/payment/clinic/web_hook",
     authenticationController.getPaymentReportByWebHook
 );
-// offline patment status checking
 router.post("/payment/status", 
     authenticationController.paymentStatus
 );

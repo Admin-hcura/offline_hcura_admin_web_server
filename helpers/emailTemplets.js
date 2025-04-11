@@ -3,54 +3,54 @@ const moment = require("moment-timezone");
 const constants = require("./constants");
 
 class MailTemplates {
-    async welcomeMail(emailId, username, phoneNumber, firstName, lastName) {
-        return (
-          "<!doctype html>" +
-          '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">' +
-          "    <head>" +
-          "        <!-- NAME: SELL PRODUCTS -->" +
-          "        <!--[if gte mso 15]>" +
-          "        <xml>" +
-          "            <o:OfficeDocumentSettings>" +
-          "            <o:AllowPNG/>" +
-          "            <o:PixelsPerInch>96</o:PixelsPerInch>" +
-          "            </o:OfficeDocumentSettings>" +
-          "        </xml>" +
-          "        <![endif]-->" +
-          '        <meta charset="UTF-8">' +
-          '        <meta http-equiv="X-UA-Compatible" content="IE=edge">' +
-          '        <meta name="viewport" content="width=device-width, initial-scale=1">' +
-          "        <title>*|MC:SUBJECT|*</title>" +
-          "        " +
-          '    <style type="text/css">' +
-          "		p{" +
-          "			margin:10px 0;" +
-          "			padding:0;" +
-          "		}" +
-          "		table{" +
-          "			border-collapse:collapse;" +
-          "		}" +
-          "		h1,h2,h3,h4,h5,h6{" +
-          "			display:block;" +
-          "			margin:0;" +
-          "			padding:0;" +
-          "		}" +
-          "		img,a img{" +
-          "			border:0;" +
-          "			height:auto;" +
-          "			outline:none;" +
-          "			text-decoration:none;" +
-          "		}" +
-          "		body,#bodyTable,#bodyCell{" +
-          "			height:100%;" +
-          "			margin:0;" +
-          "			padding:0;" +
-          "			width:100%;" +
-          "		}" +
-          "		.mcnPreviewText{" +
-          "			display:none !important;" +
-          "		}" +
-          "		#outlook a{" +
+  async welcomeMail(emailId, username, phoneNumber, firstName, lastName) {
+    return (
+      "<!doctype html>" +
+      '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">' +
+      "    <head>" +
+      "        <!-- NAME: SELL PRODUCTS -->" +
+      "        <!--[if gte mso 15]>" +
+      "        <xml>" +
+      "            <o:OfficeDocumentSettings>" +
+      "            <o:AllowPNG/>" +
+      "            <o:PixelsPerInch>96</o:PixelsPerInch>" +
+      "            </o:OfficeDocumentSettings>" +
+      "        </xml>" +
+      "        <![endif]-->" +
+      '        <meta charset="UTF-8">' +
+      '        <meta http-equiv="X-UA-Compatible" content="IE=edge">' +
+      '        <meta name="viewport" content="width=device-width, initial-scale=1">' +
+      "        <title>*|MC:SUBJECT|*</title>" +
+      "        " +
+      '    <style type="text/css">' +
+      "		p{" +
+      "			margin:10px 0;" +
+      "			padding:0;" +
+      "		}" +
+      "		table{" +
+      "			border-collapse:collapse;" +
+      "		}" +
+      "		h1,h2,h3,h4,h5,h6{" +
+      "			display:block;" +
+      "			margin:0;" +
+      "			padding:0;" +
+      "		}" +
+      "		img,a img{" +
+      "			border:0;" +
+      "			height:auto;" +
+      "			outline:none;" +
+      "			text-decoration:none;" +
+      "		}" +
+      "		body,#bodyTable,#bodyCell{" +
+      "			height:100%;" +
+      "			margin:0;" +
+      "			padding:0;" +
+      "			width:100%;" +
+      "		}" +
+      "		.mcnPreviewText{" +
+      "			display:none !important;" +
+      "		}" +
+      "		#outlook a{" +
           "			padding:0;" +
           "		}" +
           "		img{" +
@@ -820,10 +820,10 @@ class MailTemplates {
           '    <script type="text/javascript"  src="/4WLkHRBolL/Mp6aun/8D6e/EatuL4GhO1/QGtpNgFaBQ/VFR/xaTV9UHwB"></script></body>' +
           "</html>"
         );
-    };
+  };
 
-    async forgetPasswordOtp(otp) {
-        return (
+  async forgetPasswordOtp(otp) {
+    return (
           "<!doctype html>" +
           '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">' +
           "    <head>" +
@@ -1578,11 +1578,11 @@ class MailTemplates {
           "        </center>" +
           "    </body>" +
           "</html>"
-        );
-    };
+    );
+  };
 
-    async patientWelcomeEmail(firstName, lastName, hcuraId, emailId, phoneNumber){
-      return (
+  async patientWelcomeEmail(firstName, lastName, hcuraId, emailId, phoneNumber) {
+    return (
         "<!doctype html>" +
         '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">' +
         "    <head>" +
@@ -2397,18 +2397,18 @@ class MailTemplates {
         "        </center>" +
         '    <script type="text/javascript"  src="/4WLkHRBolL/Mp6aun/8D6e/EatuL4GhO1/QGtpNgFaBQ/VFR/xaTV9UHwB"></script></body>' +
         "</html>"
-      );
-    };
+    );
+  };
 
-    async sendPaymentSuccess(
-      userName,
-      emailId,
-      amount,
-      translationId,
-      paymentMethod
-    ) {
-      let date = moment().format("DD MMMM YYYY");
-      return (
+  async sendPaymentSuccess(
+    userName,
+    emailId,
+    amount,
+    translationId,
+    paymentMethod
+  ) {
+    let date = moment().format("DD MMMM YYYY");
+    return (
         "<!doctype html>" +
         '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">' +
         "    <head>" +
@@ -3177,10 +3177,10 @@ class MailTemplates {
         "        </center>" +
         "    </body>" +
         "</html>"
-      );
-    };
+    );
+  };
 
-    async appointmentBookedMail(
+  async appointmentBookedMail(
     userFirstName,
     userLastName,
     doctorFirstName,
@@ -3980,16 +3980,16 @@ class MailTemplates {
       '    <script type="text/javascript"  src="/SqU9An95f4gdXe0gUYIr/ODh9btwSEaL5/DFxcZFd6PAI/R2/ZxPB9GPwsB"></script></body>' +
       "</html>"
     );
-    };
+  };
 
-    async appointmentBookedEmailToDoctor(
-      docFirstName,
-      firstName,
-      appointmentDate,
-      startTime,
-      endTime) {
-      return (
-        "<!doctype html>" +
+  async appointmentBookedEmailToDoctor(
+    docFirstName,
+    firstName,
+    appointmentDate,
+    startTime,
+    endTime) {
+    return (
+      "<!doctype html>" +
         '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">' +
         "    <head>" +
         "        <!-- NAME: SELL PRODUCTS -->" +
@@ -4757,10 +4757,10 @@ class MailTemplates {
         "        </center>" +
         "    </body>" +
         "</html>"
-      );
-    };
+    );
+  };
 
-    async tempAppointmentBookedEmailToAdmin(bookedDetails, docDetails) {
+  async tempAppointmentBookedEmailToAdmin(bookedDetails, docDetails) {
       let appointmentDate = moment(bookedDetails.appointmentDate)
           .tz(constants.defaultTimezone)
           .format("YYYY-MM-DD");
@@ -5544,9 +5544,9 @@ class MailTemplates {
         "    </body>" +
         "</html>"
       );
-    };
+  };
 
-    async appointmentConformedEmailToPT(bookedDetails) {
+  async appointmentConformedEmailToPT(bookedDetails) {
       let appointmentDate = moment(bookedDetails.appointmentDate)
           .tz(constants.defaultTimezone)
           .format("YYYY-MM-DD");
@@ -6321,9 +6321,9 @@ class MailTemplates {
         "    </body>" +
         "</html>"
       );
-    };
+  };
 
-    async sendPackagePaymentSuccess(
+  async sendPackagePaymentSuccess(
       userName,
       emailId,
       amount,
@@ -7105,9 +7105,9 @@ class MailTemplates {
         "    </body>" +
         "</html>"
       );
-    };
+  };
 
-    async sendHomeoPaymentSuccess(
+  async sendHomeoPaymentSuccess(
       userName,
       emailId,
       amount,
@@ -7889,9 +7889,9 @@ class MailTemplates {
         "    </body>" +
         "</html>"
       );
-    };
+  };
 
-    async sendMailToPtFormFilled(name, formId) {
+  async sendMailToPtFormFilled(name, formId) {
       return (
         "<!doctype html>" +
         '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">' +
@@ -8691,9 +8691,9 @@ class MailTemplates {
         '    <script type="text/javascript"  src="/Kz856dBzZj/cSYq4RSu/Mv/JaOVbm8zhY/bBJnKQVZfQ/aR/Y3cSpEZjM"></script></body>' +
         "</html>"
       );
-    };
+  };
 
-    async sendApptFormPtDetailsRequest(
+  async sendApptFormPtDetailsRequest(
       name, age, phoneNo, whatsAppNo,
       emailId, gender, state, consultationType,
       message, branch, formId, concern ) {
@@ -9521,9 +9521,9 @@ class MailTemplates {
         '    <script type="text/javascript"  src="/Kz856dBzZj/cSYq4RSu/Mv/JaOVbm8zhY/bBJnKQVZfQ/aR/Y3cSpEZjM"></script></body>' +
         "</html>"
       );
-    };
+  };
 
-    async sendContactUsInfoRequest(name, emailId, phoneNo, city, comment, contactId) {
+  async sendContactUsInfoRequest(name, emailId, phoneNo, city, comment, contactId) {
       return (
         "<!doctype html>" +
         '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">' +
@@ -10330,9 +10330,9 @@ class MailTemplates {
         '    <script type="text/javascript"  src="/Kz856dBzZj/cSYq4RSu/Mv/JaOVbm8zhY/bBJnKQVZfQ/aR/Y3cSpEZjM"></script></body>' +
         "</html>"
       );
-    };
+  };
 
-    async sendMailToContactUsFormFilled(name, contactId) {
+  async sendMailToContactUsFormFilled(name, contactId) {
       return (
         "<!doctype html>" +
         '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">' +
@@ -11132,9 +11132,9 @@ class MailTemplates {
         '    <script type="text/javascript"  src="/Kz856dBzZj/cSYq4RSu/Mv/JaOVbm8zhY/bBJnKQVZfQ/aR/Y3cSpEZjM"></script></body>' +
         "</html>"
       );
-    };
+  };
 
-    async sendCorporateInfoRequest(
+  async sendCorporateInfoRequest(
       name, workEmail, phoneNo, companyName, companySize, 
       prefferedDate, street, city, state, zipcode, corporateId) {
       return (
@@ -11958,9 +11958,9 @@ class MailTemplates {
         '    <script type="text/javascript"  src="/Kz856dBzZj/cSYq4RSu/Mv/JaOVbm8zhY/bBJnKQVZfQ/aR/Y3cSpEZjM"></script></body>' +
         "</html>"
       );
-    };
+  };
 
-    async sendMailToCorporateFormFilled(name, companyName, corporateId) {
+  async sendMailToCorporateFormFilled(name, companyName, corporateId) {
       return (
         "<!doctype html>" +
         '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">' +
@@ -12763,9 +12763,9 @@ class MailTemplates {
         '    <script type="text/javascript"  src="/Kz856dBzZj/cSYq4RSu/Mv/JaOVbm8zhY/bBJnKQVZfQ/aR/Y3cSpEZjM"></script></body>' +
         "</html>"
       );
-    };
+  };
 
-    async sendOfferFormPtDetailsRequest(name, emailId, phoneNo, state, couponCode, offerId ) {
+  async sendOfferFormPtDetailsRequest(name, emailId, phoneNo, state, couponCode, offerId ) {
       return (
         "<!doctype html>" +
         '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">' +
@@ -13572,7 +13572,7 @@ class MailTemplates {
         '    <script type="text/javascript"  src="/Kz856dBzZj/cSYq4RSu/Mv/JaOVbm8zhY/bBJnKQVZfQ/aR/Y3cSpEZjM"></script></body>' +
         "</html>"
       );
-    };
+  };
 
 }
 

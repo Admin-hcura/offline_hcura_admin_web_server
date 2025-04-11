@@ -4,11 +4,11 @@ const { number, required } = require("joi");
   const mongoose = require('mongoose');
   const schema = mongoose.Schema;
   const moment = require("moment-timezone");
-//   var mongooseIncrement = require("mongoose-increment");
-//   var increment = mongooseIncrement(mongoose);
-//   const mongoose = require('mongoose');
-const increment = require('mongoose-increment')(mongoose); 
-let createdOn = moment().format();
+  //   var mongooseIncrement = require("mongoose-increment");
+  //   var increment = mongooseIncrement(mongoose);
+  //   const mongoose = require('mongoose');
+  const increment = require('mongoose-increment')(mongoose); 
+  let createdOn = moment().format();
 
   let branches = new schema ({
     branchCode: {type: String, required: true,unique: true },

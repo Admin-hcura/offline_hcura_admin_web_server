@@ -19,7 +19,7 @@ Constants.MAIL_CONFIG = {
   email: "connect@h-cura.com",
   invoiceEmail: "admin@h-cura.com",
 };
-Constants.OTP_STORE_TIME_LIMIT = 60 * 15; //15 Minutes
+Constants.OTP_STORE_TIME_LIMIT = 60 * 15;
 Constants.OTP = {
   otpLength: 6,
   defaultOtp: 132204,

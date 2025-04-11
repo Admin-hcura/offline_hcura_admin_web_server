@@ -5,6 +5,7 @@ const Boom = require("@hapi/boom");
 const rule = require("../helpers/autthenticationRule");
 const authentationDAObj = require("../layers/dataLayer/authentationDA");
 const authentationBAObj = require("../layers/bussinessLayer/authentationBA");
+const appointmentBAObj = require("../layers/bussinessLayer/appointmentBA");
 const apiResponse = require("../helpers/apiResponse");
 const emailSender = require("../helpers/emailSender");
 const ua_parser = require("ua-parser-js");
@@ -278,8 +279,8 @@ class authentication {
 
       const countThisMonth = maxCount + 1;
       const hcuraTId = `${branchCode.branchCode}T${month}${year}${String(countThisMonth).padStart(2, '0')}`;
-      let booked = await appointmentDA.bookedDetails(body, hcuraTId);
-      let docDetails = await appointmentDA.getDoctorDetails(body.doctorId);
+      let booked = await appointmentBAObj.bookedDetailsBA(body, hcuraTId);
+      let docDetails = await appointmentBAObj.getDoctorDetailsBA(body.doctorId);
       let SMSToPatient = await sendSMS.sendSMSAppointmentBookedToPT(booked, docDetails);
       let SMSToDoctor = await sendSMS.sendSMSTempAppointmentBookedToDoc(booked, docDetails);
 
@@ -401,7 +402,7 @@ class authentication {
           console.log("........getStatus.......",getStatus);
           let branchDetails = await authentationBAObj.getBrachDetailsBA(getStatus.branchId);
           console.log("........branchDetails.......",branchDetails);
-          let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
+          let userInfo = await appointmentBAObj.getuserInfoWithpaymentRelationIdBA(relationId);
           console.log("--------userInfo-----",userInfo);
           let invoiceNumber
           if (userInfo[0].paymentFor == constants.value.ASTHETIC) {
@@ -421,10 +422,10 @@ class authentication {
           };
           console.log("--------updatePaymentDetails-----",updatePaymentDetails)
           if (getStatus.paymentStatus.toUpperCase() != constants.PAYMENT_STATUS.CAPTURE) {
-            let updatePaymentReport = await appointmentDA.updatePaymentReport(updatePaymentDetails);
+            let updatePaymentReport = await appointmentBAObj.updatePaymentReportBA(updatePaymentDetails);
             console.log("--------updatePaymentReport-----",updatePaymentReport)
             if (updatePaymentReport && updatePaymentReport != null) {
-              let appointmentDetails = await appointmentDA.getAppointmentDetails(updatePaymentReport.appointmentId);
+              let appointmentDetails = await appointmentBAObj.getAppointmentDetailsBA(updatePaymentReport.appointmentId);
               console.log("------appointmentDetails------",appointmentDetails);
 
               // needs to check whether this 2 lines is working or not
@@ -433,14 +434,14 @@ class authentication {
 
               // let consultationfee = await appointmentDA.getAmount(appointmentDetails[0].consultationType);
               // console.log("_________consultationfee________",consultationfee.amount);
-              let branchCode = await appointmentDA.branchCode(userInfo[0].patient.branchId);
+              let branchCode = await appointmentBAObj.branchCodeBA(userInfo[0].patient.branchId);
               console.log("@@@@@@@  branchCode  @@@@@",branchCode)
               if (userInfo && userInfo.length > 0) {
                 console.log("------entered----------1");
                 if (report.status.toUpperCase() == constants.PAYMENT_STATUS.CAPTURE) {
                   console.log("------entered----------2");
                   if (userInfo[0].paymentFor == constants.value.CONSULTATION) {
-                    let consultationfee = await appointmentDA.getAmount(appointmentDetails[0].consultationType);
+                    let consultationfee = await appointmentBAObj.getAmountBA(appointmentDetails[0].consultationType);
                     console.log("_________consultationfee________",consultationfee.amount);
                     console.log("------entered----------3");
                     let pdfDetails = {
@@ -509,7 +510,7 @@ class authentication {
                       endDate: endDate,
                       paidOn: updatePaymentReport.paidOn,
                     }
-                    let insertPackageSchedules = await appointmentDA.insertPackageSchedules(packageSchedules);
+                    let insertPackageSchedules = await appointmentBAObj.insertPackageSchedulesBA(packageSchedules);
                     let details ={
                       endDate: insertPackageSchedules.endDate,
                       _id: insertPackageSchedules._id
@@ -600,7 +601,7 @@ class authentication {
                       endDate: endDate,
                       paidOn: updatePaymentReport.paidOn,
                     }
-                    let insertPackageSchedules = await appointmentDA.insertPackageSchedules(packageSchedules);
+                    let insertPackageSchedules = await appointmentBAObj.insertPackageSchedulesBA(packageSchedules);
                     let details ={
                       endDate: insertPackageSchedules.endDate,
                       _id: insertPackageSchedules._id

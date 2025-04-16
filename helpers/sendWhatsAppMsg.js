@@ -181,6 +181,79 @@ class whatsApp {
         }
     };
 
+    async appointmentForm(name, age, phoneNo, whatsAppNo, emailId,
+        gender, state, consultationType, message, branch, formId) {
+            try { 
+                name = name || "NA";
+                age = age || "NA";
+                phoneNo = phoneNo || "NA";
+                whatsAppNo = whatsAppNo || "NA";
+                emailId = emailId || "NA";
+                gender = gender || "NA";
+                state = state || "NA";
+                consultationType = consultationType || "NA";
+                message = message || "NA";
+                branch = branch || "NA";
+                formId = formId || "NA";
+
+                const response = await axios({
+                    url: 'https://api.ownchat.app/apis/v1/chat/send-message',
+                    method: 'post',
+                    headers: {
+                        'OWNCHAT-API-KEY': `${process.env.OWNCHAT_API_KEY}`,
+                        'OWNCHAT-API-SECRET' : `${process.env.OWNCHAT_API_SECRET}`,
+                        'Content-Type': 'application/json'
+                    },
+
+                    data: JSON.stringify(
+                        {
+                            "messaging_product": "whatsapp",
+                            "recipient_type": "individual",
+                            "recipient_name": "Dear",
+                            "to": `${process.env.WhatsApp_Default_Mobile}`,
+                            "type": "template",
+                            "template": {
+                                "name": "appointment_form",
+                                "language": {
+                                    "code": "en_US"
+                                },
+                                "components": [
+                                    // {
+                                    //     "type": "header",
+                                    //     "parameters": [
+                                    //         {
+                                    //             "type": "text",
+                                    //             "text": "Haje"
+                                    //         }
+                                    //     ]
+                                    // },
+                                    {
+                                        "type": "body",
+                                        "parameters": [
+                                            { "type": "text", "text": name },
+                                            { "type": "text", "text": age },
+                                            { "type": "text", "text": phoneNo },
+                                            { "type": "text",  "text": whatsAppNo },
+                                            { "type": "text", "text": emailId },
+                                            { "type": "text", "text": gender },
+                                            { "type": "text", "text": state },
+                                            { "type": "text", "text": consultationType },
+                                            { "type": "text", "text": branch },
+                                            { "type": "text", "text": message },
+                                            { "type": "text", "text": formId }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    )
+                })
+                return response.data;
+            } catch(e) {
+                console.error('API Request Error:', e.response?.data || e.message);
+            }
+    };
+
 };
 
 module.exports = new whatsApp();

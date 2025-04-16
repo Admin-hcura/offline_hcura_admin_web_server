@@ -2072,12 +2072,13 @@ class appointment{
             }
 
             if (insertDetails.whatsAppNo || insertDetails.phoneNo) {
-                emailSender.sendMailToFormPatient( insertDetails.name,
+                let whatsAppMsg = await whatsApp.appointmentForm( insertDetails.name,
                     insertDetails.age, insertDetails.phoneNo, insertDetails.whatsAppNo,
                     insertDetails.emailId, insertDetails.gender, insertDetails.state, 
                     insertDetails.consultationType, insertDetails.message, 
                     insertDetails.branch, insertDetails.formId 
                 );
+                console.log("-----whatsAppMsg----",whatsAppMsg);
             }
             
             // let send = await whatsApp.sendWhatsAppMsgToAdmin( insertDetails.name,

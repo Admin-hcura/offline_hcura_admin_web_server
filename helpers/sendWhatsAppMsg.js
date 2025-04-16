@@ -184,8 +184,6 @@ class whatsApp {
     async appointmentForm(name, age, phoneNo, whatsAppNo, emailId,
         gender, state, consultationType, concern, branch, message, formId) {
             try {
-                console.log("-------00000000000------",name, age, phoneNo, whatsAppNo, emailId,
-                    gender, state, consultationType, concern, branch, message, formId)
                 name = name || "NA";
                 age = age || "NA";
                 phoneNo = phoneNo || "NA";

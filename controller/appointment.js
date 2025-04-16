@@ -2039,28 +2039,38 @@ class appointment{
     async apptFormPtDetails(req, res, next) {
         try{
             let body = req.body
-            console.log("------body----",body)
             let existingApptId = await appointmentBAObj.getApptIdBA();
-            console.log("------existingApptId----",existingApptId)
-            let newApptId = "HAF01" ;
+            let newApptId = "HAF01";
 
             if (existingApptId.length > 0) {
-                const apptId = existingApptId.map(item => item.formId);
-                const existingApptIds = apptId.map(id => ({
-                    prefix: id.substring(0, 3),  
-                    count: parseInt(id.substring(3), 10)  
-                }));
+            const apptId = existingApptId.map(item => item.formId).filter(Boolean);
+            const existingApptIds = apptId
+                .map(id => {
+                const match = id.match(/^([A-Z]+)(\d+)$/);
+                if (match) {
+                    return {
+                        prefix: match[1],
+                        count: parseInt(match[2], 10)
+                    };
+                }
+                return null;
+                })
+                .filter(Boolean);
 
+            if (existingApptIds.length > 0) {
                 const maxCount = Math.max(...existingApptIds.map(item => item.count));
                 const newCount = maxCount + 1;
                 const newCountFormatted = newCount.toString().padStart(2, '0');
-
-                newApptId = `${existingApptIds[0].prefix}${newCountFormatted}`;
-                console.log('New Appointment Number:', newApptId);
+                const prefix = existingApptIds[0].prefix;
+                newApptId = `${prefix}${newCountFormatted}`;
             }
+            }
+
+            console.log('New Appointment Number:', newApptId);
+
             let createdOn = moment().format();
             let insertDetails = await appointmentBAObj.apptFormPtDetailsBA(body, newApptId, createdOn)
-            console.log("----------",insertDetails)
+
             emailSender.sendApptFormPtDetailsToAdmin( insertDetails.name,
                 insertDetails.age, insertDetails.phoneNo, insertDetails.whatsAppNo,
                 insertDetails.emailId, insertDetails.gender, insertDetails.state, 
@@ -2071,9 +2081,8 @@ class appointment{
                 emailSender.sendMailToFormPatient(insertDetails.name, 
                     insertDetails.emailId, insertDetails.formId)
             }
-            console.log("-----111111111----",insertDetails);
+
             if (insertDetails.whatsAppNo || insertDetails.phoneNo) {
-                console.log("-----222222222----",insertDetails);
                 let whatsAppMsg = await whatsApp.appointmentForm( insertDetails.name,
                     insertDetails.age, insertDetails.phoneNo, insertDetails.whatsAppNo,
                     insertDetails.emailId, insertDetails.gender, insertDetails.state,

@@ -2070,8 +2070,9 @@ class appointment{
                 emailSender.sendMailToFormPatient(insertDetails.name, 
                     insertDetails.emailId, insertDetails.formId)
             }
-
+            console.log("-----111111111----",insertDetails);
             if (insertDetails.whatsAppNo || insertDetails.phoneNo) {
+                console.log("-----222222222----",insertDetails);
                 let whatsAppMsg = await whatsApp.appointmentForm( insertDetails.name,
                     insertDetails.age, insertDetails.phoneNo, insertDetails.whatsAppNo,
                     insertDetails.emailId, insertDetails.gender, insertDetails.state, 

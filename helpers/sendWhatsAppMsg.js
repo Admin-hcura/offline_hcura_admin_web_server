@@ -182,9 +182,10 @@ class whatsApp {
     };
 
     async appointmentForm(name, age, phoneNo, whatsAppNo, emailId,
-        gender, state, consultationType, message, branch, formId) {
+        gender, state, consultationType, concern, branch, message, formId) {
             try {
-                console.log("-------00000000000------",name, age, phoneNo, whatsAppNo, emailId, gender, state, consultationType, message, branch, formId)
+                console.log("-------00000000000------",name, age, phoneNo, whatsAppNo, emailId,
+                    gender, state, consultationType, concern, branch, message, formId)
                 name = name || "NA";
                 age = age || "NA";
                 phoneNo = phoneNo || "NA";
@@ -193,8 +194,9 @@ class whatsApp {
                 gender = gender || "NA";
                 state = state || "NA";
                 consultationType = consultationType || "NA";
-                message = message || "NA";
+                concern = message || "NA";
                 branch = branch || "NA";
+                message = message || "NA";
                 formId = formId || "NA";
 
                 const response = await axios({
@@ -239,6 +241,7 @@ class whatsApp {
                                             { "type": "text", "text": gender },
                                             { "type": "text", "text": state },
                                             { "type": "text", "text": consultationType },
+                                            { "type": "text", "text": concern },
                                             { "type": "text", "text": branch },
                                             { "type": "text", "text": message },
                                             { "type": "text", "text": formId }

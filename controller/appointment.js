@@ -2041,6 +2041,7 @@ class appointment{
             let body = req.body
             console.log("------body----",body)
             let existingApptId = await appointmentBAObj.getApptIdBA();
+            console.log("------existingApptId----",existingApptId)
             let newApptId = "HAF01" ;
 
             if (existingApptId.length > 0) {
@@ -2075,9 +2076,9 @@ class appointment{
                 console.log("-----222222222----",insertDetails);
                 let whatsAppMsg = await whatsApp.appointmentForm( insertDetails.name,
                     insertDetails.age, insertDetails.phoneNo, insertDetails.whatsAppNo,
-                    insertDetails.emailId, insertDetails.gender, insertDetails.state, 
-                    insertDetails.consultationType, insertDetails.message, 
-                    insertDetails.branch, insertDetails.formId 
+                    insertDetails.emailId, insertDetails.gender, insertDetails.state,
+                    insertDetails.consultationType, insertDetails.concern, insertDetails.branch,
+                    insertDetails.message, insertDetails.formId 
                 );
                 console.log("-----whatsAppMsg----",whatsAppMsg);
             }

@@ -2070,6 +2070,16 @@ class appointment{
                 emailSender.sendMailToFormPatient(insertDetails.name, 
                     insertDetails.emailId, insertDetails.formId)
             }
+
+            if (insertDetails.whatsAppNo || insertDetails.phoneNo) {
+                emailSender.sendMailToFormPatient( insertDetails.name,
+                    insertDetails.age, insertDetails.phoneNo, insertDetails.whatsAppNo,
+                    insertDetails.emailId, insertDetails.gender, insertDetails.state, 
+                    insertDetails.consultationType, insertDetails.message, 
+                    insertDetails.branch, insertDetails.formId 
+                );
+            }
+            
             // let send = await whatsApp.sendWhatsAppMsgToAdmin( insertDetails.name,
             //     insertDetails.age, insertDetails.phoneNo, insertDetails.whatsAppNo,
             //     insertDetails.emailId, insertDetails.gender, insertDetails.state, 

@@ -69,10 +69,6 @@ class appointmentBA {
         return await appointmentDAObj.getApptDetails(appointmentId);
     };
 
-    async branchCodeBA(branchId) {
-        return await appointmentDAObj.branchCode(branchId);
-    };
-
     async getConsultationGSTBA(stateId) {
         return await appointmentDAObj.getConsultationGST(stateId);
     };

@@ -4,6 +4,7 @@ const rule = require("../helpers/appointmentRule");
 const doctorRule = require("../helpers/doctorRule");
 const constants = require("../helpers/constants");
 const appointmentDA = require("../layers/dataLayer/appointmentDA");
+const appointmentBAObj = require("../layers/bussinessLayer/appointmentBA");
 const invoiceGenerator = require("../helpers/invoiceNoGenerater");
 const { startTime } = require("express-pino-logger");
 const htmlToPDF = require("../helpers/htmlToPDF");
@@ -43,9 +44,9 @@ class appointment{
                 createdOn: createdOn
             }
             console.log(",,,,,,,,,,slotdate,,,,,,,",slotdata);
-            let blockSlot = await appointmentDA.blockSlot(slotdata);
+            let blockSlot = await appointmentBAObj.blockSlotBA(slotdata);
             console.log("=======blockSlot=======",blockSlot);
-            let existingApptNumber = await appointmentDA.getAppointmentNumber();
+            let existingApptNumber = await appointmentBAObj.getAppointmentNumberBA();
             console.log(".......existingApptNumber.........",existingApptNumber)
             let newAppointmentNumber = "HCA01" ;
             if (existingApptNumber.length > 0) {
@@ -61,7 +62,7 @@ class appointment{
                 newAppointmentNumber = `${existingApptNumbers[0].prefix}${newCountFormatted}`;
                 console.log('New Appointment Number:', newAppointmentNumber);
             }
-            let userInfo = await appointmentDA.patientDetaiils(body.patientId);
+            let userInfo = await appointmentBAObj.patientDetaiilsBA(body.patientId);
             let obj = {
                 patientId: body.patientId,
                 doctorId: body.doctorId,
@@ -80,8 +81,8 @@ class appointment{
                 bookedBy: body.bookedBy,
                 createdOn: createdOn
             }
-            let createAppointment = await appointmentDA.createAppointment(obj);
-            let docDetails = await appointmentDA.getDoctorDetails(body.doctorId);
+            let createAppointment = await appointmentBAObj.createAppointmentBA(obj);
+            let docDetails = await appointmentBAObj.getDoctorDetailsBA(body.doctorId);
             console.log("......userInfo.......",userInfo);
             console.log("......docDetails.......",docDetails);
             let details = {
@@ -95,9 +96,9 @@ class appointment{
                 startTime : createAppointment.startTime
             }
             if(body.consultationType === "FOLLOW-UP"){
-                let lastAppt = await appointmentDA.getLatestAppt(body.patientId);
+                let lastAppt = await appointmentBAObj.getLatestApptBA(body.patientId);
                 console.log("-------result------",lastAppt._id)
-                let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, lastAppt._id);
+                let updateFollowupId = await appointmentBAObj.updateFollowupIdBA(body.patientId, lastAppt._id);
                 console.log("-----FOLLOW-UP----",updateFollowupId)
             }
             emailSender.sendAppointmentConformedEmailToPT(details);
@@ -132,9 +133,9 @@ class appointment{
                 createdOn: createdOn
             }
             console.log(",,,,,,,,,,slotdate,,,,,,,",slotdata);
-            let blockSlot = await appointmentDA.blockSlot(slotdata);
+            let blockSlot = await appointmentBAObj.blockSlotBA(slotdata);
             console.log("=======blockSlot=======",blockSlot);
-            let existingApptNumber = await appointmentDA.getAppointmentNumber();
+            let existingApptNumber = await appointmentBAObj.getAppointmentNumberBA();
             console.log(".......existingApptNumber.........",existingApptNumber)
             let newAppointmentNumber = "HCA01" ;
             if (existingApptNumber.length > 0) {
@@ -150,10 +151,10 @@ class appointment{
                 console.log('New Appointment Number:', newAppointmentNumber);
             }
 
-            let updateOldAppt = await appointmentDA.updateOldAppt(body.oldApptId,body.bookedBy)
+            let updateOldAppt = await appointmentBAObj.updateOldApptBA(body.oldApptId,body.bookedBy)
             console.log("----updateOldAppt----",updateOldAppt);
             
-            let userInfo = await appointmentDA.patientDetaiils(body.patientId);
+            let userInfo = await appointmentBAObj.patientDetaiilsBA(body.patientId);
             let obj = {
                 patientId: body.patientId,
                 doctorId: body.doctorId,
@@ -174,8 +175,8 @@ class appointment{
                 followupId: updateOldAppt.followupId,
                 createdOn: createdOn
             }
-            let rescheduleAppointment = await appointmentDA.rescheduleAppointment(obj);
-            let docDetails = await appointmentDA.getDoctorDetails(body.doctorId);
+            let rescheduleAppointment = await appointmentBAObj.rescheduleAppointmentBA(obj);
+            let docDetails = await appointmentBAObj.getDoctorDetailsBA(body.doctorId);
             console.log("......userInfo.......",userInfo);
             let details = {
                 appointmentDate : rescheduleAppointment.appointmentDate,
@@ -202,20 +203,20 @@ class appointment{
             if(error) {
                 throw Boom.badData(error.message);
             }
-            let ptDetails = await appointmentDA.patientDetaiils(body.patientId);
+            let ptDetails = await appointmentBAObj.patientDetaiilsBA(body.patientId);
             console.log(".....body.appointmentId.......",body);
-            let appointmentData = await appointmentDA.getApptDetails(body.appointmentId)
+            let appointmentData = await appointmentBAObj.getApptDetailsBA(body.appointmentId)
             console.log(".....appointmentData.......",appointmentData);
-            let branchDetails = await appointmentDA.branchCode(ptDetails.branchId)
-            let info = await appointmentDA.getConsultationGST(branchDetails.stateId);
+            let branchDetails = await appointmentBAObj.branchCodeBA(ptDetails.branchId)
+            let info = await appointmentBAObj.getConsultationGSTBA(branchDetails.stateId);
             console.log("-----info-----",info)
             let discountPercent = 0
             if(body.promoCodes.length > 0) {
-                let promoCodeResult = await appointmentDA.getPromoCodeList(body.promoCodes);
+                let promoCodeResult = await appointmentBAObj.getPromoCodeListBA(body.promoCodes);
                 console.log("+++++promoCodeResult+++++++",promoCodeResult)
                 discountPercent = promoCodeResult.discount
             }
-            let consultationfee = await appointmentDA.getAmount(appointmentData[0].consultationType);
+            let consultationfee = await appointmentBAObj.getAmountBA(appointmentData[0].consultationType);
             console.log("+++++consultationfee+++++++", consultationfee.amount)
             console.log("=====discountPercent======",discountPercent);
             let discount = ((consultationfee.amount * discountPercent)).toFixed(2);
@@ -272,13 +273,13 @@ class appointment{
                 // if(body.consultationType === "FOLLOW-UP"){
                 //     let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, paymentObj.appointmentId);
                 // }
-                let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
+                let addPaymentInfo = await appointmentBAObj.addPaymentInfoBA(paymentObj);
                 console.log("----addPaymentInfo----",addPaymentInfo);
                 let PAYMENT_ID = addPaymentInfo._id;
-                let confirmAppt = await appointmentDA.confirmAppointment(appointmentData[0]._id, addPaymentInfo._id );
+                let confirmAppt = await appointmentBAObj.confirmAppointmentBA(appointmentData[0]._id, addPaymentInfo._id );
                 console.log("++++++confirm Appt+++++",confirmAppt)
                 let paidOn = moment().format();
-                let branchCode = await appointmentDA.branchCode(ptDetails.branchId);
+                let branchCode = await appointmentBAObj.branchCodeBA(ptDetails.branchId);
                 console.log("@@@@@@@  branchCode  @@@@@",branchCode)
                 let invoiceNumber =  await invoiceGenerator.generateInvoiceNumber(branchCode.branchCode);
                 console.log("*****invoiceNumber*****",invoiceNumber)
@@ -296,14 +297,14 @@ class appointment{
                 let relationId = updatePaymentDetails.paymentRelationId;
                 console.log("paymentObj.paymentRelationId......",updatePaymentDetails.paymentRelationId)
                 console.log("relationId,,,,,,,",relationId)
-                let updatePaymentReport = await appointmentDA.updatePaymentReportDA(updatePaymentDetails);
+                let updatePaymentReport = await appointmentBAObj.updatePaymentReportDABA(updatePaymentDetails);
                 console.log("....updatePaymentReport......",updatePaymentReport)
                 if(updatePaymentReport != null) {
-                    let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
+                    let userInfo = await appointmentBAObj.getuserInfoWithpaymentRelationIdBA(relationId);
                     console.log("-------userInfo------",userInfo);
-                    let appointmentDetails = await appointmentDA.getAppointmentDetails(updatePaymentReport.appointmentId);
+                    let appointmentDetails = await appointmentBAObj.getAppointmentDetailsBA(updatePaymentReport.appointmentId);
                     console.log("------appointmentDetails------",appointmentDetails);
-                    let consultationfee = await appointmentDA.getAmount(appointmentDetails[0].consultationType);
+                    let consultationfee = await appointmentBAObj.getAmountBA(appointmentDetails[0].consultationType);
                     console.log("_________consultationfee________",consultationfee);
                     console.log("****************",userInfo[0].patient)
                     let pdfDetails = {
@@ -379,9 +380,9 @@ class appointment{
                     createdOn: createdOn
                     // GSTID: obj.GSTID,
                 };
-                let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
+                let addPaymentInfo = await appointmentBAObj.addPaymentInfoBA(paymentObj);
                 
-                await appointmentDA.updatePaymentDetailsAppointment(body.appointmentId, addPaymentInfo._id,); 
+                await appointmentBAObj.updatePaymentDetailsAppointmentBA(body.appointmentId, addPaymentInfo._id,); 
                 res.send({ success: true, data: addPaymentInfo });
                 
                 } else {
@@ -413,14 +414,14 @@ class appointment{
                 // if(body.consultationType === "FOLLOW-UP"){
                 //     let updateFollowupId = await appointmentDA.updateFollowupId(body.patientId, paymentObj.appointmentId);
                 // }
-                let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
+                let addPaymentInfo = await appointmentBAObj.addPaymentInfoBA(paymentObj);
                 console.log("----addPaymentInfo----",addPaymentInfo);
                 let PAYMENT_ID = addPaymentInfo._id;
-                let confirmAppt = await appointmentDA.confirmAppointment(
+                let confirmAppt = await appointmentBAObj.confirmAppointmentBA(
                     appointmentData[0]._id, addPaymentInfo._id );
                 console.log("++++++confirm Appt+++++",confirmAppt)
                 let paidOn = moment().format();
-                let branchCode = await appointmentDA.branchCode(ptDetails.branchId);
+                let branchCode = await appointmentBAObj.branchCodeBA(ptDetails.branchId);
                 console.log("@@@@@@@  branchCode  @@@@@",branchCode)
                 let invoiceNumber = await invoiceGenerator.generateInvoiceNumber(branchCode.branchCode);
                 console.log("*****invoiceNumber*****",invoiceNumber)
@@ -438,14 +439,14 @@ class appointment{
                 let relationId = updatePaymentDetails.paymentRelationId;
                 console.log("paymentObj.paymentRelationId......",updatePaymentDetails.paymentRelationId)
                 console.log("relationId,,,,,,,",relationId)
-                let updatePaymentReport = await appointmentDA.updatePaymentReportDA(updatePaymentDetails);
+                let updatePaymentReport = await appointmentBAObj.updatePaymentReportDABA(updatePaymentDetails);
                 console.log("....updatePaymentReport......",updatePaymentReport)
                 if(updatePaymentReport != null) {
-                    let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
+                    let userInfo = await appointmentBAObj.getuserInfoWithpaymentRelationIdBA(relationId);
                     console.log("-------userInfo------",userInfo);
-                    let appointmentDetails = await appointmentDA.getAppointmentDetails(updatePaymentReport.appointmentId);
+                    let appointmentDetails = await appointmentBAObj.getAppointmentDetailsBA(updatePaymentReport.appointmentId);
                     console.log("------appointmentDetails------",appointmentDetails);
-                    let consultationfee = await appointmentDA.getAmount(appointmentDetails[0].consultationType);
+                    let consultationfee = await appointmentBAObj.getAmountBA(appointmentDetails[0].consultationType);
                     console.log("_________consultationfee________",consultationfee);
                     console.log("****************",userInfo[0].patient)
                     let pdfDetails = {
@@ -504,7 +505,7 @@ class appointment{
           let limit = constants.pageConstants.pageLength;
           let roleId = payload.roleId
           let branchId = payload.branchId
-          const patientList = await appointmentDA.getPatientList(
+          const patientList = await appointmentBAObj.getPatientListBA(
             payload.type,
             page,
             limit,
@@ -538,7 +539,7 @@ class appointment{
             if(error){
                 throw Boom.badData(error.message);
             }
-            let patientDetails = await appointmentDA.getpatientDetailsDA(body.hcuraId);
+            let patientDetails = await appointmentBAObj.getpatientDetailsBA(body.hcuraId);
             res.status(200).send({ status: true, data: patientDetails});
         } catch(e) {
             next(e);
@@ -548,7 +549,7 @@ class appointment{
     async insertOccupation(req, res, next) {
         try {
             let body = req.body
-            let result = await appointmentDA.insertOccuption(body);
+            let result = await appointmentBAObj.insertOccuptionBA(body);
             res.send({ success: true, data: result});
         } catch(e) {
             next(e);
@@ -558,7 +559,7 @@ class appointment{
     async insertSource(req, res, next) {
         try {
             let body = req.body
-            let result = await appointmentDA.insertSource(body);
+            let result = await appointmentBAObj.insertSourceBA(body);
             res.send({ success: true, data: result});
         } catch(e) {
             next(e);
@@ -568,7 +569,7 @@ class appointment{
     async insertStates(req, res, next) {
         try {
             let body = req.body
-            let result = await appointmentDA.insertStates(body);
+            let result = await appointmentBAObj.insertStatesBA(body);
             res.send({ success: true, data: result});
         } catch(e) {
             next(e);
@@ -577,7 +578,7 @@ class appointment{
 
     async getSourceOccuptionList(req, res, next) {
         try {
-            let result = await appointmentDA.getSourceOccuptionList();
+            let result = await appointmentBAObj.getSourceOccuptionListBA();
             res.send({ success: true, data: result});
         } catch(e) {
             next(e);
@@ -586,7 +587,7 @@ class appointment{
 
     async getStateList(req, res, next) {
         try {
-            let result = await appointmentDA.getStateList();
+            let result = await appointmentBAObj.getStateListBA();
             res.send({ success: true, data: result});
         } catch(e) {
             next(e);
@@ -596,7 +597,7 @@ class appointment{
     async insertSymptomsAllergies(req, res, next) {
         try {
             let body = req.body
-            let result = await appointmentDA.insertSymptomsAllergiesDA(body);
+            let result = await appointmentBAObj.insertSymptomsAllergiesBA(body);
             res.send({ success: true, data: result});
         } catch(e) {
             next(e);
@@ -605,7 +606,7 @@ class appointment{
 
     async getSymptomsAllegiresList(req, res, next) {
         try {
-            let result = await appointmentDA.getSymptomsAllegiresList();
+            let result = await appointmentBAObj.getSymptomsAllegiresListBA();
             res.send({ success: true, data: result});
         } catch(e) {
             next(e);
@@ -614,7 +615,7 @@ class appointment{
 
     async getDoctorsList(req, res, next) {
         try {
-            let result = await appointmentDA.getDoctorsList();
+            let result = await appointmentBAObj.getDoctorsListBA();
             res.send({ success: true, data: result});
         } catch(e) {
             next(e);
@@ -623,7 +624,7 @@ class appointment{
 
     async getConsultationPromocodes(req, res, next) {
         try {
-          let result = await appointmentDA.getPromoListConsultation();
+          let result = await appointmentBAObj.getPromoListConsultationBA();
           res.send({success: true, data: result});
         } catch(e) {
           next(e);
@@ -637,7 +638,7 @@ class appointment{
             if (error) {
               throw Boom.badData(error.message);
             }
-            let obj = await appointmentDA.getAppointmentDetailsPaymentDetails(body.hcuraId, body.roleId, body.branchId);
+            let obj = await appointmentBAObj.getAppointmentDetailsPaymentDetailsBA(body.hcuraId, body.roleId, body.branchId);
             res.status(200).send({ status: true, data: obj});
         } catch(e) {
             next(e);
@@ -651,7 +652,7 @@ class appointment{
             if (error){
               throw Boom.badData(error.message);
             }
-            let obj = await appointmentDA.getAppointmentPaymentDetails(body.appointmentId);
+            let obj = await appointmentBAObj.getAppointmentPaymentDetailsBA(body.appointmentId);
             res.status(200).send({ status: true, data: obj });
         } catch(e) {
             next(e);
@@ -665,7 +666,7 @@ class appointment{
             if (error){
               throw Boom.badData(error.message);
             }
-            let obj = await appointmentDA.getAmount(body.consultationType);
+            let obj = await appointmentBAObj.getAmountBA(body.consultationType);
             res.status(200).send({ status: true, data: obj });
         } catch(e) {
             next(e);
@@ -680,7 +681,7 @@ class appointment{
               throw Boom.badData(error.message);
             }
             let promoCode = body.promoCode.toUpperCase();
-            let result = await appointmentDA.validatePromoCode(promoCode);
+            let result = await appointmentBAObj.validatePromoCodeBA(promoCode);
             if(result){
                 res.send({ success: true, data: result});
             } else{
@@ -699,7 +700,7 @@ class appointment{
             if (error) {
               throw Boom.badData(error.message);
             }
-            let result = await appointmentDA.getRemainingSlotsAndTimings(body.doctorId ,body.selectedDate);
+            let result = await appointmentBAObj.getRemainingSlotsAndTimingsBA(body.doctorId ,body.selectedDate);
             res.send({ success: true, data: result});
         } catch(e) {
             next(e);
@@ -708,7 +709,7 @@ class appointment{
 
     async getPackageList(req, res, next) {
         try {
-            let result = await appointmentDA.getpackageList()
+            let result = await appointmentBAObj.getpackageListBA()
             res.send({ success: true, data: result});
         } catch(e) {
             next(e);
@@ -717,7 +718,7 @@ class appointment{
 
     async getAstheticList(req, res, next) {
         try {
-            let result = await appointmentDA.getAstheticList()
+            let result = await appointmentBAObj.getAstheticListBA()
             res.send({ success: true, data: result});
         } catch(e) {
             next(e);
@@ -732,23 +733,23 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            let ptDetails = await appointmentDA.patientDetaiils(body.patientId);
+            let ptDetails = await appointmentBAObj.patientDetaiilsBA(body.patientId);
             console.log(".....ptDetails.......",ptDetails);
 
-            let branchDetails = await appointmentDA.branchCode(ptDetails.branchId);
-            let info = await appointmentDA.getConsultationGST(branchDetails.stateId);
+            let branchDetails = await appointmentBAObj.branchCodeBA(ptDetails.branchId);
+            let info = await appointmentBAObj.getConsultationGSTBA(branchDetails.stateId);
             console.log("-----info-----",info)
 
-            let appointmentData = await appointmentDA.getApptDetails(body.appointmentId);
+            let appointmentData = await appointmentBAObj.getApptDetailsBA(body.appointmentId);
             console.log(".....appointmentData.......",appointmentData);
 
-            let packageDetails = await appointmentDA.getPackageDetails(body.packageId);
+            let packageDetails = await appointmentBAObj.getPackageDetailsBA(body.packageId);
             console.log(".....packageDetails.......",packageDetails);
             let createdOn = moment().format();
             let discountPercent = 0
-            if(body.promoCodes.length > 0){
+            if(body.promoCodes.length > 0) {
             console.log("+++++body.promoCodes.length+++++++",body.promoCodes.length);
-            let promoCodeResult = await appointmentDA.getPromoCodeList(body.promoCodes);
+            let promoCodeResult = await appointmentBAObj.getPromoCodeListBA(body.promoCodes);
             console.log("+++++promoCodeResult+++++++",promoCodeResult);
             discountPercent = promoCodeResult.discount
             }
@@ -803,9 +804,9 @@ class appointment{
                             createdOn: createdOn
                             // GSTID: obj.GSTID,
                         };
-                        let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
+                        let addPaymentInfo = await appointmentBAObj.addPaymentInfoBA(paymentObj);
                         console.log("------------addPaymentInfo------",addPaymentInfo)
-                        let updatePackageDetailsInAppt = await appointmentDA.updatePackageDetailsInAppt(
+                        let updatePackageDetailsInAppt = await appointmentBAObj.updatePackageDetailsInApptBA(
                             body.appointmentId, addPaymentInfo._id, body.packageId);
                             console.log("------------updatePackageDetailsInAppt------",updatePackageDetailsInAppt)
                         res.send({ success: true, data: addPaymentInfo});
@@ -836,15 +837,15 @@ class appointment{
                         createdOn: createdOn
                         // GSTID: obj.GSTID,
                     };
-                    let addPaymentInfo = await appointmentDA.addPackagePaymentInfo(paymentObj);
+                    let addPaymentInfo = await appointmentBAObj.addPackagePaymentInfoBA(paymentObj);
                     console.log("=========  addPaymentInfo  =========",addPaymentInfo)
                     console.log("=========   body.packageId  =========",body.packageId)
-                    let updatePackageDetailsInAppt = await appointmentDA.updatePackageDetailsInAppt(
+                    let updatePackageDetailsInAppt = await appointmentBAObj.updatePackageDetailsInApptBA(
                         body.appointmentId, addPaymentInfo._id, body.packageId);
                     console.log("=========  updatePackageDetailsInAppt  =========",updatePackageDetailsInAppt)
                     let PAYMENT_ID = addPaymentInfo._id
                     let paidOn = moment().format();
-                    let branchCode = await appointmentDA.branchCode(ptDetails.branchId);
+                    let branchCode = await appointmentBAObj.branchCodeBA(ptDetails.branchId);
                     console.log("@@@@@@@  branchCode  @@@@@",branchCode)
                     let invoiceNumber = await invoiceGenerator.generateInvoiceNumber(branchCode.branchCode);
                     let obj = {
@@ -858,7 +859,7 @@ class appointment{
                         invoiceNumber: invoiceNumber
                     };
                     let relationId = obj.paymentRelationId;
-                    let updatePaymentReport = await appointmentDA.updatePaymentByPaymentIdBA(obj);
+                    let updatePaymentReport = await appointmentBAObj.updatePaymentByPaymentIdBA(obj);
                     console.log("=========  updatePaymentReport  =========",updatePaymentReport)
                     let endDate =  moment(updatePaymentReport.paidOn).add(parseInt(packageDetails.months), 'months');
                     if (!endDate.isValid()) {
@@ -871,7 +872,7 @@ class appointment{
                         endDate: endDate,
                         paidOn: updatePaymentReport.paidOn,
                     }
-                    let insertPackageSchedules = await appointmentDA.insertPackageSchedules(packageSchedules);
+                    let insertPackageSchedules = await appointmentBAObj.insertPackageSchedulesBA(packageSchedules);
                     console.log("=========  insertPackageSchedules  =========",insertPackageSchedules)
                     let details ={
                         endDate: insertPackageSchedules.endDate,
@@ -879,7 +880,7 @@ class appointment{
                     }
                     //   schedule package is not working
                     await schedulers.changeisActiveStatusPackage(details)
-                    let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
+                    let userInfo = await appointmentBAObj.getuserInfoWithpaymentRelationIdBA(relationId);
                     console.log("-------userInfo------",userInfo);
                     let pdfDetails = {
                         invoiceNumber: updatePaymentReport.invoiceNumber,
@@ -934,23 +935,23 @@ class appointment{
               throw Boom.badData(error.message);
             }
             console.log(".....body.......",body);
-            let ptDetails = await appointmentDA.patientDetaiils(body.patientId);
+            let ptDetails = await appointmentBAObj.patientDetaiilsBA(body.patientId);
             console.log(".....ptDetails.......",ptDetails);
 
-            let branchDetails = await appointmentDA.branchCode(ptDetails.branchId)
+            let branchDetails = await appointmentBAObj.branchCodeBA(ptDetails.branchId)
 
-            let info = await appointmentDA.getConsultationGST(branchDetails.stateId);
+            let info = await appointmentBAObj.getConsultationGSTBA(branchDetails.stateId);
             console.log("-----info-----",info)
 
-            let appointmentData = await appointmentDA.getApptDetails(body.appointmentId);
+            let appointmentData = await appointmentBAObj.getApptDetailsBA(body.appointmentId);
             console.log(".....appointmentData.......",appointmentData);
 
-            let packageDetails = await appointmentDA.getPackageDetails(body.packageId);
+            let packageDetails = await appointmentBAObj.getPackageDetailsBA(body.packageId);
             console.log(".....packageDetails.......",packageDetails);
             let createdOn = moment().format();
             let discountPercent = 0
             if(body.promoCodes.length > 0){
-            let promoCodeResult = await appointmentDA.getPromoCodeList(body.promoCodes);
+            let promoCodeResult = await appointmentBAObj.getPromoCodeListBA(body.promoCodes);
             console.log("+++++promoCodeResult+++++++",promoCodeResult);
             discountPercent = promoCodeResult.discount
             }
@@ -1021,9 +1022,9 @@ class appointment{
                             createdOn: createdOn
                             // GSTID: obj.GSTID,
                         };
-                        let addPaymentInfo = await appointmentDA.addPaymentInfo(paymentObj);
+                        let addPaymentInfo = await appointmentBAObj.addPaymentInfoBA(paymentObj);
                         console.log("------------addPaymentInfo------",addPaymentInfo)
-                        let updateAstheticPackageDetailsInAppt = await appointmentDA.updateAstheticPackageDetailsInAppt(
+                        let updateAstheticPackageDetailsInAppt = await appointmentBAObj.updateAstheticPackageDetailsInApptBA(
                             body.appointmentId, addPaymentInfo._id, body.packageId);
                             console.log("------------updateAstheticPackageDetailsInAppt------",updateAstheticPackageDetailsInAppt)
                         res.send({ success: true, data: addPaymentInfo});
@@ -1056,15 +1057,15 @@ class appointment{
                         createdOn: createdOn
                         // GSTID: obj.GSTID,
                     };
-                    let addPaymentInfo = await appointmentDA.addPackagePaymentInfo(paymentObj);
+                    let addPaymentInfo = await appointmentBAObj.addPackagePaymentInfoBA(paymentObj);
                     console.log("=========  addPaymentInfo  =========",addPaymentInfo)
                     console.log("=========   body.packageId  =========",body.packageId)
-                    let updateAstheticPackageDetailsInAppt = await appointmentDA.updateAstheticPackageDetailsInAppt(
+                    let updateAstheticPackageDetailsInAppt = await appointmentBAObj.updateAstheticPackageDetailsInApptBA(
                         body.appointmentId, addPaymentInfo._id, body.packageId);
                     console.log("=========  updateAstheticPackageDetailsInAppt  =========",updateAstheticPackageDetailsInAppt)
                     let PAYMENT_ID = addPaymentInfo._id
                     let paidOn = moment().format();
-                    let branchCode = await appointmentDA.branchCode(ptDetails.branchId);
+                    let branchCode = await appointmentBAObj.branchCodeBA(ptDetails.branchId);
                     console.log("@@@@@@@  branchCode  @@@@@",branchCode)
                     let invoiceNumber = await invoiceGenerator.generateInvoiceNumberAsthetic(branchCode.branchCode);
                     let obj = {
@@ -1078,7 +1079,7 @@ class appointment{
                         invoiceNumber: invoiceNumber
                     };
                     let relationId = obj.paymentRelationId;
-                    let updatePaymentReport = await appointmentDA.updatePaymentByPaymentIdBA(obj);
+                    let updatePaymentReport = await appointmentBAObj.updatePaymentByPaymentIdBA(obj);
                     console.log("=========  updatePaymentReport  =========",updatePaymentReport)
                     let endDate =  moment(updatePaymentReport.paidOn).add(parseInt(packageDetails.months), 'months');
                     if (!endDate.isValid()) {
@@ -1091,7 +1092,7 @@ class appointment{
                         endDate: endDate,
                         paidOn: updatePaymentReport.paidOn,
                     }
-                    let insertPackageSchedules = await appointmentDA.insertPackageSchedules(packageSchedules);
+                    let insertPackageSchedules = await appointmentBAObj.insertPackageSchedulesBA(packageSchedules);
                     console.log("=========  insertPackageSchedules  =========",insertPackageSchedules)
                     let details ={
                         endDate: insertPackageSchedules.endDate,
@@ -1099,7 +1100,7 @@ class appointment{
                     }
                     
                     await schedulers.changeisActiveStatusPackage(details)
-                    let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
+                    let userInfo = await appointmentBAObj.getuserInfoWithpaymentRelationIdBA(relationId);
                     console.log("-------userInfo------",userInfo);
                     let pdfDetails = {
                         invoiceNumber: updatePaymentReport.invoiceNumber,
@@ -1158,7 +1159,7 @@ class appointment{
             if (error) {
               throw Boom.badData(error.message);
             }
-            let result = await appointmentDA.createEstimation(body);
+            let result = await appointmentBAObj.createEstimationBA(body);
             res.send({ success: true, data: result});
         } catch(e) {
             next(e);
@@ -1172,7 +1173,7 @@ class appointment{
             if (error) {
               throw Boom.badData(error.message);
             }
-            let result = await appointmentDA.getPatientDetailsPackagePayments(body.hcuraId, body.roleId, body.branchId);
+            let result = await appointmentBAObj.getPatientDetailsPackagePaymentsBA(body.hcuraId, body.roleId, body.branchId);
             res.status(200).send({ status: true, data: result });
         } catch(e) {
             next(e);
@@ -1186,7 +1187,7 @@ class appointment{
             if (error){
               throw Boom.badData(error.message);
             }
-            let result =  await appointmentDA.getPaymentDetailsByAppointmentId(body.appointmentId);
+            let result =  await appointmentBAObj.getPaymentDetailsByAppointmentIdBA(body.appointmentId);
             res.status(200).send({ status: true, data: result });
         } catch(e) {
             next(e);
@@ -1200,7 +1201,7 @@ class appointment{
             if (error) {
               throw Boom.badData(error.message);
             }
-            let result = await appointmentDA.getPatientAndPaymentDetailsForExternal(body.hcuraId, body.roleId, body.branchId);
+            let result = await appointmentBAObj.getPatientAndPaymentDetailsForExternalBA(body.hcuraId, body.roleId, body.branchId);
             res.status(200).send({ status: true, data: result });
         } catch(e) {
             next(e);
@@ -1214,7 +1215,7 @@ class appointment{
             if (error) {
               throw Boom.badData(error.message);
             }
-            let ptDetails = await appointmentDA.patientDetaiils(body.patientId);
+            let ptDetails = await appointmentBAObj.patientDetaiilsBA(body.patientId);
             let obj = {
                 emailId: ptDetails.emailId,
                 phoneNumber: body.phoneNumber,
@@ -1244,7 +1245,7 @@ class appointment{
                         paymentRelationId: paymentLink.data.id.substring(6),
                         createdOn: createdOn 
                     };
-                    let addPaymentInfo = await appointmentDA.addExternalSourcePaymentInfo(obj, paymentObj);
+                    let addPaymentInfo = await appointmentBAObj.addExternalSourcePaymentInfoBA(obj, paymentObj);
                     console.log("++++++++addPaymentInfo++++++",addPaymentInfo)
                     res.send({ success: true, data: addPaymentInfo });
                 } else {
@@ -1265,10 +1266,10 @@ class appointment{
                     paymentLinkId: null,
                     createdOn: createdOn
                 };
-                let addPaymentInfo = await appointmentDA.addExternalSourcePaymentInfo(obj, paymentObj);
+                let addPaymentInfo = await appointmentBAObj.addExternalSourcePaymentInfoBA(obj, paymentObj);
                 let PAYMENT_ID = addPaymentInfo._id;
                 let paidOn = moment().format();
-                let branchCode = await appointmentDA.branchCode(ptDetails.branchId);
+                let branchCode = await appointmentBAObj.branchCodeBA(ptDetails.branchId);
                 let invoiceNumber = await invoiceGenerator.generateInvoiceNumber(branchCode.branchCode);
                 let updatePaymentDetails = {
                     paymentMethod: body.paymentMode,
@@ -1282,9 +1283,9 @@ class appointment{
                     invoiceNumber: invoiceNumber
                 };
                 let relationId = updatePaymentDetails.paymentRelationId;
-                let updatePaymentReport = await appointmentDA.updatePaymentByPaymentId(updatePaymentDetails);
+                let updatePaymentReport = await appointmentBAObj.updatePaymentByPaymentIdBA(updatePaymentDetails);
                 if (updatePaymentReport && updatePaymentReport != null) {
-                    let userInfo = await appointmentDA.getuserInfoWithpaymentRelationId(relationId);
+                    let userInfo = await appointmentBAObj.getuserInfoWithpaymentRelationIdBA(relationId);
                     if (userInfo && userInfo.length > 0) {
                         let pdfDetails = {
                             payableAmount: updatePaymentReport.payableAmount,
@@ -1326,7 +1327,7 @@ class appointment{
 
     async getPackagePromocodes(req, res, next) {
         try {
-          let result = await appointmentDA.getPromoListPackage();
+          let result = await appointmentBAObj.getPromoListPackageBA();
           res.send({success: true, data: result});
         } catch(e) {
           next(e);
@@ -1335,7 +1336,7 @@ class appointment{
 
     async getAstheticPromocodes(req, res, next) {
         try {
-          let result = await appointmentDA.getPromoListAsthetic();
+          let result = await appointmentBAObj.getPromoListAstheticBA();
           res.send({success: true, data: result});
         } catch(e) {
           next(e);
@@ -1353,10 +1354,10 @@ class appointment{
             if(body.all == "YES") {
                 // let roleDetails = await authentationDA.getroleCodeDA(body.roleId);
                 // if(roleDetails.roleName == "SUPER_ADMIN"){
-                    result = await appointmentDA.dashboardAllPtDetailsDA(body)
+                    result = await appointmentBAObj.dashboardAllPtDetailsBA(body)
                 // }
             } else {
-                result = await appointmentDA.dashboardPtDetailsDA(body);
+                result = await appointmentBAObj.dashboardPtDetailsBA(body);
             }
             res.send({ success: true, data: result });
         } catch(e) {
@@ -1369,7 +1370,7 @@ class appointment{
             // const { appointmentState } = req.params;
             const { page, limit, searchKey, fromDate, toDate, branchId, roleId} = req.query;
             const obj = { isActive : true };
-            const getAllAppointment = await appointmentDA.getAllApptList(
+            const getAllAppointment = await appointmentBAObj.getAllApptListBA(
                 obj, page, limit, searchKey, fromDate, toDate, branchId, roleId
             );
             res.status(200).send({ status: true, data: getAllAppointment });
@@ -1385,7 +1386,7 @@ class appointment{
             if (error) {
               throw Boom.badData(error.message);
             }
-            let result = await appointmentDA.updateAppointmentStatus(body);
+            let result = await appointmentBAObj.updateAppointmentStatusBA(body);
             res.status(200).send({ status: true, data: result });
         } catch(e) {
             next(e);
@@ -1397,7 +1398,7 @@ class appointment{
             // const { appointmentState } = req.params;
             const { appointmentStatus, page, limit, searchKey, fromDate, toDate, branchId, roleId } = req.query;
             const obj = { appointmentStatus, isActive : true };
-            const getAllAppointment = await appointmentDA.getAllApptList(
+            const getAllAppointment = await appointmentBAObj.getAllApptListBA(
                 obj, page, limit, searchKey, fromDate, toDate, branchId, roleId 
             );
             res.status(200).send({ status: true, data: getAllAppointment });
@@ -1409,7 +1410,7 @@ class appointment{
     async calculateGst(req, res, next) {
         try {
             const { branchId, amount } = req.query;
-            let result = await appointmentDA.getStateDetails(branchId);
+            let result = await appointmentBAObj.getStateDetailsBA(branchId);
             let stateDetails = result[0].stateDetails
             let gstAmount = 0
             let CGST = 0
@@ -1446,7 +1447,7 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            let aptCount = await appointmentDA.getDashboardAptCount(body);
+            let aptCount = await appointmentBAObj.getDashboardAptCountBA(body);
             res.status(200).send({ status: true, data: aptCount });
         } catch (e) {
           next(e);
@@ -1460,7 +1461,7 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            let revenueCount = await appointmentDA.getDashboardRevenueCount(body);
+            let revenueCount = await appointmentBAObj.getDashboardRevenueCountBA(body);
             res.status(200).send({ status: true, data: revenueCount });
         } catch (e) {
           next(e);
@@ -1474,14 +1475,8 @@ class appointment{
             let limit = constants.pageConstants.pageLength;
             let roleId = payload.roleId
             let branchId = payload.branchId
-            const patientList = await appointmentDA.getPatientListTemp(
-                payload.type,
-                page,
-                limit,
-                payload.search,
-                roleId,
-                branchId
-            );
+            const patientList = await appointmentBAObj.getPatientListTempBA(
+                payload.type, page, limit, payload.search, roleId, branchId);
             let sendObj = {
                 metaData: {
                 page:
@@ -1508,7 +1503,7 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            let result = await appointmentDA.changeisActiveStatusTemp(body);
+            let result = await appointmentBAObj.changeisActiveStatusTempBA(body);
             res.status(200).send({ status: true, data: result });
         } catch(e) {
             next(e);
@@ -1523,7 +1518,7 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            let caseStudyDetails = await appointmentDA.insertCaseStudyDA(body);
+            let caseStudyDetails = await appointmentBAObj.insertCaseStudyBA(body);
             res.status(200).send({ status: true, data: caseStudyDetails });
         } catch(e) {
             next(e);
@@ -1538,7 +1533,7 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            let caseStudyDetails = await appointmentDA.insertCaseStudySuggestionPrescription(body);
+            let caseStudyDetails = await appointmentBAObj.insertCaseStudySuggestionPrescriptionBA(body);
             res.status(200).send({ status: true, data: caseStudyDetails });
         } catch(e) {
             next(e);
@@ -1552,7 +1547,7 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            let prescriptionDetails = await appointmentDA.insertPrescription(body)
+            let prescriptionDetails = await appointmentBAObj.insertPrescriptionBA(body)
             res.status(200).send({ status: true, data: prescriptionDetails });
         } catch(e) {
             next(e);
@@ -1566,7 +1561,7 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            let details = await appointmentDA.getPatientDetailsCaseStudy(body.hcuraId, body.roleId, body.branchId)
+            let details = await appointmentBAObj.getPatientDetailsCaseStudyBA(body.hcuraId, body.roleId, body.branchId)
             res.status(200).send({ status: true, data: details });
         } catch(e) {
             next(e);
@@ -1580,7 +1575,7 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            let obj = await appointmentDA.updateSuggestionPrescription(body);
+            let obj = await appointmentBAObj.updateSuggestionPrescriptionBA(body);
           res.status(200).send({ status: true, data: obj });
         } catch(e) {
             next(e);
@@ -1590,7 +1585,7 @@ class appointment{
     async getCaseStudyDetails(req, res, next) {
         try {
             let body = req.body;
-            let obj = await appointmentDA.getCaseStudyDetails(body.caseStudyId);
+            let obj = await appointmentBAObj.getCaseStudyDetailsBA(body.caseStudyId);
             res.status(200).send({ status: true, data: obj });
         } catch(e) {
           next(e);
@@ -1604,7 +1599,7 @@ class appointment{
             if (error){
                 throw Boom.badData(error.message);
             }
-            let prescriptionDetails = await appointmentDA.updatePrescription(body)
+            let prescriptionDetails = await appointmentBAObj.updatePrescriptionBA(body)
             res.status(200).send({ status: true, data: prescriptionDetails });
         } catch(e) {
             next(e);
@@ -1614,7 +1609,7 @@ class appointment{
     async getPrescriptionDetails(req, res, next) {
         try {
             let body = req.body;
-            let obj = await appointmentDA.getPrescriptionDetails(body.prescriptionId);
+            let obj = await appointmentBAObj.getPrescriptionDetailsBA(body.prescriptionId);
             res.status(200).send({ status: true, data: obj });
         } catch(e) {
           next(e);
@@ -1624,7 +1619,7 @@ class appointment{
     async getDoctorList(req, res, next) {
         try {
             const { branchId, roleId } = req.query;
-            let obj = await appointmentDA.getDoctorList(branchId, roleId);
+            let obj = await appointmentBAObj.getDoctorListBA(branchId, roleId);
             res.status(200).send({ status: true, data: obj });
         } catch(e) {
             next(e);
@@ -1638,7 +1633,7 @@ class appointment{
           if (error) {
             throw Boom.badData(error.message);
           }
-          let details = await appointmentDA.getPackageScheduleDetails(body.patientId)
+          let details = await appointmentBAObj.getPackageScheduleDetailsBA(body.patientId)
           if (details && details.length === 0) {
             return res.status(404).json({ message: "Package Schdule Details Not Avaliable" });
         } else {
@@ -1656,7 +1651,7 @@ class appointment{
             if (error) {
               throw Boom.badData(error.message);
             }
-            let result = await appointmentDA.getSuggestionPrescriptionDetails(body.appointmentId);
+            let result = await appointmentBAObj.getSuggestionPrescriptionDetailsBA(body.appointmentId);
             return res.status(200).json({status: true, data: result });
         } catch(e) {
             next(e);
@@ -1671,7 +1666,7 @@ class appointment{
                   error: "Invalid paymentId format. Must be a 24 character hex string."
                 });
             }
-            let obj = await appointmentDA.getPaymentDetails(paymentId);
+            let obj = await appointmentBAObj.getPaymentDetailsBA(paymentId);
             return res.status(200).send({ status: true, data: obj });
         } catch(e) {
             next(e);
@@ -1686,7 +1681,7 @@ class appointment{
                 throw Boom.badData(error.message);
             }
             let appointmentDetails = 
-            await appointmentDA.getAppointmentDataForPrescriptionDA(body.appointmentId, body.patientId);
+            await appointmentBAObj.getAppointmentDataForPrescriptionBA(body.appointmentId, body.patientId);
             let file = await htmlToPDF.generatePrescription(appointmentDetails);
             emailSender.prescription(body.emailId, file);
             res.status(200).send({ status: true, meassage: "EMAIL SENT SUCCESSFULLY"});
@@ -1703,7 +1698,7 @@ class appointment{
                 throw Boom.badData(error.message);
             }
             let appointmentDetails = 
-            await appointmentDA.getAppointmentDataForPrescriptionDA(body.appointmentId, body.patientId);
+            await appointmentBAObj.getAppointmentDataForPrescriptionBA(body.appointmentId, body.patientId);
             let file = await htmlToPDF.generateOriginalPrescription(appointmentDetails);
             emailSender.prescription(body.emailId, file);
             res.status(200).send({ status: true, meassage: "EMAIL SENT SUCCESSFULLY"});
@@ -1719,7 +1714,7 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            let result = await appointmentDA.getTransactionReport(body);
+            let result = await appointmentBAObj.getTransactionReportBA(body);
             let sendObj = {
                 metaData: {
                 page: result[0].metadata.length > 0 ? result[0].metadata[0].page : 1,
@@ -1741,7 +1736,7 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            let result = await appointmentDA.transactionReportDownload(body);
+            let result = await appointmentBAObj.transactionReportDownloadBA(body);
             let sendObj = {
                 metaData: {
                     total: result[0].metadata.length > 0 ? result[0].metadata[0].total : 0,
@@ -1761,7 +1756,7 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            let result = await appointmentDA.masterReport(body);
+            let result = await appointmentBAObj.masterReportBA(body);
             let sendObj = {
                 metaData: {
                 page: result[0].metadata.length > 0 ? result[0].metadata[0].page : 1,
@@ -1783,7 +1778,7 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            let result = await appointmentDA.masterReportDownload(body);
+            let result = await appointmentBAObj.masterReportDownloadBA(body);
             let sendObj = {
                 metaData: {
                 total:
@@ -1804,7 +1799,7 @@ class appointment{
             if( error ) {
                 throw Boom.badData(error.message);
             }
-            let result = await appointmentDA.statusCaseStudy(body);
+            let result = await appointmentBAObj.statusCaseStudyBA(body);
             res.status(200).send({ status: true, data: result });
         } catch(e) {
             next(e);
@@ -1814,7 +1809,7 @@ class appointment{
     async getApptDocs(req, res, next) {
         try {
             const { page, limit, searchKey, fromDate, toDate, docId, roleId} = req.query;
-            const getApptsDocs = await appointmentDA.getApptListDocs(
+            const getApptsDocs = await appointmentBAObj.getApptListDocsBA(
                 page, limit, searchKey, fromDate, toDate, docId, roleId
             );
             res.status(200).send({ status: true, data: getApptsDocs });
@@ -1830,7 +1825,7 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            let result = await appointmentDA.patientReport(body);
+            let result = await appointmentBAObj.patientReportBA(body);
             let sendObj = {
                 metaData: {
                 page: result[0].metadata.length > 0 ? result[0].metadata[0].page : 1,
@@ -1852,7 +1847,7 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            let result = await appointmentDA.patientReportDownload(body);
+            let result = await appointmentBAObj.patientReportDownloadBA(body);
             let sendObj = {
                 metaData: {
                 total:
@@ -1873,7 +1868,7 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            let result = await appointmentDA.appointmentReport(body);
+            let result = await appointmentBAObj.appointmentReportBA(body);
             let sendObj = {
                 metaData: {
                 page: result[0].metadata.length > 0 ? result[0].metadata[0].page : 1,
@@ -1895,7 +1890,7 @@ class appointment{
             if (error) {
                 throw Boom.badData(error.message);
             }
-            let result = await appointmentDA.appointmentReportDowanload(body);
+            let result = await appointmentBAObj.appointmentReportDowanloadBA(body);
             let sendObj = {
                 metaData: {
                 total:
@@ -2045,7 +2040,7 @@ class appointment{
         try{
             let body = req.body
             console.log("------body----",body)
-            let existingApptId = await appointmentDA.getApptId();
+            let existingApptId = await appointmentBAObj.getApptIdBA();
             let newApptId = "HAF01" ;
 
             if (existingApptId.length > 0) {
@@ -2063,7 +2058,7 @@ class appointment{
                 console.log('New Appointment Number:', newApptId);
             }
             let createdOn = moment().format();
-            let insertDetails = await appointmentDA.apptFormPtDetailsDA(body, newApptId, createdOn)
+            let insertDetails = await appointmentBAObj.apptFormPtDetailsBA(body, newApptId, createdOn)
             console.log("----------",insertDetails)
             emailSender.sendApptFormPtDetailsToAdmin( insertDetails.name,
                 insertDetails.age, insertDetails.phoneNo, insertDetails.whatsAppNo,
@@ -2101,7 +2096,7 @@ class appointment{
         try {
             let body = req.body
 
-            let existingId = await appointmentDA.getContactUsId();
+            let existingId = await appointmentBAObj.getContactUsIdBA();
             let newId = "HCU01" ;
 
             if (existingId.length > 0) {
@@ -2121,7 +2116,7 @@ class appointment{
                 console.log('New Appointment Number:', newId);
             }
             let createdOn = moment().format();
-            let insertDetails = await appointmentDA.webContactUsFormDA(body, newId, createdOn)
+            let insertDetails = await appointmentBAObj.webContactUsFormBA(body, newId, createdOn)
             emailSender.sendContactUsInfoToAdmin( insertDetails.name, insertDetails.emailId,
                 insertDetails.phoneNo, insertDetails.city, insertDetails.comment,
                 insertDetails.contactId )
@@ -2149,7 +2144,7 @@ class appointment{
         try {
             let body = req.body
 
-            let existingId = await appointmentDA.getCorporateId();
+            let existingId = await appointmentBAObj.getCorporateIdBA();
             let newId = "HCO01" ;
 
             if (existingId.length > 0) {
@@ -2166,7 +2161,7 @@ class appointment{
                 console.log('New Appointment Number:', newId);
             }
             let createdOn = moment().format();
-            let insertDetails = await appointmentDA.webCorporateFormDA(body, newId, createdOn)
+            let insertDetails = await appointmentBAObj.webCorporateFormBA(body, newId, createdOn)
             emailSender.sendCorporateInfoToAdmin( insertDetails.name, insertDetails.workEmail,
                 insertDetails.phoneNo, insertDetails.companyName, insertDetails.companySize,
                 insertDetails.prefferedDate, insertDetails.street, insertDetails.city,
@@ -2196,7 +2191,7 @@ class appointment{
         try {
             let body = req.body
 
-            let existingId = await appointmentDA.getOfferId();
+            let existingId = await appointmentBAObj.getOfferIdBA();
             let newId = "HOF01" ;
 
             if (existingId.length > 0) {
@@ -2213,7 +2208,7 @@ class appointment{
                 console.log('New Appointment Number:', newId);
             }
             let createdOn = moment().format();
-            let insertDetails = await appointmentDA.webOfferFormDA(body, newId, createdOn)
+            let insertDetails = await appointmentBAObj.webOfferFormBA(body, newId, createdOn)
             emailSender.sendOfferFormPtDetailsToAdmin( insertDetails.name, insertDetails.emailId,
                 insertDetails.phoneNo, insertDetails.state, insertDetails.couponCode,
                 insertDetails.offerId)
@@ -2245,7 +2240,7 @@ class appointment{
             if(error) {
                 throw Boom.badData(error.message);
             }
-            let data = await appointmentDA.homeCountDataDA(body);
+            let data = await appointmentBAObj.homeCountDataBA(body);
             res.status(200).send({ status: true, message: "Successfully Recieved Data"});
         } catch(e) {
             next(e);
@@ -2254,7 +2249,7 @@ class appointment{
 
     async getHomeCountData(req, res, next) {
         try {
-            let data = await appointmentDA.getHomeCountData();
+            let data = await appointmentBAObj.getHomeCountDataBA();
             res.status(200).send({ status: true, data: data });
         } catch(e) {
             next(e);

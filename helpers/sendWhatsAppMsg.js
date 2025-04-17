@@ -256,6 +256,59 @@ class whatsApp {
             }
     };
 
+    async contactUsForm(name, phoneNo, emailId, city, comment, contactId) {
+            try {
+                name = name || "NA";
+                phoneNo = phoneNo || "NA";
+                emailId = emailId || "NA";
+                city = city || "NA";
+                comment = comment || "NA";
+                contactId = contactId || "NA";
+
+                const response = await axios({
+                    url: 'https://api.ownchat.app/apis/v1/chat/send-message',
+                    method: 'post',
+                    headers: {
+                        'OWNCHAT-API-KEY': `${process.env.OWNCHAT_API_KEY}`,
+                        'OWNCHAT-API-SECRET' : `${process.env.OWNCHAT_API_SECRET}`,
+                        'Content-Type': 'application/json'
+                    },
+
+                    data: JSON.stringify(
+                        {
+                            "messaging_product": "whatsapp",
+                            "recipient_type": "individual",
+                            "recipient_name": "Dear",
+                            "to": `${process.env.WhatsApp_Default_Mobile}`,
+                            "type": "template",
+                            "template": {
+                                "name": "contact_us",
+                                "language": {
+                                    "code": "en_US"
+                                },
+                                "components": [
+                                    {
+                                        "type": "body",
+                                        "parameters": [
+                                            { "type": "text", "text": name },
+                                            { "type": "text", "text": phoneNo },
+                                            { "type": "text", "text": emailId },
+                                            { "type": "text", "text": city },
+                                            { "type": "text", "text": comment },
+                                            { "type": "text", "text": contactId }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    )
+                })
+                return response.data;
+            } catch(e) {
+                console.error('API Request Error:', e.response?.data || e.message);
+            }
+    };
+
 };
 
 module.exports = new whatsApp();

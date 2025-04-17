@@ -2043,27 +2043,24 @@ class appointment{
             let newApptId = "HAF01";
 
             if (existingApptId.length > 0) {
-            const apptId = existingApptId.map(item => item.formId).filter(Boolean);
-            const existingApptIds = apptId
-                .map(id => {
-                const match = id.match(/^([A-Z]+)(\d+)$/);
-                if (match) {
-                    return {
-                        prefix: match[1],
-                        count: parseInt(match[2], 10)
-                    };
+                const apptId = existingApptId.map(item => item.formId).filter(Boolean);
+                const existingApptIds = apptId.map(id => {
+                    const match = id.match(/^([A-Z]+)(\d+)$/);
+                    if (match) {
+                        return {
+                            prefix: match[1],
+                            count: parseInt(match[2], 10)
+                        };
+                    }
+                    return null;
+                }).filter(Boolean);
+                if (existingApptIds.length > 0) {
+                    const maxCount = Math.max(...existingApptIds.map(item => item.count));
+                    const newCount = maxCount + 1;
+                    const newCountFormatted = newCount.toString().padStart(2, '0');
+                    const prefix = existingApptIds[0].prefix;
+                    newApptId = `${prefix}${newCountFormatted}`;
                 }
-                return null;
-                })
-                .filter(Boolean);
-
-            if (existingApptIds.length > 0) {
-                const maxCount = Math.max(...existingApptIds.map(item => item.count));
-                const newCount = maxCount + 1;
-                const newCountFormatted = newCount.toString().padStart(2, '0');
-                const prefix = existingApptIds[0].prefix;
-                newApptId = `${prefix}${newCountFormatted}`;
-            }
             }
 
             console.log('New Appointment Number:', newApptId);
@@ -2091,23 +2088,6 @@ class appointment{
                 );
                 console.log("-----whatsAppMsg----",whatsAppMsg);
             }
-            
-            // let send = await whatsApp.sendWhatsAppMsgToAdmin( insertDetails.name,
-            //     insertDetails.age, insertDetails.phoneNo, insertDetails.whatsAppNo,
-            //     insertDetails.emailId, insertDetails.gender, insertDetails.state, 
-            //     insertDetails.consultationType, insertDetails.message, 
-            //     insertDetails.branch, insertDetails.formId );
-
-            // sms need to check templete error
-            // let messageAdmin = await sendSMS.onlinePtFormToAdmin(
-            //   insertDetails.name, insertDetails.age, insertDetails.phoneNo, 
-            //   insertDetails.whatsAppNo, insertDetails.emailId, insertDetails.gender,
-            //   insertDetails.state, insertDetails.consultationType, insertDetails.message, insertedDetails.branch );
-
-            // console.log("---------",messageAdmin)
-            
-            // whatsApp messages need to be intergrate
-
         res.status(200).send({ status: true, message: "Successfully Submited"});
         } catch(e) {
             next(e);
@@ -2124,16 +2104,12 @@ class appointment{
             if (existingId.length > 0) {
                 const exid = existingId.map(item => item.contactId);
                 const existingIds = exid.map(id => ({
-                    prefix: id.substring(0, 3),  // Extract the prefix part
-                    count: parseInt(id.substring(3), 10)  // Extract and convert the count part to an integer
+                    prefix: id.substring(0, 3),  
+                    count: parseInt(id.substring(3), 10)
                 }));
-                // Find the maximum count
                 const maxCount = Math.max(...existingIds.map(item => item.count));
-                // Increment the count
                 const newCount = maxCount + 1;
-                // Format the new count to match the original format (assuming 2 digits)
                 const newCountFormatted = newCount.toString().padStart(2, '0');
-                // Use the prefix from the first item (assuming all prefixes are the same)
                 newId = `${existingIds[0].prefix}${newCountFormatted}`;
                 console.log('New Appointment Number:', newId);
             }
@@ -2142,20 +2118,17 @@ class appointment{
             emailSender.sendContactUsInfoToAdmin( insertDetails.name, insertDetails.emailId,
                 insertDetails.phoneNo, insertDetails.city, insertDetails.comment,
                 insertDetails.contactId )
- 
+            
             if (insertDetails.emailId !== null) {
                 emailSender.sendMailToContactUs(insertDetails.name, insertDetails.emailId, insertDetails.contactId)
             }
-            // sms need to check templete error
-            // let messageAdmin = await sendSMS.onlinePtFormToAdmin(
-            //   insertDetails.name, insertDetails.age, insertDetails.phoneNo, 
-            //   insertDetails.whatsAppNo, insertDetails.emailId, insertDetails.gender,
-            //   insertDetails.state, insertDetails.consultationType, insertDetails.message, insertedDetails.branch );
 
-            // console.log("---------",messageAdmin)
-            
-            // whatsApp messages need to be intergrate
-
+            if (insertDetails.phoneNo) {
+                let whatsAppMsg = await whatsApp.contactUsForm( insertDetails.name, insertDetails.phoneNo,
+                    insertDetails.emailId, insertDetails.city, insertDetails.comment, insertDetails.contactId
+                );
+                console.log("-----whatsAppMsg----",whatsAppMsg);
+            }
             res.status(200).send({ status: true, message: "Successfully Submited"});
         } catch(e) {
             next(e);

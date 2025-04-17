@@ -2102,8 +2102,8 @@ class appointment{
             let newId = "HCU01" ;
 
             if (existingId.length > 0) {
-                const apptId = existingId.map(item => item.contactId).filter(Boolean);
-                const existingApptIds = apptId.map(id => {
+                const conId = existingId.map(item => item.contactId).filter(Boolean);
+                const existingApptIds = conId.map(id => {
                     const match = id.match(/^([A-Z]+)(\d+)$/);
                     if (match) {
                         return {
@@ -2149,33 +2149,52 @@ class appointment{
     async webCorporateForm(req, res, next) {
         try {
             let body = req.body
-
             let existingId = await appointmentBAObj.getCorporateIdBA();
             let newId = "HCO01" ;
 
             if (existingId.length > 0) {
-                const exid = existingId.map(item => item.corporateId);
-                const existingIds = exid.map(id => ({
-                    prefix: id.substring(0, 3),  
-                    count: parseInt(id.substring(3), 10) 
-                }));
-
-                const maxCount = Math.max(...existingIds.map(item => item.count));
-                const newCount = maxCount + 1;
-                const newCountFormatted = newCount.toString().padStart(2, '0');
-                newId = `${existingIds[0].prefix}${newCountFormatted}`;
-                console.log('New Appointment Number:', newId);
+                const copId = existingId.map(item => item.corporateId).filter(Boolean);
+                const existingApptIds = copId.map(id => {
+                    const match = id.match(/^([A-Z]+)(\d+)$/);
+                    if (match) {
+                        return {
+                            prefix: match[1],
+                            count: parseInt(match[2], 10)
+                        };
+                    }
+                    return null;
+                }).filter(Boolean);
+                if (existingApptIds.length > 0) {
+                    const maxCount = Math.max(...existingApptIds.map(item => item.count));
+                    const newCount = maxCount + 1;
+                    const newCountFormatted = newCount.toString().padStart(2, '0');
+                    const prefix = existingApptIds[0].prefix;
+                    newId = `${prefix}${newCountFormatted}`;
+                }
             }
+
+            console.log('New Appointment Number:', newId);
             let createdOn = moment().format();
-            let insertDetails = await appointmentBAObj.webCorporateFormBA(body, newId, createdOn)
+
+            let insertDetails = await appointmentBAObj.webCorporateFormBA(body, newId, createdOn);
+
             emailSender.sendCorporateInfoToAdmin( insertDetails.name, insertDetails.workEmail,
                 insertDetails.phoneNo, insertDetails.companyName, insertDetails.companySize,
                 insertDetails.prefferedDate, insertDetails.street, insertDetails.city,
                 insertDetails.state, insertDetails.zipcode, insertDetails.corporateId )
 
             if (insertDetails.emailId !== null) {
-                emailSender.sendMailToCorporate(
-                    insertDetails.name, insertDetails.workEmail, insertDetails.companyName, insertDetails.corporateId)
+                emailSender.sendMailToCorporate(insertDetails.name, insertDetails.workEmail, 
+                insertDetails.companyName, insertDetails.corporateId);
+            }
+            
+            if (insertDetails.phoneNo) {
+                let whatsAppMsg = await whatsApp.corporateForm( insertDetails.name,insertDetails.phoneNo,
+                    insertDetails.workEmail, insertDetails.companyName, insertDetails.companySize,
+                    insertDetails.prefferedDate, insertDetails.street, insertDetails.city,
+                    insertDetails.state, insertDetails.zipcode, insertDetails.corporateId
+                );
+                console.log("-----whatsAppMsg----",whatsAppMsg);
             }
 
             res.status(200).send({ status: true, message: "Successfully Submited"});

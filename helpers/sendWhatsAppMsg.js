@@ -309,6 +309,70 @@ class whatsApp {
             }
     };
 
+    async corporateForm(name, phoneNo, workEmail, companyName, companySize,
+        prefferedDate, street, city, state, zipcode, corporateId) {
+            try {
+                name = name || "NA";
+                phoneNo = phoneNo || "NA";
+                workEmail = workEmail || "NA";
+                companyName = companyName || "NA";
+                companySize = companySize || "NA";
+                prefferedDate = prefferedDate || "NA";
+                street = street || "NA";
+                city = city || "NA";
+                state = state || "NA";
+                zipcode = zipcode || "NA";
+                corporateId = corporateId || "NA";
+
+                const response = await axios({
+                    url: 'https://api.ownchat.app/apis/v1/chat/send-message',
+                    method: 'post',
+                    headers: {
+                        'OWNCHAT-API-KEY': `${process.env.OWNCHAT_API_KEY}`,
+                        'OWNCHAT-API-SECRET' : `${process.env.OWNCHAT_API_SECRET}`,
+                        'Content-Type': 'application/json'
+                    },
+
+                    data: JSON.stringify(
+                        {
+                            "messaging_product": "whatsapp",
+                            "recipient_type": "individual",
+                            "recipient_name": "Dear",
+                            "to": `${process.env.WhatsApp_Default_Mobile}`,
+                            "type": "template",
+                            "template": {
+                                "name": "corporate_form",
+                                "language": {
+                                    "code": "en_US"
+                                },
+                                "components": [
+                                    {
+                                        "type": "body",
+                                        "parameters": [
+                                            { "type": "text", "text": name },
+                                            { "type": "text", "text": phoneNo },
+                                            { "type": "text", "text": workEmail },
+                                            { "type": "text", "text": companyName },
+                                            { "type": "text", "text": companySize },
+                                            { "type": "text", "text": prefferedDate },
+                                            { "type": "text", "text": street },
+                                            { "type": "text", "text": city },
+                                            { "type": "text", "text": state },
+                                            { "type": "text", "text": zipcode },
+                                            { "type": "text", "text": corporateId }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    )
+                })
+                return response.data;
+            } catch(e) {
+                console.error('API Request Error:', e.response?.data || e.message);
+            }
+    };
+
 };
 
 module.exports = new whatsApp();

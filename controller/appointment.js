@@ -2102,19 +2102,30 @@ class appointment{
             let newId = "HCU01" ;
 
             if (existingId.length > 0) {
-                const exid = existingId.map(item => item.contactId);
-                const existingIds = exid.map(id => ({
-                    prefix: id.substring(0, 3),  
-                    count: parseInt(id.substring(3), 10)
-                }));
-                const maxCount = Math.max(...existingIds.map(item => item.count));
-                const newCount = maxCount + 1;
-                const newCountFormatted = newCount.toString().padStart(2, '0');
-                newId = `${existingIds[0].prefix}${newCountFormatted}`;
-                console.log('New Appointment Number:', newId);
+                const apptId = existingId.map(item => item.formId).filter(Boolean);
+                const existingApptIds = apptId.map(id => {
+                    const match = id.match(/^([A-Z]+)(\d+)$/);
+                    if (match) {
+                        return {
+                            prefix: match[1],
+                            count: parseInt(match[2], 10)
+                        };
+                    }
+                    return null;
+                }).filter(Boolean);
+                if (existingApptIds.length > 0) {
+                    const maxCount = Math.max(...existingApptIds.map(item => item.count));
+                    const newCount = maxCount + 1;
+                    const newCountFormatted = newCount.toString().padStart(2, '0');
+                    const prefix = existingApptIds[0].prefix;
+                    newId = `${prefix}${newCountFormatted}`;
+                }
             }
+
+            console.log('New Appointment Number:', newId);
             let createdOn = moment().format();
-            let insertDetails = await appointmentBAObj.webContactUsFormBA(body, newId, createdOn)
+            let insertDetails = await appointmentBAObj.webContactUsFormBA(body, newId, createdOn);
+
             emailSender.sendContactUsInfoToAdmin( insertDetails.name, insertDetails.emailId,
                 insertDetails.phoneNo, insertDetails.city, insertDetails.comment,
                 insertDetails.contactId )
@@ -2166,15 +2177,6 @@ class appointment{
                 emailSender.sendMailToCorporate(
                     insertDetails.name, insertDetails.workEmail, insertDetails.companyName, insertDetails.corporateId)
             }
-            // sms need to check templete error
-            // let messageAdmin = await sendSMS.onlinePtFormToAdmin(
-            //   insertDetails.name, insertDetails.age, insertDetails.phoneNo, 
-            //   insertDetails.whatsAppNo, insertDetails.emailId, insertDetails.gender,
-            //   insertDetails.state, insertDetails.consultationType, insertDetails.message, insertedDetails.branch );
-
-            // console.log("---------",messageAdmin)
-            
-            // whatsApp messages need to be intergrate
 
             res.status(200).send({ status: true, message: "Successfully Submited"});
         } catch(e) {
@@ -2212,17 +2214,8 @@ class appointment{
                 emailSender.sendMailToFormPatient(
                     insertDetails.name, insertDetails.emailId, insertDetails.offerId)
             }
-            // sms need to check templete error
-            // let messageAdmin = await sendSMS.onlinePtFormToAdmin(
-            //   insertDetails.name, insertDetails.age, insertDetails.phoneNo, 
-            //   insertDetails.whatsAppNo, insertDetails.emailId, insertDetails.gender,
-            //   insertDetails.state, insertDetails.consultationType, insertDetails.message, insertedDetails.branch );
 
-            // console.log("---------",messageAdmin)
-            
-            // whatsApp messages need to be intergrate
-
-        res.status(200).send({ status: true, message: "Successfully Submited"});
+            res.status(200).send({ status: true, message: "Successfully Submited"});
         } catch(e) {
             next(e);
         }

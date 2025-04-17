@@ -2102,7 +2102,7 @@ class appointment{
             let newId = "HCU01" ;
 
             if (existingId.length > 0) {
-                const apptId = existingId.map(item => item.formId).filter(Boolean);
+                const apptId = existingId.map(item => item.contactId).filter(Boolean);
                 const existingApptIds = apptId.map(id => {
                     const match = id.match(/^([A-Z]+)(\d+)$/);
                     if (match) {

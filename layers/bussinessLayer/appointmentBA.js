@@ -341,8 +341,8 @@ class appointmentBA {
         return await appointmentDAObj.apptFormPtDetailsDA(data, newApptId, createdOn);
     };
 
-    async webContactUsFormBA(data) {
-        return await appointmentDAObj.webContactUsFormDA(data);
+    async webContactUsFormBA(data, newId, createdOn) {
+        return await appointmentDAObj.webContactUsFormDA(data, newId, createdOn);
     };
 
     async getCorporateIdBA() {

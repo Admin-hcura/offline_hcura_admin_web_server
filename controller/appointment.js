@@ -2037,7 +2037,7 @@ class appointment{
     // new Website APPT Form
     
     async apptFormPtDetails(req, res, next) {
-        try{
+        try {
             let body = req.body
             let existingApptId = await appointmentBAObj.getApptIdBA();
             let newApptId = "HAF01";
@@ -2079,16 +2079,19 @@ class appointment{
                     insertDetails.emailId, insertDetails.formId)
             }
 
+            let whatsAppMsg = await whatsApp.appointmentForm( insertDetails.name, insertDetails.age, 
+                insertDetails.phoneNo, insertDetails.whatsAppNo, insertDetails.emailId, insertDetails.gender,
+                insertDetails.state, insertDetails.consultationType, insertDetails.concern,
+                insertDetails.branch, insertDetails.message, insertDetails.formId 
+            );
+            console.log("-----whatsAppMsg----",whatsAppMsg);
+
             if (insertDetails.whatsAppNo || insertDetails.phoneNo) {
-                let whatsAppMsg = await whatsApp.appointmentForm( insertDetails.name,
-                    insertDetails.age, insertDetails.phoneNo, insertDetails.whatsAppNo,
-                    insertDetails.emailId, insertDetails.gender, insertDetails.state,
-                    insertDetails.consultationType, insertDetails.concern, insertDetails.branch,
-                    insertDetails.message, insertDetails.formId 
-                );
-                console.log("-----whatsAppMsg----",whatsAppMsg);
+                let greetingMsg = await whatsApp.greetings( insertDetails.name, insertDetails.phoneNo);
+                console.log("-----whatsAppMsg----",greetingMsg);
             }
-        res.status(200).send({ status: true, message: "Successfully Submited"});
+
+            res.status(200).send({ status: true, message: "Successfully Submited"});
         } catch(e) {
             next(e);
         }
@@ -2127,19 +2130,22 @@ class appointment{
             let insertDetails = await appointmentBAObj.webContactUsFormBA(body, newId, createdOn);
 
             emailSender.sendContactUsInfoToAdmin( insertDetails.name, insertDetails.emailId,
-                insertDetails.phoneNo, insertDetails.city, insertDetails.comment,
-                insertDetails.contactId )
+                insertDetails.phoneNo, insertDetails.city, insertDetails.comment, insertDetails.contactId )
             
             if (insertDetails.emailId !== null) {
                 emailSender.sendMailToContactUs(insertDetails.name, insertDetails.emailId, insertDetails.contactId)
             }
 
+            let whatsAppMsg = await whatsApp.contactUsForm( insertDetails.name, insertDetails.phoneNo,
+                insertDetails.emailId, insertDetails.city, insertDetails.comment, insertDetails.contactId
+            );
+            console.log("-----whatsAppMsg----",whatsAppMsg);
+
             if (insertDetails.phoneNo) {
-                let whatsAppMsg = await whatsApp.contactUsForm( insertDetails.name, insertDetails.phoneNo,
-                    insertDetails.emailId, insertDetails.city, insertDetails.comment, insertDetails.contactId
-                );
-                console.log("-----whatsAppMsg----",whatsAppMsg);
+                let greetingMsg = await whatsApp.greetings( insertDetails.name, insertDetails.phoneNo);
+                console.log("-----whatsAppMsg----",greetingMsg);
             }
+
             res.status(200).send({ status: true, message: "Successfully Submited"});
         } catch(e) {
             next(e);
@@ -2188,13 +2194,16 @@ class appointment{
                 insertDetails.companyName, insertDetails.corporateId);
             }
             
+            let whatsAppMsg = await whatsApp.corporateForm( insertDetails.name,insertDetails.phoneNo,
+                insertDetails.workEmail, insertDetails.companyName, insertDetails.companySize,
+                insertDetails.prefferedDate, insertDetails.street, insertDetails.city,
+                insertDetails.state, insertDetails.zipcode, insertDetails.corporateId
+            );
+            console.log("-----whatsAppMsg----",whatsAppMsg);
+
             if (insertDetails.phoneNo) {
-                let whatsAppMsg = await whatsApp.corporateForm( insertDetails.name,insertDetails.phoneNo,
-                    insertDetails.workEmail, insertDetails.companyName, insertDetails.companySize,
-                    insertDetails.prefferedDate, insertDetails.street, insertDetails.city,
-                    insertDetails.state, insertDetails.zipcode, insertDetails.corporateId
-                );
-                console.log("-----whatsAppMsg----",whatsAppMsg);
+                let greetingMsg = await whatsApp.greetings( insertDetails.name, insertDetails.phoneNo);
+                console.log("-----whatsAppMsg----",greetingMsg);
             }
 
             res.status(200).send({ status: true, message: "Successfully Submited"});
@@ -2211,27 +2220,46 @@ class appointment{
             let newId = "HOF01" ;
 
             if (existingId.length > 0) {
-                const exid = existingId.map(item => item.offerId);
-                const existingIds = exid.map(id => ({
-                    prefix: id.substring(0, 3),  
-                    count: parseInt(id.substring(3), 10)  
-                }));
-                const maxCount = Math.max(...existingIds.map(item => item.count));
-
-                const newCount = maxCount + 1;
-                const newCountFormatted = newCount.toString().padStart(2, '0');
-                newId = `${existingIds[0].prefix}${newCountFormatted}`;
-                console.log('New Appointment Number:', newId);
+                const wofId = existingId.map(item => item.offerId).filter(Boolean);
+                const existingApptIds = wofId.map(id => {
+                    const match = id.match(/^([A-Z]+)(\d+)$/);
+                    if (match) {
+                        return {
+                            prefix: match[1],
+                            count: parseInt(match[2], 10)
+                        };
+                    }
+                    return null;
+                }).filter(Boolean);
+                if (existingApptIds.length > 0) {
+                    const maxCount = Math.max(...existingApptIds.map(item => item.count));
+                    const newCount = maxCount + 1;
+                    const newCountFormatted = newCount.toString().padStart(2, '0');
+                    const prefix = existingApptIds[0].prefix;
+                    newId = `${prefix}${newCountFormatted}`;
+                }
             }
+
+            console.log('New Appointment Number:', newId);
             let createdOn = moment().format();
-            let insertDetails = await appointmentBAObj.webOfferFormBA(body, newId, createdOn)
+            let insertDetails = await appointmentBAObj.webOfferFormBA(body, newId, createdOn);
+            
             emailSender.sendOfferFormPtDetailsToAdmin( insertDetails.name, insertDetails.emailId,
                 insertDetails.phoneNo, insertDetails.state, insertDetails.couponCode,
                 insertDetails.offerId)
 
             if (insertDetails.emailId !== null) {
-                emailSender.sendMailToFormPatient(
-                    insertDetails.name, insertDetails.emailId, insertDetails.offerId)
+                emailSender.sendMailToFormPatient(insertDetails.name, insertDetails.emailId, insertDetails.offerId)
+            }
+
+            let whatsAppMsg = await whatsApp.webOfferForm( insertDetails.name,insertDetails.emailId,
+                insertDetails.phoneNo, insertDetails.state, insertDetails.couponCode, insertDetails.offerId
+            );
+            console.log("-----whatsAppMsg----",whatsAppMsg);
+
+            if (insertDetails.phoneNo) {
+                let greetingMsg = await whatsApp.greetings( insertDetails.name, insertDetails.phoneNo);
+                console.log("-----whatsAppMsg----",greetingMsg);
             }
 
             res.status(200).send({ status: true, message: "Successfully Submited"});

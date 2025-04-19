@@ -450,7 +450,7 @@ class whatsApp {
                 data: JSON.stringify({
                     "messaging_product": "whatsapp",
                     "recipient_type": "individual",
-                    "recipient_name": "Dear",
+                    "recipient_name": name,
                     "to": phoneNo,
                     "type": "template",
                     "template": {

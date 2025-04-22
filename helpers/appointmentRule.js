@@ -1,9 +1,7 @@
 const Joi = require("joi");
 const moment = require("moment-timezone");
-const { updateAppointmentStatus } = require("../controller/appointment");
 
 let now = moment().format("YYYY-MM-DD");
-
 
 exports.appointmentRule = Joi.object({
     patientId: Joi.string().required().error(new Error("Patient Id is required")),

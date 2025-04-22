@@ -1,9 +1,7 @@
 const { promisify, isNull } = require("util");
 const redisClient = require("../config/redisConfiguration");
 const Boom = require("@hapi/boom");
-// const multiparty = require("multiparty");
 const rule = require("../helpers/autthenticationRule");
-const authentationDAObj = require("../layers/dataLayer/authentationDA");
 const authentationBAObj = require("../layers/bussinessLayer/authentationBA");
 const appointmentBAObj = require("../layers/bussinessLayer/appointmentBA");
 const apiResponse = require("../helpers/apiResponse");
@@ -12,11 +10,9 @@ const ua_parser = require("ua-parser-js");
 const invoiceGenerator = require("../helpers/invoiceNoGenerater");
 const utilities = require("../helpers/utilities");
 const constants = require("../helpers/constants");
-const appointmentDA = require("../layers/dataLayer/appointmentDA");
 const htmlToPDF = require("../helpers/htmlToPDF");
 const sendSMS = require("../helpers/sendSMS");
 const moment = require("moment-timezone");
-const appointment = require("./appointment");
 const scheduler = require("../scheduler/scheduler");
 const schedulers = new scheduler();
 
@@ -749,27 +745,6 @@ class authentication {
 
 }
 
-// async function createAdminSession(response, res, userAgent) {
-//     response = JSON.parse(JSON.stringify(response));
-//     console.log("============response========",response);
-//     let sessionKey = response._id + "_session@" + Date.now();
-//     console.log("--------- sessionKey--------", sessionKey);
-//     let sessionId = await utilities.encryptSession(sessionKey);
-//     console.log("................sessionId.........",sessionId)
-//     response.sessionId = sessionId;
-//     sessionId = response._id + "_offline_admin_web@" + sessionId;
-//     console.log(";;;;;;;;;sessiodId;;;;;;;",sessionId)
-//     if (!redisClient.isReady) {
-//         await redisClient.connect();
-//     }
-//     await redisClient.set(
-//       response._id + "_offline_admin_web",
-//       JSON.stringify(response)
-//     );
-//   console.log("'''''''''''response.sessionId'''''''",response.sessionId)
-//     response.sessionId = sessionId;
-//     res.send({ success: true, data: response });
-// }
 async function createAdminSession(response, res, userAgent) {
   response = JSON.parse(JSON.stringify(response));
   let sessionKey = response._id + "_session@" + Date.now();    
@@ -799,6 +774,5 @@ async function createAdminSession(response, res, userAgent) {
   return response;
     // res.send({ success: true, data: response });
 };
-
 
 module.exports = new authentication();

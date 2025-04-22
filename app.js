@@ -15,18 +15,11 @@ let scheduler = require("./scheduler/scheduler");
 let schedulerObj = new scheduler();
 
 const routingV1 = require("./routes");
-// const redisClient = require("./config/redisConfiguration");
-
 const port = 7001;
-
-// mongoose.set("useNewUrlParser", true);
-// mongoose.set("useFindAndModify", false);
-// mongoose.set("useCreateIndex", true);
-
 const app = express();
 
 async function connectMongo() {
-  try{
+  try {
     await mongoose.connect(
       process.env.MONGO_URI,
       {
@@ -36,11 +29,11 @@ async function connectMongo() {
       }
     );
     console.log('MongoDB connected successfully')
-  } catch(e){
+  } catch(e) {
     console.log('Error While connecting MongoDB')
   }
   
-  try{
+  try {
     let mongoScheduler = new MSM(process.env.MONGO_URI, {});
     mongoScheduler.on("error", function (e) {
     console.log("-------->error", e);
@@ -48,15 +41,15 @@ async function connectMongo() {
     mongoScheduler.on(
       "changeisActiveStatus", 
       async function(details, event){
-        if(new Date(details.data.endDate) < new Date()){
+        if(new Date(details.data.endDate) < new Date()) {
           await appointmentDA.changeisActivePackage(details.data._id)
         }
     });
     schedulerObj.startScheduler(mongoScheduler);
     console.log('Scheduler is Active');
-  } catch(e){
+  } catch(e) {
       console.log('Scheduler is ERROR');
-    }
+  }
 }
 connectMongo();
 

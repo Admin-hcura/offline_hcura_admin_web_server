@@ -1,8 +1,6 @@
 const redisClient = require("../config/redisConfiguration");
 const { promisify } = require("util");
-const redisGet = promisify(redisClient.get).bind(redisClient);
 const Boom = require("@hapi/boom");
-const rule = require("../helpers/autthenticationRule");
 const apiResponse = require("../helpers/apiResponse");
 
 class sessionValidator {
@@ -32,8 +30,6 @@ class sessionValidator {
 }
 
 function getUserIdFromSessionId(sessionId) {
-  // The sessionId is in the format userId_offline_admin_web@encryptedSessionId
-  // Split the sessionId by "_offline_admin_web@"
     let parts = sessionId.split("_offline_admin_web@");
     if (parts.length > 0) {
         return parts[0];
@@ -46,10 +42,9 @@ function getSessionPartFromSessionId(sessionId) {
     if (!sessionId) {
         throw new Error("Session ID is undefined or null");
     }
-    // Split the sessionId by "@" to get the parts
     let parts = sessionId.split("@");
     if (parts.length > 1) {
-        return parts[1]; // Return the part after the "@" which is the session part
+        return parts[1];
     } else {
         throw new Error("Invalid session ID format");
     }

@@ -1,5 +1,4 @@
 const axios = require('axios');
-const { model } = require('mongoose');
 const whatsapptoken = "EAARheJ4rHpUBO8gjkfI44tXe6gSAr4YveHKeSn41rcvUwzsxqfYnbQ4xZCbJ5ZCws9uKzX6yTR2wskTuYMNvsARVwfF8sfNAgcwucplZAbPkAA3ZBJAzogZCYAa5dkjQJ6QazONxwlhIiTbkTQ8jTUch3IuZCbC8tadObfL7fcAK3R8jT2Id4Q2CYZAuM2DKB5sFAZDZD"
 
 class whatsApp {

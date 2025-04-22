@@ -3,18 +3,14 @@ const moment = require("moment-timezone");
 const rule = require("../helpers/appointmentRule");
 const doctorRule = require("../helpers/doctorRule");
 const constants = require("../helpers/constants");
-const appointmentDA = require("../layers/dataLayer/appointmentDA");
 const appointmentBAObj = require("../layers/bussinessLayer/appointmentBA");
 const invoiceGenerator = require("../helpers/invoiceNoGenerater");
-const { startTime } = require("express-pino-logger");
 const htmlToPDF = require("../helpers/htmlToPDF");
 const emailSender = require("../helpers/emailSender");
 const paymentGateway = require("../helpers/paymentGateway");
-const { sourceModel, occupationModel } = require("../models/schema");
 const scheduler = require("../scheduler/scheduler");
 const schedulers = new scheduler();
 const apiResponse = require("../helpers/apiResponse");
-const authentationDA = require("../layers/dataLayer/authentationDA");
 const { ObjectId } = require('mongodb');
 const whatsApp = require("../helpers/sendWhatsAppMsg");
 const whatsapptoken = "EAARheJ4rHpUBOwKkzCdxPMZAwxgHpZCtmnfWZAt3lntXatTaBRCdxwPhGn23FJLhLmWLFmj15Ecvj1gKqahB2OemZBTPFXflTSHwegasszbNap5MYZCZCOqjqiKKjJzP1yEVHCciwDNI64RdUwbCmFlSAMsVjp5fmx3kMNL22OkLZA6Tnw5J72foDsKmtYraKXvJ3w0AGyR1Ijqb9Js6Sxc95fO67MT"
@@ -1960,81 +1956,6 @@ class appointment{
             next(e);
         }
     };
-
-    // async sendImageMessage(req, res, next) {
-    // const imageUrl = 'https://images.pexels.com/photos/674010/pexels-photo-674010.jpeg'; // Example image URL
-
-    // const messageData = {
-    //     messaging_product: 'whatsapp',
-    //     to: '917411845658', // Replace with the recipient's phone number
-    //     type: 'image',
-    //     image: {
-    //     link: imageUrl
-    //     }
-    // };
-
-    // try {
-    //     const response = await axios.post(
-    //     `https://graph.facebook.com/v21.0/428296813705977/messages`,
-    //     messageData,
-    //     {
-    //         headers: {
-    //         Authorization: `Bearer ${whatsapptoken}`,
-    //         'Content-Type': 'application/json'
-    //         }
-    //     }
-    //     );
-    //     console.log('Message sent successfully:', response.data);
-    //     res.status(200).send({ status: true, data: response.data });
-    // } catch (error) {
-    //     if (error.response) {
-    //     console.error('Error response:', error.response.data);
-    //     } else {
-    //     console.error('Error:', error.message);
-    //     }
-    // }
-    // };
-
-    // async sendPdfMessage(req, res, next) {
-    //     const pdfUrl = 'https://www.w3.org/WAI/WCAG21/quickref/WCAG21-QuickRef.pdf'; // Sample PDF URL
-    
-    //     const messageData = {
-    //     messaging_product: 'whatsapp',
-    //     to: '917411845658', // Replace with the recipient's phone number
-    //     type: 'document',
-    //     document: {
-    //         link: pdfUrl,        // The URL where the PDF file is hosted
-    //         filename: 'WCAG21-QuickRef.pdf'  // The name of the file as it will appear on the recipient's phone
-    //     }
-    //     };
-    
-    //     try {
-    //     const response = await axios.post(
-    //         `https://graph.facebook.com/v21.0/428296813705977/messages`,
-    //         messageData,
-    //         {
-    //         headers: {
-    //             Authorization: `Bearer ${whatsapptoken}`, // Use your WhatsApp API token here
-    //             'Content-Type': 'application/json'
-    //         }
-    //         }
-    //     );
-    //     console.log('PDF sent successfully:', response.data);
-    //     res.status(200).send({ status: true, data: response.data });
-    //     } catch (error) {
-    //     if (error.response) {
-    //         console.error('Error response:', error.response.data);
-    //         res.status(400).send({ status: false, error: error.response.data });
-    //     } else {
-    //         console.error('Error:', error.message);
-    //         res.status(400).send({ status: false, error: error.message });
-    //     }
-    //     }
-    // };
-  
-    // new website form filling data
-  
-    // new Website APPT Form
     
     async apptFormPtDetails(req, res, next) {
         try {

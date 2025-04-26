@@ -59,6 +59,7 @@ class authentication {
   async addAdmin(req, res, next) {
     try {
       let body = req.body
+      console.log("------body----",body)
       const { error } = rule.addAdminRule.validate(body);
       if (error) {
         throw Boom.badData(error.message);

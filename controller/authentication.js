@@ -63,11 +63,14 @@ class authentication {
       if (error) {
         throw Boom.badData(error.message);
       }
+      console.log("------body----",body)
       let adminExist = await authentationBAObj.adminExistBA(body.emailId, body.username, body.phoneNumber, body.EmpNumber);
+      console.log("------adminExist----",adminExist)
       if (adminExist){
         throw Boom.conflict(apiResponse.ServerErrors.error.admin_already_exist);
       } else {
         let response = await authentationBAObj.addAdminBA(body);
+        console.log("------response----",response)
         await emailSender.welcomeMail(
           response.emailId,
           response.username,

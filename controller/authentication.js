@@ -16,7 +16,6 @@ const moment = require("moment-timezone");
 const scheduler = require("../scheduler/scheduler");
 const schedulers = new scheduler();
 
-
 async function redisGet(key) {
   try {
     const value = await redisClient.get(key);
@@ -59,15 +58,19 @@ class authentication {
   async addAdmin(req, res, next) {
     try {
       let body = req.body
+
       const { error } = rule.addAdminRule.validate(body);
       if (error) {
         throw Boom.badData(error.message);
       }
+
       let adminExist = await authentationBAObj.adminExistBA(body.emailId, body.username, body.phoneNumber, body.EmpNumber);
+
       if (adminExist){
         throw Boom.conflict(apiResponse.ServerErrors.error.admin_already_exist);
       } else {
         let response = await authentationBAObj.addAdminBA(body);
+
         await emailSender.welcomeMail(
           response.emailId,
           response.username,

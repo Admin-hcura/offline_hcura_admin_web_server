@@ -14,7 +14,7 @@ Constants.MAIL_CONFIG = {
   host: "mail.gmail.com",
   auth: {
     user: "connect@h-cura.com",
-    pass: "Connect@2024#H",
+    pass: "xlbh fkkn mqap mgzh",
   },
   email: "connect@h-cura.com",
   invoiceEmail: "admin@h-cura.com",

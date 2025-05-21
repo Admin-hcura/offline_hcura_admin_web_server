@@ -3965,6 +3965,7 @@ class appointmentDA{
                   firstName: 1,
                   lastName: 1,
                   birthDate: 1,
+                  stateName: 1,
                   gender: 1,
                   emailId: 1,
                   phoneNumber: 1,

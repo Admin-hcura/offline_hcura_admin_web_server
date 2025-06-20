@@ -59,7 +59,7 @@ exports.patientRegRule = Joi.object({
     registeredBy: Joi.string().required().error(new Error("registeredBy Id is required")),
     branchId: Joi.string().required().error(new Error("branchId is required")),
     firstName: Joi.string().required().error(new Error("firstName is required")),
-    lastName: Joi.string().required().error(new Error("lastName is required")),
+    lastName: Joi.string().empty("").allow(null).default(null),
     birthDate: Joi.date().required().error(new Error("birtDate is required")),
     gender: Joi.string().required().error(new Error("Gender is required")),
     emailId: Joi.string().required().error(new Error("Email Id is required")),
@@ -88,6 +88,9 @@ exports.insertPackageRule = Joi.object({
     packageFor: Joi.string().required().error(new Error("packageFor type is required")),
     months: Joi.number().required().error(new Error("months is required")),
     amount: Joi.number().required().error(new Error("amount is required")),
+    gstAmount: Joi.number().required().error(new Error("gstAmount is required")),
+    amountWithoutGST : Joi.number().required().error(new Error("amountWithoutGST is required")),
+    isGstApplicable: Joi.boolean().required().error(new Error("isGstApplicable is required")),
     createdBy: Joi.string().required().error(new Error("createdBy Id is required")),
     installments: Joi.number().required().error(new Error("installments Id is required")),
 });

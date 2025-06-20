@@ -4,6 +4,8 @@ const adminModel = require("../../models/schema").adminModel;
 const patientModel = require("../../models/schema").patientModel;
 const timeModel = require("../../models/schema").timeModel;
 const dayModel = require("../../models/schema").dayModel;
+const appointmentForEstimationModel = require("../../models/schema").appointmentForEstimationModel;
+
 const mongoose = require("mongoose");
 const moment = require("moment-timezone");
 const bcrypt = require("bcrypt");
@@ -256,9 +258,18 @@ class authentationDA {
             throw e;
         }
     };
-
-    async adminLogoutDA(patientId) {
+    async getdoctorIdCodeDA(doctorId) {
         try {
+            console.log("_____doctorId______",doctorId)
+            let result = await appointmentModel.find({ doctorId: new mongoose.Types.ObjectId(doctorId) });
+            // console.log("result..........",result)
+            return result; // Returns an array of appointmentsF
+        } catch (e) {
+            throw e;
+        }
+    }    
+    async adminLogoutDA(patientId){
+        try{
             return await adminModel.updateOne(
                 { _id: patientId },
                 { $set: { fcmToken: "" } }
@@ -312,6 +323,9 @@ class authentationDA {
                 packageFor: body.packageFor,
                 months: body.months,
                 amount: body.amount,
+                gstAmount: body.gstAmount,
+                isGstApplicable : body.isGstApplicable,
+                amountWithoutGST: body.amountWithoutGST,
                 installments: body.installments,
                 createdBy: body.createdBy,
                 createdOn: new Date()

@@ -96,17 +96,33 @@ router.get("/get/package/homeopathy",
   sessionValidator.validateAdminSession,
   appointmentController.getPackageList
 );
-router.get("/get/package/asthetic",
+router.get("/get/package/skin",
   sessionValidator.validateAdminSession,
   appointmentController.getAstheticList
+);
+router.get("/get/package/hair",
+  sessionValidator.validateAdminSession,
+  appointmentController.getHairpackageList
+);
+router.get("/get/package/dental",
+  // sessionValidator.validateAdminSession,
+  appointmentController.getDentalpackageList
 );
 router.post("/payment/package",
   sessionValidator.validateAdminSession,
   appointmentController.packagePayment
 );
+router.post("/advance/payment",
+  // sessionValidator.validateAdminSession,
+  appointmentController.addAdvancePayment
+);
 router.post("/payment/asthetic",
   sessionValidator.validateAdminSession,
   appointmentController.paymentAsthetic
+);
+router.post("/payment/settled",
+  // sessionValidator.validateAdminSession,
+  appointmentController.settledPayment
 );
 router.post("/create/estimation",
   sessionValidator.validateAdminSession,
@@ -147,6 +163,55 @@ router.post("/get/dashboard/patient/details",
 router.get("/get/all/appointments",
   sessionValidator.validateAdminSession,
   appointmentController.getAllAppt
+);
+router.get("/get/all/appointments/for/estimation",
+  // sessionValidator.validateAdminSession,
+  appointmentController.getAllApptForEstimation
+);
+router.get("/get/all/estimation/details",
+  // sessionValidator.validateAdminSession,
+  appointmentController.getAllEstimations
+);
+router.get("/get/details/for/estimation",
+  // sessionValidator.validateAdminSession,
+  appointmentController.getdetailsForEstimation
+);
+router.post("/change/Status/of/estimation",
+  // sessionValidator.validateAdminSession,
+  appointmentController.changeEstimationStatus
+);
+router.get("/get/estimation/data",
+  // sessionValidator.validateAdminSession,
+  appointmentController.getEstimationData
+);
+router.get("/get/performance/data",
+  // sessionValidator.validateAdminSession,
+  appointmentController.getPerformanceData
+);
+router.get("/get/particular/performed/data",
+  // sessionValidator.validateAdminSession,
+  appointmentController.getParticularPerformedData
+);
+router.post("/performed/estimation/data",
+  // sessionValidator.validateAdminSession,
+  appointmentController.performedEstimationData
+);
+router.post("/update/paid/months",
+  // sessionValidator.validateAdminSession, // Uncomment if needed
+  appointmentController.updatePaidMonths
+);
+
+router.put("/update/performed/estimation/data",
+  // sessionValidator.validateAdminSession,
+  appointmentController.updateperformedEstimationData
+);
+router.get("/get/performedEstimatio/data",
+  // sessionValidator.validateAdminSession,
+  appointmentController.getperformedEstimationData
+);
+router.post("/debit/advance/amount",
+  // sessionValidator.validateAdminSession,
+  appointmentController.debitAdvanceAmount
 );
 router.post("/update/appointment/status",
   sessionValidator.validateAdminSession,

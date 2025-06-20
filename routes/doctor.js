@@ -11,10 +11,32 @@ router.post("/insert/casestudy/data",
   sessionValidator.validateAdminSession,
   appointmentController.insertCaseStudy
 );
+router.patch("/update/casestudy/data",
+  // sessionValidator.validateAdminSession,
+  appointmentController.updateCaseStudy
+);
 router.post("/insert/casestudy/suggestion/prescription",
   sessionValidator.validateAdminSession,
   appointmentController.insertCaseStudySuggestionPrescription
 );
+router.post("/insert/casestudy/for/aesthetics/data",
+  sessionValidator.validateAdminSession,
+  appointmentController.insertAestheticCaseStudy
+);
+router.patch("/update/aesthetic/casestudy/data",
+  // sessionValidator.validateAdminSession,
+  appointmentController.updateCaseStudyAesthetic
+);
+router.patch("/update/dental/casestudy/data",
+  // sessionValidator.validateAdminSession,
+  appointmentController.updateCaseStudyDental
+);
+ 
+router.post("/insert/casestudy/for/dental/data",
+  // sessionValidator.validateAdminSession,
+  appointmentController.insertDentalCaseStudy
+);
+ 
 router.post("/insert/prescription",
   sessionValidator.validateAdminSession,
   appointmentController.insertPrescription
@@ -30,6 +52,14 @@ router.post("/update/suggestion/prescription",
 router.post("/get/casestudy/details",
   sessionValidator.validateAdminSession,
   appointmentController.getCaseStudyDetails
+);
+router.post("/get/AestheticCasestudy/details",
+  sessionValidator.validateAdminSession,
+  appointmentController.getCaseStudyAestheticDetails
+);
+router.post("/get/DentalCasestudy/details",
+  // sessionValidator.validateAdminSession,
+  appointmentController.getCaseStudyDentalDetails
 );
 router.post("/update/prescription",
   sessionValidator.validateAdminSession,

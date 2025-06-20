@@ -15,7 +15,8 @@ const { ObjectId } = require('mongodb');
 const whatsApp = require("../helpers/sendWhatsAppMsg");
 const whatsapptoken = "EAARheJ4rHpUBOwKkzCdxPMZAwxgHpZCtmnfWZAt3lntXatTaBRCdxwPhGn23FJLhLmWLFmj15Ecvj1gKqahB2OemZBTPFXflTSHwegasszbNap5MYZCZCOqjqiKKjJzP1yEVHCciwDNI64RdUwbCmFlSAMsVjp5fmx3kMNL22OkLZA6Tnw5J72foDsKmtYraKXvJ3w0AGyR1Ijqb9Js6Sxc95fO67MT"
 const axios = require('axios');
-
+const mongoose = require("mongoose");  // ✅ Add this at the top
+ 
 class appointment{
     async bookAppointment(req, res, next) {
         try {
@@ -68,9 +69,10 @@ class appointment{
                 appointmentDate: appointmentDate,
                 startTime: body.startTime,
                 endTime: body.endTime,
-                symptoms: body.symptoms,
-                allegires: body.allegires,
-                consultationMode: body.consultationMode,
+                appointmentFor :body.appointmentFor,
+                // symptoms: body.symptoms,
+                // allegires: body.allegires,
+                // consultationMode: body.consultationMode,
                 consultationType: body.consultationType,
                 appointmentStatus: "SCHEDULED",
                 appointmentNumber: newAppointmentNumber,
@@ -303,32 +305,32 @@ class appointment{
                     let consultationfee = await appointmentBAObj.getAmountBA(appointmentDetails[0].consultationType);
                     console.log("_________consultationfee________",consultationfee);
                     console.log("****************",userInfo[0].patient)
-                    let pdfDetails = {
-                        invoiceNumber: updatePaymentReport.invoiceNumber,
-                        firstName: userInfo[0].patient.firstName,
-                        lastName: userInfo[0].patient.lastName,
-                        paidOn: updatePaymentDetails.paidOn,
-                        age: userInfo[0].patient.birthDate,
-                        gender: userInfo[0].patient.gender,
-                        docFirstName: userInfo[0].doctor.firstName,
-                        docLastName: userInfo[0].doctor.lastName,
-                        appointmentDate: appointmentDetails[0].appointmentDate,
-                        startTime: appointmentDetails[0].startTime,
-                        endTime: appointmentDetails[0].endTime,
-                        consultationfee: consultationfee.amount,
-                        serviceCharges: updatePaymentReport.serviceCharges,
-                        discount: updatePaymentReport.discount,
-                        GST: "0%", // needs to work on gst
-                        payableAmount: updatePaymentReport.payableAmount,
-                        paymentMethod: updatePaymentDetails.paymentMethod,
-                        hcuraId: userInfo[0].patient.hcuraId,
-                        branchPhoneNumber : branchCode.branchPhoneNumber,
-                        docQualification : userInfo[0].doctor.qualifaction,
-                        docRegstration : userInfo[0].doctor.registerationNumber
-                    }
-                    console.log(",,,,,,,,,,pdfDetails,,,,,,,,",pdfDetails)
-                    let file = await htmlToPDF.generateInvoiceForConsultation(pdfDetails);
-
+                let pdfDetails = {
+                    invoiceNumber: updatePaymentReport.invoiceNumber,
+                    firstName: userInfo[0].patient.firstName,
+                    lastName: userInfo[0].patient.lastName,
+                    paidOn: updatePaymentDetails.paidOn,
+                    age: userInfo[0].patient.birthDate,
+                    gender: userInfo[0].patient.gender,
+                    docFirstName: userInfo[0].doctor.firstName,
+                    docLastName: userInfo[0].doctor.lastName,
+                    appointmentDate: appointmentDetails[0].appointmentDate,
+                    startTime: appointmentDetails[0].startTime,
+                    endTime: appointmentDetails[0].endTime,
+                    consultationfee: consultationfee.amount,
+                    serviceCharges: updatePaymentReport.serviceCharges,
+                    discount: updatePaymentReport.discount,
+                    GST: "0%", // needs to work on gst
+                    payableAmount: updatePaymentReport.payableAmount,
+                    paymentMethod: updatePaymentDetails.paymentMethod,
+                    hcuraId: userInfo[0].patient.hcuraId,
+                    branchPhoneNumber : branchCode.branchPhoneNumber,
+                    docQualification : userInfo[0].doctor.qualifaction,
+                    docRegstration : userInfo[0].doctor.registerationNumber
+                } 
+                console.log(",,,,,,,,,,pdfDetails,,,,,,,,",pdfDetails)
+                let file = await htmlToPDF.generateInvoiceForConsultation(pdfDetails);
+                    // email to patient consultation invoice
                     emailSender.sendConsultationInvoiceEmail(
                         userInfo[0].patient.emailId,
                         file
@@ -720,9 +722,24 @@ class appointment{
             next(e);
         }
     };
-
-    async packagePayment(req, res, next) {
-        try {
+    async getHairpackageList(req, res, next){
+        try{
+            let result = await appointmentDA.getHairpackageList()
+            res.send({ success: true, data: result});
+        } catch(e){
+            next(e);
+        }
+    };
+     async getDentalpackageList(req, res, next){
+        try{
+            let result = await appointmentDA.getDentalpackageList()
+            res.send({ success: true, data: result});
+        } catch(e){
+            next(e);
+        }
+    };
+    async packagePayment(req, res, next){
+        try{
             let body = req.body
             console.log(".....body.......",body);
             const { error } = rule.paymenPackageRule.validate(body);
@@ -923,8 +940,38 @@ class appointment{
         }
     };
 
-    async paymentAsthetic(req, res, next) {
+    async addAdvancePayment(req, res, next) {
         try {
+            let body = req.body;
+            console.log("Received advance payment request:", body);
+    
+            // Validate request body using Joi
+            const { error } = rule.advancePaymentRule.validate(body);
+            if (error) {
+                throw Boom.badData(error.message);
+            }
+    
+            let paymentDetails = {
+                patientId: body.patientId,
+                totalAdvance: body.payableAmount,
+                paymentMode: body.paymentMode,
+                paymentDoneBy: body.paymentDoneBy,
+                shortUrl: body.shortUrl || null,
+                paymentRelationId: body.paymentRelationId || null,
+                paymentLinkId: body.paymentLinkId || null,
+                debitedAmount : 0
+            };
+    
+            let result = await appointmentDA.addAdvancePackagePaymentInfo(paymentDetails);
+            res.send(result);
+    
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async paymentAsthetic(req, res, next){
+        try{
             let body = req.body
             const { error } = rule.paymenPackageRule.validate(body);
             if (error) {
@@ -1148,8 +1195,159 @@ class appointment{
         }
     };
 
-    async insertEstimation(req, res, next) {
+ 
+  async settledPayment(req, res, next) {
+    try {
+      const body = req.body;
+//   let file;
+      // Step 1: Create payment record (like in old flow, but no appointmentId)
+      const paymentData = {
+        patientId: body.patientId,
+        doctorId: body.doctorId,
+        branchId: body.branchId,
+        packageId: body.packageId,
+        paymentDoneBy: body.paymentDoneBy,
+        paymentFor: body.paymentFor,
+        // remarks: body.remarks,
+        promoCodes: body.promoCodes || "",
+        payableAmount: body.payableAmount,
+        discount: body.discount || 0,
+        SGST: body.SGST || 0,
+        CGST: body.CGST || 0,
+        IGST: body.IGST || 0,
+        UGST: body.UGST || 0,
+        GSTAmount: body.GSTAmount || 0,
+        paymentMethod: body.paymentMethod || "cash",
+        paymentStatus: "PAID",
+        paidOn: body.paidOn || new Date(),
+        createdOn: body.createdOn || new Date(),
+        afterRemovingGST: body.afterRemovingGST,
+        phoneNumber: body.phoneNumber,
+        sessions: body.sessions || []  // ✅ Add this line
+      };
+  
+      console.log(paymentData,"paymentdataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+      // Add payment info (similar to the old flow)
+      const addPaymentInfo = await appointmentDA.addSettledPaymentInfo(paymentData);
+      console.log(addPaymentInfo._id,"@@@@@@@@@@@@@@@@@@@@")
+      const paymentId = addPaymentInfo._id;
+  
+      // Step 2: Generate invoice number and update payment record (same as old flow)
+      const branchDetails = await appointmentDA.branchCode(body.branchId);
+    //   const invoiceNumber = await invoiceGenerator.generateInvoiceNumber(branchDetails.branchCode);
+    let invoiceNumber;
+    if (
+      body.paymentFor &&
+      ["SKIN", "HAIR" ].includes(body.paymentFor.toUpperCase())
+    ) {
+      invoiceNumber = await invoiceGenerator.generateInvoiceNumberAsthetic(branchDetails.branchCode);
+    } else {
+      invoiceNumber = await invoiceGenerator.generateInvoiceNumber(branchDetails.branchCode);
+    }
+    
+ 
+       const paymentUpdateObj = {
+        paymentId,
+        paymentRelationId: paymentId,
+        paymentStatus: "captured",
+        paidOn: body.paidOn || new Date(),
+        paymentMethod: body.paymentMethod,
+        paymentLinkId: paymentId,
+        invoiceNumber,
+      };
+  
+      
+      const updatedPayment = await appointmentDA.updatePaymentByPaymentId(paymentUpdateObj);
+      //updatePaymentByPaymentIdBA
+ 
+      // Step 3: Generate and email invoice (same as old flow)
+      const userInfo = await appointmentDA.getUserInfo(paymentId);
+       const packageDetails = await appointmentDA.getPackageDetails(body.packageId);
+  
+      // Prepare PDF details (same as in the old flow)
+      const months = body.sessions.map(session => session.month).join(', ');
+
+      const pdfDetails = {
+        // invoiceNumber : addPaymentInfo.invoiceNumber,
+        invoiceNumber: updatedPayment.invoiceNumber,
+        firstName: userInfo[0].patient.firstName,
+        lastName: userInfo[0].patient.lastName,
+        paidOn: paymentUpdateObj.paidOn,
+        age: userInfo[0].patient.birthDate,
+        gender: userInfo[0].patient.gender,
+        docFirstName: userInfo[0].doctor.firstName,
+        docLastName: userInfo[0].doctor.lastName,
+        serviceCharges: updatedPayment.serviceCharges,
+        discount: body.discount,
+        SGST: body.SGST,
+        CGST: body.CGST,
+        IGST: body.IGST,
+        UGST: body.UGST,
+        payableAmount: body.payableAmount,
+        paymentMethod: body.paymentMethod,
+        docQualification: userInfo[0].doctor.qualifaction,
+        hcuraId: userInfo[0].patient.hcuraId,
+        packageName: packageDetails.name,
+        packageAmount: packageDetails.amount,
+        docRegstration: userInfo[0].doctor.registerationNumber,
+        branchPhoneNumber: branchDetails.branchPhoneNumber,
+        remarks: body.remarks,
+        months: months,
+        paidAmount : body.afterRemovingGST
+      };
+  
+  
+    let file;
         try {
+        if (["SKIN", "HAIR"].includes(body.paymentFor?.toUpperCase())) {
+            file = await htmlToPDF.generateInvoiceForAsthetic(pdfDetails);
+        } else if(["DENTAL"].includes(body.paymentFor?.toUpperCase())) {
+            file = await htmlToPDF.generateInvoiceForDental(pdfDetails);
+        }else{
+            file = await htmlToPDF.generateInvoiceForPackage(pdfDetails);
+
+        }
+         } catch (err) {
+         // Optional: You can still proceed or return here
+        return res.status(500).json({ success: false, message: "PDF generation failed" });
+        }
+ 
+        try {
+             if (["SKIN", "HAIR"].includes(body.paymentFor?.toUpperCase())) {
+      let emailsender = await emailSender.sendAstheticInvoiceEmail(userInfo[0].patient.emailId, file);
+            console.log(emailsender,"emailsenderrrrrrrrrrrrrrrrrrrrrrrAsthetics")
+             } else if (body.paymentFor === "DENTAL")
+              {
+      let emailsender = await emailSender.sendDentalInvoiceEmail(userInfo[0].patient.emailId, file);
+           //sendInvoiceEmail
+              }else{
+        let emailsender = await emailSender.sendPackageInvoiceEmail(userInfo[0].patient.emailId, file);
+              }
+
+        await emailSender.sendPaymentSuccessEmail(
+            userInfo[0].patient.firstName,
+            userInfo[0].patient.emailId,
+            body.payableAmount,
+            "#" + paymentId,
+            body.paymentMethod,
+            packageDetails.name
+        );
+        } catch (emailError) {
+        console.error("Email sending failed:", emailError);
+        // You may return warning, but don't throw error unless it's critical
+        }
+
+      res.send({ success: true, data: userInfo });
+    } catch (e) {
+      next(e);
+    }
+  }
+  
+ 
+      
+
+    async insertEstimation(req, res, next){
+        try{
             let body = req.body
             const { error } = rule.createEstimationRule.validate(body);
             if (error) {
@@ -1183,9 +1381,10 @@ class appointment{
             if (error){
               throw Boom.badData(error.message);
             }
-            let result =  await appointmentBAObj.getPaymentDetailsByAppointmentIdBA(body.appointmentId);
-            res.status(200).send({ status: true, data: result });
-        } catch(e) {
+            
+            let result =  await appointmentDA.getPaymentDetailsByAppointmentId(body.appointmentId);
+             res.status(200).send({ status: true, data: result });
+        } catch(e){
             next(e);
         }
     };
@@ -1374,9 +1573,231 @@ class appointment{
             next(e);
         }
     };
-
-    async updateAppointmentStatus(req, res, next) {
+    async getAllEstimations(req, res, next){
+        try{
+            // const { appointmentState } = req.params;
+            const { page,  branchId, roleId} = req.query;
+              const getAllAppointment = await appointmentDA.getAllEstimations(
+                 page, branchId, roleId 
+            );
+            res.status(200).send({ status: true, data: getAllAppointment });
+        } catch(e){
+            next(e);
+        }
+    };
+    async getAllApptForEstimation(req, res, next){
+        try{
+            // const { appointmentState } = req.params;
+            const { page,   searchKey, branchId, roleId, doctorId} = req.query;
+            const obj = { isActive : true };
+             const getAllAppointment = await appointmentDA.getAllApptListForEstimation(
+                obj, page,  searchKey,  branchId, roleId, doctorId
+            );
+            res.status(200).send({ status: true, data: getAllAppointment });
+        } catch(e){
+            next(e);
+        }
+    };
+    async getdetailsForEstimation(req, res, next) {
         try {
+     
+            const { estimationId } = req.query;
+            // const obj = { isActive : true };
+     
+            if (!estimationId || !mongoose.Types.ObjectId.isValid(estimationId)) {
+                console.log("Invalid estimationId");
+                return res.status(400).json({ status: false, message: "Invalid or missing estimationId" });
+            }
+    
+            console.log("Calling appointmentDA.getDetailsForEstimation...");
+            const getEstimation = await appointmentDA.getDetailsForEstimation(estimationId);
+    
+            console.log("Response from Data Access Layer:", getEstimation);
+    
+            if (!getEstimation || getEstimation.length === 0) {
+                return res.status(200).json({ status: true, data: null });
+            }
+            res.status(200).json({ status: true, data: getEstimation });
+        } catch (e) {
+            console.error("Error in getdetailsForEstimation:", e);
+            next(e);
+        }
+    }
+   
+    async changeEstimationStatus(req, res, next) {
+        try {
+          const { estimationId } = req.body;
+      
+          if (!estimationId || !mongoose.Types.ObjectId.isValid(estimationId)) {
+            return res.status(400).json({ status: false, message: "Invalid or missing estimationId" });
+          }
+      
+          // 👉 Step 3: call the Data Access Layer
+          const updatedEstimation = await appointmentDA.updateEstimationStatus(estimationId);
+      
+          if (!updatedEstimation) {
+            return res.status(404).json({ status: false, message: "Estimation not found" });
+          }
+      
+          res.status(200).json({
+            status: true,
+            message: "Estimation confirmed successfully",
+            data: updatedEstimation
+          });
+      
+        } catch (error) {
+          console.error("Error in changeEstimationStatus:", error);
+          next(error);
+        }
+      }
+
+      
+    async getEstimationData(req, res, next) {
+        try {
+            const { hcuraId, branchId, roleId, doctorId } = req.query; // Get hcuraId from request query
+ 
+            if (!hcuraId) {
+                return res.status(400).json({ status: false, message: "hcuraId is required" });
+            }
+    
+            console.log("Received hcuraId:", hcuraId);
+    
+            // Fetch estimation data using hcuraId
+            const getEstimation = await appointmentDA.getEstimationData(hcuraId, branchId, roleId, doctorId);
+    
+            if (!getEstimation || getEstimation.length === 0) {
+                return res.status(200).json({ status: true, data: null });
+            }
+    
+            res.status(200).json({ status: true, data: getEstimation });
+    
+        } catch (error) {
+            console.error("Error fetching estimation data:", error);
+            res.status(500).json({ message: "Server error", error: error.message });
+        }
+    }
+    async getPerformanceData(req, res, next) {
+        try {
+            const { hcuraId, branchId, roleId } = req.query; // Get hcuraId from request query
+ 
+            if (!hcuraId) {
+                return res.status(400).json({ status: false, message: "hcuraId is required" });
+            }
+    
+            console.log("Received hcuraId:", hcuraId);
+    
+            // Fetch estimation data using hcuraId
+            const getPerformance = await appointmentDA.getPerformanceData(hcuraId, branchId, roleId );
+    
+            if (!getPerformance || getPerformance.length === 0) {
+                return res.status(200).json({ status: true, data: null });
+            }
+    
+            res.status(200).json({ status: true, data: getPerformance });
+    
+        } catch (error) {
+            console.error("Error fetching getPerformanceData:", error);
+            res.status(500).json({ message: "Server error", error: error.message });
+        }
+    }
+    async getParticularPerformedData(req, res, next) {
+        try {
+            const { performedId } = req.query; // Get hcuraId from request query
+ 
+            if (!performedId) {
+                return res.status(400).json({ status: false, message: "performedId is required" });
+            }
+    
+            console.log("Received hcuraId:", performedId);
+    
+            // Fetch estimation data using hcuraId
+            const getPerformance = await appointmentDA.getParticularPerformanceData(performedId );
+    
+            if (!getPerformance || getPerformance.length === 0) {
+                return res.status(200).json({ status: true, data: null });
+            }
+            res.status(200).json({ status: true, data: getPerformance });
+    
+        } catch (error) {
+            console.error("Error fetching getPerformanceData:", error);
+            res.status(500).json({ message: "Server error", error: error.message });
+        }
+    }
+    async performedEstimationData(req, res, next){
+        try{
+            let body = req.body
+            const { error } = rule.performedEstimationRule.validate(body);
+            if (error){
+              throw Boom.badData(error.message);
+            }
+            let result = await appointmentDA.performedEstimations(body);
+            res.status(200).send({ status: true, data: result });
+        } catch(e){
+            next(e);
+        }
+    };
+    
+    async updatePaidMonths(req, res, next) {
+        try {
+          const { performedEstimationId, selectedMonths } = req.body;
+      
+          if (!performedEstimationId || !selectedMonths || !Array.isArray(selectedMonths)) {
+            return res.status(400).send({ status: false, message: "Invalid request body" });
+          }
+      
+          const result = await appointmentDA.markMonthsAsPaid(performedEstimationId, selectedMonths);
+      
+          res.status(200).send({ status: true, data: result });
+        } catch (e) {
+          next(e);
+        }
+      }
+      
+    async updateperformedEstimationData(req, res, next) {
+        try {
+            // let { patientId, roleId, doctorId, estimationId, updates } = req.body;
+    let { patientId, roleId, estimationId, updates } = req.body;
+
+            console.log("Received payload:", req.body); // Check incoming data
+            console.log("Updates array:", updates); // Ensure `updates` is an array
+    
+            // if (!patientId || !roleId || !doctorId || !estimationId || !Array.isArray(updates)) {
+            //     throw new Error("Invalid input: patientId, roleId, doctorId, estimationId, and updates array are required.");
+            // }
+           if (!patientId || !roleId || !estimationId || !Array.isArray(updates)) {
+                throw new Error("Invalid input: patientId, roleId, estimationId, and updates array are required.");
+            }
+
+            let result = await appointmentDA.updateperformedEstimations(patientId, roleId,  estimationId, updates);
+            res.status(200).send({ status: true, message: "Updated successfully", data: result });
+        } catch (e) {
+            console.error("Error in updateperformedEstimationData:", e);
+            next(e);
+        }
+    }
+    
+    async getperformedEstimationData(req, res, next){
+        try{
+            const { performedId } = req.query;
+            let result = await appointmentDA.getperformedEstimations(performedId);
+            res.status(200).send({ status: true, data: result });
+        } catch(e){
+            next(e);
+        }
+    };
+    
+    async debitAdvanceAmount(req, res, next){
+        try{
+            let body = req.body
+            
+            let result = await appointmentDA.debitAdvanceBalance(body);
+            res.status(200).send({ status: true, data: result });
+        } catch(e){
+            next(e);
+        }
+    };
+    async updateAppointmentStatus(req, res, next){
+        try{
             let body = req.body
             const { error } = rule.apptStatusRule.validate(body);
             if (error) {
@@ -1536,8 +1957,98 @@ class appointment{
         }
     };
 
-    async insertPrescription(req, res, next) {
-        try {
+        // Update case study (PART - 1 )
+        async updateCaseStudy(req, res, next){
+            try{
+            let body = req.body;
+            const { error } = doctorRule.updateCaseStudyRule.validate(body);
+            if (error){
+                throw Boom.badData(error.message);
+            }
+            let caseStudyDetails = await appointmentDA.updateCaseStudyDA(body);
+            res.status(200).send({ status: true, data: caseStudyDetails });
+            } catch(e) {
+            next(e);
+            }
+        };
+        
+    // insert Aesthetic case study (PART - 1 )
+    async insertAestheticCaseStudy(req, res, next){
+        try{
+        let body = req.body;
+        const { error } = doctorRule.insertAestheticCaseStudyRule.validate(body);
+        if (error){
+            throw Boom.badData(error.message);
+        }
+        let caseStudyDetails = await appointmentDA.insertAestheticCaseStudyDA(body);
+        res.status(200).send({ status: true, data: caseStudyDetails });
+        } catch(e) {
+        next(e);
+        }
+    };
+   
+
+        // Update Aesthetic case study (PART - 1 )
+        async updateCaseStudyAesthetic(req, res, next){
+            try{
+            let body = req.body;
+            const { error } = doctorRule.updateAestheticCaseStudyRule.validate(body);
+            if (error){
+                throw Boom.badData(error.message);
+            }
+            let caseStudyDetails = await appointmentDA.updateAestheticCaseStudyDA(body);
+            res.status(200).send({ status: true, data: caseStudyDetails });
+            } catch(e) {
+            next(e);
+            }
+        };
+
+    // Update Dental case study (PART - 1 )
+    async updateCaseStudyDental(req, res, next){
+        try{
+        let body = req.body;
+        const { error } = doctorRule.updateDentalCaseStudyRule.validate(body);
+        if (error){
+            throw Boom.badData(error.message);
+        }
+        let caseStudyDetails = await appointmentDA.updateDentalCaseStudyDA(body);
+        res.status(200).send({ status: true, data: caseStudyDetails });
+        } catch(e) {
+        next(e);
+        }
+    };
+
+ 
+async insertDentalCaseStudy(req, res, next){
+    try{
+    let body = req.body;
+    const { error } = doctorRule.insertDentalCaseStudyRule.validate(body);
+    if (error){
+        throw Boom.badData(error.message);
+    }
+    let caseStudyDetails = await appointmentDA.insertDentalCaseStudyDA(body);
+    res.status(200).send({ status: true, data: caseStudyDetails });
+    } catch(e) {
+    next(e);
+    }
+};
+
+// insert Dental case study (PART - 2 )
+async insertDentalCaseStudySuggestionPrescription(req, res, next){
+    try{
+    let body = req.body;
+    const { error } = doctorRule.insertDentalCaseStudySuggestionPrescriptionRule.validate(body);
+    if (error){
+        throw Boom.badData(error.message);
+    }
+    let caseStudyDetails = await appointmentDA.insertDentalCaseStudySuggestionPrescription(body);
+    res.status(200).send({ status: true, data: caseStudyDetails });
+    } catch(e) {
+    next(e);
+    }
+};
+    async insertPrescription(req, res, next){
+        try{
             let body = req.body;
             const { error } = doctorRule.insertPrescriptionRule.validate(body);
             if (error) {
@@ -1588,8 +2099,26 @@ class appointment{
         }
     };
 
-    async updatePrescription(req, res, next) {
-        try {
+    async getCaseStudyAestheticDetails(req, res, next){
+        try{
+            let body = req.body;
+            let obj = await appointmentDA.getCaseStudyAestheticDetails(body.caseStudyId);
+            res.status(200).send({ status: true, data: obj });
+        } catch(e) {
+          next(e);
+        }
+    };
+    async getCaseStudyDentalDetails(req, res, next){
+        try{
+            let body = req.body;
+            let obj = await appointmentDA.getCaseStudyDentalDetails(body.caseStudyId);
+            res.status(200).send({ status: true, data: obj });
+        } catch(e) {
+          next(e);
+        }
+    };
+    async updatePrescription(req, res, next){
+        try{
             let body = req.body;
             const { error } = doctorRule.updatePrescriptionRule.validate(body);
             if (error){

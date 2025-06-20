@@ -153,14 +153,9 @@ const { number, required } = require("joi");
     endTime: { type: Date, default: null },
     followupDate: { type: Date, default: null },
     followupId: {type: mongoose.Schema.Types.ObjectId, ref: "Appointments", default: null},
-    symptoms: [],
-    allegires: [],
+     
     rescheduledApptId: {type: mongoose.Schema.Types.ObjectId, ref: "Appointments", default: null},
-    consultationMode: {
-      type: String,
-      enum: ["ONLINE", "OFFLINE"],
-      default: "OFFLINE"
-    },
+    
     consultationType: {
       type: String,
       enum: ["FOLLOW-UP", "FIRST-CONSULTATION"],
@@ -178,6 +173,11 @@ const { number, required } = require("joi");
       ],
       default: "SCHEDULED",
     },
+    appointmentFor: {
+      type: String,
+      enum: ["homeopathy", "aesthetics", "dental"],
+      required: true
+    },
     confirmedUpdatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null },
     visitedUpdatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null },
     rescheduleUpdatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null },
@@ -194,6 +194,56 @@ const { number, required } = require("joi");
     appointmentNumber: { type: String, default: null },
   });
 
+  let appointmentforestimation = new schema ({
+    patientId: {type: mongoose.Schema.Types.ObjectId, ref: "Patient", default: null},
+    doctorId: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
+    slotId: {type: mongoose.Schema.Types.ObjectId, ref: "Slot", default: null},
+    dayId: {type: mongoose.Schema.Types.ObjectId, ref: "Day", default: null},
+    paymentId: {type: mongoose.Schema.Types.ObjectId, ref: "Payment", default: null},
+    caseStudyId: {type: mongoose.Schema.Types.ObjectId, ref: "caseStudy", default: null},
+    prescriptionId: {type: mongoose.Schema.Types.ObjectId, ref: "Prescription", default: null},
+    branchId: {type: mongoose.Schema.Types.ObjectId, ref: "Branches", default: null},
+    bookedBy: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
+    packageId: {type: mongoose.Schema.Types.ObjectId, ref: "Package", default: null},
+    packagePaymentId: {type: mongoose.Schema.Types.ObjectId, ref: "Payment", default: null},
+    astheticPaymentId: {type: mongoose.Schema.Types.ObjectId, ref: "Payment", default: null},
+    astheticId: {type: mongoose.Schema.Types.ObjectId, ref: "Package", default: null},
+    appointmentDate: { type: Date, default: null },
+    startTime: { type: Date, default: null },
+    endTime: { type: Date, default: null },
+    followupDate: { type: Date, default: null },
+    followupId: {type: mongoose.Schema.Types.ObjectId, ref: "Appointments", default: null},
+    symptoms: [],
+    allegires: [],
+    rescheduledApptId: {type: mongoose.Schema.Types.ObjectId, ref: "Appointments", default: null},
+    consultationMode: {
+        type: String,
+        enum: ["ONLINE", "OFFLINE"],
+        default: "OFFLINE"
+    },
+    consultationType: {
+        type: String,
+        enum: ["FOLLOW-UP", "FIRST-CONSULTATION"],
+        default: "FIRST-CONSULTATION"
+    },
+     
+    confirmedUpdatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null },
+    visitedUpdatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null },
+    rescheduleUpdatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null },
+    canceledUpdatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null },
+    completedUpdatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null },
+    createdOn: {type: Date, default: new Date()},
+    isScheduled: {type: Boolean, default: true},
+    isConfirmed: {type: Boolean, default: false},
+    visitedClinic: {type: Boolean, default: false},
+    isCompleted: {type: Boolean, default: false},
+    isRescheduled: {type: Boolean, default: false},
+    isCancelled: {type: Boolean, default: false},
+    isActive: {type: Boolean, default: true},
+    appointmentNumber: { type: String, default: null },
+  });
+
+
   let payment = new schema ({
     patientId: {type: mongoose.Schema.Types.ObjectId, ref: "Patient", default: null},
     doctorId: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
@@ -204,16 +254,8 @@ const { number, required } = require("joi");
     dayId: {type: mongoose.Schema.Types.ObjectId, ref: "Day", default: null},
     slotId: {type: mongoose.Schema.Types.ObjectId, ref: "Slot", default: null},
     astheticPaymentId: {type: mongoose.Schema.Types.ObjectId, ref: "Payment", default: null},
-    paymentFor: {
-      type: String,
-      enum: [
-        "CONSULTATION",
-        "HOMEOPATHY",
-        "EXTERNAL_SOURCE",
-        "ASTHETIC"
-      ],
-      default: "CONSULTATION",
-    },
+  
+    paymentFor: { type: String, required: true }, // "CONSULTATION", "SKIN", etc.
     orderId: {type: String, default: null},
     prescribedBy: {type: String, default: null},
     installments: {type: Number, default: null},
@@ -244,6 +286,14 @@ const { number, required } = require("joi");
     refundAmount: {type: Number, default: null},
     refundStatus: {type: String, default: null},
     refundOn: {type: Date, default: null},
+    sessions: [
+      {
+        monthId: { type: mongoose.Schema.Types.ObjectId, ref: 'PerformedMonth' },
+        month: Number,
+        amount: Number
+      }
+    ]
+    
   });
 
   let consulatationAmount= new schema ({
@@ -290,9 +340,12 @@ const { number, required } = require("joi");
 
   let package = new schema ({
     name: { type: String, default: null},
-    packageFor: {type: String, enum: ["HOMEOPATHY", "ASTHETIC"], default: "HOMEOPATHY"},
+    packageFor: {type: String, enum: ["HOMEOPATHY", "SKIN","HAIR","DENTAL"], default: "HOMEOPATHY"},
     months: { type: Number, default: 0},
     amount: { type: Number, default: 0},
+    gstAmount: { type: Number, default: 0},
+    isGstApplicable: { type: Boolean, default: false},
+    amountWithoutGST: { type: Number, default: 0},
     installments: { type: Number, default: 0},
     createdOn: { type: Date, default: new Date()},
     isActive: { type: Boolean, default: true},
@@ -338,7 +391,7 @@ const { number, required } = require("joi");
 
   let promoCodes = new schema({
     promoCodeName: { type: String, required: true, unique: true},
-    promoCodeFor: { type: String, enum: ["CONSULTATION", "HOMEOPATHY", "ASTHETIC"], default:"HOMEOPATHY" },
+    promoCodeFor: { type: String, enum: ["CONSULTATION", "HOMEOPATHY", "ASTHETIC", "DENTAL"], default:"HOMEOPATHY" },
     discount: { type: Number, default: null},
     startsOn: { type: Date, default: null},
     expiredOn: { type: Date, default: null},
@@ -375,6 +428,7 @@ const { number, required } = require("joi");
   // CASESTUDY PART - 1
   let caseStudy = new schema({
     patientId: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Patient"},
+    appointmentId: {type: schema.Types.ObjectId,ref: "Appointment",default: null,},
     doctorId: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin" },
     createdBy: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin"},
     branchId: { type: mongoose.Schema.Types.ObjectId, ref: "Branch", default: null},
@@ -384,16 +438,9 @@ const { number, required } = require("joi");
     weight : { type: String, default: null},
     // consultationSummary : { type: String, default: null},
     presentComplaint : { type: String, default: null},
-    // symptoms : [
-    //   {
-    //     symptoms : { type: String, default: null},
-    //     location : { type: String, default: null},
-    //     sensation : { type: String, default: null},
-    //     modalities : { type: String, default: null},
-    //     concomitants : { type: String, default: null},
-    //   }
-    // ],
+ 
     pastHistory : { type: String, default: null},
+     
     anyInjuryOrFracture : { type: String, default: null},
     anyHospitalisation : { type: String, default: null},
     anyAllergy : { type: String, default: null},
@@ -425,19 +472,19 @@ const { number, required } = require("joi");
     intermediateRelationship : { type: String, default: null},
     mentalGenerals : { type: String, default: null},
     investigation : { type: String, default: null},
-    diagnosis : { type: String, default: null},
-    treatmentAdvice : { type: String, default: null},
-    treatmentAdviceAmount : { type: String, default: null},
-    dietAdviceAndRegimen: [ 
+    estimation : { type: String, default: null},
+   
+    totalityofSymptoms : { type: String, default: null},
+    followupSheets : [
       {
-        dos : { type: String, default: null},
-        donts : { type: String, default: null}
+        followupNotes : { type: String, default: null},
+        prescriptions : { type: String, default: null},
       }
     ],
-    suggestion : { type: String, default: null},
-    totalityofSymptoms : { type: String, default: null},
+     curedCaseSummary : { type: String, default: null},
+     updatedOn : { type: Date, default: null },
   });
-
+ 
   // CASESTUDY PART - 2
   let suggestionPrescription = new schema({
     patientId: {
@@ -478,30 +525,132 @@ const { number, required } = require("joi");
     curedCaseSummary : { type: String, default: null},
   });
 
-  let estimation = new schema ({
-    patientId: {type: mongoose.Schema.Types.ObjectId, ref: "Patient", default: null},
-    doctorId: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
-    branchId: {type: mongoose.Schema.Types.ObjectId, ref: "Branch", default: null},
-    createdBy: {type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null},
-    homeopathy: [
-      {
-        packageName : { type: String, default: null},
-        amount : { type: Number, default: null},
-        packageId: {type: mongoose.Schema.Types.ObjectId, ref: "Package", default: null},
-      }
-    ],
-    asthetic: [
-      {
-        packageName : { type: String, default: null},
-        amount : { type: Number, default: null},
-        packageId: {type: mongoose.Schema.Types.ObjectId, ref: "Package", default: null},
-      }
-    ],
-    createdOn: { type: Date, default: new Date()},
-    isActive: { type: Boolean, default: true},
+  // CASESTUDY Of Aesthetic
+  let  caseStudyAesthetic = new schema({
+    patientId: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Patient"},
+    appointmentId: {type: schema.Types.ObjectId,ref: "Appointment",default: null,},
+    doctorId: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin" },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin"},
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+      ref: "Admin",
+    },
+    branchId: { type: mongoose.Schema.Types.ObjectId, ref: "Branch", default: null},
+    createdOn : { type: Date, default: new Date()},
+    bloodPressure : { type: String, default: null},
+    height : { type: String, default: null},
+    weight : { type: String, default: null},
+     presentComplaint : { type: String, default: null},
+    pastHistory : { type: String, default: null},
+    menstrualHistory: { type: String, default: null},
+     
+    appetitte : { type: String, default: null},
+    stool : { type: String, default: null},
+    desire : { type: String, default: null},
+    urine : { type: String, default: null},
+     
+    thirst : { type: String, default: null},
+    sleep : { type: String, default: null},
+    thermal  : { type: String, default: null},
+    
+    addiction : { type: String, default: null},
+     
+    suggestion : { type: String, default: null},
+    curedCaseSummary : { type: String, default: null},
+
+ 
   });
 
-  // website pt form filling
+ // CASESTUDY Of Aesthetic
+ let  caseStudyDental = new schema({
+  patientId: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Patient"},
+  appointmentId: {type: schema.Types.ObjectId,ref: "Appointment",default: null,},
+  doctorId: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin" },
+  createdBy: { type: mongoose.Schema.Types.ObjectId, default: null, ref: "Admin"},
+  updatedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    default: null,
+    ref: "Admin",
+  },
+  branchId: { type: mongoose.Schema.Types.ObjectId, ref: "Branch", default: null},
+  createdOn : { type: Date, default: new Date()},
+  bloodPressure : { type: String, default: null},
+  heartDisease : { type: String, default: null},
+  bloodDisorder : { type: String, default: null},
+  diabetes : { type: String, default: null},
+ pregnancy : { type: String, default: null},
+   presentComplaint : { type: String, default: null},
+  pastHistory : { type: String, default: null},
+  anyAllergy: { type: String, default: null},
+   
+  oralExamination : { type: String, default: null},
+  radiologicalinvestigation : { type: String, default: null},
+  investigation: { type: String, default: null},
+  diagnosis : { type: String, default: null},
+   
+  treatmentplan: { type: String, default: null},
+  poi : { type: String, default: null},
+  prescription : { type: String, default: null},
+  
+  treatmentSheet : [
+    {
+      treatment : { type: String, default: null},
+      consultant : { type: String, default: null},
+    }
+  ],
+
+});
+
+ 
+  let estimation = new schema({
+    patientId: { type: mongoose.Schema.Types.ObjectId, ref: "Patient", default: null },
+    doctorId: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null },
+    branchId: { type: mongoose.Schema.Types.ObjectId, ref: "Branch", default: null },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "Admin", default: null },
+    appointmentId : { type: mongoose.Schema.Types.ObjectId, ref: "Appointment", default: null },
+    homeopathy: [
+        {
+            packageName: { type: String, default: null },
+            amount: { type: Number, default: null },
+            months: { type: Number, default: null }, 
+            packageId: { type: mongoose.Schema.Types.ObjectId, ref: "Package", required: true, default: null },
+            isGstApplicable: { type: Boolean, default: false },
+        }
+    ],
+    skin: [
+        {
+            packageName: { type: String, default: null },
+            amount: { type: Number, default: null },
+            months: { type: Number, default: null }, 
+            packageId: { type: mongoose.Schema.Types.ObjectId, ref: "Package", required: true, default: null },
+                        isGstApplicable: { type: Boolean, default: false },
+
+        }
+    ],
+    hair: [
+      {
+          packageName: { type: String, default: null },
+          amount: { type: Number, default: null },
+          months: { type: Number, default: null }, 
+          packageId: { type: mongoose.Schema.Types.ObjectId, ref: "Package", required: true, default: null },
+                      isGstApplicable: { type: Boolean, default: false },
+
+      }
+  ],
+    dental: [
+      {
+          packageName: { type: String, default: null },
+          amount: { type: Number, default: null },
+          months: { type: Number, default: null }, 
+          packageId: { type: mongoose.Schema.Types.ObjectId, ref: "Package", required: true, default: null },
+                      isGstApplicable: { type: Boolean, default: false },
+
+      }
+  ],
+    createdOn: { type: Date, default: new Date() },
+    isActive: { type: Boolean, default: false }, // <-- change from true to false
+  });
   let bookApptForm = new schema({
     name: { type: String, default: "NA" },
     age: { type: Number, default: 0 },
@@ -569,7 +718,157 @@ const { number, required } = require("joi");
     createdOn: { type: Date, default: null },
     isActive: { type: Boolean, default: true }
   });
+ 
+const advancePaymentSchema = new mongoose.Schema({
+  patientId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Patient",
+    required: true
+  },
+  patientName: {
+    type: String,
+    required: true // make required if you always want to store it
+  },
+  totalAdvance: {
+    type: Number,
+    required: true
+  },
+  remainingBalance: {
+    type: Number,
+    required: true
+  },
+  paymentMode: {
+    type: String,
+    enum: ["cash", "qr_code", "swiping_machine", "online"],
+    required: true
+  },
+  paymentStatus: {
+    type: String,
+    enum: ["created", "pending", "completed", "failed"],
+    default: "created"
+  },
+  paymentDoneBy: {
+    type: String,
+    required: true
+  },
+  shortUrl: {
+    type: String,
+    default: null
+  },
+  paymentRelationId: {
+    type: String,
+    default: null
+  },
+  paymentLinkId: {
+    type: String,
+    default: null
+  },
+  createdOn: {
+    type: Date,
+    default: Date.now
+  }
+});
+ 
 
+const PerformedEstimationSchema = new mongoose.Schema(
+  {
+    patientId: { type: mongoose.Schema.Types.ObjectId, required: true },
+    doctorId: { type: mongoose.Schema.Types.ObjectId, required: true },
+    estimationId: { type: mongoose.Schema.Types.ObjectId, required: true },
+    roleId: { type: String, required: true },
+    categories: [
+      {
+        category: { type: String, required: true },
+        packageName: { type: String, required: true },
+        packageId :  { type: String, required: true },
+        isGstApplicable: { type: Boolean, default: false },
+        
+        months: [
+          {
+            month: { type: Number, required: true },
+            amount: { type: Number, required: true },
+            performed: { type: Boolean, default: false },
+            paid: { type: Boolean, default: false },
+            doctorId: { type: mongoose.Schema.Types.ObjectId } // ✅ add here
+          }
+        ]
+
+      }
+    ]
+  },
+  { timestamps: true }
+);
+
+const advancePaymentTransactionSchema = new mongoose.Schema({
+  patientId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Patient",
+    required: true
+  },
+  patientName: {
+    type: String,
+    required: true
+  },
+  totalAdvance: {
+    type: Number,
+    required: true
+  },
+  debitedAmount: {
+    type: Number,
+    required: true
+  },
+  remainingBalance: {
+    type: Number,
+    required: true // snapshot of wallet after this transaction
+  },
+  paymentMode: {
+    type: String,
+    enum: ["cash", "qr_code", "swiping_machine", "online"],
+    required: true
+  },
+  paymentStatus: {
+    type: String,
+    enum: ["created", "pending", "completed", "failed"],
+    default: "created"
+  },
+  paymentDoneBy: {
+    type: String,
+    required: true
+  },
+  shortUrl: String,
+  paymentRelationId: String,
+  paymentLinkId: String,
+  createdOn: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const advancePaymentSummarySchema = new mongoose.Schema({
+  patientId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Patient",
+    required: true,
+    unique: true
+  },
+  remainingBalance: {
+    type: Number,
+    default: 0
+  },
+  updatedOn: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+ 
+ exports.advancePaymentSummaryModel = mongoose.model("AdvancePaymentSummary", advancePaymentSummarySchema, "advancepaymentsummary");
+
+exports.advancePaymentTransactionModel = mongoose.model("AdvancePaymentTransaction", advancePaymentTransactionSchema, "advancepaymenttransactions");
+
+exports.PerformedEstimationModel = mongoose.model("PerformedEstimationSchema", PerformedEstimationSchema, "PerformedEstimationSchema");
+
+exports.advancePaymentModel = mongoose.model("AdvancePayment", advancePaymentSchema, "advancepayment");
   exports.branchesModel = mongoose.model("Branches", branches, "branches");
   exports.roleModel = mongoose.model("Role", role, "role");
   exports.adminModel = mongoose.model("Admin", admin, "admin");
@@ -578,6 +877,7 @@ const { number, required } = require("joi");
   exports.dayModel = mongoose.model("Day", day, "day");
   exports.slotModel = mongoose.model("Slot", slot, "slot");
   exports.appointmentModel = mongoose.model("Appointment", appointment, "appointment");
+  exports.appointmentForEstimationModel = mongoose.model("Appointmentforestimation", appointmentforestimation, "appointmentforestimation");
   exports.paymentModel = mongoose.model("Payment", payment, "payment");
   exports.packageModel = mongoose.model("Package", package, "package");
   exports.prescriptionModel = mongoose.model("Prescription", prescription, "prescription");
@@ -591,6 +891,9 @@ const { number, required } = require("joi");
   exports.estimationModel = mongoose.model("estimation", estimation, "Estimation");
   exports.packageSubscriptionModel = mongoose.model("packageSubscription", packageSubscription, "PackageSubscription");
   exports.caseStudyModel = mongoose.model("CaseStudy", caseStudy, "caseStudy");
+  exports.aestheticCaseStudyModel = mongoose.model("CaseStudyAesthetic", caseStudyAesthetic, "caseStudyAesthetic");
+   exports.dentalCaseStudyModel = mongoose.model("CaseStudyDental", caseStudyDental, "caseStudyDental");
+
   exports.suggestionPrescriptionModel = mongoose.model("SuggestionPrescription", suggestionPrescription, "suggestionPrescription");
   exports.bookApptFormModel = mongoose.model("BookApptForm", bookApptForm, "bookApptForm");
   exports.contactUsModel = mongoose.model("ContactUs", contactUs, "contactUs");

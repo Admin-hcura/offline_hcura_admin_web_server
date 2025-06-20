@@ -12,15 +12,16 @@ exports.appointmentRule = Joi.object({
     appointmentDate: Joi.string().required().error(new Error("appointmentDate is required")),
     startTime: Joi.string().required().error(new Error("startTime is required")),
     endTime: Joi.string().required().error(new Error("endTime is required")),
-    symptoms: Joi.array()
-        .min(0)
-        .required()
-        .error(new Error("Symptoms is required")),
-    allergies: Joi.array()
-        .min(0)
-        .required()
-        .error(new Error("Allergies is required")),
-    consultationMode: Joi.string().required().error(new Error("consultationMode is required")),
+    appointmentFor: Joi.string().valid("homeopathy", "aesthetics", "dental").required(),
+    // symptoms: Joi.array()
+    //     .min(0)
+    //     .required()
+    //     .error(new Error("Symptoms is required")),
+    // allergies: Joi.array()
+    //     .min(0)
+    //     .required()
+    //     .error(new Error("Allergies is required")),
+    // consultationMode: Joi.string().required().error(new Error("consultationMode is required")),
     consultationType: Joi.string().required().error(new Error("consultationType is required")),
     bookedBy: Joi.string().required().error(new Error("bookedBy ID is required")),
 });
@@ -87,39 +88,67 @@ exports.avaliableSlotsRule = Joi.object({
 
 exports.paymenPackageRule = Joi.object({
     phoneNumber: Joi.number().required().error(new Error ("Phone number is Required")),
-    appointmentId: Joi.string().required().error(new Error("appointmentId is Required")),
+    // appointmentId: Joi.string().required().error(new Error("appointmentId is Required")),
     // courierCharges: Joi.number().required().error(new Error("courierCharges is Required")),
     promoCodes: Joi.string().empty("").allow(null).default(null),
     // installements: Joi.number().required().error(new Error("installements is required")),
-    remarks: Joi.string().required().error(new Error("remarks is required")),
+    // remarks: Joi.string().required().error(new Error("remarks is required")),
     paymentDoneBy: Joi.string().required().error(new Error("paymentDoneBy is required")),
     patientId: Joi.string().required().error(new Error("userId is Required")),
     packageId: Joi.string().required().error(new Error("packageId is Required")),
-    paymentMode: Joi.string().valid('cash', 'qr_code', 'swiping_machine', 'online').required().error(new Error("payment Mode is Required")),
+    // paymentMode: Joi.string().valid('cash', 'qr_code', 'swiping_machine', 'online').required().error(new Error("payment Mode is Required")),
     payableAmount: Joi.number().required().error(new Error("payable Amount is Required")),
-    address: Joi.array().items({
-        houseNo: Joi.string().required().error(new Error("houseNo is required")),
-        street: Joi.string().required().error(new Error("street is required")),
-        city: Joi.string().required().error(new Error("city is required")),
-        state: Joi.string().required().error(new Error("state is required")),
-        pinCode: Joi.number().required().error(new Error("pinCode is required")),
-      }).required(),
+    // address: Joi.array().items({
+    //     houseNo: Joi.string().required().error(new Error("houseNo is required")),
+    //     street: Joi.string().required().error(new Error("street is required")),
+    //     city: Joi.string().required().error(new Error("city is required")),
+    //     state: Joi.string().required().error(new Error("state is required")),
+    //     pinCode: Joi.number().required().error(new Error("pinCode is required")),
+    //   }).required(),
   });
-
+  exports.advancePaymentRule = Joi.object({
+    patientId: Joi.string().required().error(new Error("Patient ID is required")),
+    payableAmount: Joi.number().required().error(new Error("Advance amount is required")),
+    paymentMode: Joi.string().valid("cash", "qr_code", "swiping_machine", "online").required()
+        .error(new Error("Valid payment mode is required")),
+    paymentDoneBy: Joi.string().required().error(new Error("Payment done by is required")),
+ });
 exports.createEstimationRule = Joi.object({
     patientId: Joi.string().required().error(new Error("patientId is required")),
     doctorId: Joi.string().required().error(new Error("doctorId is required")),
     branchId: Joi.string().required().error(new Error("branchId is required")),
     createdBy: Joi.string().required().error(new Error("createdBy is required")),
+    appointmentId: Joi.string().required().error(new Error("branchId is required")),
     homeopathy: Joi.array().items(Joi.object({
         packageName: Joi.string().empty("").allow(null).default(null),
         amount: Joi.number().empty("").allow(null).default(null),
-        packageId: Joi.string().empty("").allow(null).default(null),
+        months: Joi.number().empty("").allow(null).default(null),
+        packageId: Joi.string().empty("").allow(null).default(null),     
+        isGstApplicable: Joi.boolean().empty("").allow(null).default(null),
     })),
-    asthetic: Joi.array().items(Joi.object({
+    skin: Joi.array().items(Joi.object({
         packageName: Joi.string().empty("").allow(null).default(null),
         amount: Joi.number().empty("").allow(null).default(null),
-        packageId: Joi.string().empty("").allow(null).default(null),
+        months: Joi.number().empty("").allow(null).default(null),
+        packageId: Joi.string().empty("").allow(null).default(null),     
+        isGstApplicable: Joi.boolean().empty("").allow(null).default(null),
+
+    })),
+    hair: Joi.array().items(Joi.object({
+        packageName: Joi.string().empty("").allow(null).default(null),
+        amount: Joi.number().empty("").allow(null).default(null),
+        months: Joi.number().empty("").allow(null).default(null),
+        packageId: Joi.string().empty("").allow(null).default(null),       
+        isGstApplicable: Joi.boolean().empty("").allow(null).default(null),
+
+    })),
+    dental: Joi.array().items(Joi.object({
+        packageName: Joi.string().empty("").allow(null).default(null),
+        amount: Joi.number().empty("").allow(null).default(null),
+        months: Joi.number().empty("").allow(null).default(null),
+        packageId: Joi.string().empty("").allow(null).default(null),    
+        isGstApplicable: Joi.boolean().empty("").allow(null).default(null),
+
     })),
 });
 
@@ -145,7 +174,33 @@ exports.apptStatusRule = Joi.object({
     appointmentStatus : Joi.string().required().error(new Error("appointmentStatus Id is required")),
     appointmentId : Joi.string().required().error(new Error("appointmentId Id is required")),
 });
-
+exports.performedEstimationRule = Joi.object({
+           patientId: Joi.string().required(),
+            roleId: Joi.string().required(),
+            doctorId: Joi.string().required(),
+            estimationId: Joi.string().required(),
+            categories: Joi.array()
+                .items(
+                    Joi.object({
+                        category: Joi.string().required(),
+                        packageName: Joi.string().required(),
+                        packageId :  Joi.string().required(),
+                        isGstApplicable: Joi.boolean().required(),
+                        months: Joi.array()
+                            .items(
+                                Joi.object({
+                                    month: Joi.number().integer().min(1).max(12).required(),
+                                    amount: Joi.number().positive().required(),
+                                    performed: Joi.boolean().required(),
+                                })
+                            )
+                            .min(1)
+                            .required(),
+                    })
+                )
+                .min(1)
+                .required(),
+});
 exports.dashboard = Joi.object({
     startDate: Joi.string().required().error(new Error("Start date is required")),
     endDate: Joi.string().required().error(new Error("End date is required")),

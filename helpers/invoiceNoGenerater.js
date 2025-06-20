@@ -2,16 +2,23 @@ const moment = require("moment-timezone");
 const appointmentDA = require("../layers/dataLayer/appointmentDA")
 
 class invoiceGenerator {
-  async generateInvoiceNumber(branchcode) {
-    try {
-      let lastAppData = await appointmentDA.getLastInvoiceNo(branchcode);
-      const oldInvoice = lastAppData.length > 0
-        ? lastAppData.reduce((max, item) => item.invoiceNumber > max ? item.invoiceNumber : max, -Infinity) : null;
-      if (oldInvoice) {
-        let invNo = parseInt(oldInvoice);
-        let newNo = invNo + 1;
-        if (newNo > 9) {
-          return `${branchcode}/${newNo}/${moment().format("DD")}/${moment().format("MMM")}/${moment().format("YYYY")}-SAC999319`;
+    async generateInvoiceNumber(branchcode) {
+      try {
+        let lastAppData = await appointmentDA.getLastInvoiceNo(branchcode);
+        const oldInvoice = lastAppData.length > 0
+              ? lastAppData.reduce((max, item) => item.invoiceNumber > max ? item.invoiceNumber : max, -Infinity) : null;
+          if (oldInvoice) {
+            let invNo = parseInt(oldInvoice);
+            let newNo = invNo + 1;
+          if (newNo > 9) {
+            return `${branchcode}/${newNo}/${moment().format("DD")}/${moment().format(
+              "MMM"
+            )}/${moment().format("YYYY")}-SAC999319`;
+          } else {
+            return `${branchcode}/0${newNo}/${moment().format("DD")}/${moment().format(
+              "MMM"
+            )}/${moment().format("YYYY")}-SAC999319`;
+          }
         } else {
           return `${branchcode}/0${newNo}/${moment().format("DD")}/${moment().format("MMM")}/${moment().format("YYYY")}-SAC999319`;
         }

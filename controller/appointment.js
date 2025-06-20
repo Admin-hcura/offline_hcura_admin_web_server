@@ -4,6 +4,7 @@ const rule = require("../helpers/appointmentRule");
 const doctorRule = require("../helpers/doctorRule");
 const constants = require("../helpers/constants");
 const appointmentBAObj = require("../layers/bussinessLayer/appointmentBA");
+const appointmentDA = require("../layers/dataLayer/appointmentDA");
 const invoiceGenerator = require("../helpers/invoiceNoGenerater");
 const htmlToPDF = require("../helpers/htmlToPDF");
 const emailSender = require("../helpers/emailSender");

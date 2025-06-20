@@ -1442,4 +1442,4 @@ class Mail{
 
 // }
 
-// module.exports = new Mail();
+module.exports = new Mail();

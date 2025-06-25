@@ -286,6 +286,7 @@ const { number, required } = require("joi");
     refundAmount: {type: Number, default: null},
     refundStatus: {type: String, default: null},
     refundOn: {type: Date, default: null},
+    isGstApplicable: {type: Boolean, default: false},
     sessions: [
       {
         monthId: { type: mongoose.Schema.Types.ObjectId, ref: 'PerformedMonth' },

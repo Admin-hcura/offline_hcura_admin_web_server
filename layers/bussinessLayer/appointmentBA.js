@@ -229,6 +229,10 @@ class appointmentBA {
         return await appointmentDAObj.getStateDetails(branchId);
     };
 
+    async  getPatientStateDetailsBA(patientId) {
+    return await appointmentDAObj.getPatientStateDetails(patientId);
+    }
+
     async getDashboardAptCountBA(data) {
         return await appointmentDAObj.getDashboardAptCount(data);
     };

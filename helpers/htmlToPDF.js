@@ -299,6 +299,7 @@ class HtmlToPdfHelper {
       let packageAmount = pdfDetails.packageAmount
       let paidAmount = pdfDetails.paidAmount
       let months = pdfDetails.months  
+      let sessionAmount = pdfDetails.sessionAmount
 
       let roundeddown = Math.floor(pdfDetails.payableAmount);
       let roundedDown = (pdfDetails.payableAmount - roundeddown)
@@ -501,11 +502,33 @@ class HtmlToPdfHelper {
         '            <TABLE cellpadding=0 cellspacing=0 class="t5">' +
         "                <TR>" +
         '                    <TD class="tr6 td12">' +
-        '                        <P class="p8 ft7">Paid Amount</P>' +
+        '                        <P class="p8 ft7">Session Amount</P>' +
         "                    </TD>" +
         '                    <TD class="tr6 td13">' +
         '                        <P class="p9 ft7">' +
         "+" +
+        parseFloat(sessionAmount).toFixed(2) +
+         "</P>" +
+        "                    </TD>" +
+        "                </TR>" +
+        "                <TR>" +
+        '                    <TD class="tr7 td12">' +
+        '                        <P class="p8 ft7">Discount</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr7 td13">' +
+        '                        <P class="p10 ft7">' +
+        "-" +
+        parseFloat(pdfDetails.discount).toFixed(2) +
+         "</P>" +
+        "                    </TD>" +
+        "                </TR>" +
+        "                <TR>" +
+        '                    <TD class="tr7 td12">' +
+        '                        <P class="p8 ft7">Amount After Discount</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr7 td13">' +
+        '                        <P class="p10 ft7">' +
+        "-" +
         parseFloat(paidAmount).toFixed(2) +
         "</P>" +
         "                    </TD>" +
@@ -518,17 +541,17 @@ class HtmlToPdfHelper {
         '                        <P class="p9 ft7">' +
         "+" +
         parseFloat(pdfDetails.serviceCharges).toFixed(2) +
-        "</P>" +
-        "                    </TD>" +
-        "                </TR>" +
-        "                <TR>" +
-        '                    <TD class="tr7 td12">' +
-        '                        <P class="p8 ft7">Discount</P>' +
-        "                    </TD>" +
-        '                    <TD class="tr7 td13">' +
-        '                        <P class="p10 ft7">' +
-        "-" +
-        parseFloat(pdfDetails.discount).toFixed(2) +
+        // "</P>" +
+        // "                    </TD>" +
+        // "                </TR>" +
+        // "                <TR>" +
+        // '                    <TD class="tr7 td12">' +
+        // '                        <P class="p8 ft7">Discount</P>' +
+        // "                    </TD>" +
+        // '                    <TD class="tr7 td13">' +
+        // '                        <P class="p10 ft7">' +
+        // "-" +
+        // parseFloat(pdfDetails.discount).toFixed(2) +
         "</P>" +
         "                    </TD>" +
         "                </TR>" +
@@ -643,6 +666,7 @@ class HtmlToPdfHelper {
       let packageAmount = pdfDetails.packageAmount
       let paidAmount = pdfDetails.paidAmount
       let months = pdfDetails.months  
+      let sessionAmount = pdfDetails.sessionAmount
 
       let roundeddown = Math.floor(pdfDetails.payableAmount);
       let roundedDown = (pdfDetails.payableAmount - roundeddown)
@@ -845,7 +869,29 @@ class HtmlToPdfHelper {
         '            <TABLE cellpadding=0 cellspacing=0 class="t5">' +
         "                <TR>" +
         '                    <TD class="tr6 td12">' +
-        '                        <P class="p8 ft7">Paid Amount</P>' +
+        '                        <P class="p8 ft7">Session Amount</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr6 td13">' +
+        '                        <P class="p9 ft7">' +
+        "+" +
+        parseFloat(sessionAmount).toFixed(2) +
+        "</P>" +
+        "                    </TD>" +
+        "                </TR>" +
+        "                <TR>" +
+        '                    <TD class="tr7 td12">' +
+        '                        <P class="p8 ft7">Discount</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr7 td13">' +
+        '                        <P class="p10 ft7">' +
+        "-" +
+        parseFloat(pdfDetails.discount).toFixed(2) +
+        "</P>" +
+        "                    </TD>" +
+        "                </TR>" +
+        "                <TR>" +
+        '                    <TD class="tr6 td12">' +
+        '                        <P class="p8 ft7">Amount After Discount</P>' +
         "                    </TD>" +
         '                    <TD class="tr6 td13">' +
         '                        <P class="p9 ft7">' +
@@ -862,17 +908,51 @@ class HtmlToPdfHelper {
         '                        <P class="p9 ft7">' +
         "+" +
         parseFloat(pdfDetails.serviceCharges).toFixed(2) +
+        
         "</P>" +
         "                    </TD>" +
         "                </TR>" +
         "                <TR>" +
-        '                    <TD class="tr7 td12">' +
-        '                        <P class="p8 ft7">Discount</P>' +
+        '                    <TD class="tr6 td12">' +
+        '                        <P class="p8 ft7">SGST  @9%</P>' + //GST@Nill (GST is exempt for healthcare services)
         "                    </TD>" +
-        '                    <TD class="tr7 td13">' +
-        '                        <P class="p10 ft7">' +
-        "-" +
-        parseFloat(pdfDetails.discount).toFixed(2) +
+        '                    <TD class="tr6 td13">' +
+        '                        <P class="p11 ft7">' +
+        "+" +
+        parseFloat(pdfDetails.SGST).toFixed(2) +
+        "</P>" +
+        "                    </TD>" +
+        "                </TR>" +
+        "                <TR>" +
+        '                    <TD class="tr8 td12">' +
+        '                        <P class="p8 ft7">CGST  @9%</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr8 td13">' +
+        '                        <P class="p9 ft7">' +
+        "+" +
+        parseFloat(pdfDetails.CGST).toFixed(2) +
+        "</P>" +
+        "                    </TD>" +
+        "                </TR>" +
+        "                <TR>" +
+        '                    <TD class="tr8 td12">' +
+        '                        <P class="p8 ft7">IGST  @18%</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr8 td13">' +
+        '                        <P class="p9 ft7">' +
+        "+" +
+        parseFloat(pdfDetails.IGST).toFixed(2) +
+        "</P>" +
+        "                    </TD>" +
+        "                </TR>" +
+        "                <TR>" +
+        '                    <TD class="tr8 td12">' +
+        '                        <P class="p8 ft7">UGST  @9%</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr8 td13">' +
+        '                        <P class="p9 ft7">' +
+        "+" +
+        parseFloat(pdfDetails.UGST).toFixed(2) +
         "</P>" +
         "                    </TD>" +
         "                </TR>" +
@@ -884,17 +964,7 @@ class HtmlToPdfHelper {
         '                        <P class="p9 ft7">' +
         "-" +
         parseFloat(roundedDown).toFixed(2) +
-        //   "</P>" +
-        // "                    </TD>" +
-        // "                </TR>" +
-
-        // "                <TR>" +
-        // '                    <TD class="tr8 td12">' +
-        // '                        <P class="p8 ft7">Paid Amount</P>' +
-        // "                    </TD>" +
-        // '                    <TD class="tr8 td13">' +
-        // '                        <P class="p9 ft7">' +
-        // parseFloat(paidAmount).toFixed(2) +
+  
         "</P>" +
         "                    </TD>" +
         "                </TR>" +
@@ -990,6 +1060,8 @@ class HtmlToPdfHelper {
       let roundedDown = (pdfDetails.payableAmount - roundeddown)
       let Remarks = pdfDetails.remarks
       let months = pdfDetails.months  
+      let GSTNumber = pdfDetails.GSTNumber
+      let sessionAmount = pdfDetails.sessionAmount
       let paidOn = moment(pdfDetails.paidOn)
         .tz(constants.defaultTimezone)
         .format("DD/MM/YYYY"); //
@@ -1512,7 +1584,10 @@ class HtmlToPdfHelper {
         '<P class="p6 ft6">Registration Number : ' +
         pdfDetails.docRegstration +
         "</P>" +
-        '<P class="p6 ft6">Session Number Paid: ' +
+        '<P class="p6 ft6">GST No : ' +
+        GSTNumber +
+        "</P>" +
+        '<P class="p6 ft6">Session/Month: ' +
         months +
         "</P>" +
         '            <TABLE cellpadding=0 cellspacing=0 class="t0">' +
@@ -1554,22 +1629,13 @@ class HtmlToPdfHelper {
         '            <TABLE cellpadding=0 cellspacing=0 class="t5">' +
            "                <TR>" +
         '                    <TD class="tr6 td12">' +
-        '                        <P class="p8 ft7">Paid Amount</P>' +
+        '                        <P class="p8 ft7">Session Amount</P>' +
         "                    </TD>" +
         '                    <TD class="tr6 td13">' +
         '                        <P class="p9 ft7">' +
         "+" +
-        parseFloat(paidAmount).toFixed(2) +
-        "</P>" +
-        "                <TR>" +
-        '                    <TD class="tr6 td12">' +
-        '                        <P class="p8 ft7">Service Charge</P>' +
-        "                    </TD>" +
-        '                    <TD class="tr6 td13">' +
-        '                        <P class="p9 ft7">' +
-        "+" +
-        parseFloat(pdfDetails.serviceCharges).toFixed(2) +
-        "</P>" +
+        parseFloat(sessionAmount).toFixed(2) +
+               "</P>" +
         "                    </TD>" +
         "                </TR>" +
         "                <TR>" +
@@ -1580,6 +1646,26 @@ class HtmlToPdfHelper {
         '                        <P class="p10 ft7">' +
         "-" +
         parseFloat(pdfDetails.discount).toFixed(2) +
+        "</P>" +
+        "                <TR>" +
+        '                    <TD class="tr6 td12">' +
+        '                        <P class="p8 ft7">Amount After Discount</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr6 td13">' +
+        '                        <P class="p9 ft7">' +
+        "+" +
+        
+        parseFloat(paidAmount).toFixed(2) +
+        "</P>" +
+        "                <TR>" +
+        '                    <TD class="tr6 td12">' +
+        '                        <P class="p8 ft7">Service Charge</P>' +
+        "                    </TD>" +
+        '                    <TD class="tr6 td13">' +
+        '                        <P class="p9 ft7">' +
+        "+" +
+        parseFloat(pdfDetails.serviceCharges).toFixed(2) +
+ 
         "</P>" +
         "                    </TD>" +
         "                </TR>" +

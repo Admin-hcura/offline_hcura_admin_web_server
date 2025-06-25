@@ -447,7 +447,33 @@ class Mail{
       console.error("Internal error ", e);
     }
   };
-
+ async sendDentalInvoiceEmail(emailId, file) {
+    try {
+      let info = await this.setUpSmtp();
+      info
+        .sendMail({
+          from: constants.MAIL_CONFIG.auth.user,
+          to: [constants.MAIL_CONFIG.invoiceEmail, emailId],
+          subject: "H-Cura Dental Package invoice received successfully!",
+          text: "Hi Dear H-Cura consumer Please find the attached file for your reference \n \nThank you.",
+          attachments: [
+            {
+              filename: "Dental_Invoice.pdf",
+              content: file,
+              contentType: "application/pdf",
+            },
+          ],
+        })
+        .then(() => {
+          console.log("Dental_INVOICE___Email sent");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } catch (e) {
+      console.error("Internal error ", e);
+    }
+  };
   async sendExternalSourceInvoiceEmail(emailId, file) {
     try {
       let info = await this.setUpSmtp();

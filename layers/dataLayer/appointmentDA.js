@@ -1332,7 +1332,8 @@ async updateEstimationStatus(estimationId) {
         afterRemovingGST: paymentDetails.afterRemovingGST, // Amount after GST is removed
         phoneNumber: paymentDetails.phoneNumber, // Phone number of the patient (for contact purposes)
         invoiceNumber: paymentDetails.invoiceNumber, // Generated invoice number
-        sessions: paymentDetails.sessions || []
+        sessions: paymentDetails.sessions || [],
+        isGstApplicable: paymentDetails.isGstApplicable || false, // Whether GST is applicable for this payment
       });
   
       // Save the payment record to the database
@@ -3014,42 +3015,88 @@ async getAllApptListForEstimation(obj, page, searchKey, branchId, roleId, doctor
     }
   };
 
-  async getStateDetails(branchId){
-    try{
-      let result = await branchesModel.aggregate([
-        {
-          $match: {
-            _id: new mongoose.Types.ObjectId(branchId),
-            isDeleted: false
-          }
-        },
-        {
-          $lookup: {
-            from: "states",
-            localField: "stateId",
-            foreignField: "_id",
-            as: "stateDetails"
-          }
-        },
-        {
-          $unwind: {
-            path: "$stateDetails",
-            preserveNullAndEmptyArrays: true
-          }
-        },
-        {
-          $project: {
-            _id: 0,
-            stateDetails: 1
-          }
+  // async getStateDetails(branchId){
+  //   try{
+  //     let result = await branchesModel.aggregate([
+  //       {
+  //         $match: {
+  //           _id: new mongoose.Types.ObjectId(branchId),
+  //           isDeleted: false
+  //         }
+  //       },
+  //       {
+  //         $lookup: {
+  //           from: "states",
+  //           localField: "stateId",
+  //           foreignField: "_id",
+  //           as: "stateDetails"
+  //         }
+  //       },
+  //       {
+  //         $unwind: {
+  //           path: "$stateDetails",
+  //           preserveNullAndEmptyArrays: true
+  //         }
+  //       },
+  //       {
+  //         $project: {
+  //           _id: 0,
+  //           stateDetails: 1
+  //         }
+  //       }
+  //     ]);
+  //     return result;
+  //   } catch(e){
+  //     throw e;
+  //   }
+  // };
+async   getStateDetails(branchId) {
+  try {
+    const result = await branchesModel.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(branchId),
+          isDeleted: false
         }
-      ]);
-      return result;
-    } catch(e){
-      throw e;
-    }
-  };
+      },
+      {
+        $lookup: {
+          from: "states",
+          localField: "stateId",
+          foreignField: "_id",
+          as: "stateDetails"
+        }
+      },
+      {
+        $unwind: "$stateDetails"
+      },
+      {
+        $project: {
+          _id: 0,
+          stateDetails: 1
+        }
+      }
+    ]);
+    return result;
+  } catch (e) {
+    throw e;
+  }
+}
 
+async   getPatientStateDetails(patientId) {
+  try {
+    return await patientModel.findOne({
+      _id: new mongoose.Types.ObjectId(patientId),
+      isDeleted: false
+    }).populate({
+      path: 'stateId',
+      model: 'States',
+      select: 'stateCode name'
+    });
+  } catch (e) {
+    throw e;
+  }
+}
   async getDashboardAptCount(data) {
     try {
       let obj = {
@@ -4262,9 +4309,10 @@ async updateAestheticCaseStudyDA(obj) {
             createdOn: 1,
             sessions :1,
             paymentFor: 1,
-afterRemovingGST           : 1,
+            afterRemovingGST : 1,
             ptFirstName: "$ptDetails.firstName",
             ptLastName: "$ptDetails.lastName",
+            stateName: "$ptDetails.stateName",
             hcuraId: "$ptDetails.hcuraId",
             ptAge: "$ptDetails.birthDate",
             docFirstName: "$docDetails.firstName",

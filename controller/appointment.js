@@ -1224,7 +1224,8 @@ class appointment{
         createdOn: body.createdOn || new Date(),
         afterRemovingGST: body.afterRemovingGST,
         phoneNumber: body.phoneNumber,
-        sessions: body.sessions || []  // ✅ Add this line
+        sessions: body.sessions || [] , // ✅ Add this line,
+        isGstApplicable: body.isGstApplicable || false, // ✅ Add this line
       };
   
       console.log(paymentData,"paymentdataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
@@ -1267,6 +1268,7 @@ class appointment{
   
       // Prepare PDF details (same as in the old flow)
       const months = body.sessions.map(session => session.month).join(', ');
+      const amount = body.sessions.map(session => session.amount).join(', ');
 
       const pdfDetails = {
         // invoiceNumber : addPaymentInfo.invoiceNumber,
@@ -1294,9 +1296,12 @@ class appointment{
         branchPhoneNumber: branchDetails.branchPhoneNumber,
         remarks: body.remarks,
         months: months,
-        paidAmount : body.afterRemovingGST
+        sessionAmount: amount,
+        paidAmount : body.afterRemovingGST,
+        GSTNumber: "29AAIFL8357M1ZG"
+        
       };
-  
+  console.log(pdfDetails,"pdfdetailsaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
   
     let file;
         try {
@@ -1316,7 +1321,7 @@ class appointment{
         try {
              if (["SKIN", "HAIR"].includes(body.paymentFor?.toUpperCase())) {
       let emailsender = await emailSender.sendAstheticInvoiceEmail(userInfo[0].patient.emailId, file);
-            console.log(emailsender,"emailsenderrrrrrrrrrrrrrrrrrrrrrrAsthetics")
+            // console.log(emailsender,"emailsenderrrrrrrrrrrrrrrrrrrrrrrAsthetics")
              } else if (body.paymentFor === "DENTAL")
               {
       let emailsender = await emailSender.sendDentalInvoiceEmail(userInfo[0].patient.emailId, file);
@@ -1825,38 +1830,106 @@ class appointment{
         }
     };
 
-    async calculateGst(req, res, next) {
-        try {
-            const { branchId, amount } = req.query;
-            let result = await appointmentBAObj.getStateDetailsBA(branchId);
-            let stateDetails = result[0].stateDetails
-            let gstAmount = 0
-            let CGST = 0
-            let SGST = 0
-            let IGST = 0
-            let UGST = 0
-            if(stateDetails.stateCode == "KA") {
-                let CGSTSGST = parseFloat(stateDetails.CGST) + parseFloat(stateDetails.SGST)
-                gstAmount = parseFloat(((amount * parseFloat(CGSTSGST)) /100).toFixed(2));
-                CGST = parseFloat((gstAmount/2));
-                SGST = parseFloat((gstAmount/2));
-            } else {
-                gstAmount = parseFloat(((amount * parseFloat(stateDetails.IGST)) /100).toFixed(2));
-                IGST = parseFloat((gstAmount));
-            }
-            let data = {
-                totalAmount: parseFloat(amount) + parseFloat(gstAmount),
-                gstAmount: gstAmount,
-                CGST: CGST,
-                SGST: SGST,
-                IGST: IGST,
-                UGST: UGST
-            }
-            res.status(200).send({ status: true, data: data });
-        } catch(e) {
-            next(e);
-        }
+    // async calculateGst(req, res, next) {
+    //     try {
+    //         const { branchId, amount } = req.query;
+    //         let result = await appointmentBAObj.getStateDetailsBA(branchId);
+    //         console.log("resulttttttttttttttttttttttttttttttttttt", result);
+    //         let stateDetails = result[0].stateDetails
+    //         console.log("stateDetails", stateDetails);
+    //         let gstAmount = 0
+    //         let CGST = 0
+    //         let SGST = 0
+    //         let IGST = 0
+    //         let UGST = 0
+    //         if(stateDetails.stateCode == "KA") {
+    //             console.log("Inside KA state");
+    //             let CGSTSGST = parseFloat(stateDetails.CGST) + parseFloat(stateDetails.SGST)
+    //             gstAmount = parseFloat(((amount * parseFloat(CGSTSGST)) /100).toFixed(2));
+    //             CGST = parseFloat((gstAmount/2));
+    //             SGST = parseFloat((gstAmount/2));
+    //         } else {
+    //             console.log("Inside other state");
+    //             gstAmount = parseFloat(((amount * parseFloat(stateDetails.IGST)) /100).toFixed(2));
+    //             IGST = parseFloat((gstAmount));
+    //         }
+    //         let data = {
+    //             totalAmount: parseFloat(amount) + parseFloat(gstAmount),
+    //             gstAmount: gstAmount,
+    //             CGST: CGST,
+    //             SGST: SGST,
+    //             IGST: IGST,
+    //             UGST: UGST
+    //         }
+    //         res.status(200).send({ status: true, data: data });
+    //     } catch(e) {
+    //         next(e);
+    //     }
+    // };
+
+async  calculateGst(req, res, next) {
+  try {
+    const { branchId, amount, patientId } = req.query;
+
+    if (!branchId || !amount || !patientId) {
+      return res.status(400).send({ status: false, message: "Missing required parameters" });
+    }
+
+    // Step 1: Get Branch State Details
+    const branchResult = await appointmentBAObj.getStateDetailsBA(branchId);
+    const branchState = branchResult?.[0]?.stateDetails;
+
+    if (!branchState) {
+      return res.status(404).send({ status: false, message: "Branch state not found" });
+    }
+
+    // Step 2: Get Patient State Details
+    const patientData = await appointmentBAObj.getPatientStateDetailsBA(patientId);
+    const patientStateCode = patientData?.stateId?.stateCode;
+
+    if (!patientStateCode) {
+      return res.status(404).send({ status: false, message: "Patient state not found" });
+    }
+
+    // Step 3: GST Calculation
+    const branchStateCode = branchState.stateCode;
+    const isUnionTerritory = ["CH", "DD", "DN", "LD", "AN", "DL", "JK", "LA", "PY"].includes(branchStateCode);
+
+    let gstAmount = 0, CGST = 0, SGST = 0, IGST = 0, UGST = 0;
+
+    if (branchStateCode === patientStateCode) {
+      if (isUnionTerritory) {
+        const totalRate = parseFloat(branchState.CGST) + parseFloat(branchState.UGST);
+        gstAmount = parseFloat(((amount * totalRate) / 100).toFixed(2));
+        CGST = gstAmount / 2;
+        UGST = gstAmount / 2;
+      } else {
+        const totalRate = parseFloat(branchState.CGST) + parseFloat(branchState.SGST);
+        gstAmount = parseFloat(((amount * totalRate) / 100).toFixed(2));
+        CGST = gstAmount / 2;
+        SGST = gstAmount / 2;
+      }
+    } else {
+      gstAmount = parseFloat(((amount * parseFloat(branchState.IGST)) / 100).toFixed(2));
+      IGST = gstAmount;
+    }
+
+    const totalAmount = parseFloat(amount) + gstAmount;
+
+    const data = {
+      totalAmount: +totalAmount.toFixed(2),
+      gstAmount: +gstAmount.toFixed(2),
+      CGST: +CGST.toFixed(2),
+      SGST: +SGST.toFixed(2),
+      IGST: +IGST.toFixed(2),
+      UGST: +UGST.toFixed(2)
     };
+
+    return res.status(200).send({ status: true, data });
+  } catch (e) {
+    next(e);
+  }
+}
 
     async getDashboardDataAptCount(req, res, next) {
         try {

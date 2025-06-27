@@ -291,7 +291,9 @@ const { number, required } = require("joi");
       {
         monthId: { type: mongoose.Schema.Types.ObjectId, ref: 'PerformedMonth' },
         month: Number,
-        amount: Number
+        amount: Number,
+        // discountedAmount : Number
+
       }
     ]
     
@@ -720,55 +722,55 @@ const { number, required } = require("joi");
     isActive: { type: Boolean, default: true }
   });
  
-const advancePaymentSchema = new mongoose.Schema({
-  patientId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Patient",
-    required: true
-  },
-  patientName: {
-    type: String,
-    required: true // make required if you always want to store it
-  },
-  totalAdvance: {
-    type: Number,
-    required: true
-  },
-  remainingBalance: {
-    type: Number,
-    required: true
-  },
-  paymentMode: {
-    type: String,
-    enum: ["cash", "qr_code", "swiping_machine", "online"],
-    required: true
-  },
-  paymentStatus: {
-    type: String,
-    enum: ["created", "pending", "completed", "failed"],
-    default: "created"
-  },
-  paymentDoneBy: {
-    type: String,
-    required: true
-  },
-  shortUrl: {
-    type: String,
-    default: null
-  },
-  paymentRelationId: {
-    type: String,
-    default: null
-  },
-  paymentLinkId: {
-    type: String,
-    default: null
-  },
-  createdOn: {
-    type: Date,
-    default: Date.now
-  }
-});
+// const advancePaymentSchema = new mongoose.Schema({
+//   patientId: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: "Patient",
+//     required: true
+//   },
+//   patientName: {
+//     type: String,
+//     required: true // make required if you always want to store it
+//   },
+//   totalAdvance: {
+//     type: Number,
+//     required: true
+//   },
+//   remainingBalance: {
+//     type: Number,
+//     required: true
+//   },
+//   paymentMode: {
+//     type: String,
+//     enum: ["cash", "qr_code", "swiping_machine", "online"],
+//     required: true
+//   },
+//   paymentStatus: {
+//     type: String,
+//     enum: ["created", "pending", "completed", "failed"],
+//     default: "created"
+//   },
+//   paymentDoneBy: {
+//     type: String,
+//     required: true
+//   },
+//   shortUrl: {
+//     type: String,
+//     default: null
+//   },
+//   paymentRelationId: {
+//     type: String,
+//     default: null
+//   },
+//   paymentLinkId: {
+//     type: String,
+//     default: null
+//   },
+//   createdOn: {
+//     type: Date,
+//     default: Date.now
+//   }
+// });
  
 
 const PerformedEstimationSchema = new mongoose.Schema(
@@ -869,7 +871,7 @@ exports.advancePaymentTransactionModel = mongoose.model("AdvancePaymentTransacti
 
 exports.PerformedEstimationModel = mongoose.model("PerformedEstimationSchema", PerformedEstimationSchema, "PerformedEstimationSchema");
 
-exports.advancePaymentModel = mongoose.model("AdvancePayment", advancePaymentSchema, "advancepayment");
+// exports.advancePaymentModel = mongoose.model("AdvancePayment", advancePaymentSchema, "advancepayment");
   exports.branchesModel = mongoose.model("Branches", branches, "branches");
   exports.roleModel = mongoose.model("Role", role, "role");
   exports.adminModel = mongoose.model("Admin", admin, "admin");

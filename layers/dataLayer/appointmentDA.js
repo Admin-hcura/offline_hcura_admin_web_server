@@ -1507,6 +1507,139 @@ async debitAdvanceBalance({ patientId, patientName, amountToDebit, paymentDoneBy
   }
 }
  
+async  getBranchAndPatientAdvanceSummary(startDate, endDate, branchId = null, patientId = null) {
+  try {
+    const matchStage = {};
+    if (branchId) {
+      matchStage.branchId = new mongoose.Types.ObjectId(branchId);
+    }
+    if (patientId) {
+      matchStage._id = new mongoose.Types.ObjectId(patientId);
+    }
+
+    const result = await patientModel.aggregate([
+      {
+        $match: matchStage
+      },
+      {
+        $lookup: {
+          from: "advancepaymentsummary",
+          localField: "_id",
+          foreignField: "patientId",
+          as: "summary"
+        }
+      },
+      {
+        $unwind: {
+          path: "$summary",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: "advancepaymenttransactions",
+          let: { patientId: "$_id" },
+          pipeline: [
+            // {
+            //   $match: {
+            //     $expr: {
+            //       $and: [
+            //         { $eq: ["$patientId", "$$patientId"] },
+            //         { $gte: ["$createdOn", new Date(startDate)] },
+            //         { $lte: ["$createdOn", new Date(endDate)] }
+            //       ]
+            //     }
+            //   }
+            // }
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$patientId", "$$patientId"] },
+                    { $gte: ["$createdOn", new Date(startDate)] },
+                    { $lt: ["$createdOn", new Date(new Date(endDate).getTime() + 24 * 60 * 60 * 1000)] }
+                  ]
+                }
+              }
+            }
+          ],
+          as: "transactions"
+        }
+      },
+      {
+        $addFields: {
+          totalAdvancePaid: { $sum: "$transactions.totalAdvance" },
+          totalDebited: { $sum: "$transactions.debitedAmount" }
+        }
+      },
+      {
+        $lookup: {
+          from: "branches",
+          localField: "branchId",
+          foreignField: "_id",
+          as: "branch"
+        }
+      },
+      { $unwind: "$branch" },
+      {
+        $project: {
+          patientId: "$_id",
+          firstName: 1,
+          lastName: 1,
+          phoneNumber: 1,
+          hcuraId: 1,
+          branchId: "$branch._id",
+          branchName: "$branch.branchName",
+          remainingBalance: { $ifNull: ["$summary.remainingBalance", 0] },
+          totalAdvancePaid: 1,
+          totalDebited: 1,
+          transactions: 1
+        }
+      },
+      {
+        $group: {
+          _id: "$branchId",
+          branchName: { $first: "$branchName" },
+          totalPatients: { $sum: 1 },
+          totalAdvancePaid: { $sum: "$totalAdvancePaid" },
+          totalDebited: { $sum: "$totalDebited" },
+          totalRemainingBalance: { $sum: "$remainingBalance" },
+          patients: {
+            $push: {
+              patientId: "$patientId",
+              firstName: "$firstName",
+              lastName: "$lastName",
+              phoneNumber: "$phoneNumber",
+              hcuraId: "$hcuraId",
+              totalAdvancePaid: "$totalAdvancePaid",
+              totalDebited: "$totalDebited",
+              remainingBalance: "$remainingBalance",
+              transactions: "$transactions"
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          branchId: "$_id",
+          branchName: 1,
+          totalPatients: 1,
+          totalAdvancePaid: 1,
+          totalDebited: 1,
+          totalRemainingBalance: 1,
+          patients: 1
+        }
+      }
+    ]);
+
+    return { success: true, data: result };
+  } catch (err) {
+    console.error("Error in merged branch-patient summary:", err);
+    return { success: false, message: err.message };
+  }
+}
+
   async updatePaymentByPaymentIdBA(obj){
     try{
       let result = await paymentModel.findOneAndUpdate(
@@ -1982,18 +2115,18 @@ async getEstimationData(hcuraId, branchId, roleId, doctorId) {
 
       // 🔍 Step 4: Fetch Estimations
       const estimations = await estimationModel.find(estimationFilter);
-
+console.log(estimations,"estimation data..................................................")
       if (!estimations.length) {
           return { status: false, message: "No estimations found", data: null };
       }
 
       // 🔍 Step 5: Fetch latest payment details for patient (if exists)
-      let latestPayment = null;
-      if (patientData) {
-          latestPayment = await advancePaymentModel
-              .findOne({ patientId: patientData._id })
-              .sort({ createdAt: -1 });
-      }
+      // let latestPayment = null;
+      // if (patientData) {
+      //     latestPayment = await advancePaymentModel
+      //         .findOne({ patientId: patientData._id })
+      //         .sort({ createdAt: -1 });
+      // }
 
       // 🔍 Step 6: Fetch doctor details for each estimation
       const estimationsWithDoctor = await Promise.all(
@@ -2027,9 +2160,9 @@ async getEstimationData(hcuraId, branchId, roleId, doctorId) {
                   estimationsWithDoctor.length > 0
                       ? estimationsWithDoctor[0].doctorName
                       : "Unknown",
-              remainingBalance: latestPayment
-                  ? latestPayment.remainingBalance
-                  : null,
+              // remainingBalance: latestPayment
+              //     ? latestPayment.remainingBalance
+              //     : null,
               estimationData: estimationsWithDoctor
           }
       };

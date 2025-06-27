@@ -116,6 +116,12 @@ router.post("/advance/payment",
   // sessionValidator.validateAdminSession,
   appointmentController.addAdvancePayment
 );
+router.post(
+  "/branch-wise-patient-balances",
+    // sessionValidator.validateAdminSession,
+  appointmentController.getBranchPatientSummary
+);
+
 router.post("/payment/asthetic",
   sessionValidator.validateAdminSession,
   appointmentController.paymentAsthetic

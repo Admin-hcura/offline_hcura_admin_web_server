@@ -675,12 +675,14 @@ class appointment{
     async validatePromoCode(req, res, next) {
         try {
             let body = req.body;
+            console.log("+++++body+++++++",body);
             const { error } = rule.promoCodeRule.validate(body);
             if (error) {
               throw Boom.badData(error.message);
             }
             let promoCode = body.promoCode.toUpperCase();
             let result = await appointmentBAObj.validatePromoCodeBA(promoCode);
+            console.log("+++++result+++++++",result);
             if(result){
                 res.send({ success: true, data: result});
             } else{
@@ -970,6 +972,34 @@ class appointment{
             next(e);
         }
     }
+async   getBranchPatientSummary(req, res, next) {
+  try {
+    const { startDate, endDate, branchId, patientId } = req.body;
+
+    if (!startDate || !endDate) {
+      return res.status(400).json({ success: false, message: "Start and end date required" });
+    }
+
+    const result = await appointmentDA.getBranchAndPatientAdvanceSummary(startDate, endDate, branchId, patientId);
+    res.send(result);
+  } catch (err) {
+    next(err);
+  }
+}
+// async  getBranchPatientSummary(req, res, next) {
+//   try {
+//     const { startDate, endDate, branchId } = req.body;
+
+//     if (!startDate || !endDate) {
+//       return res.status(400).json({ success: false, message: "Start and end date required" });
+//     }
+
+//     const result = await appointmentDA.getBranchAndPatientAdvanceSummary(startDate, endDate, branchId);
+//     res.send(result);
+//   } catch (err) {
+//     next(err);
+//   }
+// }
 
     async paymentAsthetic(req, res, next){
         try{
@@ -1307,6 +1337,7 @@ class appointment{
         try {
         if (["SKIN", "HAIR"].includes(body.paymentFor?.toUpperCase())) {
             file = await htmlToPDF.generateInvoiceForAsthetic(pdfDetails);
+            console.log(file,"fileeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeAsthetics")
         } else if(["DENTAL"].includes(body.paymentFor?.toUpperCase())) {
             file = await htmlToPDF.generateInvoiceForDental(pdfDetails);
         }else{
@@ -1321,7 +1352,7 @@ class appointment{
         try {
              if (["SKIN", "HAIR"].includes(body.paymentFor?.toUpperCase())) {
       let emailsender = await emailSender.sendAstheticInvoiceEmail(userInfo[0].patient.emailId, file);
-            // console.log(emailsender,"emailsenderrrrrrrrrrrrrrrrrrrrrrrAsthetics")
+            console.log(emailsender,"emailsenderrrrrrrrrrrrrrrrrrrrrrrAsthetics")
              } else if (body.paymentFor === "DENTAL")
               {
       let emailsender = await emailSender.sendDentalInvoiceEmail(userInfo[0].patient.emailId, file);

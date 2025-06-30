@@ -3425,9 +3425,11 @@ async   getPatientStateDetails(patientId) {
   //   }
   // };
 
+
 async getDashboardRevenueCount(data) {
   try {
-    let obj = {
+    // Main payment filter
+    let paymentFilter = {
       paidOn: {
         $gte: new Date(data.startDate),
         $lte: new Date(data.endDate),
@@ -3435,15 +3437,22 @@ async getDashboardRevenueCount(data) {
       isDeleted: false
     };
 
+    let patientIds = [];
+
+    // If branch-specific, get patientIds from that branch
     if (data.all !== "YES") {
-      obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
+      paymentFilter["branchId"] = new mongoose.Types.ObjectId(data.branchId);
+
+      const patients = await patientModel
+        .find({ branchId: new mongoose.Types.ObjectId(data.branchId) }, { _id: 1 })
+        .lean();
+
+      patientIds = patients.map(p => p._id);
     }
 
-    console.log("🟡 Filter Object for Payments:", obj);
-
-    // Main payment aggregation
+    // Payment aggregation pipeline
     const paymentPipeline = [
-      { $match: obj },
+      { $match: paymentFilter },
       {
         $facet: {
           results: [
@@ -3538,14 +3547,15 @@ async getDashboardRevenueCount(data) {
       }
     ];
 
-    // Advance payment transaction aggregation (totalAdvance & debitedAmount)
+    // Advance Payment Transaction Pipeline
     const advanceTransactionPipeline = [
       {
         $match: {
           createdOn: {
             $gte: new Date(data.startDate),
             $lte: new Date(data.endDate),
-          }
+          },
+          ...(patientIds.length ? { patientId: { $in: patientIds } } : {})
         }
       },
       {
@@ -3557,8 +3567,11 @@ async getDashboardRevenueCount(data) {
       }
     ];
 
-    // Remaining balance from advance summary (all patients)
+    // Advance Summary Pipeline
     const advanceSummaryPipeline = [
+      {
+        $match: patientIds.length ? { patientId: { $in: patientIds } } : {}
+      },
       {
         $group: {
           _id: null,
@@ -3567,6 +3580,7 @@ async getDashboardRevenueCount(data) {
       }
     ];
 
+    // Run All Pipelines
     const [paymentResults, advanceTransResult, advanceSummaryResult] = await Promise.all([
       paymentModel.aggregate(paymentPipeline),
       advancePaymentTransactionModel.aggregate(advanceTransactionPipeline),
@@ -3593,8 +3607,7 @@ async getDashboardRevenueCount(data) {
 }
 
 
-
-// async  getDashboardRevenueCount(data) {
+// async getDashboardRevenueCount(data) {
 //   try {
 //     let obj = {
 //       paidOn: {
@@ -3607,6 +3620,8 @@ async getDashboardRevenueCount(data) {
 //     if (data.all !== "YES") {
 //       obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
 //     }
+
+//     console.log("🟡 Filter Object for Payments:", obj);
 
 //     // Main payment aggregation
 //     const paymentPipeline = [
@@ -3705,8 +3720,8 @@ async getDashboardRevenueCount(data) {
 //       }
 //     ];
 
-//     // Advance Payment Aggregation
-//     const advancePipeline = [
+//     // Advance payment transaction aggregation (totalAdvance & debitedAmount)
+//     const advanceTransactionPipeline = [
 //       {
 //         $match: {
 //           createdOn: {
@@ -3720,31 +3735,45 @@ async getDashboardRevenueCount(data) {
 //           _id: null,
 //           totalAdvance: { $sum: "$totalAdvance" },
 //           debitedAmount: { $sum: "$debitedAmount" },
-//           remainingBalance: { $sum: "$remainingBalance" },
 //         }
 //       }
 //     ];
 
-//     const [paymentResults, advanceResults] = await Promise.all([
+//     // Remaining balance from advance summary (all patients)
+//     const advanceSummaryPipeline = [
+//       {
+//         $group: {
+//           _id: null,
+//           remainingBalance: { $sum: "$remainingBalance" }
+//         }
+//       }
+//     ];
+
+//     const [paymentResults, advanceTransResult, advanceSummaryResult] = await Promise.all([
 //       paymentModel.aggregate(paymentPipeline),
-//       advancePaymentTransactionModel.aggregate(advancePipeline)
+//       advancePaymentTransactionModel.aggregate(advanceTransactionPipeline),
+//       advancePaymentSummaryModel.aggregate(advanceSummaryPipeline)
 //     ]);
 
 //     const payment = paymentResults[0]?.results?.[0] || {};
-//     const advance = advanceResults?.[0] || {
-//       totalAdvance: 0,
-//       debitedAmount: 0,
-//       remainingBalance: 0
+//     const advanceTransaction = advanceTransResult?.[0] || { totalAdvance: 0, debitedAmount: 0 };
+//     const advanceSummary = advanceSummaryResult?.[0] || { remainingBalance: 0 };
+
+//     const finalResult = {
+//       ...payment,
+//       ...advanceTransaction,
+//       ...advanceSummary
 //     };
 
-//     return {
-//       ...payment,
-//       ...advance
-//     };
+//     console.log("✅ Final Computed Result:", finalResult);
+//     return [finalResult];
+
 //   } catch (e) {
+//     console.error("❌ Error in getDashboardRevenueCount:", e);
 //     throw e;
 //   }
 // }
+
 
 
 

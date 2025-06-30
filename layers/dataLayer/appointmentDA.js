@@ -3287,143 +3287,467 @@ async   getPatientStateDetails(patientId) {
     }
   };
     
-  async getDashboardRevenueCount(data) {
-    try {
-      let obj = {
-        paidOn: {
-          $gte: new Date(data.startDate),
-          $lte: new Date(data.endDate),
-        },
-        isDeleted : false
-      };
-      if (data.all !== "YES") {
-        // let roleDetails = await authentationDA.getroleCodeDA(data.roleId);
-        // if (roleDetails.roleName !== "SUPER_ADMIN" && data.branchId) {
-        obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
-        // }
-      }
+  // async getDashboardRevenueCount(data) {
+  //   try {
+  //     let obj = {
+  //       paidOn: {
+  //         $gte: new Date(data.startDate),
+  //         $lte: new Date(data.endDate),
+  //       },
+  //       isDeleted : false
+  //     };
+  //     if (data.all !== "YES") {
+  //       // let roleDetails = await authentationDA.getroleCodeDA(data.roleId);
+  //       // if (roleDetails.roleName !== "SUPER_ADMIN" && data.branchId) {
+  //       obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
+  //       // }
+  //     }
     
-      let pipeline = [
-        { $match: obj },
-        {
-          $facet: {
-            debug: [
-              {
-                $project: {
-                  refunded: { $toDouble: "$refundAmount" },
-                  total: { $toDouble: "$payableAmount" },
-                  completed: {
-                    $cond: [
-                      { $eq: ["$paymentStatus", "captured"] },
-                      { $toDouble: "$payableAmount" },
-                      0
-                    ],
-                  },
-                  paymentFor: 1,
-                  paymentMethod: 1,
+  //     let pipeline = [
+  //       { $match: obj },
+  //       {
+  //         $facet: {
+  //           debug: [
+  //             {
+  //               $project: {
+  //                 refunded: { $toDouble: "$refundAmount" },
+  //                 total: { $toDouble: "$payableAmount" },
+  //                 completed: {
+  //                   $cond: [
+  //                     { $eq: ["$paymentStatus", "captured"] },
+  //                     { $toDouble: "$payableAmount" },
+  //                     0
+  //                   ],
+  //                 },
+  //                 paymentFor: 1,
+  //                 paymentMethod: 1,
+  //               },
+  //             },
+  //             {
+  //               $addFields: {
+  //                 debugPaymentFor: "$paymentFor",
+  //                 debugPaymentMethod: "$paymentMethod",
+  //                 debugPayableAmount: "$payableAmount"
+  //               }
+  //             }
+  //           ],
+  //           results: [
+  //             {
+  //               $project: {
+  //                 refunded: { $toDouble: "$refundAmount" },
+  //                 total: { $toDouble: "$payableAmount" },
+  //                 completed: {
+  //                   $cond: [
+  //                     { $eq: ["$paymentStatus", "captured"] },
+  //                     { $toDouble: "$payableAmount" },
+  //                     0
+  //                   ],
+  //                 },
+  //                 paymentFor: 1,
+  //                 paymentMethod: 1,
+  //               },
+  //             },
+  //             {
+  //               $group: {
+  //                 _id: null,
+  //                 refunded: { $sum: "$refunded" },
+  //                 total: { $sum: "$total" },
+  //                 completed: { $sum: "$completed" },  
+  //                 astheticTotal: {
+  //                   $sum: {
+  //                     $cond: [{ $eq: ["$paymentFor", "ASTHETIC"] }, "$total", 0]
+  //                   }
+  //                 },
+  //                  skinTotal: {
+  //                   $sum: {
+  //                     $cond: [{ $eq: ["$paymentFor", "SKIN"] }, "$total", 0]
+  //                   }
+  //                 },
+  //                 hairTotal: {
+  //                   $sum: {
+  //                     $cond: [{ $eq: ["$paymentFor", "HAIR"] }, "$total", 0]
+  //                   }
+  //                 },
+  //                  dentalTotal: {
+  //                   $sum: {
+  //                     $cond: [{ $eq: ["$paymentFor", "DENTAL"] }, "$total", 0]
+  //                   }
+  //                 },
+  //                 consultationTotal: {
+  //                   $sum: {
+  //                     $cond: [{ $eq: ["$paymentFor", "CONSULTATION"] }, "$total", 0]
+  //                   }
+  //                 },
+  //                 homepathyTotal: {
+  //                   $sum: {
+  //                     $cond: [{ $eq: ["$paymentFor", "HOMEOPATHY"] }, "$total", 0]
+  //                   }
+  //                 },
+  //                 externalSourceTotal: {
+  //                   $sum: {
+  //                     $cond: [{ $eq: ["$paymentFor", "EXTERNAL_SOURCE"] }, "$total", 0]
+  //                   }
+  //                 },
+  //                 cashTotal: {
+  //                   $sum: {
+  //                     $cond: [{ $eq: ["$paymentMethod", "cash"] }, "$total", 0]
+  //                   }
+  //                 },
+  //                 qrCodeTotal: {
+  //                   $sum: {
+  //                     $cond: [{ $eq: ["$paymentMethod", "qr_code"] }, "$total", 0]
+  //                   }
+  //                 },
+  //                 swippingMachineTotal: {
+  //                   $sum: {
+  //                     $cond: [{ $eq: ["$paymentMethod", "swipping_machine"] }, "$total", 0]
+  //                   }
+  //                 },
+  //                 otherMethodsTotal: {
+  //                   $sum: {
+  //                     $cond: [
+  //                       { $not: [{ $in: ["$paymentMethod", ["cash", "qr_code", "swipping_machine"]] }] },
+  //                       "$total",
+  //                       0
+  //                     ]
+  //                   }
+  //                 },
+  //               },
+  //             }
+  //           ]
+  //         }
+  //       }
+  //     ];
+  //     let result = await paymentModel.aggregate(pipeline);
+  //     return result[0].results;
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // };
+
+async getDashboardRevenueCount(data) {
+  try {
+    let obj = {
+      paidOn: {
+        $gte: new Date(data.startDate),
+        $lte: new Date(data.endDate),
+      },
+      isDeleted: false
+    };
+
+    if (data.all !== "YES") {
+      obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
+    }
+
+    console.log("🟡 Filter Object for Payments:", obj);
+
+    // Main payment aggregation
+    const paymentPipeline = [
+      { $match: obj },
+      {
+        $facet: {
+          results: [
+            {
+              $project: {
+                refunded: { $toDouble: "$refundAmount" },
+                total: { $toDouble: "$payableAmount" },
+                completed: {
+                  $cond: [
+                    { $eq: ["$paymentStatus", "captured"] },
+                    { $toDouble: "$payableAmount" },
+                    0
+                  ],
                 },
+                paymentFor: 1,
+                paymentMethod: 1,
               },
-              {
-                $addFields: {
-                  debugPaymentFor: "$paymentFor",
-                  debugPaymentMethod: "$paymentMethod",
-                  debugPayableAmount: "$payableAmount"
+            },
+            {
+              $group: {
+                _id: null,
+                refunded: { $sum: "$refunded" },
+                total: { $sum: "$total" },
+                completed: { $sum: "$completed" },
+                astheticTotal: {
+                  $sum: {
+                    $cond: [{ $eq: ["$paymentFor", "ASTHETIC"] }, "$total", 0]
+                  }
+                },
+                skinTotal: {
+                  $sum: {
+                    $cond: [{ $eq: ["$paymentFor", "SKIN"] }, "$total", 0]
+                  }
+                },
+                hairTotal: {
+                  $sum: {
+                    $cond: [{ $eq: ["$paymentFor", "HAIR"] }, "$total", 0]
+                  }
+                },
+                dentalTotal: {
+                  $sum: {
+                    $cond: [{ $eq: ["$paymentFor", "DENTAL"] }, "$total", 0]
+                  }
+                },
+                consultationTotal: {
+                  $sum: {
+                    $cond: [{ $eq: ["$paymentFor", "CONSULTATION"] }, "$total", 0]
+                  }
+                },
+                homepathyTotal: {
+                  $sum: {
+                    $cond: [{ $eq: ["$paymentFor", "HOMEOPATHY"] }, "$total", 0]
+                  }
+                },
+                externalSourceTotal: {
+                  $sum: {
+                    $cond: [{ $eq: ["$paymentFor", "EXTERNAL_SOURCE"] }, "$total", 0]
+                  }
+                },
+                cashTotal: {
+                  $sum: {
+                    $cond: [{ $eq: ["$paymentMethod", "cash"] }, "$total", 0]
+                  }
+                },
+                qrCodeTotal: {
+                  $sum: {
+                    $cond: [{ $eq: ["$paymentMethod", "qr_code"] }, "$total", 0]
+                  }
+                },
+                swippingMachineTotal: {
+                  $sum: {
+                    $cond: [{ $eq: ["$paymentMethod", "swipping_machine"] }, "$total", 0]
+                  }
+                },
+                otherMethodsTotal: {
+                  $sum: {
+                    $cond: [
+                      {
+                        $not: [
+                          { $in: ["$paymentMethod", ["cash", "qr_code", "swipping_machine"]] }
+                        ]
+                      },
+                      "$total",
+                      0
+                    ]
+                  }
                 }
               }
-            ],
-            results: [
-              {
-                $project: {
-                  refunded: { $toDouble: "$refundAmount" },
-                  total: { $toDouble: "$payableAmount" },
-                  completed: {
-                    $cond: [
-                      { $eq: ["$paymentStatus", "captured"] },
-                      { $toDouble: "$payableAmount" },
-                      0
-                    ],
-                  },
-                  paymentFor: 1,
-                  paymentMethod: 1,
-                },
-              },
-              {
-                $group: {
-                  _id: null,
-                  refunded: { $sum: "$refunded" },
-                  total: { $sum: "$total" },
-                  completed: { $sum: "$completed" },  
-                  astheticTotal: {
-                    $sum: {
-                      $cond: [{ $eq: ["$paymentFor", "ASTHETIC"] }, "$total", 0]
-                    }
-                  },
-                   skinTotal: {
-                    $sum: {
-                      $cond: [{ $eq: ["$paymentFor", "SKIN"] }, "$total", 0]
-                    }
-                  },
-                  hairTotal: {
-                    $sum: {
-                      $cond: [{ $eq: ["$paymentFor", "HAIR"] }, "$total", 0]
-                    }
-                  },
-                   dentalTotal: {
-                    $sum: {
-                      $cond: [{ $eq: ["$paymentFor", "DENTAL"] }, "$total", 0]
-                    }
-                  },
-                  consultationTotal: {
-                    $sum: {
-                      $cond: [{ $eq: ["$paymentFor", "CONSULTATION"] }, "$total", 0]
-                    }
-                  },
-                  homepathyTotal: {
-                    $sum: {
-                      $cond: [{ $eq: ["$paymentFor", "HOMEOPATHY"] }, "$total", 0]
-                    }
-                  },
-                  externalSourceTotal: {
-                    $sum: {
-                      $cond: [{ $eq: ["$paymentFor", "EXTERNAL_SOURCE"] }, "$total", 0]
-                    }
-                  },
-                  cashTotal: {
-                    $sum: {
-                      $cond: [{ $eq: ["$paymentMethod", "cash"] }, "$total", 0]
-                    }
-                  },
-                  qrCodeTotal: {
-                    $sum: {
-                      $cond: [{ $eq: ["$paymentMethod", "qr_code"] }, "$total", 0]
-                    }
-                  },
-                  swippingMachineTotal: {
-                    $sum: {
-                      $cond: [{ $eq: ["$paymentMethod", "swipping_machine"] }, "$total", 0]
-                    }
-                  },
-                  otherMethodsTotal: {
-                    $sum: {
-                      $cond: [
-                        { $not: [{ $in: ["$paymentMethod", ["cash", "qr_code", "swipping_machine"]] }] },
-                        "$total",
-                        0
-                      ]
-                    }
-                  },
-                },
-              }
-            ]
+            }
+          ]
+        }
+      }
+    ];
+
+    // Advance payment transaction aggregation (totalAdvance & debitedAmount)
+    const advanceTransactionPipeline = [
+      {
+        $match: {
+          createdOn: {
+            $gte: new Date(data.startDate),
+            $lte: new Date(data.endDate),
           }
         }
-      ];
-      let result = await paymentModel.aggregate(pipeline);
-      return result[0].results;
-    } catch (e) {
-      throw e;
-    }
-  };
+      },
+      {
+        $group: {
+          _id: null,
+          totalAdvance: { $sum: "$totalAdvance" },
+          debitedAmount: { $sum: "$debitedAmount" },
+        }
+      }
+    ];
+
+    // Remaining balance from advance summary (all patients)
+    const advanceSummaryPipeline = [
+      {
+        $group: {
+          _id: null,
+          remainingBalance: { $sum: "$remainingBalance" }
+        }
+      }
+    ];
+
+    const [paymentResults, advanceTransResult, advanceSummaryResult] = await Promise.all([
+      paymentModel.aggregate(paymentPipeline),
+      advancePaymentTransactionModel.aggregate(advanceTransactionPipeline),
+      advancePaymentSummaryModel.aggregate(advanceSummaryPipeline)
+    ]);
+
+    const payment = paymentResults[0]?.results?.[0] || {};
+    const advanceTransaction = advanceTransResult?.[0] || { totalAdvance: 0, debitedAmount: 0 };
+    const advanceSummary = advanceSummaryResult?.[0] || { remainingBalance: 0 };
+
+    const finalResult = {
+      ...payment,
+      ...advanceTransaction,
+      ...advanceSummary
+    };
+
+    console.log("✅ Final Computed Result:", finalResult);
+    return [finalResult];
+
+  } catch (e) {
+    console.error("❌ Error in getDashboardRevenueCount:", e);
+    throw e;
+  }
+}
+
+
+
+// async  getDashboardRevenueCount(data) {
+//   try {
+//     let obj = {
+//       paidOn: {
+//         $gte: new Date(data.startDate),
+//         $lte: new Date(data.endDate),
+//       },
+//       isDeleted: false
+//     };
+
+//     if (data.all !== "YES") {
+//       obj["branchId"] = new mongoose.Types.ObjectId(data.branchId);
+//     }
+
+//     // Main payment aggregation
+//     const paymentPipeline = [
+//       { $match: obj },
+//       {
+//         $facet: {
+//           results: [
+//             {
+//               $project: {
+//                 refunded: { $toDouble: "$refundAmount" },
+//                 total: { $toDouble: "$payableAmount" },
+//                 completed: {
+//                   $cond: [
+//                     { $eq: ["$paymentStatus", "captured"] },
+//                     { $toDouble: "$payableAmount" },
+//                     0
+//                   ],
+//                 },
+//                 paymentFor: 1,
+//                 paymentMethod: 1,
+//               },
+//             },
+//             {
+//               $group: {
+//                 _id: null,
+//                 refunded: { $sum: "$refunded" },
+//                 total: { $sum: "$total" },
+//                 completed: { $sum: "$completed" },
+//                 astheticTotal: {
+//                   $sum: {
+//                     $cond: [{ $eq: ["$paymentFor", "ASTHETIC"] }, "$total", 0]
+//                   }
+//                 },
+//                 skinTotal: {
+//                   $sum: {
+//                     $cond: [{ $eq: ["$paymentFor", "SKIN"] }, "$total", 0]
+//                   }
+//                 },
+//                 hairTotal: {
+//                   $sum: {
+//                     $cond: [{ $eq: ["$paymentFor", "HAIR"] }, "$total", 0]
+//                   }
+//                 },
+//                 dentalTotal: {
+//                   $sum: {
+//                     $cond: [{ $eq: ["$paymentFor", "DENTAL"] }, "$total", 0]
+//                   }
+//                 },
+//                 consultationTotal: {
+//                   $sum: {
+//                     $cond: [{ $eq: ["$paymentFor", "CONSULTATION"] }, "$total", 0]
+//                   }
+//                 },
+//                 homepathyTotal: {
+//                   $sum: {
+//                     $cond: [{ $eq: ["$paymentFor", "HOMEOPATHY"] }, "$total", 0]
+//                   }
+//                 },
+//                 externalSourceTotal: {
+//                   $sum: {
+//                     $cond: [{ $eq: ["$paymentFor", "EXTERNAL_SOURCE"] }, "$total", 0]
+//                   }
+//                 },
+//                 cashTotal: {
+//                   $sum: {
+//                     $cond: [{ $eq: ["$paymentMethod", "cash"] }, "$total", 0]
+//                   }
+//                 },
+//                 qrCodeTotal: {
+//                   $sum: {
+//                     $cond: [{ $eq: ["$paymentMethod", "qr_code"] }, "$total", 0]
+//                   }
+//                 },
+//                 swippingMachineTotal: {
+//                   $sum: {
+//                     $cond: [{ $eq: ["$paymentMethod", "swipping_machine"] }, "$total", 0]
+//                   }
+//                 },
+//                 otherMethodsTotal: {
+//                   $sum: {
+//                     $cond: [
+//                       {
+//                         $not: [
+//                           { $in: ["$paymentMethod", ["cash", "qr_code", "swipping_machine"]] }
+//                         ]
+//                       },
+//                       "$total",
+//                       0
+//                     ]
+//                   }
+//                 }
+//               }
+//             }
+//           ]
+//         }
+//       }
+//     ];
+
+//     // Advance Payment Aggregation
+//     const advancePipeline = [
+//       {
+//         $match: {
+//           createdOn: {
+//             $gte: new Date(data.startDate),
+//             $lte: new Date(data.endDate),
+//           }
+//         }
+//       },
+//       {
+//         $group: {
+//           _id: null,
+//           totalAdvance: { $sum: "$totalAdvance" },
+//           debitedAmount: { $sum: "$debitedAmount" },
+//           remainingBalance: { $sum: "$remainingBalance" },
+//         }
+//       }
+//     ];
+
+//     const [paymentResults, advanceResults] = await Promise.all([
+//       paymentModel.aggregate(paymentPipeline),
+//       advancePaymentTransactionModel.aggregate(advancePipeline)
+//     ]);
+
+//     const payment = paymentResults[0]?.results?.[0] || {};
+//     const advance = advanceResults?.[0] || {
+//       totalAdvance: 0,
+//       debitedAmount: 0,
+//       remainingBalance: 0
+//     };
+
+//     return {
+//       ...payment,
+//       ...advance
+//     };
+//   } catch (e) {
+//     throw e;
+//   }
+// }
+
+
+
 
   async getPatientListTemp(type, page, limit, search, roleId, branchId) {
     let offset = (page - 1) * limit;
